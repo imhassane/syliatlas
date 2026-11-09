@@ -10,6 +10,7 @@ defmodule SyliAtlas.Profiles.Benchmark do
       Queries.ranking("real_gdp_index", 2020, 2025)
       Queries.ranking("inflation", 2015, 2025, region: "west_africa", mode: "value")
       Queries.search("cote")
+      Queries.map_countries("fr")
     end
 
     SyliAtlas.Profiles.QueryStats.summary()

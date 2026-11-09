@@ -56,9 +56,8 @@
   .pad { padding: 20px; }
   .lead { font-size: 17px; }
   .hero-grid { padding-top: 16px; padding-bottom: 48px; gap: 32px; }
-  /* The band would run under the text: keep it as a thin stripe on top. */
-  .band { top: -480px; }
-  .band::after { background: none; }
+  /* The band would run under the text on a phone: leave it out. */
+  .band { display: none; }
   .search input { padding-right: 20px; }
   .search .btn { position: static; margin-top: 8px; width: 100%; }
   .window-body { padding: 20px; }
@@ -123,3 +122,8 @@
 @media (pointer: coarse) {
   .nav a, .crumbs a, .site-footer nav a { min-height: 44px; display: inline-flex; align-items: center; }
 }
+.headline-spark { display: block; width: 100%; height: 64px; overflow: visible; }
+
+/* The footer always reaches the bottom of the window, even on a short page. */
+body { min-height: 100svh; display: flex; flex-direction: column; }
+body > main { flex: 1 0 auto; }

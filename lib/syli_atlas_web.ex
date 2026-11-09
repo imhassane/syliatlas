@@ -88,6 +88,7 @@ defmodule SyliAtlasWeb do
       import SyliAtlasWeb.CoreComponents
       import SyliAtlasWeb.UI
       import SyliAtlasWeb.PageComponents
+      import SyliAtlasWeb.MapComponents
       import SyliAtlasWeb.Format
 
       # Common modules used in templates

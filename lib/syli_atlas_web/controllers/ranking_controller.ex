@@ -12,7 +12,7 @@ defmodule SyliAtlasWeb.RankingController do
     {from, to} = PageComponents.period(params)
 
     indicator =
-      if Indicators.valid?(params["indicator"]), do: params["indicator"], else: "real_gdp_index"
+      if Indicators.valid?(params["indicator"]), do: params["indicator"], else: "gdp_usd_bn"
 
     mode =
       if params["mode"] == "value" and indicator != "real_gdp_index", do: "value", else: "change"

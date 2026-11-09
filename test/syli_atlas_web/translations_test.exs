@@ -6,7 +6,9 @@ defmodule SyliAtlasWeb.TranslationsTest do
 
   test "French catalog is complete" do
     po = File.read!(@po)
-    refute po =~ "#, fuzzy", "fuzzy translations are never kept: check them and remove the flag"
+
+    refute po =~ ~r/^#,.*\bfuzzy\b/m,
+           "fuzzy translations are never kept: check them and remove the flag"
 
     missing =
       ~r/msgid "(.+)"\nmsgstr ""\n/

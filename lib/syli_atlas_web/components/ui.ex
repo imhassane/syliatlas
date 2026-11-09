@@ -308,6 +308,7 @@ defmodule SyliAtlasWeb.UI do
   attr :rows, :list, required: true
   attr :caption, :string, required: true, doc: "names the table for screen readers"
   attr :current, :any, default: nil, doc: "row (as given) to highlight"
+  attr :wide, :boolean, default: false, doc: "many columns: stack below 60rem instead of 34rem"
 
   slot :head, required: true, doc: "the row header (first column)" do
     attr :label, :string, required: true
@@ -327,7 +328,7 @@ defmodule SyliAtlasWeb.UI do
   def data_table(assigns) do
     ~H"""
     <div class="table-box" role="region" aria-labelledby={"#{@id}-caption"}>
-      <table id={@id} class="table table-stack">
+      <table id={@id} class={["table table-stack", @wide && "table-wide"]}>
         <caption id={"#{@id}-caption"} class="vh">{@caption}</caption>
         <thead>
           <tr>

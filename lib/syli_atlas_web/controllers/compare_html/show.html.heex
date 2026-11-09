@@ -48,18 +48,16 @@
   <.section :if={@series != []} tight={:top}>
     <.card pad>
       <.card_head
-        title={indicator_label("real_gdp_index")}
-        subtitle={
-          gettext("Index, %{year} = 100 · dashed: estimates and projections", year: @from)
-        }
+        title={indicator_label("gdp_usd_bn")}
+        subtitle={gettext("Billions of current dollars · dashed: estimates and projections")}
       />
       <Charts.line_chart
         id="compare-chart"
-        indicator="real_gdp_index"
+        indicator="gdp_usd_bn"
         from={@from}
         to={@to}
         locale={@locale}
-        label={gettext("Real GDP, %{from} → %{to}", from: @from, to: @to)}
+        label={gettext("GDP in current dollars, %{from} → %{to}", from: @from, to: @to)}
         series={
           Enum.map(
             @series,
@@ -67,7 +65,7 @@
               id: &1.id,
               name: &1.name,
               color: &1.color,
-              values: Charts.rebase(&1.item["series"]["real_gdp_index"], @from)
+              values: &1.item["series"]["gdp_usd_bn"]
             }
           )
         }
@@ -79,21 +77,29 @@
       <.data_table
         id="compare-table"
         caption={gettext("Indicators in %{year}", year: @to)}
-        rows={["real_gdp_index" | SyliAtlas.Sources.Indicators.keys()]}
+        rows={["gdp_change", "real_gdp_index" | SyliAtlas.Sources.Indicators.keys()]}
       >
         <:head :let={k} label={gettext("Indicator") <> " · #{@to}"}>
-          <span title={indicator_help(k)}>{indicator_label(k)}</span>
-          <span :if={k == "real_gdp_index"} class="small muted">{@from} → {@to}</span>
+          <span :if={k == "gdp_change"}>{gettext("GDP in dollars")}</span>
+          <span :if={k != "gdp_change"} title={indicator_help(k)}>{indicator_label(k)}</span>
+          <span :if={k in ["gdp_change", "real_gdp_index"]} class="small muted">{@from} → {@to}</span>
         </:head>
         <:col :let={k} :for={s <- @series} label={s.name}>
-          <%= if k == "real_gdp_index" do %>
-            <b class={tone(s.item["real_gdp_change_pct"], k)}>{change(
-              s.item["real_gdp_change_pct"],
-              k,
-              @locale
-            )}</b>
-          <% else %>
-            {value(PublicData.at(s.item["series"][k], @to), k, @locale)}
+          <%= cond do %>
+            <% k == "gdp_change" -> %>
+              <b class={tone(s.item["gdp_change_pct"], "gdp_usd_bn")}>{change(
+                s.item["gdp_change_pct"],
+                "gdp_usd_bn",
+                @locale
+              )}</b>
+            <% k == "real_gdp_index" -> %>
+              <b class={tone(s.item["real_gdp_change_pct"], k)}>{change(
+                s.item["real_gdp_change_pct"],
+                k,
+                @locale
+              )}</b>
+            <% true -> %>
+              {value(PublicData.at(s.item["series"][k], @to), k, @locale)}
           <% end %>
         </:col>
       </.data_table>

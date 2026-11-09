@@ -1,0 +1,69 @@
+/* Motion. Transforms only — never fade text, so contrast checks stay right
+   at every frame. One curve for the site. Everything stops when the device
+   asks for reduced motion; pages already seen this session (html.revisit)
+   do not replay their entrance. */
+
+:root { --ease: cubic-bezier(.2, .8, .2, 1); }
+
+@keyframes rise { from { transform: translateY(10px) scale(.985); } to { transform: none; } }
+@keyframes slide-in { from { transform: translateX(24px); } to { transform: none; } }
+@keyframes draw-line { from { clip-path: inset(-10% 100% -10% 0); } to { clip-path: inset(-10% 0 -10% 0); } }
+@keyframes grow-x { from { transform: scaleX(0); } to { transform: none; } }
+@keyframes pop { 0% { transform: scale(.6); } 70% { transform: scale(1.15); } 100% { transform: none; } }
+
+/* The map rises region by region. */
+.reveal .cty { transform-box: fill-box; transform-origin: center; animation: rise .5s var(--ease) both; }
+.reveal .rg-north_africa { animation-delay: 0ms; }
+.reveal .rg-west_africa { animation-delay: 70ms; }
+.reveal .rg-central_africa { animation-delay: 140ms; }
+.reveal .rg-east_africa { animation-delay: 210ms; }
+.reveal .rg-southern_africa { animation-delay: 280ms; }
+
+/* Lines draw themselves from left to right (a clip that opens), then the
+   arrival dot pops. */
+.draw { animation: draw-line .9s var(--ease) both; }
+.spark-dot, .chart .end-dot { transform-box: fill-box; transform-origin: center; animation: pop .45s var(--ease) both .6s; }
+
+/* Bars grow from their start. */
+.bar-fill { transform-origin: left; animation: grow-x .6s var(--ease) both; }
+.bar-fill { transition: width .5s var(--ease); }
+
+/* The panel's content slides in when the country changes (class set by map.js). */
+.is-entering { animation: slide-in .3s var(--ease) both; }
+
+/* Hover and press. */
+a.card, .qcard { transition: transform .15s var(--ease), box-shadow .15s var(--ease); }
+a.card:hover, .qcard:hover { transform: translateY(-2px); box-shadow: var(--shadow-pop); }
+.btn { transition: transform .15s var(--ease); }
+.btn:active { transform: scale(.97); }
+
+/* Between pages: the browser's own transitions; the country name travels. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+}
+.area-title { view-transition-name: area-title; }
+
+html.revisit .reveal .cty, html.revisit .draw, html.revisit .bar-fill, html.revisit .spark-dot, html.revisit .chart .end-dot { animation: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  @view-transition { navigation: none; }
+}
+
+/* Long pages: blocks rise into place as they scroll into view. Native
+   scroll-driven animations where supported (entry range only, so nothing
+   moves once in place); elsewhere (Firefox) assets/js/ui/motion.js sets
+   .reveal-pending on blocks below the fold and removes it as they arrive.
+   Transforms only: the content is always readable. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports ((animation-timeline: view()) and (animation-range: entry)) {
+    @keyframes scroll-rise { from { transform: translateY(32px); } }
+    .section > .wrap > * {
+      animation: scroll-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+  }
+  .reveal-pending { transform: translateY(32px); }
+  .reveal-arrive { transition: transform .6s var(--ease); }
+}

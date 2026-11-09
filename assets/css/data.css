@@ -16,10 +16,11 @@
 }
 .bar-fill.neg { background: var(--signal); }
 .bar-cell { display: inline-flex; align-items: center; justify-content: flex-end; gap: 12px; }
+.bar-cell b, .table-stack td b { white-space: nowrap; }
 
 /* Tables (UI.data_table/1): sticky header row and first column when wide,
    one card per row when narrow — never a sideways scroll on a phone. */
-.table-box { container-type: inline-size; }
+.table-box { container-type: inline-size; overflow-x: auto; }
 .table-stack th[scope="row"] { font-family: var(--sans); font-size: 15px; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--ink); text-align: left; white-space: normal; height: 54px; border-bottom: 1px solid var(--border-faint); }
 .table-stack th[scope="row"] .small { display: block; font-weight: 400; }
 .table-stack tbody tr:last-child th { border-bottom: 0; }
@@ -40,9 +41,23 @@
   .table-stack .bar-cell .bar-track { width: 72px; }
 }
 
+/* Tables with many columns stack sooner. */
+@container (width < 60rem) {
+  .table-wide, .table-wide tbody, .table-wide tr, .table-wide th, .table-wide td { display: block; }
+  .table-wide thead { display: none; }
+  .table-wide tr { padding: 14px 20px; border-top: 1px solid var(--border-faint); }
+  .table-wide tbody tr:first-child { border-top: 0; }
+  .table-wide th[scope="row"], .table-wide thead th:first-child { height: auto; padding: 0 0 6px; border: 0; }
+  .table-wide td { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; height: auto; padding: 5px 0; border: 0; white-space: normal; text-align: right; }
+  .table-wide td:last-child { padding-right: 0; }
+  .table-wide td::before { content: attr(data-label); flex: 1 1 auto; min-width: 0; text-align: left; color: var(--ink-muted); font-size: 14px; }
+  .table-wide td.hide-sm { display: none; }
+  .table-wide .bar-cell .bar-track { width: 72px; }
+}
+
 /* Charts: drawn twice (Charts.line_chart/1), wide with end labels and
    narrow for phones, whose legend sits under the chart. */
-.chart path.series, .chart .ref-line, .chart .grid-line { vector-effect: non-scaling-stroke; }
+.chart .ref-line, .chart .grid-line { vector-effect: non-scaling-stroke; }
 .chart-narrow, .legend { display: none; }
 .chart-narrow text { font-size: 12px; }
 @media (max-width: 39.99rem) {

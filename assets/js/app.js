@@ -30,11 +30,16 @@ import {initDrawer} from "./ui/drawer"
 import {initSheets} from "./ui/sheet"
 import {initTheme} from "./ui/theme"
 import {initPeriodForms} from "./ui/period"
+import {initMap} from "./ui/map"
+import {initCountUp, initScrollReveal} from "./ui/motion"
 
 initTheme()
 initDrawer()
 initSheets()
 initPeriodForms()
+initMap()
+initCountUp()
+initScrollReveal()
 
 // Public pages are cached and carry no session or CSRF token: LiveView only
 // connects on pages that have one (sign-in, discussions, admin).

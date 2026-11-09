@@ -8,7 +8,7 @@ defmodule SyliAtlasWeb.AreaController do
 
   plug :put_layout, false
 
-  @kpis ~w(real_gdp_index gdp_per_capita_usd inflation public_debt_pct_gdp)
+  @kpis ~w(gdp_usd_bn gdp_per_capita_usd inflation public_debt_pct_gdp)
 
   def show(conn, %{"slug" => slug} = params) do
     locale = conn.assigns.locale
@@ -28,7 +28,7 @@ defmodule SyliAtlasWeb.AreaController do
 
       peers =
         if area.kind == "country" do
-          PublicData.ranking("real_gdp_index", from, to, region: ranking_scope, locale: locale)
+          PublicData.ranking("gdp_usd_bn", from, to, region: ranking_scope, locale: locale)
         else
           Geo.list_regions()
           |> Enum.map(&PublicData.area(&1.code, from, to))
@@ -39,7 +39,7 @@ defmodule SyliAtlasWeb.AreaController do
               "name" => r["profile"]["name"][locale],
               "slug" => r["profile"]["slug"][locale],
               "kind" => r["profile"]["kind"],
-              "value" => r["period"]["changes"]["real_gdp_index"]
+              "value" => r["period"]["changes"]["gdp_usd_bn"]
             }
           end)
           |> Enum.sort_by(&(-(&1["value"] || -999)))
@@ -108,7 +108,7 @@ defmodule SyliAtlasWeb.AreaController do
         "name" => &1["name"][locale],
         "slug" => &1["slug"][locale],
         "kind" => &1["kind"],
-        "value" => &1["real_gdp_change_pct"]
+        "value" => &1["gdp_change_pct"]
       }
     )
     |> Enum.sort_by(&(-(&1["value"] || -999)))
@@ -118,16 +118,18 @@ defmodule SyliAtlasWeb.AreaController do
 
   @doc false
   def answer(name, data, from, to, locale) do
-    c = data["period"]["changes"]["real_gdp_index"]
-    growth = PublicData.at(data["profile"]["series"]["real_gdp_growth"], to)
+    s = data["profile"]["series"]
+    ch = data["period"]["changes"]
 
     gettext(
-      "Between %{from} and %{to}, the real GDP of %{name} changed by %{change} (IMF). Growth in %{to}: %{growth}.",
-      from: from,
-      to: to,
+      "%{name}: GDP of %{gdp} in %{to} (IMF), %{change} since %{from} in current dollars, %{real} in volume. Real growth in %{to}: %{growth}.",
       name: name,
-      change: change(c, "real_gdp_index", locale),
-      growth: value(growth, "real_gdp_growth", locale)
+      gdp: value(PublicData.at(s["gdp_usd_bn"], to), "gdp_usd_bn", locale),
+      to: to,
+      from: from,
+      change: change(ch["gdp_usd_bn"], "gdp_usd_bn", locale),
+      real: change(ch["real_gdp_index"], "real_gdp_index", locale),
+      growth: value(PublicData.at(s["real_gdp_growth"], to), "real_gdp_growth", locale)
     )
   end
 

@@ -80,8 +80,8 @@ defmodule SyliAtlasWeb.Format do
   end
 
   defp signed(v, locale), do: if(v > 0, do: "+", else: "") <> number(v, 1, locale)
-  defp billions("en"), do: "bn$"
-  defp billions(_), do: "Md$"
+  def billions("en"), do: "bn$"
+  def billions(_), do: "Md$"
   defp na("en"), do: "n/a"
   defp na(_), do: "n.d."
 end

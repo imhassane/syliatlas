@@ -10,76 +10,64 @@ defmodule SyliAtlasWeb.PageHTML do
   attr :to, :integer, required: true
   attr :locale, :string, required: true
 
-  @doc "The hero's window: Africa's real GDP change with a sparkline."
+  @doc "The hero's window: Africa's GDP in current dollars, its change, a sparkline."
   def headline_window(assigns) do
+    s = assigns.africa["profile"]["series"]
+    ch = assigns.africa["period"]["changes"]
+
     assigns =
-      assign(
-        assigns,
-        :spark,
-        spark_path(
-          assigns.africa["profile"]["series"]["real_gdp_index"],
-          assigns.from,
-          assigns.to
-        )
+      assign(assigns,
+        spark: SyliAtlasWeb.Spark.paths(s["gdp_usd_bn"], assigns.from, assigns.to, 300, 60),
+        gdp: PublicData.at(s["gdp_usd_bn"], assigns.to),
+        gdp_change: ch["gdp_usd_bn"],
+        real_change: ch["real_gdp_index"]
       )
 
     ~H"""
     <div class="window" aria-live="polite">
-      <div class="window-bar"><i></i><i></i><i></i><span>atlas · africa · real gdp</span></div>
+      <div class="window-bar"><i></i><i></i><i></i><span>atlas · africa · gdp</span></div>
       <div class="window-body stack gap-3">
-        <p class="eyebrow">{gettext("Africa's real GDP")} · {@from} → {@to}</p>
+        <p class="eyebrow">{gettext("Africa's GDP in current dollars")} · {@to}</p>
         <div class="row gap-2">
-          <span class="num headline">{change(
-            @africa["period"]["changes"]["real_gdp_index"],
-            "real_gdp_index",
-            @locale
-          )}</span>
+          <span class="num headline">{value(@gdp, "gdp_usd_bn", @locale)}</span>
           <span class="pill pill-info">{gettext("%{year} estimated", year: @to)}</span>
         </div>
         <svg
           viewBox="0 0 300 60"
-          width="100%"
-          height="64"
+          class="headline-spark"
           role="img"
-          aria-label={gettext("Africa's real GDP, 2015 to 2030")}
+          aria-label={gettext("Africa's GDP in current dollars, 2015 to 2030")}
         >
-          <path
-            d={@spark.past}
-            fill="none"
-            style="stroke: var(--c1)"
-            stroke-width="2.5"
-            stroke-linejoin="round"
-          />
-          <path
-            d={@spark.future}
-            fill="none"
-            style="stroke: var(--c1)"
-            stroke-width="2.5"
-            stroke-dasharray="5 4"
-          />
+          <g class="draw">
+            <path d={@spark.past} class="spark-past" />
+            <path d={@spark.future} class="spark-future" />
+          </g>
           <circle
             :if={@spark.dot}
+            class="spark-dot"
             cx={elem(@spark.dot, 0)}
             cy={elem(@spark.dot, 1)}
             r="4"
-            style="fill: var(--c1)"
           />
         </svg>
         <div>
           <.list_row
-            :if={@ssa}
-            label={gettext("Sub-Saharan Africa (IMF average)")}
-            value={change(@ssa["period"]["changes"]["real_gdp_index"], "real_gdp_index", @locale)}
+            label={gettext("In dollars since %{year}", year: @from)}
+            value={change(@gdp_change, "gdp_usd_bn", @locale)}
+            tone={tone(@gdp_change, "gdp_usd_bn")}
+          />
+          <.list_row
+            label={gettext("In volume (real GDP)")}
+            value={change(@real_change, "real_gdp_index", @locale)}
+            tone={tone(@real_change, "real_gdp_index")}
           />
           <.list_row
             :if={@world}
-            label={gettext("World (IMF average)")}
-            value={change(@world["period"]["changes"]["real_gdp_index"], "real_gdp_index", @locale)}
+            label={gettext("World, in dollars since %{year}", year: @from)}
+            value={change(@world["period"]["changes"]["gdp_usd_bn"], "gdp_usd_bn", @locale)}
           />
         </div>
-        <p class="src">
-          {gettext("Volume of output, excluding inflation and exchange rates · dashed: projections")}
-        </p>
+        <p class="src">{gettext("IMF, at market exchange rates · dashed: projections")}</p>
       </div>
     </div>
     """
@@ -115,13 +103,13 @@ defmodule SyliAtlasWeb.PageHTML do
         {gettext("weighted average")}
       </:stat>
       <:stat
-        label={gettext("Real GDP") <> " · #{@from} → #{@to}"}
-        value={change(@africa["period"]["changes"]["real_gdp_index"], "real_gdp_index", @locale)}
-        tone={tone(@africa["period"]["changes"]["real_gdp_index"], "real_gdp_index")}
+        label={gettext("GDP in dollars") <> " · #{@from} → #{@to}"}
+        value={change(@africa["period"]["changes"]["gdp_usd_bn"], "gdp_usd_bn", @locale)}
+        tone={tone(@africa["period"]["changes"]["gdp_usd_bn"], "gdp_usd_bn")}
       >
         {@world &&
           gettext("World: %{v}",
-            v: change(@world["period"]["changes"]["real_gdp_index"], "real_gdp_index", @locale)
+            v: change(@world["period"]["changes"]["gdp_usd_bn"], "gdp_usd_bn", @locale)
           )}
       </:stat>
     </.stat_grid>
@@ -139,7 +127,7 @@ defmodule SyliAtlasWeb.PageHTML do
         assigns,
         :max,
         assigns.regions
-        |> Enum.map(&(&1["period"]["changes"]["real_gdp_index"] || 0))
+        |> Enum.map(&(&1["period"]["changes"]["gdp_usd_bn"] || 0))
         |> Enum.max(fn -> 1 end)
       )
 
@@ -164,11 +152,11 @@ defmodule SyliAtlasWeb.PageHTML do
         <:col :let={r} label={gettext("Population %{year}", year: @to)}>
           {value(PublicData.at(r["profile"]["series"]["population_m"], @to), "population_m", @locale)}
         </:col>
-        <:col :let={r} label={gettext("Real GDP %{from} → %{to}", from: @from, to: @to)}>
-          <% c = r["period"]["changes"]["real_gdp_index"] %>
+        <:col :let={r} label={gettext("GDP in dollars %{from} → %{to}", from: @from, to: @to)}>
+          <% c = r["period"]["changes"]["gdp_usd_bn"] %>
           <span class="bar-cell">
             <.bar pct={if(c && @max > 0, do: round(max(c, 0) / @max * 100), else: 0)} />
-            <b class={tone(c, "real_gdp_index")}>{change(c, "real_gdp_index", @locale)}</b>
+            <b class={tone(c, "gdp_usd_bn")}>{change(c, "gdp_usd_bn", @locale)}</b>
           </span>
         </:col>
       </.data_table>

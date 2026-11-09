@@ -73,7 +73,11 @@ defmodule SyliAtlasWeb.AreaHTML do
 
   @doc "Series embedded in the page so the browser recomputes the period offline."
   def embedded_json(profile) do
-    Jason.encode!(%{code: profile["code"], series: profile["series"], years: profile["years"]})
+    SyliAtlasWeb.MapComponents.json_for_script(%{
+      code: profile["code"],
+      series: profile["series"],
+      years: profile["years"]
+    })
   end
 
   def citation(name, edition, url) do

@@ -43,7 +43,23 @@
     </div>
   </div>
 
-  <.section>
+  <.section :if={@map_selected} id="carte">
+    <.section_head eyebrow={gettext("The map")} title={gettext("Africa at a glance.")}>
+      <:intro>
+        {gettext("Touch a country to see its figures. The colour follows the chosen indicator.")}
+      </:intro>
+    </.section_head>
+    <.map_section
+      countries={@map_countries}
+      indicator={@map_indicator}
+      selected={@map_selected}
+      from={@map_from}
+      to={@map_to}
+      locale={@locale}
+    />
+  </.section>
+
+  <.section variant="alt">
     <.section_head
       eyebrow={gettext("Start with a question")}
       title={gettext("The answers people look for, in figures.")}
@@ -53,56 +69,54 @@
         href={Paths.ranking(@locale)}
         eyebrow={gettext("Growth")}
         title={gettext("Which African countries grew the most since %{year}?", year: @from)}
-        subtitle={gettext("Real GDP, %{from} → %{to}", from: @from, to: @to)}
+        subtitle={gettext("GDP in current dollars, %{from} → %{to}", from: @from, to: @to)}
         cta={gettext("See the full ranking")}
       >
         <.list_row
           :for={r <- @top}
           label={r["name"]}
-          value={change(r["value"], "real_gdp_index", @locale)}
-          tone={tone(r["value"], "real_gdp_index")}
+          value={change(r["value"], "gdp_usd_bn", @locale)}
+          tone={tone(r["value"], "gdp_usd_bn")}
         />
       </.question_card>
       <.question_card
-        href={Paths.area(@locale, @africa["profile"])}
+        href={Paths.regions(@locale)}
         eyebrow={gettext("Regions")}
         title={gettext("Which region of Africa grows fastest?")}
-        subtitle={gettext("Real GDP, %{from} → %{to}", from: @from, to: @to)}
+        subtitle={gettext("GDP in current dollars, %{from} → %{to}", from: @from, to: @to)}
         cta={gettext("Compare the five regions")}
       >
         <.list_row
           :for={r <- Enum.take(@regions, 2) ++ Enum.take(@regions, -1)}
           label={r["profile"]["name"][@locale]}
-          value={change(r["period"]["changes"]["real_gdp_index"], "real_gdp_index", @locale)}
-          tone={tone(r["period"]["changes"]["real_gdp_index"], "real_gdp_index")}
+          value={change(r["period"]["changes"]["gdp_usd_bn"], "gdp_usd_bn", @locale)}
+          tone={tone(r["period"]["changes"]["gdp_usd_bn"], "gdp_usd_bn")}
         />
       </.question_card>
       <.question_card
         href={Paths.ranking(@locale) <> "?order=asc"}
         eyebrow={gettext("Weakest")}
         title={gettext("Which economies grew the least since %{year}?", year: @from)}
-        subtitle={gettext("Real GDP, %{from} → %{to}", from: @from, to: @to)}
+        subtitle={gettext("GDP in current dollars, %{from} → %{to}", from: @from, to: @to)}
         cta={gettext("See all countries")}
       >
         <.list_row
           :for={r <- @bottom}
           label={r["name"]}
-          value={change(r["value"], "real_gdp_index", @locale)}
-          tone={tone(r["value"], "real_gdp_index")}
+          value={change(r["value"], "gdp_usd_bn", @locale)}
+          tone={tone(r["value"], "gdp_usd_bn")}
         />
       </.question_card>
     </div>
   </.section>
 
-  <.section variant="alt">
+  <.section>
     <.section_head
       eyebrow={gettext("The continent in %{year}", year: @to)}
       title={gettext("Five regions, very different paths.")}
     >
       <:actions>
-        <a class="btn btn-secondary" href={Paths.area(@locale, @africa["profile"])}>{gettext(
-          "Africa as a whole"
-        )} →</a>
+        <a class="btn btn-secondary" href={Paths.regions(@locale)}>{gettext("Compare the regions")} →</a>
       </:actions>
     </.section_head>
     <.continent_stats africa={@africa} world={@world} from={@from} to={@to} locale={@locale} />

@@ -38,6 +38,12 @@
           document.documentElement.dataset.theme = t;
         } catch (e) {}
         document.documentElement.classList.add("js");
+        // Entrance animations play once per page and session.
+        try {
+          var seen = JSON.parse(sessionStorage.getItem("seen") || "[]");
+          if (seen.indexOf(location.pathname) >= 0) document.documentElement.classList.add("revisit");
+          else sessionStorage.setItem("seen", JSON.stringify(seen.concat(location.pathname).slice(-50)));
+        } catch (e) {}
         if (!navigator.onLine) document.documentElement.classList.add("is-offline");
       })();
     </script>
@@ -47,6 +53,21 @@
       href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
     />
     <link phx-track-static rel="stylesheet" href={~p"/assets/js/app.css"} />
+    <%!-- Cross-document view transitions: wait for the visible content before animating. --%>
+    <link rel="expect" href="#main" blocking="render" />
+    <%!-- Prepare the next page on hover (prerender) so a click shows it at once.
+         Only public pages: never the API, sign-in, discussions or admin. --%>
+    <script :if={assigns[:public]} type="speculationrules">
+      {"prerender": [{"where": {"and": [
+        {"href_matches": "/*"},
+        {"not": {"href_matches": "/api/*"}},
+        {"not": {"href_matches": "/*/connexion"}},
+        {"not": {"href_matches": "/*/sign-in"}},
+        {"not": {"href_matches": "/*/discussion"}},
+        {"not": {"href_matches": "/admin/*"}},
+        {"not": {"selector_matches": "[rel~=nofollow], [download]"}}
+      ]}, "eagerness": "moderate"}]}
+    </script>
     <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
     </script>
   </head>

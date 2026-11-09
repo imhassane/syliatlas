@@ -45,6 +45,8 @@ defmodule SyliAtlas.Profiles do
           [code, edition.id, json, etag, now]
         )
       end)
+
+      SyliAtlas.Profiles.Queries.refresh_snapshots!()
     end)
 
     map_size(docs)
