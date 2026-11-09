@@ -31,6 +31,8 @@ import {initSheets} from "./ui/sheet"
 import {initTheme} from "./ui/theme"
 import {initPeriodForms} from "./ui/period"
 import {initMap} from "./ui/map"
+import {initUpdates} from "./ui/updates"
+import {initInstall} from "./ui/install"
 import {initCountUp, initScrollReveal} from "./ui/motion"
 
 initTheme()
@@ -38,6 +40,8 @@ initDrawer()
 initSheets()
 initPeriodForms()
 initMap()
+initUpdates()
+initInstall()
 initCountUp()
 initScrollReveal()
 

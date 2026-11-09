@@ -27,9 +27,11 @@
       <%= Phoenix.HTML.raw(Jason.encode!(ld)) %>
     </script>
     <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="syli-version" content={SyliAtlasWeb.Build.version()} />
+    <meta name="syli-build" content={SyliAtlasWeb.Build.id()} />
     <meta name="theme-color" content="#0b1a33" />
     <link rel="icon" href={~p"/images/icon.svg"} type="image/svg+xml" />
-    <link rel="apple-touch-icon" href={~p"/images/icon-192.png"} />
+    <link rel="apple-touch-icon" href={~p"/images/apple-touch-icon.png"} />
     <script>
       (function () {
         try {
@@ -73,5 +75,10 @@
   </head>
   <body>
     {@inner_content}
+    <section id="toasts" class="toasts" aria-label={gettext("Notifications")} aria-live="polite">
+    </section>
+    <script type="application/json" id="ui-strings">
+      <%= Phoenix.HTML.raw(SyliAtlasWeb.MapComponents.json_for_script(SyliAtlasWeb.Layouts.ui_strings())) %>
+    </script>
   </body>
 </html>
