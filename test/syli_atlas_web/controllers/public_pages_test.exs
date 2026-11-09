@@ -54,6 +54,35 @@ defmodule SyliAtlasWeb.PublicPagesTest do
     assert html =~ "+26,1"
   end
 
+  test "lists show 10 rows, then pages", %{conn: conn} do
+    html = conn |> get("/fr/classement") |> html_response(200)
+    doc = LazyHTML.from_document(html)
+    assert doc |> LazyHTML.query("#ranking .rank-list li") |> Enum.count() == 10
+    assert doc |> LazyHTML.query(~s(#ranking .pager a[rel="next"])) |> Enum.count() == 1
+
+    last =
+      build_conn()
+      |> get("/fr/classement?page=6")
+      |> html_response(200)
+      |> LazyHTML.from_document()
+
+    rows = last |> LazyHTML.query("#ranking .rank-list li") |> Enum.count()
+    assert rows >= 1 and rows <= 10
+    assert last |> LazyHTML.query(~s(#ranking ol.rank-list[start="51"])) |> Enum.count() == 1
+
+    # A country's region list opens on the page holding the country.
+    peers =
+      build_conn() |> get("/fr/pays/nigeria") |> html_response(200) |> LazyHTML.from_document()
+
+    assert peers |> LazyHTML.query("#peers .is-current") |> LazyHTML.text() =~ "Nigeria"
+  end
+
+  test "French typography and translations", %{conn: conn} do
+    html = conn |> get("/fr/pays/cote-d-ivoire") |> html_response(200)
+    assert html =~ "Tous les indicateurs"
+    assert html =~ "\u202f?"
+  end
+
   test "ranking and search", %{conn: conn} do
     assert conn |> get("/fr/classement?region=west_africa") |> html_response(200) =~ "Cabo Verde"
     assert redirected_to(build_conn() |> get("/fr/recherche?q=senegal")) == "/fr/pays/senegal"
