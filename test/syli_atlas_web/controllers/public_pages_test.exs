@@ -6,6 +6,10 @@ defmodule SyliAtlasWeb.PublicPagesTest do
     :ok
   end
 
+  test "health check", %{conn: conn} do
+    assert conn |> get("/health") |> text_response(200) == "ok"
+  end
+
   test "root redirects to a language", %{conn: conn} do
     assert redirected_to(get(conn, "/")) in ["/fr", "/en"]
   end
