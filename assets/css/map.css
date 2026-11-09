@@ -107,3 +107,4 @@ html.js .no-js-only { display: none !important; }
 .map-panel-changes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; }
 .map-panel-changes dt { font-size: 13px; color: var(--ink-muted); }
 .map-panel-changes dd { margin: 2px 0 0; font-size: 20px; font-variant-numeric: tabular-nums; }
+.map-panel-changes.single { grid-template-columns: 1fr; }

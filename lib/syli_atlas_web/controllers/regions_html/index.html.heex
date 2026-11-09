@@ -175,13 +175,6 @@
             @locale
           )}</b>
         </:col>
-        <:col :let={a} label={gettext("Real GDP %{from} → %{to}", from: @from, to: @to)}>
-          <span class={tone(a["period"]["changes"]["real_gdp_index"], "real_gdp_index")}>{change(
-            a["period"]["changes"]["real_gdp_index"],
-            "real_gdp_index",
-            @locale
-          )}</span>
-        </:col>
       </.data_table>
     </.card>
     <p class="src">

@@ -178,17 +178,11 @@ defmodule SyliAtlasWeb.MapComponents do
           </span>
           <span class="muted small">{gettext("GDP in current dollars, %{year} (IMF)", year: @to)}</span>
         </div>
-        <dl class="map-panel-changes">
+        <dl class="map-panel-changes single">
           <div>
             <dt>{gettext("In dollars since %{year}", year: @from)}</dt>
             <dd class={Format.tone(@c["gdp_change"], "gdp_usd_bn")} data-field="gdp-change">
               {Format.change(@c["gdp_change"], "gdp_usd_bn", @locale)}
-            </dd>
-          </div>
-          <div>
-            <dt>{gettext("In volume (real GDP)")}</dt>
-            <dd class={Format.tone(@c["real_change"], "real_gdp_index")} data-field="real-change">
-              {Format.change(@c["real_change"], "real_gdp_index", @locale)}
             </dd>
           </div>
         </dl>
@@ -297,14 +291,10 @@ defmodule SyliAtlasWeb.MapComponents do
              series: c["series"],
              href: Paths.area(locale, "country", c["slug"]),
              compare: Paths.compare(locale, [c["slug"]]),
-             tones: %{
-               gdp_change: Format.tone(c["gdp_change"], "gdp_usd_bn"),
-               real_change: Format.tone(c["real_change"], "real_gdp_index")
-             },
+             tones: %{gdp_change: Format.tone(c["gdp_change"], "gdp_usd_bn")},
              text: %{
                gdp: Format.value(c["gdp"], "gdp_usd_bn", locale),
                gdp_change: Format.change(c["gdp_change"], "gdp_usd_bn", locale),
-               real_change: Format.change(c["real_change"], "real_gdp_index", locale),
                gdppc: Format.value(c["gdppc"], "gdp_per_capita_usd", locale),
                growth: Format.value(c["growth"], "real_gdp_growth", locale),
                inflation: Format.value(c["inflation"], "inflation", locale),

@@ -88,6 +88,20 @@ defmodule SyliAtlasWeb.AreaController do
     end
   end
 
+  # Rank of a country among African economies by GDP in dollars in `to`.
+  defp gdp_rank(%{"profile" => %{"kind" => "country", "code" => code}}, to) do
+    rows =
+      PublicData.ranking("gdp_usd_bn", to - 1, to, mode: "value")
+      |> Enum.filter(&is_number(&1["value"]))
+
+    case Enum.find_index(rows, &(&1["code"] == code)) do
+      nil -> nil
+      i -> {i + 1, length(rows)}
+    end
+  end
+
+  defp gdp_rank(_data, _to), do: nil
+
   defp bar_max(rows), do: rows |> Enum.map(&abs(&1["value"] || 0)) |> Enum.max(fn -> 0 end)
 
   defp query(%{query_string: ""}), do: ""
@@ -122,20 +136,18 @@ defmodule SyliAtlasWeb.AreaController do
     ch = data["period"]["changes"]
 
     gettext(
-      "%{name}: GDP of %{gdp} in %{to} (IMF), %{change} since %{from} in current dollars, %{real} in volume. Real growth in %{to}: %{growth}.",
+      "%{name}: GDP of %{gdp} in %{to} (IMF), %{change} since %{from} in current dollars. Growth in %{to}: %{growth}.",
       name: name,
       gdp: value(PublicData.at(s["gdp_usd_bn"], to), "gdp_usd_bn", locale),
       to: to,
       from: from,
       change: change(ch["gdp_usd_bn"], "gdp_usd_bn", locale),
-      real: change(ch["real_gdp_index"], "real_gdp_index", locale),
       growth: value(PublicData.at(s["real_gdp_growth"], to), "real_gdp_growth", locale)
     )
   end
 
   defp faq(name, data, from, to, locale) do
     s = data["profile"]["series"]
-    rank = data["profile"]["default_period"]["rank"] || %{}
 
     [
       {gettext("How much has the economy of %{name} grown since %{from}?", name: name, from: from),
@@ -158,21 +170,20 @@ defmodule SyliAtlasWeb.AreaController do
          year: to
        )}
     ] ++
-      if rank["africa"] do
-        {f, t} = SyliAtlas.Profiles.Builder.default_period()
+      case gdp_rank(data, to) do
+        nil ->
+          []
 
-        [
-          {gettext("Where does %{name} rank in Africa?", name: name),
-           gettext(
-             "%{rank} out of %{of} African countries for real GDP growth between %{from} and %{to}.",
-             rank: rank["africa"],
-             of: rank["of_africa"],
-             from: f,
-             to: t
-           )}
-        ]
-      else
-        []
+        {rank, of} ->
+          [
+            {gettext("Where does %{name} rank in Africa?", name: name),
+             gettext(
+               "Economy no. %{rank} of %{of} in Africa by GDP in current dollars in %{year} (IMF).",
+               rank: rank,
+               of: of,
+               year: to
+             )}
+          ]
       end
   end
 end
