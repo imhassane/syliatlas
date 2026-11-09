@@ -1,0 +1,100 @@
+<Layouts.public locale={@locale} current={:ranking} alternates={@alternates}>
+  <section class="section" style="padding-bottom: 24px">
+    <div class="wrap stack gap-4">
+      <p class="eyebrow">{gettext("Ranking")}</p>
+      <h1 class="h1">{gettext("African economies, ranked.")}</h1>
+      <form class="filters" action={Paths.ranking(@locale)} method="get">
+        <label>
+          <span class="eyebrow">{gettext("Indicator")}</span>
+          <select name="indicator" class="select">
+            <option
+              :for={k <- SyliAtlas.Sources.Indicators.published_keys()}
+              value={k}
+              selected={k == @indicator}
+            >
+              {indicator_label(k)}
+            </option>
+          </select>
+        </label>
+        <label>
+          <span class="eyebrow">{gettext("Show")}</span>
+          <select name="mode" class="select">
+            <option value="change" selected={@mode == "change"}>
+              {gettext("Change over the period")}
+            </option>
+            <option value="value" selected={@mode == "value"}>
+              {gettext("Value in the arrival year")}
+            </option>
+          </select>
+        </label>
+        <label>
+          <span class="eyebrow">{gettext("Region")}</span>
+          <select name="region" class="select">
+            <option value="">{gettext("All Africa")}</option>
+            <option
+              :for={r <- @regions}
+              value={r.code}
+              selected={@region && @region.code == r.code}
+            >
+              {SyliAtlas.Geo.Area.name(r, @locale)}
+            </option>
+          </select>
+        </label>
+        <label>
+          <span class="eyebrow">{gettext("Since")}</span>
+          <select name="from" class="select"><option
+            :for={y <- 2015..2029}
+            value={y}
+            selected={y == @from}
+          >
+            {y}
+          </option></select>
+        </label>
+        <label>
+          <span class="eyebrow">{gettext("Until")}</span>
+          <select name="to" class="select"><option
+            :for={y <- 2016..2030}
+            value={y}
+            selected={y == @to}
+          >
+            {y}
+          </option></select>
+        </label>
+        <input type="hidden" name="order" value={@order} />
+        <button type="submit" class="btn btn-primary btn-sm">{gettext("Apply")}</button>
+      </form>
+      <p class="muted">{indicator_help(@indicator)}</p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top: 0">
+    <div class="wrap stack gap-3">
+      <div class="card">
+        <ol class="rank-list rank-bars">
+          <li :for={{r, i} <- Enum.with_index(@rows, 1)}>
+            <span class="num subtle">{i}</span>
+            <a href={Paths.with_period(Paths.area(@locale, "country", r["slug"]), @from, @to)}>{r[
+              "name"
+            ]}</a>
+            <span class="bar-track"><span
+              class={["bar-fill", r["value"] < 0 && "neg"]}
+              style={"width: #{round(abs(r["value"]) / max(@max, 0.001) * 100)}%"}
+            ></span></span>
+            <b class={["num", tone(r["value"], @indicator)]}>
+              {if @mode == "value",
+                do: value(r["value"], @indicator, @locale),
+                else: change(r["value"], @indicator, @locale)}
+            </b>
+          </li>
+        </ol>
+      </div>
+      <p :if={@missing != []} class="src">
+        {gettext("No data: %{names}", names: Enum.map_join(@missing, ", ", & &1["name"]))}
+      </p>
+      <p class="src">
+        {gettext("IMF, World Economic Outlook")} ·
+        <a href={"/api/v1/ranking?indicator=#{@indicator}&from=#{@from}&to=#{@to}&mode=#{@mode}"}>JSON</a>
+      </p>
+    </div>
+  </section>
+</Layouts.public>

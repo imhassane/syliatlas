@@ -1,0 +1,106 @@
+<Layouts.public locale={@locale} current={:compare} alternates={@alternates}>
+  <section class="section" style="padding-bottom: 24px">
+    <div class="wrap stack gap-4">
+      <p class="eyebrow">{gettext("Compare")}</p>
+      <h1 class="h1">{gettext("Side by side, over the same period.")}</h1>
+      <div class="row gap-2">
+        <span :for={s <- @series} class="chip chip-series" style={"--dot: var(#{s.color})"}>
+          <i aria-hidden="true"></i>{s.name}
+          <a
+            href={
+              Paths.compare(@locale, without(@slugs, SyliAtlas.Geo.Area.slug(s.area, @locale)))
+            }
+            aria-label={gettext("Remove %{name}", name: s.name)}
+          >×</a>
+        </span>
+        <form :if={!@full?} class="row gap-1" action={Paths.compare(@locale, @slugs)} method="get">
+          <label for="add" class="vh">{gettext("Add a country or a region")}</label>
+          <select id="add" name="add" class="select">
+            <option value="">{gettext("Add…")}</option>
+            <option :for={a <- @choices} value={SyliAtlas.Geo.Area.slug(a, @locale)}>
+              {SyliAtlas.Geo.Area.name(a, @locale)}
+            </option>
+          </select>
+          <button type="submit" class="btn btn-secondary btn-sm">{gettext("Add")}</button>
+        </form>
+      </div>
+      <.period_form action={Paths.compare(@locale, @slugs)} from={@from} to={@to} />
+    </div>
+  </section>
+
+  <section :if={@series != []} class="section" style="padding-top: 0">
+    <div class="wrap stack gap-6">
+      <div class="card pad">
+        <h2 class="h2">{indicator_label("real_gdp_index")}</h2>
+        <p class="small muted">
+          {gettext("Index, %{year} = 100 · dashed: estimates and projections", year: @from)}
+        </p>
+        <Charts.line_chart
+          id="compare-chart"
+          indicator="real_gdp_index"
+          from={@from}
+          to={@to}
+          locale={@locale}
+          label={gettext("Real GDP, %{from} → %{to}", from: @from, to: @to)}
+          series={
+            Enum.map(
+              @series,
+              &%{
+                id: &1.id,
+                name: &1.name,
+                color: &1.color,
+                values: Charts.rebase(&1.item["series"]["real_gdp_index"], @from)
+              }
+            )
+          }
+        />
+      </div>
+
+      <div class="card">
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col" style="padding-left: 24px">{gettext("Indicator")} · {@to}</th>
+                <th :for={s <- @series} scope="col">
+                  <a href={Paths.with_period(Paths.area(@locale, s.area), @from, @to)}>{s.name}</a>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="padding-left: 24px">
+                  {indicator_label("real_gdp_index")} · {@from} → {@to}
+                </td>
+                <td
+                  :for={s <- @series}
+                  class={tone(s.item["real_gdp_change_pct"], "real_gdp_index")}
+                >
+                  <b>{change(s.item["real_gdp_change_pct"], "real_gdp_index", @locale)}</b>
+                </td>
+              </tr>
+              <tr :for={k <- SyliAtlas.Sources.Indicators.keys()}>
+                <td style="padding-left: 24px" title={indicator_help(k)}>{indicator_label(k)}</td>
+                <td :for={s <- @series}>
+                  {value(PublicData.at(s.item["series"][k], @to), k, @locale)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="src">
+        {gettext("IMF, World Economic Outlook")} ·
+        <a href={"/api/v1/compare?codes=#{Enum.map_join(@series, ",", & &1.id)}&from=#{@from}&to=#{@to}"}>JSON</a>
+      </p>
+    </div>
+  </section>
+
+  <section :if={@series == []} class="section" style="padding-top: 0">
+    <div class="wrap">
+      <p class="muted">
+        {gettext("Pick at least two countries or regions above to compare them.")}
+      </p>
+    </div>
+  </section>
+</Layouts.public>

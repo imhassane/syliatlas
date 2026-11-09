@@ -1,0 +1,44 @@
+<Layouts.public locale={@locale} current={:search} alternates={@alternates}>
+  <section class="section">
+    <div class="wrap stack gap-6">
+      <h1 class="h1">{gettext("Search")}</h1>
+      <form class="search" role="search" action={Paths.search(@locale)} method="get">
+        <label for="q" class="vh">{gettext("Search a country")}</label>
+        <input
+          id="q"
+          name="q"
+          type="search"
+          value={@q}
+          placeholder={gettext("Search a country or a region…")}
+          autocomplete="off"
+          autofocus
+        />
+        <button type="submit" class="btn btn-primary">{gettext("Search")}</button>
+      </form>
+      <p :if={@q != "" and @results == []} class="muted">
+        {gettext("No country or region matches “%{q}”.", q: @q)}
+      </p>
+      <div :if={@results != []} class="card">
+        <ol class="rank-list">
+          <li :for={r <- @results}>
+            <a href={Paths.area(@locale, r["kind"], r["slug"])}>{r["name"]}</a>
+          </li>
+        </ol>
+      </div>
+      <div class="stack gap-3">
+        <h2 class="h2">{gettext("All countries")}</h2>
+        <ul class="az">
+          <li :for={
+            c <-
+              Enum.sort_by(
+                @countries,
+                &SyliAtlas.Geo.Area.normalize(SyliAtlas.Geo.Area.name(&1, @locale))
+              )
+          }>
+            <a href={Paths.area(@locale, c)}>{SyliAtlas.Geo.Area.name(c, @locale)}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+</Layouts.public>
