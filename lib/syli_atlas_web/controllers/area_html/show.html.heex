@@ -1,6 +1,6 @@
 <Layouts.public locale={@locale} alternates={@alternates}>
   <script type="application/json" id="area-data">
-    {raw(embedded_json(@profile))}
+    <%= raw(embedded_json(@profile)) %>
   </script>
 
   <.section tight={:bottom}>
@@ -24,23 +24,21 @@
 
     <.card pad>
       <.card_head
-        title={indicator_label("real_gdp_index")}
-        subtitle={
-          gettext("Index, %{year} = 100 · dashed: estimates and projections", year: @from)
-        }
+        title={indicator_label("gdp_usd_bn")}
+        subtitle={gettext("Billions of current dollars · dashed: estimates and projections")}
       />
       <% series = [
         %{
           id: @profile["code"],
           name: @name,
           color: "--c1",
-          values: Charts.rebase(@profile["series"]["real_gdp_index"], @from),
+          values: @profile["series"]["gdp_usd_bn"],
           strong: true
         }
       ] %>
       <Charts.line_chart
         id="area-chart"
-        indicator="real_gdp_index"
+        indicator="gdp_usd_bn"
         from={@from}
         to={@to}
         locale={@locale}
@@ -60,12 +58,12 @@
                 else: gettext("The five regions")
               )
             }
-            subtitle={gettext("Real GDP, %{from} → %{to}", from: @from, to: @to)}
+            subtitle={gettext("GDP in current dollars, %{from} → %{to}", from: @from, to: @to)}
           />
         </div>
         <.rank_list
           items={
-            rank_items(@peers.entries, "real_gdp_index", @locale, @from, @to, bar_max: @peers_max)
+            rank_items(@peers.entries, "gdp_usd_bn", @locale, @from, @to, bar_max: @peers_max)
           }
           start={@peers.offset}
           current={@area.code}
@@ -113,14 +111,12 @@
       <div class="pad">
         <.card_head
           title={gettext("Member countries")}
-          subtitle={gettext("Real GDP, %{from} → %{to}", from: @from, to: @to)}
+          subtitle={gettext("GDP in current dollars, %{from} → %{to}", from: @from, to: @to)}
         />
       </div>
       <.rank_list
         items={
-          rank_items(@members.entries, "real_gdp_index", @locale, @from, @to,
-            bar_max: @members_max
-          )
+          rank_items(@members.entries, "gdp_usd_bn", @locale, @from, @to, bar_max: @members_max)
         }
         start={@members.offset}
         bars
