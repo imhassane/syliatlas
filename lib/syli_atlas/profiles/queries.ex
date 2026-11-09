@@ -24,7 +24,7 @@ defmodule SyliAtlas.Profiles.Queries do
         'profile', json(p.doc),
         'period', json_object(
           'from', ?2, 'to', ?3,
-          'changes', (
+          'changes', json((
             SELECT json_group_object(s.key,
               CASE WHEN s.key IN ('real_gdp_growth', 'inflation', 'public_debt_pct_gdp')
                 THEN round(json_extract(s.value, '$[' || (?3 - #{@first}) || ']')
@@ -32,7 +32,7 @@ defmodule SyliAtlas.Profiles.Queries do
                 ELSE round((json_extract(s.value, '$[' || (?3 - #{@first}) || ']')
                           / json_extract(s.value, '$[' || (?2 - #{@first}) || ']') - 1) * 100, 1)
               END)
-            FROM json_each(p.doc, '$.series') AS s)))
+            FROM json_each(p.doc, '$.series') AS s))))
       FROM profiles AS p
       WHERE p.area_code = ?1
       """,
@@ -48,9 +48,9 @@ defmodule SyliAtlas.Profiles.Queries do
       SELECT json_group_array(json(item)) FROM (
         SELECT json_object(
           'code', p.area_code,
-          'name', json_extract(p.doc, '$.name'),
-          'slug', json_extract(p.doc, '$.slug'),
-          'kind', json_extract(p.doc, '$.kind'),
+          'name', json(jsonb_extract(p.doc, '$.name')),
+          'slug', json(jsonb_extract(p.doc, '$.slug')),
+          'kind', jsonb_extract(p.doc, '$.kind'),
           'series', json(jsonb_extract(p.doc, '$.series')),
           'real_gdp_change_pct', #{change_sql("real_gdp_index")}
         ) AS item
