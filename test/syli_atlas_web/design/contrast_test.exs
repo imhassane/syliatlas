@@ -59,7 +59,16 @@ defmodule SyliAtlasWeb.Design.ContrastTest do
     {"c5", "card"},
     {"c6", "card"},
     {"signal", "card"},
-    {"accent", "page"}
+    {"accent", "page"},
+    # region colours (lines, dots, the regions map)
+    {"r-north_africa", "card"},
+    {"r-west_africa", "card"},
+    {"r-central_africa", "card"},
+    {"r-east_africa", "card"},
+    {"r-southern_africa", "card"},
+    # the selected country's outline on the map
+    {"map-sel", "seq-2"},
+    {"map-sel", "bad-2"}
   ]
 
   for theme <- [:light, :dark] do
@@ -95,7 +104,7 @@ defmodule SyliAtlasWeb.Design.ContrastTest do
   defp block(selector) do
     [_, body] = Regex.run(~r/#{Regex.escape(selector)}\s*\{([^}]*)\}/, @css)
 
-    ~r/--([a-z0-9-]+):\s*(#[0-9a-fA-F]{6})/
+    ~r/--([a-z0-9_-]+):\s*(#[0-9a-fA-F]{6})/
     |> Regex.scan(body)
     |> Map.new(fn [_, name, hex] -> {name, String.downcase(hex)} end)
   end
