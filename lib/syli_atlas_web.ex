@@ -86,10 +86,12 @@ defmodule SyliAtlasWeb do
       import Phoenix.HTML
       # Core UI components
       import SyliAtlasWeb.CoreComponents
+      import SyliAtlasWeb.PageComponents
+      import SyliAtlasWeb.Format
 
       # Common modules used in templates
       alias Phoenix.LiveView.JS
-      alias SyliAtlasWeb.Layouts
+      alias SyliAtlasWeb.{Layouts, Paths, PublicData}
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())
