@@ -87,6 +87,54 @@ defmodule SyliAtlasWeb.PublicPagesTest do
     assert html =~ "\u202f?"
   end
 
+  test "home map: every country links to its profile, the panel shows GDP in dollars", %{
+    conn: conn
+  } do
+    doc = conn |> get("/fr") |> html_response(200) |> LazyHTML.from_document()
+    links = LazyHTML.query(doc, "#africa-map a.cty")
+    assert Enum.count(links) == 54
+
+    assert doc |> LazyHTML.query(~s(#africa-map a[data-code="KEN"])) |> LazyHTML.attribute("href") ==
+             ["/fr/pays/kenya"]
+
+    assert doc |> LazyHTML.query(~s(#map-panel [data-field="name"])) |> LazyHTML.text() =~
+             "Côte d'Ivoire"
+
+    assert doc |> LazyHTML.query(~s(#map-panel [data-field="gdp"])) |> LazyHTML.text() =~ "Md$"
+    assert doc |> LazyHTML.query("#map-data") |> Enum.count() == 1
+  end
+
+  test "home map: another indicator through the URL, without JavaScript", %{conn: conn} do
+    doc = conn |> get("/fr?carte=inflation") |> html_response(200) |> LazyHTML.from_document()
+
+    assert doc
+           |> LazyHTML.query(~s(#africa-map a[data-code="NGA"]))
+           |> LazyHTML.attribute("class")
+           |> hd() =~ "q-bad-"
+
+    assert doc
+           |> LazyHTML.query(~s([data-map-indicator="inflation"][aria-current="true"]))
+           |> Enum.count() == 1
+  end
+
+  test "regions page compares the five regions", %{conn: conn} do
+    doc = conn |> get("/fr/regions") |> html_response(200) |> LazyHTML.from_document()
+    assert doc |> LazyHTML.query("#regions-table tbody tr") |> Enum.count() == 7
+    assert doc |> LazyHTML.query("#regions-map a.cty.rf-west_africa") |> Enum.count() > 10
+    assert doc |> LazyHTML.query(".carry-card") |> Enum.count() == 5
+
+    focused =
+      build_conn()
+      |> get("/en/regions?indicator=inflation&focus=east_africa")
+      |> html_response(200)
+      |> LazyHTML.from_document()
+
+    assert focused |> LazyHTML.query("#regions-map a.cty.rf-west_africa") |> Enum.count() == 0
+
+    assert focused |> LazyHTML.query(".region-chips a[aria-current]") |> LazyHTML.text() =~
+             "East Africa"
+  end
+
   test "ranking and search", %{conn: conn} do
     assert conn |> get("/fr/classement?region=west_africa") |> html_response(200) =~ "Cabo Verde"
     assert redirected_to(build_conn() |> get("/fr/recherche?q=senegal")) == "/fr/pays/senegal"
