@@ -10,108 +10,23 @@
             "Growth, living standards, debt and inflation: sourced figures for every African country, from 2015 to the 2030 projections, to compare freely."
           )}
         </p>
-        <form class="search" role="search" action={Paths.search(@locale)} method="get">
-          <label for="q" class="vh">{gettext("Search a country")}</label>
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="1.8"
-            stroke-linecap="round"
-            aria-hidden="true"
-          ><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
-          <input
-            id="q"
-            name="q"
-            type="search"
-            placeholder={gettext("Search a country or a region…")}
-            autocomplete="off"
-          />
-          <button type="submit" class="btn btn-primary">{gettext("Search")}</button>
-        </form>
+        <.search_form locale={@locale} />
         <div class="row gap-1">
           <span class="subtle small">{gettext("Often viewed:")}</span>
-          <a
-            :for={code <- ~w(CIV NGA ETH SEN KEN)}
-            :if={a = SyliAtlas.Geo.get_area_by_code(code)}
-            class="chip"
-            href={Paths.area(@locale, a)}
-          >
-            {SyliAtlas.Geo.Area.name(a, @locale)}
-          </a>
+          <a :for={a <- @popular} class="chip" href={Paths.area(@locale, a)}>{SyliAtlas.Geo.Area.name(
+            a,
+            @locale
+          )}</a>
         </div>
       </div>
-
-      <div class="window" aria-live="polite">
-        <div class="window-bar">
-          <i></i><i></i><i></i><span style="margin-left: 8px">atlas · africa · real gdp</span>
-        </div>
-        <div class="stack gap-3 pad-sm" style="padding: 24px">
-          <p class="eyebrow">{gettext("Africa's real GDP")} · {@from} → {@to}</p>
-          <div class="row gap-2">
-            <span
-              class="num"
-              style="font-size: 60px; line-height: 1; font-weight: 300; letter-spacing: -0.03em"
-            >
-              {change(@africa["period"]["changes"]["real_gdp_index"], "real_gdp_index", @locale)}
-            </span>
-            <span class="pill pill-info">{gettext("%{year} estimated", year: @to)}</span>
-          </div>
-          <% sp = spark_path(@africa["profile"]["series"]["real_gdp_index"], @from, @to) %>
-          <svg
-            viewBox="0 0 300 60"
-            width="100%"
-            height="64"
-            role="img"
-            aria-label={gettext("Africa's real GDP, 2015 to 2030")}
-          >
-            <path
-              d={sp.past}
-              fill="none"
-              style="stroke: var(--c1)"
-              stroke-width="2.5"
-              stroke-linejoin="round"
-            />
-            <path
-              d={sp.future}
-              fill="none"
-              style="stroke: var(--c1)"
-              stroke-width="2.5"
-              stroke-dasharray="5 4"
-            />
-            <circle
-              :if={sp.dot}
-              cx={elem(sp.dot, 0)}
-              cy={elem(sp.dot, 1)}
-              r="4"
-              style="fill: var(--c1)"
-            />
-          </svg>
-          <div>
-            <div class="list-row">
-              <span class="muted">{gettext("Sub-Saharan Africa (IMF average)")}</span><b class="num">{change(
-                @ssa["period"]["changes"]["real_gdp_index"],
-                "real_gdp_index",
-                @locale
-              )}</b>
-            </div>
-            <div class="list-row">
-              <span class="muted">{gettext("World (IMF average)")}</span><b class="num">{change(
-                @world["period"]["changes"]["real_gdp_index"],
-                "real_gdp_index",
-                @locale
-              )}</b>
-            </div>
-          </div>
-          <p class="src">
-            {gettext(
-              "Volume of output, excluding inflation and exchange rates · dashed: projections"
-            )}
-          </p>
-        </div>
-      </div>
+      <.headline_window
+        africa={@africa}
+        ssa={@ssa}
+        world={@world}
+        from={@from}
+        to={@to}
+        locale={@locale}
+      />
     </div>
   </section>
 
@@ -124,223 +39,102 @@
           date: Calendar.strftime(@source.last_checked_at, "%Y-%m-%d %H:%M UTC")
         )}
       </span>
-      <a
-        href={Paths.method(@locale)}
-        style="margin-left: auto; font-weight: 500; text-decoration: none"
-      >{gettext("How we update")} →</a>
+      <a class="strip-link" href={Paths.method(@locale)}>{gettext("How we update")} →</a>
     </div>
   </div>
 
-  <section class="section">
-    <div class="wrap">
-      <div class="section-head">
-        <p class="eyebrow">{gettext("Start with a question")}</p>
-        <h2 class="h1">{gettext("The answers people look for, in figures.")}</h2>
-      </div>
-      <div class="grid">
-        <a class="card qcard" href={Paths.ranking(@locale)}>
-          <span class="eyebrow">{gettext("Growth")}</span>
-          <span class="h2">{gettext("Which African countries grew the most since %{year}?",
-            year: @from
-          )}</span>
-          <span class="muted">{gettext("Real GDP, %{from} → %{to}", from: @from, to: @to)}</span>
-          <div>
-            <div :for={r <- @top} class="list-row">
-              <span>{r["name"]}</span><b class={["num", tone(r["value"], "real_gdp_index")]}>{change(
-                r["value"],
-                "real_gdp_index",
-                @locale
-              )}</b>
-            </div>
-          </div>
-          <span style="font-weight: 500; color: var(--accent-text)">{gettext(
-            "See the full ranking"
-          )} →</span>
-        </a>
-        <a
-          class="card qcard"
-          href={
-            Paths.area(@locale, "continent", if(@locale == "en", do: "africa", else: "afrique"))
-          }
-        >
-          <span class="eyebrow">{gettext("Regions")}</span>
-          <span class="h2">{gettext("Which region of Africa grows fastest?")}</span>
-          <span class="muted">{gettext("Real GDP, %{from} → %{to}", from: @from, to: @to)}</span>
-          <div>
-            <div :for={r <- Enum.take(@regions, 2) ++ Enum.take(@regions, -1)} class="list-row">
-              <span>{r["profile"]["name"][@locale]}</span><b class={[
-                "num",
-                tone(r["period"]["changes"]["real_gdp_index"], "real_gdp_index")
-              ]}>{change(r["period"]["changes"]["real_gdp_index"], "real_gdp_index", @locale)}</b>
-            </div>
-          </div>
-          <span style="font-weight: 500; color: var(--accent-text)">{gettext(
-            "Compare the five regions"
-          )} →</span>
-        </a>
-        <a class="card qcard" href={Paths.ranking(@locale) <> "?order=asc"}>
-          <span class="eyebrow">{gettext("Weakest")}</span>
-          <span class="h2">{gettext("Which economies grew the least since %{year}?", year: @from)}</span>
-          <span class="muted">{gettext("Real GDP, %{from} → %{to}", from: @from, to: @to)}</span>
-          <div>
-            <div :for={r <- @bottom} class="list-row">
-              <span>{r["name"]}</span><b class={["num", tone(r["value"], "real_gdp_index")]}>{change(
-                r["value"],
-                "real_gdp_index",
-                @locale
-              )}</b>
-            </div>
-          </div>
-          <span style="font-weight: 500; color: var(--accent-text)">{gettext("See all countries")} →</span>
-        </a>
-      </div>
+  <.section>
+    <.section_head
+      eyebrow={gettext("Start with a question")}
+      title={gettext("The answers people look for, in figures.")}
+    />
+    <div class="grid grid-3">
+      <.question_card
+        href={Paths.ranking(@locale)}
+        eyebrow={gettext("Growth")}
+        title={gettext("Which African countries grew the most since %{year}?", year: @from)}
+        subtitle={gettext("Real GDP, %{from} → %{to}", from: @from, to: @to)}
+        cta={gettext("See the full ranking")}
+      >
+        <.list_row
+          :for={r <- @top}
+          label={r["name"]}
+          value={change(r["value"], "real_gdp_index", @locale)}
+          tone={tone(r["value"], "real_gdp_index")}
+        />
+      </.question_card>
+      <.question_card
+        href={Paths.area(@locale, @africa["profile"])}
+        eyebrow={gettext("Regions")}
+        title={gettext("Which region of Africa grows fastest?")}
+        subtitle={gettext("Real GDP, %{from} → %{to}", from: @from, to: @to)}
+        cta={gettext("Compare the five regions")}
+      >
+        <.list_row
+          :for={r <- Enum.take(@regions, 2) ++ Enum.take(@regions, -1)}
+          label={r["profile"]["name"][@locale]}
+          value={change(r["period"]["changes"]["real_gdp_index"], "real_gdp_index", @locale)}
+          tone={tone(r["period"]["changes"]["real_gdp_index"], "real_gdp_index")}
+        />
+      </.question_card>
+      <.question_card
+        href={Paths.ranking(@locale) <> "?order=asc"}
+        eyebrow={gettext("Weakest")}
+        title={gettext("Which economies grew the least since %{year}?", year: @from)}
+        subtitle={gettext("Real GDP, %{from} → %{to}", from: @from, to: @to)}
+        cta={gettext("See all countries")}
+      >
+        <.list_row
+          :for={r <- @bottom}
+          label={r["name"]}
+          value={change(r["value"], "real_gdp_index", @locale)}
+          tone={tone(r["value"], "real_gdp_index")}
+        />
+      </.question_card>
     </div>
-  </section>
+  </.section>
 
-  <section class="section section-alt">
-    <div class="wrap stack gap-6">
-      <div class="row between gap-4" style="align-items: flex-end">
-        <div class="section-head" style="margin: 0">
-          <p class="eyebrow">{gettext("The continent in %{year}", year: @to)}</p>
-          <h2 class="h1">{gettext("Five regions, very different paths.")}</h2>
-        </div>
+  <.section variant="alt">
+    <.section_head
+      eyebrow={gettext("The continent in %{year}", year: @to)}
+      title={gettext("Five regions, very different paths.")}
+    >
+      <:actions>
         <a class="btn btn-secondary" href={Paths.area(@locale, @africa["profile"])}>{gettext(
           "Africa as a whole"
         )} →</a>
-      </div>
-      <% series = @africa["profile"]["series"] %>
-      <dl class="stats">
-        <div>
-          <dt>{gettext("Total GDP")} · {@to}</dt><dd class="big">
-            {value(PublicData.at(series["gdp_usd_bn"], @to), "gdp_usd_bn", @locale)}
-          </dd><dd class="small muted">{gettext("current dollars")}</dd>
-        </div>
-        <div>
-          <dt>{gettext("Population")} · {@to}</dt><dd class="big">
-            {value(PublicData.at(series["population_m"], @to), "population_m", @locale)}
-          </dd><dd class="small muted">{gettext("inhabitants")}</dd>
-        </div>
-        <div>
-          <dt>{gettext("Growth")} · {@to}</dt><dd class="big">
-            {value(PublicData.at(series["real_gdp_growth"], @to), "real_gdp_growth", @locale)}
-          </dd><dd class="small muted">{gettext("weighted average")}</dd>
-        </div>
-        <div>
-          <dt>{gettext("Real GDP")} · {@from} → {@to}</dt><dd class="big up">
-            {change(@africa["period"]["changes"]["real_gdp_index"], "real_gdp_index", @locale)}
-          </dd><dd class="small muted">
-            {gettext("World: %{v}",
-              v: change(@world["period"]["changes"]["real_gdp_index"], "real_gdp_index", @locale)
-            )}
-          </dd>
-        </div>
-      </dl>
-      <div class="card">
-        <div class="table-wrap">
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col" style="padding-left: 24px">{gettext("Region")}</th>
-                <th scope="col">{gettext("GDP %{year}", year: @to)}</th>
-                <th scope="col">{gettext("Share of African GDP")}</th>
-                <th scope="col">{gettext("Population %{year}", year: @to)}</th>
-                <th scope="col" style="padding-right: 24px">
-                  {gettext("Real GDP %{from} → %{to}", from: @from, to: @to)}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <% max_change =
-                @regions
-                |> Enum.map(&(&1["period"]["changes"]["real_gdp_index"] || 0))
-                |> Enum.max(fn -> 1 end) %>
-              <tr :for={r <- @regions}>
-                <% s = r["profile"]["series"]
-                c = r["period"]["changes"]["real_gdp_index"] %>
-                <td style="padding-left: 24px">
-                  <a href={Paths.area(@locale, r["profile"])}>{r["profile"]["name"][@locale]}</a>
-                </td>
-                <td>{value(PublicData.at(s["gdp_usd_bn"], @to), "gdp_usd_bn", @locale)}</td>
-                <td>
-                  {number(PublicData.at(r["profile"]["share_of_africa_gdp"], @to), 1, @locale)} %
-                </td>
-                <td>{value(PublicData.at(s["population_m"], @to), "population_m", @locale)}</td>
-                <td style="padding-right: 24px">
-                  <span class="row gap-2" style="justify-content: flex-end">
-                    <span class="bar-track"><span
-                      class="bar-fill"
-                      style={"width: #{if c && max_change > 0, do: round(max(c, 0) / max_change * 100), else: 0}%"}
-                    ></span></span>
-                    <b class={tone(c, "real_gdp_index")}>{change(c, "real_gdp_index", @locale)}</b>
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-      <p class="src">
-        {gettext("IMF, %{label} · regional totals computed by Syli Atlas (African Union regions)",
-          label: @edition && @edition.label
-        )}
-      </p>
-    </div>
-  </section>
+      </:actions>
+    </.section_head>
+    <.continent_stats africa={@africa} world={@world} from={@from} to={@to} locale={@locale} />
+    <.region_table regions={@regions} from={@from} to={@to} locale={@locale} />
+    <p class="src">
+      {gettext("IMF, %{label} · regional totals computed by Syli Atlas (African Union regions)",
+        label: @edition && @edition.label
+      )}
+    </p>
+  </.section>
 
-  <section class="section section-deep">
-    <div class="wrap stack gap-6">
-      <div class="section-head" style="margin: 0">
-        <p class="eyebrow">{gettext("Why Syli Atlas")}</p>
-        <h2 class="h1">{gettext("Figures you can check, quote and reuse.")}</h2>
-      </div>
-      <div
-        class="grid"
-        style="grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr))"
-      >
-        <div class="feature">
-          <span class="n">01</span><h3 class="h2">{gettext("Every figure has its source")}</h3><p>
-            {gettext("Institution, edition and copy date are shown next to the figures.")}
-          </p>
-        </div>
-        <div class="feature">
-          <span class="n">02</span><h3 class="h2">{gettext("Checked every day")}</h3><p>
-            {gettext(
-              "A job asks the sources every morning and publishes as soon as a new edition is out."
-            )}
-          </p>
-        </div>
-        <div class="feature">
-          <span class="n">03</span><h3 class="h2">{gettext("Open data")}</h3><p>
-            {gettext("Download every profile as CSV or query the public API, free of charge.")}
-          </p>
-        </div>
-        <div class="feature">
-          <span class="n">04</span><h3 class="h2">{gettext("Discussed openly")}</h3><p>
-            {gettext(
-              "Every profile has a moderated discussion to ask a question or report an error."
-            )}
-          </p>
-        </div>
-      </div>
-      <div class="install-card" data-install>
-        <div class="row gap-4 grow">
-          <Layouts.logo size={48} />
-          <div class="stack gap-1">
-            <h3 class="h2">{gettext("Syli Atlas on your phone")}</h3>
-            <p style="color: var(--on-deep-muted)">
-              {gettext(
-                "Install the app from your browser, no app store needed. Profiles stay readable offline."
-              )}
-            </p>
-          </div>
-        </div>
-        <button
-          type="button"
-          class="btn"
-          style="background: #ffffff; color: #0b1a33"
-          data-install-button
-        >{gettext("Install the app")}</button>
-      </div>
+  <.section variant="deep">
+    <.section_head
+      eyebrow={gettext("Why Syli Atlas")}
+      title={gettext("Figures you can check, quote and reuse.")}
+    />
+    <div class="grid grid-4">
+      <.feature n="01" title={gettext("Every figure has its source")}>
+        {gettext("Institution, edition and copy date are shown next to the figures.")}
+      </.feature>
+      <.feature n="02" title={gettext("Checked every day")}>
+        {gettext(
+          "A job asks the sources every morning and publishes as soon as a new edition is out."
+        )}
+      </.feature>
+      <.feature n="03" title={gettext("Open data")}>
+        {gettext("Download every profile as CSV or query the public API, free of charge.")}
+      </.feature>
+      <.feature n="04" title={gettext("Discussed openly")}>
+        {gettext("Every profile has a moderated discussion to ask a question or report an error.")}
+      </.feature>
     </div>
-  </section>
+    <.install_card />
+  </.section>
 </Layouts.public>

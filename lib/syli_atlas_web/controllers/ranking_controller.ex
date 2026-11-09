@@ -3,7 +3,7 @@ defmodule SyliAtlasWeb.RankingController do
 
   alias SyliAtlas.Geo
   alias SyliAtlas.Sources.Indicators
-  alias SyliAtlasWeb.{PageComponents, Paths, PublicData, Seo}
+  alias SyliAtlasWeb.{PageComponents, Pagination, Paths, PublicData, Seo}
 
   plug :put_layout, false
 
@@ -28,8 +28,10 @@ defmodule SyliAtlasWeb.RankingController do
 
     {ranked, missing} = Enum.split_with(rows, &is_number(&1["value"]))
     ranked = if params["order"] == "asc", do: Enum.reverse(ranked), else: ranked
+    page = Pagination.paginate(ranked, params["page"])
+    kept = Map.take(params, ~w(indicator mode region order from to))
     paths = %{"fr" => Paths.ranking("fr"), "en" => Paths.ranking("en")}
-    filtered? = params |> Map.take(~w(indicator mode region order from to)) |> map_size() > 0
+    filtered? = map_size(kept) > 0 or page.page > 1
 
     render(conn, :index,
       page_title: gettext("Ranking of African economies"),
@@ -52,9 +54,11 @@ defmodule SyliAtlasWeb.RankingController do
       region: region,
       regions: Geo.list_regions(),
       order: params["order"] || "desc",
-      rows: ranked,
+      page: page,
+      page_href: &Pagination.href(Paths.ranking(locale), kept, "page", &1, "ranking"),
       missing: missing,
-      max: ranked |> Enum.map(&abs(&1["value"])) |> Enum.max(fn -> 1 end)
+      # Bars keep one scale across pages: the largest value of the ranking.
+      bar_max: ranked |> Enum.map(&abs(&1["value"])) |> Enum.max(fn -> 0 end)
     )
   end
 end

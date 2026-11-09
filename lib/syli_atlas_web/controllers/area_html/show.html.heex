@@ -3,210 +3,153 @@
     {raw(embedded_json(@profile))}
   </script>
 
-  <section class="section" style="padding-bottom: 32px">
-    <div class="wrap stack gap-4">
-      <nav class="crumbs small" aria-label={gettext("Breadcrumb")}>
-        <a href={Paths.home(@locale)}>Syli Atlas</a>
-        <span :if={@region}> / <a href={Paths.area(@locale, @region)}>{SyliAtlas.Geo.Area.name(
-          @region,
-          @locale
-        )}</a></span>
-      </nav>
-      <div class="row between gap-4" style="align-items: flex-end">
-        <div class="stack gap-2">
-          <p class="eyebrow">{kind_label(@area.kind)} · {@area.code}</p>
-          <h1 class="display" style="font-size: clamp(40px, 6vw, 72px)">{@name}</h1>
-        </div>
-        <.period_form action={Paths.area(@locale, @area)} from={@from} to={@to} />
-      </div>
-      <p class="lead" data-answer>{@answer}</p>
-      <.source_line edition={@profile["edition"]} locale={@locale} />
-    </div>
-  </section>
+  <.section tight={:bottom}>
+    <.area_header area={@area} region={@region} name={@name} locale={@locale} />
+    <.filter_sheet id="period-sheet" title={gettext("Period")} summary={"#{@from} → #{@to}"}>
+      <.period_form action={Paths.area(@locale, @area)} from={@from} to={@to} />
+    </.filter_sheet>
+    <p class="lead" data-answer>{@answer}</p>
+    <.source_line edition={@profile["edition"]} locale={@locale} />
+  </.section>
 
-  <section class="section" style="padding-top: 0">
-    <div class="wrap stack gap-6">
-      <dl class="stats" data-kpis>
-        <div :for={k <- @kpis}>
-          <dt>{indicator_label(k)}</dt>
-          <%= if k == "real_gdp_index" do %>
-            <dd class={["big", tone(@data["period"]["changes"][k], k)]} data-kpi={k}>
-              {change(@data["period"]["changes"][k], k, @locale)}
-            </dd>
-            <dd class="small muted">{@from} → {@to}</dd>
-          <% else %>
-            <dd class="big" data-kpi={k}>
-              {value(PublicData.at(@profile["series"][k], @to), k, @locale)}
-            </dd>
-            <dd class="small muted">
-              {@to}
-              <span class={["num", tone(@data["period"]["changes"][k], k)]}>· {change(
-                @data["period"]["changes"][k],
-                k,
-                @locale
-              )} {gettext("since %{year}", year: @from)}</span>
-            </dd>
-          <% end %>
-        </div>
-      </dl>
+  <.section>
+    <.area_kpis
+      kpis={@kpis}
+      data={@data}
+      profile={@profile}
+      from={@from}
+      to={@to}
+      locale={@locale}
+    />
 
-      <div class="card pad">
-        <div class="row between gap-2">
-          <div>
-            <h2 class="h2">{indicator_label("real_gdp_index")}</h2>
-            <p class="small muted">
-              {gettext("Index, %{year} = 100 · dashed: estimates and projections", year: @from)}
-            </p>
-          </div>
-        </div>
-        <Charts.line_chart
-          id="area-chart"
-          indicator="real_gdp_index"
-          from={@from}
-          to={@to}
-          locale={@locale}
-          estimate_from={@profile["years"]["estimate_from"]}
-          label={@answer}
-          series={[
-            %{
-              id: @profile["code"],
-              name: @name,
-              color: "--c1",
-              values: Charts.rebase(@profile["series"]["real_gdp_index"], @from),
-              strong: true
+    <.card pad>
+      <.card_head
+        title={indicator_label("real_gdp_index")}
+        subtitle={
+          gettext("Index, %{year} = 100 · dashed: estimates and projections", year: @from)
+        }
+      />
+      <% series = [
+        %{
+          id: @profile["code"],
+          name: @name,
+          color: "--c1",
+          values: Charts.rebase(@profile["series"]["real_gdp_index"], @from),
+          strong: true
+        }
+      ] %>
+      <Charts.line_chart
+        id="area-chart"
+        indicator="real_gdp_index"
+        from={@from}
+        to={@to}
+        locale={@locale}
+        estimate_from={@profile["years"]["estimate_from"]}
+        label={@answer}
+        series={series}
+      />
+    </.card>
+
+    <div class="grid grid-2">
+      <.card id="peers">
+        <div class="pad">
+          <.card_head
+            title={
+              if(@area.kind == "country",
+                do: gettext("In its region"),
+                else: gettext("The five regions")
+              )
             }
-          ]}
+            subtitle={gettext("Real GDP, %{from} → %{to}", from: @from, to: @to)}
+          />
+        </div>
+        <.rank_list
+          items={
+            rank_items(@peers.entries, "real_gdp_index", @locale, @from, @to, bar_max: @peers_max)
+          }
+          start={@peers.offset}
+          current={@area.code}
+        />
+        <.list_pager page={@peers} href={@peers_href} />
+      </.card>
+
+      <.card>
+        <div class="pad">
+          <.card_head
+            title={gettext("All indicators")}
+            subtitle={gettext("Value in %{to} and change since %{from}", from: @from, to: @to)}
+          />
+        </div>
+        <.data_table
+          id="indicators"
+          caption={gettext("All indicators")}
+          rows={SyliAtlas.Sources.Indicators.keys()}
+        >
+          <:head :let={k} label={gettext("Indicator")}>
+            <span title={indicator_help(k)}>{indicator_label(k)}</span>
+          </:head>
+          <:col :let={k} label={to_string(@from)}>
+            {value(PublicData.at(@profile["series"][k], @from), k, @locale)}
+          </:col>
+          <:col :let={k} label={to_string(@to)}>
+            {value(PublicData.at(@profile["series"][k], @to), k, @locale)}
+          </:col>
+          <:col :let={k} label={gettext("Change")}>
+            <b class={tone(@data["period"]["changes"][k], k)}>{change(
+              @data["period"]["changes"][k],
+              k,
+              @locale
+            )}</b>
+          </:col>
+        </.data_table>
+        <.card_foot>
+          <a href={"/api/v1/areas/#{@area.code}/csv"} download>{gettext("Download CSV")}</a>
+          · <a href={"/api/v1/areas/#{@area.code}"}>JSON</a>
+        </.card_foot>
+      </.card>
+    </div>
+
+    <.card :if={@members.total > 0} id="members">
+      <div class="pad">
+        <.card_head
+          title={gettext("Member countries")}
+          subtitle={gettext("Real GDP, %{from} → %{to}", from: @from, to: @to)}
         />
       </div>
+      <.rank_list
+        items={
+          rank_items(@members.entries, "real_gdp_index", @locale, @from, @to,
+            bar_max: @members_max
+          )
+        }
+        start={@members.offset}
+        bars
+      />
+      <.list_pager page={@members} href={@members_href} />
+      <.card_foot :if={@profile["missing"] not in [nil, []]}>
+        {gettext("Not included for lack of data: %{codes}",
+          codes: Enum.join(List.wrap(@profile["missing"]), ", ")
+        )}
+      </.card_foot>
+    </.card>
 
-      <div
-        class="grid"
-        style="grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr)); align-items: start"
-      >
-        <div class="card">
-          <div class="pad" style="padding-bottom: 8px">
-            <h2 class="h2">
-              {if @area.kind == "country",
-                do: gettext("In its region"),
-                else: gettext("The five regions")}
-            </h2>
-            <p class="small muted">
-              {gettext("Real GDP, %{from} → %{to}", from: @from, to: @to)}
-            </p>
-          </div>
-          <ol class="rank-list">
-            <li
-              :for={{p, i} <- Enum.with_index(@peers, 1)}
-              class={p["code"] == @area.code && "is-current"}
-            >
-              <span class="num subtle">{i}</span>
-              <a href={
-                Paths.with_period(
-                  Paths.area(@locale, p["kind"] || "country", p["slug"]),
-                  @from,
-                  @to
-                )
-              }>{p["name"]}</a>
-              <b class={["num", tone(p["value"], "real_gdp_index")]}>{change(
-                p["value"],
-                "real_gdp_index",
-                @locale
-              )}</b>
-            </li>
-          </ol>
-        </div>
-
-        <div class="card">
-          <div class="pad" style="padding-bottom: 8px">
-            <h2 class="h2">{gettext("All indicators")}</h2>
-            <p class="small muted">
-              {gettext("Value in %{to} and change since %{from}", from: @from, to: @to)}
-            </p>
-          </div>
-          <div class="table-wrap">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th scope="col" style="padding-left: 24px">{gettext("Indicator")}</th>
-                  <th scope="col">{@from}</th>
-                  <th scope="col">{@to}</th>
-                  <th scope="col" style="padding-right: 24px">{gettext("Change")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr :for={k <- SyliAtlas.Sources.Indicators.keys()}>
-                  <td style="padding-left: 24px" title={indicator_help(k)}>
-                    {indicator_label(k)}
-                  </td>
-                  <td>{value(PublicData.at(@profile["series"][k], @from), k, @locale)}</td>
-                  <td>{value(PublicData.at(@profile["series"][k], @to), k, @locale)}</td>
-                  <td style="padding-right: 24px" class={tone(@data["period"]["changes"][k], k)}>
-                    {change(@data["period"]["changes"][k], k, @locale)}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <p class="src pad" style="padding-top: 12px">
-            <a href={"/api/v1/areas/#{@area.code}/csv"} download>{gettext("Download CSV")}</a>
-            · <a href={"/api/v1/areas/#{@area.code}"}>JSON</a>
-          </p>
-        </div>
-      </div>
-
-      <div :if={@members != []} class="card">
-        <div class="pad" style="padding-bottom: 8px">
-          <h2 class="h2">{gettext("Member countries")}</h2>
-          <p class="small muted">{gettext("Real GDP, %{from} → %{to}", from: @from, to: @to)}</p>
-        </div>
-        <div class="table-wrap">
-          <table class="table">
-            <tbody>
-              <tr :for={m <- @members}>
-                <td style="padding-left: 24px">
-                  <a href={Paths.with_period(Paths.area(@locale, m), @from, @to)}>{m["label"]}</a>
-                </td>
-                <td
-                  style="padding-right: 24px"
-                  class={tone(m["real_gdp_change_pct"], "real_gdp_index")}
-                >
-                  {change(m["real_gdp_change_pct"], "real_gdp_index", @locale)}
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p :if={@profile["missing"] not in [nil, []]} class="src pad" style="padding-top: 12px">
-          {gettext("Not included for lack of data: %{codes}",
-            codes: Enum.join(List.wrap(@profile["missing"]), ", ")
-          )}
-        </p>
-      </div>
-
-      <div class="row gap-2">
-        <a class="btn btn-primary" href={Paths.compare(@locale, [@profile["slug"][@locale]])}>{gettext(
-          "Compare %{name}",
-          name: @name
-        )} →</a>
-        <a class="btn btn-secondary" href={Paths.ranking(@locale)}>{gettext("African ranking")}</a>
-      </div>
+    <div class="row gap-2">
+      <a class="btn btn-primary" href={Paths.compare(@locale, [@profile["slug"][@locale]])}>{gettext(
+        "Compare %{name}",
+        name: @name
+      )} →</a>
+      <a class="btn btn-secondary" href={Paths.ranking(@locale)}>{gettext("African ranking")}</a>
     </div>
-  </section>
+  </.section>
 
-  <section class="section section-alt">
-    <div
-      class="wrap grid"
-      style="grid-template-columns: repeat(auto-fit, minmax(min(360px, 100%), 1fr)); align-items: start"
-    >
+  <.section variant="alt">
+    <div class="grid grid-2">
       <div class="stack gap-4">
         <h2 class="h1">{gettext("Questions")}</h2>
-        <details :for={{q, a} <- @faq} class="faq">
-          <summary>{q}</summary>
-          <p>{a}</p>
-        </details>
+        <.faq items={@faq} />
       </div>
       <div class="stack gap-4">
-        <div class="card pad stack gap-2">
+        <.card pad class="stack gap-2">
           <p class="eyebrow">{gettext("Discussion")}</p>
           <h2 class="h2">{gettext("A question, a correction, a source?")}</h2>
           <p class="muted">
@@ -215,18 +158,18 @@
           <a class="btn btn-secondary" href={Paths.discussion(@locale, @area)} rel="nofollow">{gettext(
             "Open the discussion"
           )} →</a>
-        </div>
-        <div class="card pad stack gap-2">
+        </.card>
+        <.card pad class="stack gap-2">
           <p class="eyebrow">{gettext("Cite this page")}</p>
-          <p class="small mono">
+          <p class="small mono cite">
             {citation(
               @name,
               @profile["edition"],
               SyliAtlasWeb.Seo.url(Paths.area(@locale, @area))
             )}
           </p>
-        </div>
+        </.card>
       </div>
     </div>
-  </section>
+  </.section>
 </Layouts.public>

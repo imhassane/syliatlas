@@ -4,7 +4,7 @@ defmodule SyliAtlasWeb.AreaController do
   alias SyliAtlas.Geo
   alias SyliAtlas.Geo.Area
   import SyliAtlasWeb.Format, only: [change: 3, value: 3]
-  alias SyliAtlasWeb.{NotFoundError, PageComponents, Paths, PublicData, Seo}
+  alias SyliAtlasWeb.{NotFoundError, PageComponents, Pagination, Paths, PublicData, Seo}
 
   plug :put_layout, false
 
@@ -46,6 +46,11 @@ defmodule SyliAtlasWeb.AreaController do
         end
 
       faq = faq(name, data, from, to, locale)
+      members = if(area.kind == "country", do: [], else: members(profile, from, to, locale))
+      kept = Map.take(params, ~w(from to peers members))
+
+      peers_page =
+        Map.get(params, "peers") || Pagination.page_of(peers, &(&1["code"] == area.code))
 
       render(conn, :show,
         page_title: name <> " · " <> gettext("economy %{from}–%{to}", from: from, to: to),
@@ -71,13 +76,19 @@ defmodule SyliAtlasWeb.AreaController do
         from: from,
         to: to,
         kpis: @kpis,
-        peers: peers,
+        peers: Pagination.paginate(peers, peers_page),
+        peers_href: &Pagination.href(paths[locale], kept, "peers", &1, "peers"),
+        peers_max: bar_max(peers),
         faq: faq,
         answer: answer(name, data, from, to, locale),
-        members: if(area.kind == "country", do: [], else: members(profile, from, to, locale))
+        members: Pagination.paginate(members, params["members"]),
+        members_href: &Pagination.href(paths[locale], kept, "members", &1, "members"),
+        members_max: bar_max(members)
       )
     end
   end
+
+  defp bar_max(rows), do: rows |> Enum.map(&abs(&1["value"] || 0)) |> Enum.max(fn -> 0 end)
 
   defp query(%{query_string: ""}), do: ""
   defp query(%{query_string: q}), do: "?" <> q
@@ -91,8 +102,16 @@ defmodule SyliAtlasWeb.AreaController do
   defp members(%{"members" => codes}, from, to, locale) when is_list(codes) and codes != [] do
     codes
     |> PublicData.compare(from, to)
-    |> Enum.map(&Map.put(&1, "label", &1["name"][locale]))
-    |> Enum.sort_by(&(-(&1["real_gdp_change_pct"] || -999)))
+    |> Enum.map(
+      &%{
+        "code" => &1["code"],
+        "name" => &1["name"][locale],
+        "slug" => &1["slug"][locale],
+        "kind" => &1["kind"],
+        "value" => &1["real_gdp_change_pct"]
+      }
+    )
+    |> Enum.sort_by(&(-(&1["value"] || -999)))
   end
 
   defp members(_, _, _, _), do: []

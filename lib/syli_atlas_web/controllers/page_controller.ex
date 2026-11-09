@@ -3,7 +3,7 @@ defmodule SyliAtlasWeb.PageController do
 
   alias SyliAtlas.{Geo, Sources}
   alias SyliAtlas.Profiles.Builder
-  alias SyliAtlasWeb.{PublicData, Seo, Paths}
+  alias SyliAtlasWeb.{Paths, PublicData, Seo}
 
   plug :put_layout, false
 
@@ -47,6 +47,8 @@ defmodule SyliAtlasWeb.PageController do
           top: Enum.take(ranking, 3),
           bottom: ranking |> Enum.reject(&is_nil(&1["value"])) |> Enum.take(-3) |> Enum.reverse(),
           regions: regions,
+          popular:
+            ~w(CIV NGA ETH SEN KEN) |> Enum.map(&Geo.get_area_by_code/1) |> Enum.reject(&is_nil/1),
           source: Sources.get_source("imf_weo"),
           edition: Sources.published_edition("imf_weo")
         )
