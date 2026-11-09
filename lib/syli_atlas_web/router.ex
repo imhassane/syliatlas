@@ -18,10 +18,50 @@ defmodule SyliAtlasWeb.Router do
     plug SyliAtlasWeb.Plugs.PublicCache
   end
 
+  # Public pages: no session or CSRF token, so they can be cached.
+  pipeline :public do
+    plug :accepts, ["html"]
+    plug :put_root_layout, html: {SyliAtlasWeb.Layouts, :root}
+    plug :put_secure_browser_headers
+  end
+
+  pipeline :fr do
+    plug SyliAtlasWeb.Plugs.Locale, "fr"
+  end
+
+  pipeline :en do
+    plug SyliAtlasWeb.Plugs.Locale, "en"
+  end
+
   scope "/", SyliAtlasWeb do
-    pipe_through :browser
+    pipe_through :public
+    get "/", PageController, :root
+  end
+
+  scope "/fr", SyliAtlasWeb do
+    pipe_through [:public, :fr, :public_cache]
 
     get "/", PageController, :home
+    get "/methode", PageController, :method
+    get "/classement", RankingController, :index
+    get "/recherche", SearchController, :index
+    get "/pays/:slug", AreaController, :show
+    get "/regions/:slug", AreaController, :show
+    get "/comparer", CompareController, :show
+    get "/comparer/*slugs", CompareController, :show
+  end
+
+  scope "/en", SyliAtlasWeb do
+    pipe_through [:public, :en, :public_cache]
+
+    get "/", PageController, :home
+    get "/method", PageController, :method
+    get "/ranking", RankingController, :index
+    get "/search", SearchController, :index
+    get "/countries/:slug", AreaController, :show
+    get "/regions/:slug", AreaController, :show
+    get "/compare", CompareController, :show
+    get "/compare/*slugs", CompareController, :show
   end
 
   scope "/api/v1", SyliAtlasWeb.Api do
