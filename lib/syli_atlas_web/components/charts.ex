@@ -9,11 +9,6 @@ defmodule SyliAtlasWeb.Charts do
 
   @first 2015
   @last 2030
-  @w 760
-  @h 300
-  @ml 52
-  @mt 18
-  @mb 30
 
   @doc "Values rebased to 100 in `from` (used for the real GDP index)."
   def rebase(values, from) do
@@ -37,15 +32,33 @@ defmodule SyliAtlasWeb.Charts do
   attr :estimate_from, :integer, default: 2025
   attr :locale, :string, required: true
   attr :label, :string, required: true
-  attr :end_width, :integer, default: 150
 
+  @doc """
+  A line chart drawn twice: a wide one with labels at the end of each line,
+  and a narrow one for phones (text stays readable, no end labels: a legend
+  goes under it). CSS shows one or the other.
+  """
   def line_chart(assigns) do
-    assigns = assign(assigns, :g, geometry(assigns))
+    ~H"""
+    <div class="chart-figure">
+      <.chart_svg {assigns} id={@id} size={:wide} class="chart chart-wide" />
+      <.chart_svg {assigns} id={@id <> "-narrow"} size={:narrow} class="chart chart-narrow" />
+    </div>
+    """
+  end
+
+  @sizes %{
+    wide: %{w: 760, h: 300, ml: 52, mt: 18, mb: 30, end_width: 150, labels: true},
+    narrow: %{w: 360, h: 230, ml: 34, mt: 14, mb: 24, end_width: 10, labels: false}
+  }
+
+  defp chart_svg(assigns) do
+    assigns = assign(assigns, :g, geometry(assigns, Map.fetch!(@sizes, assigns.size)))
 
     ~H"""
     <svg
       id={@id}
-      class="chart"
+      class={@class}
       viewBox={"0 0 #{@g.w} #{@g.h}"}
       role="img"
       aria-label={@label}
@@ -89,6 +102,7 @@ defmodule SyliAtlasWeb.Charts do
       </g>
       <text
         :for={l <- @g.labels}
+        :if={@g.show_labels}
         class="label"
         x={@g.right + 8}
         y={l.y + 4}
@@ -101,16 +115,16 @@ defmodule SyliAtlasWeb.Charts do
     """
   end
 
-  defp geometry(assigns) do
+  defp geometry(assigns, size) do
     values = assigns.series |> Enum.flat_map(& &1.values) |> Enum.filter(&is_number/1)
     floor_with = if assigns.indicator in ["real_gdp_growth", "inflation"], do: [0], else: []
     {lo, hi} = Enum.min_max(values ++ floor_with, fn -> {0, 1} end)
     {lo, hi, step} = nice(lo, hi)
-    right = @w - assigns.end_width
-    bottom = @h - @mb
+    right = size.w - size.end_width
+    bottom = size.h - size.mb
 
-    x = fn year -> @ml + (right - @ml) * (year - @first) / (@last - @first) end
-    y = fn v -> bottom - (v - lo) / (hi - lo) * (bottom - @mt) end
+    x = fn year -> size.ml + (right - size.ml) * (year - @first) / (@last - @first) end
+    y = fn v -> bottom - (v - lo) / (hi - lo) * (bottom - size.mt) end
 
     labels =
       assigns.series
@@ -133,11 +147,12 @@ defmodule SyliAtlasWeb.Charts do
       |> spread()
 
     %{
-      w: @w,
-      h: @h,
-      left: @ml,
+      w: size.w,
+      h: size.h,
+      left: size.ml,
       right: right,
-      top: @mt - 6,
+      top: size.mt - 6,
+      show_labels: size.labels,
       bottom: bottom,
       last: @last,
       x: x,
