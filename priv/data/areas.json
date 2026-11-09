@@ -1,0 +1,624 @@
+{
+ "areas": [
+  {
+   "code": "africa",
+   "kind": "continent",
+   "name_fr": "Afrique",
+   "name_en": "Africa",
+   "region_code": null,
+   "imf_code": null,
+   "slug_fr": "afrique",
+   "slug_en": "africa"
+  },
+  {
+   "code": "north_africa",
+   "kind": "region",
+   "name_fr": "Afrique du Nord",
+   "name_en": "North Africa",
+   "region_code": null,
+   "imf_code": null,
+   "slug_fr": "afrique-du-nord",
+   "slug_en": "north-africa"
+  },
+  {
+   "code": "west_africa",
+   "kind": "region",
+   "name_fr": "Afrique de l'Ouest",
+   "name_en": "West Africa",
+   "region_code": null,
+   "imf_code": null,
+   "slug_fr": "afrique-de-l-ouest",
+   "slug_en": "west-africa"
+  },
+  {
+   "code": "central_africa",
+   "kind": "region",
+   "name_fr": "Afrique centrale",
+   "name_en": "Central Africa",
+   "region_code": null,
+   "imf_code": null,
+   "slug_fr": "afrique-centrale",
+   "slug_en": "central-africa"
+  },
+  {
+   "code": "east_africa",
+   "kind": "region",
+   "name_fr": "Afrique de l'Est",
+   "name_en": "East Africa",
+   "region_code": null,
+   "imf_code": null,
+   "slug_fr": "afrique-de-l-est",
+   "slug_en": "east-africa"
+  },
+  {
+   "code": "southern_africa",
+   "kind": "region",
+   "name_fr": "Afrique australe",
+   "name_en": "Southern Africa",
+   "region_code": null,
+   "imf_code": null,
+   "slug_fr": "afrique-australe",
+   "slug_en": "southern-africa"
+  },
+  {
+   "code": "SSA",
+   "kind": "imf_aggregate",
+   "name_fr": "Afrique subsaharienne",
+   "name_en": "Sub-Saharan Africa",
+   "region_code": null,
+   "imf_code": "SSA",
+   "slug_fr": "afrique-subsaharienne",
+   "slug_en": "sub-saharan-africa"
+  },
+  {
+   "code": "WLD",
+   "kind": "imf_aggregate",
+   "name_fr": "Monde",
+   "name_en": "World",
+   "region_code": null,
+   "imf_code": "WEOWORLD",
+   "slug_fr": "monde",
+   "slug_en": "world"
+  },
+  {
+   "code": "DZA",
+   "kind": "country",
+   "name_fr": "Algérie",
+   "name_en": "Algeria",
+   "region_code": "north_africa",
+   "imf_code": "DZA",
+   "slug_fr": "algerie",
+   "slug_en": "algeria"
+  },
+  {
+   "code": "AGO",
+   "kind": "country",
+   "name_fr": "Angola",
+   "name_en": "Angola",
+   "region_code": "southern_africa",
+   "imf_code": "AGO",
+   "slug_fr": "angola",
+   "slug_en": "angola"
+  },
+  {
+   "code": "BEN",
+   "kind": "country",
+   "name_fr": "Bénin",
+   "name_en": "Benin",
+   "region_code": "west_africa",
+   "imf_code": "BEN",
+   "slug_fr": "benin",
+   "slug_en": "benin"
+  },
+  {
+   "code": "BWA",
+   "kind": "country",
+   "name_fr": "Botswana",
+   "name_en": "Botswana",
+   "region_code": "southern_africa",
+   "imf_code": "BWA",
+   "slug_fr": "botswana",
+   "slug_en": "botswana"
+  },
+  {
+   "code": "BFA",
+   "kind": "country",
+   "name_fr": "Burkina Faso",
+   "name_en": "Burkina Faso",
+   "region_code": "west_africa",
+   "imf_code": "BFA",
+   "slug_fr": "burkina-faso",
+   "slug_en": "burkina-faso"
+  },
+  {
+   "code": "BDI",
+   "kind": "country",
+   "name_fr": "Burundi",
+   "name_en": "Burundi",
+   "region_code": "central_africa",
+   "imf_code": "BDI",
+   "slug_fr": "burundi",
+   "slug_en": "burundi"
+  },
+  {
+   "code": "CPV",
+   "kind": "country",
+   "name_fr": "Cabo Verde",
+   "name_en": "Cabo Verde",
+   "region_code": "west_africa",
+   "imf_code": "CPV",
+   "slug_fr": "cabo-verde",
+   "slug_en": "cabo-verde"
+  },
+  {
+   "code": "CMR",
+   "kind": "country",
+   "name_fr": "Cameroun",
+   "name_en": "Cameroon",
+   "region_code": "central_africa",
+   "imf_code": "CMR",
+   "slug_fr": "cameroun",
+   "slug_en": "cameroon"
+  },
+  {
+   "code": "CAF",
+   "kind": "country",
+   "name_fr": "Centrafrique",
+   "name_en": "Central African Republic",
+   "region_code": "central_africa",
+   "imf_code": "CAF",
+   "slug_fr": "centrafrique",
+   "slug_en": "central-african-republic"
+  },
+  {
+   "code": "TCD",
+   "kind": "country",
+   "name_fr": "Tchad",
+   "name_en": "Chad",
+   "region_code": "central_africa",
+   "imf_code": "TCD",
+   "slug_fr": "tchad",
+   "slug_en": "chad"
+  },
+  {
+   "code": "COM",
+   "kind": "country",
+   "name_fr": "Comores",
+   "name_en": "Comoros",
+   "region_code": "east_africa",
+   "imf_code": "COM",
+   "slug_fr": "comores",
+   "slug_en": "comoros"
+  },
+  {
+   "code": "COD",
+   "kind": "country",
+   "name_fr": "RD Congo",
+   "name_en": "DR Congo",
+   "region_code": "central_africa",
+   "imf_code": "COD",
+   "slug_fr": "rd-congo",
+   "slug_en": "dr-congo"
+  },
+  {
+   "code": "COG",
+   "kind": "country",
+   "name_fr": "Congo",
+   "name_en": "Republic of the Congo",
+   "region_code": "central_africa",
+   "imf_code": "COG",
+   "slug_fr": "congo",
+   "slug_en": "republic-of-the-congo"
+  },
+  {
+   "code": "CIV",
+   "kind": "country",
+   "name_fr": "Côte d'Ivoire",
+   "name_en": "Côte d'Ivoire",
+   "region_code": "west_africa",
+   "imf_code": "CIV",
+   "slug_fr": "cote-d-ivoire",
+   "slug_en": "cote-d-ivoire"
+  },
+  {
+   "code": "DJI",
+   "kind": "country",
+   "name_fr": "Djibouti",
+   "name_en": "Djibouti",
+   "region_code": "east_africa",
+   "imf_code": "DJI",
+   "slug_fr": "djibouti",
+   "slug_en": "djibouti"
+  },
+  {
+   "code": "EGY",
+   "kind": "country",
+   "name_fr": "Égypte",
+   "name_en": "Egypt",
+   "region_code": "north_africa",
+   "imf_code": "EGY",
+   "slug_fr": "egypte",
+   "slug_en": "egypt"
+  },
+  {
+   "code": "GNQ",
+   "kind": "country",
+   "name_fr": "Guinée équatoriale",
+   "name_en": "Equatorial Guinea",
+   "region_code": "central_africa",
+   "imf_code": "GNQ",
+   "slug_fr": "guinee-equatoriale",
+   "slug_en": "equatorial-guinea"
+  },
+  {
+   "code": "ERI",
+   "kind": "country",
+   "name_fr": "Érythrée",
+   "name_en": "Eritrea",
+   "region_code": "east_africa",
+   "imf_code": "ERI",
+   "slug_fr": "erythree",
+   "slug_en": "eritrea"
+  },
+  {
+   "code": "SWZ",
+   "kind": "country",
+   "name_fr": "Eswatini",
+   "name_en": "Eswatini",
+   "region_code": "southern_africa",
+   "imf_code": "SWZ",
+   "slug_fr": "eswatini",
+   "slug_en": "eswatini"
+  },
+  {
+   "code": "ETH",
+   "kind": "country",
+   "name_fr": "Éthiopie",
+   "name_en": "Ethiopia",
+   "region_code": "east_africa",
+   "imf_code": "ETH",
+   "slug_fr": "ethiopie",
+   "slug_en": "ethiopia"
+  },
+  {
+   "code": "GAB",
+   "kind": "country",
+   "name_fr": "Gabon",
+   "name_en": "Gabon",
+   "region_code": "central_africa",
+   "imf_code": "GAB",
+   "slug_fr": "gabon",
+   "slug_en": "gabon"
+  },
+  {
+   "code": "GMB",
+   "kind": "country",
+   "name_fr": "Gambie",
+   "name_en": "The Gambia",
+   "region_code": "west_africa",
+   "imf_code": "GMB",
+   "slug_fr": "gambie",
+   "slug_en": "the-gambia"
+  },
+  {
+   "code": "GHA",
+   "kind": "country",
+   "name_fr": "Ghana",
+   "name_en": "Ghana",
+   "region_code": "west_africa",
+   "imf_code": "GHA",
+   "slug_fr": "ghana",
+   "slug_en": "ghana"
+  },
+  {
+   "code": "GIN",
+   "kind": "country",
+   "name_fr": "Guinée",
+   "name_en": "Guinea",
+   "region_code": "west_africa",
+   "imf_code": "GIN",
+   "slug_fr": "guinee",
+   "slug_en": "guinea"
+  },
+  {
+   "code": "GNB",
+   "kind": "country",
+   "name_fr": "Guinée-Bissau",
+   "name_en": "Guinea-Bissau",
+   "region_code": "west_africa",
+   "imf_code": "GNB",
+   "slug_fr": "guinee-bissau",
+   "slug_en": "guinea-bissau"
+  },
+  {
+   "code": "KEN",
+   "kind": "country",
+   "name_fr": "Kenya",
+   "name_en": "Kenya",
+   "region_code": "east_africa",
+   "imf_code": "KEN",
+   "slug_fr": "kenya",
+   "slug_en": "kenya"
+  },
+  {
+   "code": "LSO",
+   "kind": "country",
+   "name_fr": "Lesotho",
+   "name_en": "Lesotho",
+   "region_code": "southern_africa",
+   "imf_code": "LSO",
+   "slug_fr": "lesotho",
+   "slug_en": "lesotho"
+  },
+  {
+   "code": "LBR",
+   "kind": "country",
+   "name_fr": "Liberia",
+   "name_en": "Liberia",
+   "region_code": "west_africa",
+   "imf_code": "LBR",
+   "slug_fr": "liberia",
+   "slug_en": "liberia"
+  },
+  {
+   "code": "LBY",
+   "kind": "country",
+   "name_fr": "Libye",
+   "name_en": "Libya",
+   "region_code": "north_africa",
+   "imf_code": "LBY",
+   "slug_fr": "libye",
+   "slug_en": "libya"
+  },
+  {
+   "code": "MDG",
+   "kind": "country",
+   "name_fr": "Madagascar",
+   "name_en": "Madagascar",
+   "region_code": "east_africa",
+   "imf_code": "MDG",
+   "slug_fr": "madagascar",
+   "slug_en": "madagascar"
+  },
+  {
+   "code": "MWI",
+   "kind": "country",
+   "name_fr": "Malawi",
+   "name_en": "Malawi",
+   "region_code": "southern_africa",
+   "imf_code": "MWI",
+   "slug_fr": "malawi",
+   "slug_en": "malawi"
+  },
+  {
+   "code": "MLI",
+   "kind": "country",
+   "name_fr": "Mali",
+   "name_en": "Mali",
+   "region_code": "west_africa",
+   "imf_code": "MLI",
+   "slug_fr": "mali",
+   "slug_en": "mali"
+  },
+  {
+   "code": "MRT",
+   "kind": "country",
+   "name_fr": "Mauritanie",
+   "name_en": "Mauritania",
+   "region_code": "north_africa",
+   "imf_code": "MRT",
+   "slug_fr": "mauritanie",
+   "slug_en": "mauritania"
+  },
+  {
+   "code": "MUS",
+   "kind": "country",
+   "name_fr": "Maurice",
+   "name_en": "Mauritius",
+   "region_code": "east_africa",
+   "imf_code": "MUS",
+   "slug_fr": "maurice",
+   "slug_en": "mauritius"
+  },
+  {
+   "code": "MAR",
+   "kind": "country",
+   "name_fr": "Maroc",
+   "name_en": "Morocco",
+   "region_code": "north_africa",
+   "imf_code": "MAR",
+   "slug_fr": "maroc",
+   "slug_en": "morocco"
+  },
+  {
+   "code": "MOZ",
+   "kind": "country",
+   "name_fr": "Mozambique",
+   "name_en": "Mozambique",
+   "region_code": "southern_africa",
+   "imf_code": "MOZ",
+   "slug_fr": "mozambique",
+   "slug_en": "mozambique"
+  },
+  {
+   "code": "NAM",
+   "kind": "country",
+   "name_fr": "Namibie",
+   "name_en": "Namibia",
+   "region_code": "southern_africa",
+   "imf_code": "NAM",
+   "slug_fr": "namibie",
+   "slug_en": "namibia"
+  },
+  {
+   "code": "NER",
+   "kind": "country",
+   "name_fr": "Niger",
+   "name_en": "Niger",
+   "region_code": "west_africa",
+   "imf_code": "NER",
+   "slug_fr": "niger",
+   "slug_en": "niger"
+  },
+  {
+   "code": "NGA",
+   "kind": "country",
+   "name_fr": "Nigeria",
+   "name_en": "Nigeria",
+   "region_code": "west_africa",
+   "imf_code": "NGA",
+   "slug_fr": "nigeria",
+   "slug_en": "nigeria"
+  },
+  {
+   "code": "RWA",
+   "kind": "country",
+   "name_fr": "Rwanda",
+   "name_en": "Rwanda",
+   "region_code": "east_africa",
+   "imf_code": "RWA",
+   "slug_fr": "rwanda",
+   "slug_en": "rwanda"
+  },
+  {
+   "code": "STP",
+   "kind": "country",
+   "name_fr": "Sao Tomé-et-Principe",
+   "name_en": "São Tomé and Príncipe",
+   "region_code": "central_africa",
+   "imf_code": "STP",
+   "slug_fr": "sao-tome-et-principe",
+   "slug_en": "sao-tome-and-principe"
+  },
+  {
+   "code": "SEN",
+   "kind": "country",
+   "name_fr": "Sénégal",
+   "name_en": "Senegal",
+   "region_code": "west_africa",
+   "imf_code": "SEN",
+   "slug_fr": "senegal",
+   "slug_en": "senegal"
+  },
+  {
+   "code": "SYC",
+   "kind": "country",
+   "name_fr": "Seychelles",
+   "name_en": "Seychelles",
+   "region_code": "east_africa",
+   "imf_code": "SYC",
+   "slug_fr": "seychelles",
+   "slug_en": "seychelles"
+  },
+  {
+   "code": "SLE",
+   "kind": "country",
+   "name_fr": "Sierra Leone",
+   "name_en": "Sierra Leone",
+   "region_code": "west_africa",
+   "imf_code": "SLE",
+   "slug_fr": "sierra-leone",
+   "slug_en": "sierra-leone"
+  },
+  {
+   "code": "SOM",
+   "kind": "country",
+   "name_fr": "Somalie",
+   "name_en": "Somalia",
+   "region_code": "east_africa",
+   "imf_code": "SOM",
+   "slug_fr": "somalie",
+   "slug_en": "somalia"
+  },
+  {
+   "code": "ZAF",
+   "kind": "country",
+   "name_fr": "Afrique du Sud",
+   "name_en": "South Africa",
+   "region_code": "southern_africa",
+   "imf_code": "ZAF",
+   "slug_fr": "afrique-du-sud",
+   "slug_en": "south-africa"
+  },
+  {
+   "code": "SSD",
+   "kind": "country",
+   "name_fr": "Soudan du Sud",
+   "name_en": "South Sudan",
+   "region_code": "east_africa",
+   "imf_code": "SSD",
+   "slug_fr": "soudan-du-sud",
+   "slug_en": "south-sudan"
+  },
+  {
+   "code": "SDN",
+   "kind": "country",
+   "name_fr": "Soudan",
+   "name_en": "Sudan",
+   "region_code": "east_africa",
+   "imf_code": "SDN",
+   "slug_fr": "soudan",
+   "slug_en": "sudan"
+  },
+  {
+   "code": "TZA",
+   "kind": "country",
+   "name_fr": "Tanzanie",
+   "name_en": "Tanzania",
+   "region_code": "east_africa",
+   "imf_code": "TZA",
+   "slug_fr": "tanzanie",
+   "slug_en": "tanzania"
+  },
+  {
+   "code": "TGO",
+   "kind": "country",
+   "name_fr": "Togo",
+   "name_en": "Togo",
+   "region_code": "west_africa",
+   "imf_code": "TGO",
+   "slug_fr": "togo",
+   "slug_en": "togo"
+  },
+  {
+   "code": "TUN",
+   "kind": "country",
+   "name_fr": "Tunisie",
+   "name_en": "Tunisia",
+   "region_code": "north_africa",
+   "imf_code": "TUN",
+   "slug_fr": "tunisie",
+   "slug_en": "tunisia"
+  },
+  {
+   "code": "UGA",
+   "kind": "country",
+   "name_fr": "Ouganda",
+   "name_en": "Uganda",
+   "region_code": "east_africa",
+   "imf_code": "UGA",
+   "slug_fr": "ouganda",
+   "slug_en": "uganda"
+  },
+  {
+   "code": "ZMB",
+   "kind": "country",
+   "name_fr": "Zambie",
+   "name_en": "Zambia",
+   "region_code": "southern_africa",
+   "imf_code": "ZMB",
+   "slug_fr": "zambie",
+   "slug_en": "zambia"
+  },
+  {
+   "code": "ZWE",
+   "kind": "country",
+   "name_fr": "Zimbabwe",
+   "name_en": "Zimbabwe",
+   "region_code": "southern_africa",
+   "imf_code": "ZWE",
+   "slug_fr": "zimbabwe",
+   "slug_en": "zimbabwe"
+  }
+ ]
+}
