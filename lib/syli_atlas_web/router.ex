@@ -11,7 +11,11 @@ defmodule SyliAtlasWeb.Router do
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug :accepts, ["json", "csv"]
+  end
+
+  pipeline :public_cache do
+    plug SyliAtlasWeb.Plugs.PublicCache
   end
 
   scope "/", SyliAtlasWeb do
@@ -20,10 +24,20 @@ defmodule SyliAtlasWeb.Router do
     get "/", PageController, :home
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", SyliAtlasWeb do
-  #   pipe_through :api
-  # end
+  scope "/api/v1", SyliAtlasWeb.Api do
+    pipe_through :api
+
+    get "/version", ApiController, :version
+
+    pipe_through :public_cache
+    get "/areas", ApiController, :areas
+    get "/areas/:code", ApiController, :area
+    get "/areas/:code/csv", ApiController, :csv
+    get "/compare", ApiController, :compare
+    get "/ranking", ApiController, :ranking
+    get "/search", ApiController, :search
+    get "/offline-pack", ApiController, :offline_pack
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:syli_atlas, :dev_routes) do
