@@ -7,7 +7,7 @@ defmodule SyliAtlasWeb.RegionsController do
 
   plug :put_layout, false
 
-  @indicators ~w(gdp_usd_bn real_gdp_index gdp_per_capita_usd real_gdp_growth inflation public_debt_pct_gdp)
+  @indicators ~w(gdp_usd_bn gdp_per_capita_usd real_gdp_growth inflation public_debt_pct_gdp)
 
   def index(conn, params) do
     locale = conn.assigns.locale

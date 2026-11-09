@@ -59,7 +59,7 @@ export function initMap() {
     field("meta").textContent = c.meta
     const gdp = field("gdp")
     gdp.textContent = c.text.gdp
-    for (const [name, key] of [["gdp-change", "gdp_change"], ["real-change", "real_change"]]) {
+    for (const [name, key] of [["gdp-change", "gdp_change"]]) {
       const el = field(name)
       el.textContent = c.text[key]
       el.classList.remove("up", "down")

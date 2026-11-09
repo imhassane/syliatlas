@@ -75,6 +75,8 @@ defmodule SyliAtlasWeb.Api.ApiController do
     |> put_resp_header("cache-control", "no-cache")
     |> json(%{
       version: Profiles.data_version(),
+      build: SyliAtlasWeb.Build.id(),
+      page_version: SyliAtlasWeb.Build.version(),
       edition:
         edition &&
           %{

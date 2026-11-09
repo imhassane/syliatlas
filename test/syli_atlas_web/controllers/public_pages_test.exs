@@ -10,6 +10,21 @@ defmodule SyliAtlasWeb.PublicPagesTest do
     assert conn |> get("/health") |> text_response(200) == "ok"
   end
 
+  test "the page says which version it was built from, as the API does", %{conn: conn} do
+    html = conn |> get("/fr") |> html_response(200)
+    [_, version] = Regex.run(~r/name="syli-version" content="([^"]+)"/, html)
+    api = build_conn() |> get("/api/v1/version") |> json_response(200)
+    assert api["page_version"] == version
+    assert String.starts_with?(version, api["build"] <> ".")
+  end
+
+  test "app manifest and service worker are served", %{conn: conn} do
+    manifest = conn |> get("/manifest.webmanifest") |> response(200) |> Jason.decode!()
+    assert manifest["display"] == "standalone"
+    assert Enum.any?(manifest["icons"], &(&1["purpose"] == "maskable"))
+    assert build_conn() |> get("/sw.js?v=test") |> response(200) =~ "skip-waiting"
+  end
+
   test "root redirects to a language", %{conn: conn} do
     assert redirected_to(get(conn, "/")) in ["/fr", "/en"]
   end
@@ -18,14 +33,17 @@ defmodule SyliAtlasWeb.PublicPagesTest do
     conn = get(conn, "/fr")
     assert html_response(conn, 200) =~ "syli"
     assert [cache] = get_resp_header(conn, "cache-control")
-    assert cache =~ "public"
+    assert cache == "public, no-cache"
+    [etag] = get_resp_header(conn, "etag")
+    assert build_conn() |> put_req_header("if-none-match", etag) |> get("/fr") |> response(304)
     assert get_resp_header(conn, "set-cookie") == []
     refute conn.resp_body =~ "csrf-token"
   end
 
-  test "country profile answers with the period figures", %{conn: conn} do
+  test "country profile answers with GDP in dollars over the period", %{conn: conn} do
     html = conn |> get("/fr/pays/cote-d-ivoire") |> html_response(200)
-    assert html =~ "+37,1"
+    assert html =~ "99,9 Md$"
+    assert html =~ "+58,3"
     assert html =~ ~s(rel="canonical")
     assert html =~ ~s(hreflang="en")
     assert html =~ "FAQPage"
@@ -33,7 +51,7 @@ defmodule SyliAtlasWeb.PublicPagesTest do
     html =
       build_conn() |> get("/en/countries/cote-d-ivoire?from=2015&to=2025") |> html_response(200)
 
-    assert html =~ "+77.8"
+    assert html =~ "+118.0"
   end
 
   test "foreign slug redirects to the canonical URL", %{conn: conn} do
@@ -46,7 +64,7 @@ defmodule SyliAtlasWeb.PublicPagesTest do
 
   test "region and continent profiles list their members", %{conn: conn} do
     assert conn |> get("/fr/regions/afrique-de-l-ouest") |> html_response(200) =~ "Cabo Verde"
-    assert build_conn() |> get("/en/regions/africa") |> html_response(200) =~ "+21.7"
+    assert build_conn() |> get("/en/regions/africa") |> html_response(200) =~ "+17.6"
   end
 
   test "compare adds areas and keeps them in the path", %{conn: conn} do
@@ -54,8 +72,8 @@ defmodule SyliAtlasWeb.PublicPagesTest do
              "/fr/comparer/cote-d-ivoire/ghana"
 
     html = build_conn() |> get("/fr/comparer/cote-d-ivoire/ghana") |> html_response(200)
-    assert html =~ "+37,1"
-    assert html =~ "+26,1"
+    assert html =~ "+58,3"
+    assert html =~ "+63,8"
   end
 
   test "lists show 10 rows, then pages", %{conn: conn} do

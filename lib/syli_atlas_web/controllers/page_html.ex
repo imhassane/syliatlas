@@ -19,8 +19,7 @@ defmodule SyliAtlasWeb.PageHTML do
       assign(assigns,
         spark: SyliAtlasWeb.Spark.paths(s["gdp_usd_bn"], assigns.from, assigns.to, 300, 60),
         gdp: PublicData.at(s["gdp_usd_bn"], assigns.to),
-        gdp_change: ch["gdp_usd_bn"],
-        real_change: ch["real_gdp_index"]
+        gdp_change: ch["gdp_usd_bn"]
       )
 
     ~H"""
@@ -55,11 +54,6 @@ defmodule SyliAtlasWeb.PageHTML do
             label={gettext("In dollars since %{year}", year: @from)}
             value={change(@gdp_change, "gdp_usd_bn", @locale)}
             tone={tone(@gdp_change, "gdp_usd_bn")}
-          />
-          <.list_row
-            label={gettext("In volume (real GDP)")}
-            value={change(@real_change, "real_gdp_index", @locale)}
-            tone={tone(@real_change, "real_gdp_index")}
           />
           <.list_row
             :if={@world}

@@ -219,6 +219,29 @@ defmodule SyliAtlasWeb.Layouts do
     """
   end
 
+  @doc "Texts of the notifications drawn by assets/js (toasts), in the page's language."
+  def ui_strings do
+    %{
+      close: gettext("Close"),
+      refresh: gettext("Refresh"),
+      later: gettext("Later"),
+      update_message: gettext("A new version of Syli Atlas is available"),
+      update_description: gettext("Refresh to see it. Nothing you are reading will be lost."),
+      data_message: gettext("New IMF figures are online"),
+      data_description: gettext("Refresh to see the latest edition."),
+      offline_message: gettext("You are offline"),
+      offline_description: gettext("Pages you have already opened stay readable."),
+      online_message: gettext("Back online"),
+      install_message: gettext("Install Syli Atlas"),
+      install_description:
+        gettext("One tap from your home screen, readable offline, no app store."),
+      install_ios: gettext("In Safari, tap Share, then « Add to Home Screen »."),
+      install: gettext("Install"),
+      not_now: gettext("Not now"),
+      installed_message: gettext("Syli Atlas is installed")
+    }
+  end
+
   attr :size, :integer, default: 28
 
   def logo(assigns) do

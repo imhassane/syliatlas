@@ -85,3 +85,32 @@
   .sheet:popover-open { animation: sheet-up .22s ease-out; }
 }
 @keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
+
+/* --- Toasts (assets/js/ui/toasts.js), as in the Kalanso workshop ---
+   Bottom of the end edge; the newest in front, the others folded behind,
+   unfolded when pointed at or focused. Move, never fade. */
+.toasts { position: fixed; bottom: max(24px, env(safe-area-inset-bottom)); right: 24px; z-index: 60; display: grid; gap: 12px; width: min(380px, calc(100% - 32px)); pointer-events: none; }
+.toast { --toast-edges: 0 0 transparent; position: relative; display: flex; align-items: flex-start; gap: 12px; padding: 16px 10px 16px 18px; border-radius: 12px; background: var(--card); color: var(--ink); box-shadow: inset 0 0 0 1px var(--border), var(--toast-edges), var(--shadow-pop); font-size: 14px; line-height: 1.5; pointer-events: auto; animation: toast-in .3s var(--ease) both; }
+.toast.is-leaving { animation: toast-out .2s var(--ease) both; }
+.toasts > .toast { grid-area: 1 / 1; align-self: end; }
+.toasts:is(:hover, :focus-within) > .toast { grid-area: auto; }
+.toasts:not(:hover, :focus-within) > .toast:not(:last-child) { visibility: hidden; }
+.toasts:not(:hover, :focus-within) > .toast:last-child:nth-child(2) { --toast-edges: 0 -7px 0 -5px var(--card), 0 -7px 0 -4px var(--border); }
+.toasts:not(:hover, :focus-within) > .toast:last-child:nth-child(n + 3) { --toast-edges: 0 -7px 0 -5px var(--card), 0 -7px 0 -4px var(--border), 0 -13px 0 -10px var(--card), 0 -13px 0 -9px var(--border); }
+.toast-icon { display: grid; flex: none; place-items: center; width: 20px; height: 21px; color: var(--accent-text); }
+.toast[data-kind="success"] .toast-icon { color: var(--success-ink); }
+.toast[data-kind="warning"] .toast-icon { color: var(--warning-ink); }
+.toast-text { flex: 1; min-width: 0; display: grid; gap: 2px; align-self: center; }
+.toast-message { font-weight: 500; text-wrap: pretty; }
+.toast-description { color: var(--ink-muted); text-wrap: pretty; }
+.toast { flex-wrap: wrap; }
+.toast-actions { order: 3; display: flex; gap: 6px; width: 100%; justify-content: flex-end; padding-left: 32px; }
+.toast-actions .btn { min-height: 34px; padding: 0 12px; font-size: 13px; }
+.toast-close { display: grid; flex: none; place-items: center; width: 32px; height: 32px; margin: -5px 0; border: 0; border-radius: 999px; background: transparent; color: var(--ink-subtle); cursor: pointer; }
+.toast-close:hover { background: var(--muted); color: var(--ink); }
+@media (pointer: coarse) { .toast-close { width: 44px; height: 44px; margin: -11px 0; } .toast-actions .btn { min-height: 40px; } }
+@media (max-width: 39.99rem) {
+  .toasts { left: 16px; right: 16px; width: auto; bottom: max(16px, env(safe-area-inset-bottom)); }
+}
+@keyframes toast-in { from { transform: translateY(calc(100% + 24px)); } }
+@keyframes toast-out { to { transform: translateX(calc(100% + 32px)); } }
