@@ -37,6 +37,7 @@
           if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
           document.documentElement.dataset.theme = t;
         } catch (e) {}
+        document.documentElement.classList.add("js");
         if (!navigator.onLine) document.documentElement.classList.add("is-offline");
       })();
     </script>

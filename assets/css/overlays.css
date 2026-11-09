@@ -1,0 +1,87 @@
+/* Overlays: the phone navigation drawer and the bottom sheets of filters.
+   Both move, never fade their content (a contrast audit may run mid-way). */
+
+/* --- Navigation drawer (Layouts.nav_drawer/1, assets/js/ui/drawer.js) ---
+   popover="manual" + horizontal scroll snap: the finger drives the sheet.
+   It comes from the end side (right): an empty spacer, then the sheet, so
+   scroll start is "closed" and scroll end is "open". */
+.drawer {
+  --drawer-width: min(20rem, 82dvw);
+  --drawer-backdrop: 0;
+  width: auto; height: auto; inset: 0; margin: 0; padding: 0;
+  background: transparent; border: 0; overflow: visible;
+}
+.drawer::backdrop { background: #0b1a33; opacity: calc(var(--drawer-backdrop) * .55); }
+.drawer-scroller {
+  position: relative; display: grid; height: 100%;
+  grid-template-columns: 100% var(--drawer-width);
+  overflow-x: scroll; overscroll-behavior: none; scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+}
+.drawer-scroller::-webkit-scrollbar { display: none; }
+@media (prefers-reduced-motion: no-preference) { .drawer-scroller { scroll-behavior: smooth; } }
+.drawer-scroller::before { content: ""; scroll-snap-align: start; scroll-initial-target: nearest; }
+.drawer-sheet {
+  display: flex; flex-direction: column; gap: 24px;
+  height: 100svh; padding: 16px 20px max(24px, env(safe-area-inset-bottom));
+  background: var(--card); color: var(--ink);
+  box-shadow: -1px 0 0 var(--border), -16px 0 40px -16px rgba(11, 26, 51, .35);
+  overflow-y: auto; scroll-snap-align: end; scrollbar-width: none; outline: none;
+}
+.drawer-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; }
+.drawer-nav { display: flex; flex-direction: column; gap: 2px; }
+.drawer-nav a { display: flex; align-items: center; min-height: 52px; padding: 0 16px; border-radius: 12px; color: var(--ink); text-decoration: none; font-size: 19px; font-weight: 400; }
+.drawer-nav a[aria-current="page"] { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; }
+.drawer-foot { margin-top: auto; }
+.drawer-foot .btn { width: 100%; min-height: 48px; }
+
+@supports (animation-timeline: scroll()) {
+  .drawer { timeline-scope: --drawer-fade; animation: drawer-backdrop linear both; animation-timeline: --drawer-fade; }
+  .drawer-scroller { scroll-timeline: --drawer-fade x; }
+  @property --drawer-backdrop { syntax: "<number>"; inherits: true; initial-value: 0; }
+  @keyframes drawer-backdrop { 0% { --drawer-backdrop: 0; } 100% { --drawer-backdrop: 1; } }
+}
+
+/* --- Filters (UI.filter_sheet/1, assets/js/ui/sheet.js) ---
+   Inline from 40rem; on phones, a bottom sheet opened from a button. */
+.sheet-bar, .sheet-head { display: none; }
+
+@media (min-width: 40rem) {
+  .sheet[popover] {
+    position: static; display: block; inset: auto; width: auto; height: auto;
+    margin: 0; padding: 0; overflow: visible; border: 0; background: transparent; color: inherit;
+  }
+}
+
+@media (max-width: 39.99rem) {
+  .sheet-bar { display: block; }
+  .sheet-trigger {
+    display: flex; align-items: center; gap: 10px; width: 100%; min-height: 52px; padding: 0 18px;
+    border: 0; border-radius: 999px; background: var(--card); color: var(--ink);
+    box-shadow: inset 0 0 0 1px var(--border-input); font: inherit; font-size: 15px; cursor: pointer; text-align: left;
+  }
+  .sheet-trigger svg { flex: none; color: var(--accent-text); }
+  .sheet-trigger-label { flex: none; font-weight: 500; }
+  .sheet-trigger-summary { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-muted); }
+  .sheet-trigger-summary::before { content: "· "; }
+
+  .sheet[popover] {
+    position: fixed; inset: auto 0 0; width: 100%; max-width: 100%; max-height: 88dvh; margin: 0;
+    padding: 12px 20px max(20px, env(safe-area-inset-bottom));
+    overflow-y: auto; overscroll-behavior: contain; touch-action: pan-y;
+    border: 0; border-radius: 20px 20px 0 0; background: var(--card); color: var(--ink);
+    box-shadow: 0 -12px 40px -12px rgba(11, 26, 51, .35); transition: transform .2s ease-out;
+  }
+  .sheet::backdrop { background: rgba(11, 26, 51, .5); }
+  .sheet-head { display: block; margin-bottom: 16px; }
+  .sheet-handle { display: block; width: 40px; height: 5px; margin: 0 auto 16px; border-radius: 99px; background: var(--border-strong); }
+  .sheet .period, .sheet .filters { flex-direction: column; align-items: stretch; gap: 14px; }
+  .sheet .field, .sheet .select { width: 100%; }
+  .sheet .period-arrow { display: none; }
+  .sheet [type="submit"] { width: 100%; min-height: 52px; margin-top: 8px; background: var(--accent); color: #ffffff; box-shadow: none; }
+}
+
+@media (max-width: 39.99rem) and (prefers-reduced-motion: no-preference) {
+  .sheet:popover-open { animation: sheet-up .22s ease-out; }
+}
+@keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
