@@ -26,7 +26,19 @@ import {LiveSocket} from "phoenix_live_view"
 import {hooks as colocatedHooks} from "phoenix-colocated/syli_atlas"
 import topbar from "../vendor/topbar"
 
-const csrfToken = document.querySelector("meta[name='csrf-token']").getAttribute("content")
+import {initDrawer} from "./ui/drawer"
+import {initSheets} from "./ui/sheet"
+import {initTheme} from "./ui/theme"
+import {initPeriodForms} from "./ui/period"
+
+initTheme()
+initDrawer()
+initSheets()
+initPeriodForms()
+
+// Public pages are cached and carry no session or CSRF token: LiveView only
+// connects on pages that have one (sign-in, discussions, admin).
+const csrfToken = document.querySelector("meta[name='csrf-token']")?.getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
@@ -39,7 +51,7 @@ window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
 window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
 
 // connect if there are any LiveViews on the page
-liveSocket.connect()
+if (csrfToken) liveSocket.connect()
 
 // expose liveSocket on window for web console debug logs and latency simulation:
 // >> liveSocket.enableDebug()
