@@ -14,6 +14,14 @@ defmodule SyliAtlasWeb.PublicData do
   def ranking(indicator, from, to, opts),
     do: indicator |> Queries.ranking(from, to, opts) |> decode_list()
 
+  @doc "The home map snapshot: %{\"from\", \"to\", \"countries\"} or nil before the first import."
+  def map(locale) do
+    case Queries.map_countries(locale) do
+      nil -> nil
+      json -> Jason.decode!(json)
+    end
+  end
+
   def search(q, locale), do: q |> Queries.search(locale) |> decode_list()
 
   def at(values, year) when is_list(values), do: Enum.at(values, year - 2015)
