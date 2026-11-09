@@ -34,6 +34,10 @@ defmodule SyliAtlasWeb.Router do
   end
 
   scope "/", SyliAtlasWeb do
+    get "/health", HealthController, :show
+  end
+
+  scope "/", SyliAtlasWeb do
     pipe_through :public
     get "/", PageController, :root
   end

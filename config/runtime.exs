@@ -75,7 +75,8 @@ if config_env() == :prod do
       # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
       # See the documentation on https://bandit.hexdocs.pm/Bandit.html#t:options/0
       # for details about using IPv6 vs IPv4 and loopback vs public addresses.
-      ip: {0, 0, 0, 0, 0, 0, 0, 0}
+      # PHX_IPV4=true binds IPv4 only, for hosts without IPv6.
+      ip: if(System.get_env("PHX_IPV4") == "true", do: {0, 0, 0, 0}, else: {0, 0, 0, 0, 0, 0, 0, 0})
     ],
     secret_key_base: secret_key_base
 
