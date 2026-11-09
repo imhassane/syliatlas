@@ -1,0 +1,7 @@
+/* Syli Atlas stylesheet, bundled by esbuild in this order:
+   base (tokens, type, base components), then the frame and its reflow,
+   overlays (drawer, sheets) and data (lists, tables, charts). */
+@import "./base.css";
+@import "./layout.css";
+@import "./overlays.css";
+@import "./data.css";

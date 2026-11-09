@@ -14,6 +14,8 @@ defmodule SyliAtlas.Application do
        repos: Application.fetch_env!(:syli_atlas, :ecto_repos), skip: skip_migrations?()},
       {DNSCluster, query: Application.get_env(:syli_atlas, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: SyliAtlas.PubSub},
+      SyliAtlas.Profiles.QueryStats,
+      {Oban, Application.fetch_env!(:syli_atlas, Oban)},
       # Start a worker by calling: SyliAtlas.Worker.start_link(arg)
       # {SyliAtlas.Worker, arg},
       # Start to serve requests, typically the last entry

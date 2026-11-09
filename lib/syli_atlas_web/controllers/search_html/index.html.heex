@@ -1,0 +1,30 @@
+<Layouts.public locale={@locale} current={:search} alternates={@alternates}>
+  <.section>
+    <.section_head level={1} title={gettext("Search")} />
+    <.search_form locale={@locale} value={@q} autofocus />
+    <p :if={@q != "" and @results == []} class="muted">
+      {gettext("No country or region matches “%{q}”.", q: @q)}
+    </p>
+    <.card :if={@results != []}>
+      <ul class="link-list">
+        <li :for={r <- @results}>
+          <a href={Paths.area(@locale, r["kind"], r["slug"])}>{r["name"]}</a>
+        </li>
+      </ul>
+    </.card>
+    <div class="stack gap-3">
+      <h2 class="h2">{gettext("All countries")}</h2>
+      <ul class="az">
+        <li :for={
+          c <-
+            Enum.sort_by(
+              @countries,
+              &SyliAtlas.Geo.Area.normalize(SyliAtlas.Geo.Area.name(&1, @locale))
+            )
+        }>
+          <a href={Paths.area(@locale, c)}>{SyliAtlas.Geo.Area.name(c, @locale)}</a>
+        </li>
+      </ul>
+    </div>
+  </.section>
+</Layouts.public>

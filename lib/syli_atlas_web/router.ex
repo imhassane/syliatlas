@@ -11,19 +11,73 @@ defmodule SyliAtlasWeb.Router do
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug :accepts, ["json", "csv"]
+  end
+
+  pipeline :public_cache do
+    plug SyliAtlasWeb.Plugs.PublicCache
+  end
+
+  # Public pages: no session or CSRF token, so they can be cached.
+  pipeline :public do
+    plug :accepts, ["html"]
+    plug :put_root_layout, html: {SyliAtlasWeb.Layouts, :root}
+    plug :put_secure_browser_headers
+  end
+
+  pipeline :fr do
+    plug SyliAtlasWeb.Plugs.Locale, "fr"
+  end
+
+  pipeline :en do
+    plug SyliAtlasWeb.Plugs.Locale, "en"
   end
 
   scope "/", SyliAtlasWeb do
-    pipe_through :browser
-
-    get "/", PageController, :home
+    pipe_through :public
+    get "/", PageController, :root
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", SyliAtlasWeb do
-  #   pipe_through :api
-  # end
+  scope "/fr", SyliAtlasWeb do
+    pipe_through [:public, :fr, :public_cache]
+
+    get "/", PageController, :home
+    get "/methode", PageController, :method
+    get "/classement", RankingController, :index
+    get "/recherche", SearchController, :index
+    get "/pays/:slug", AreaController, :show
+    get "/regions/:slug", AreaController, :show
+    get "/comparer", CompareController, :show
+    get "/comparer/*slugs", CompareController, :show
+  end
+
+  scope "/en", SyliAtlasWeb do
+    pipe_through [:public, :en, :public_cache]
+
+    get "/", PageController, :home
+    get "/method", PageController, :method
+    get "/ranking", RankingController, :index
+    get "/search", SearchController, :index
+    get "/countries/:slug", AreaController, :show
+    get "/regions/:slug", AreaController, :show
+    get "/compare", CompareController, :show
+    get "/compare/*slugs", CompareController, :show
+  end
+
+  scope "/api/v1", SyliAtlasWeb.Api do
+    pipe_through :api
+
+    get "/version", ApiController, :version
+
+    pipe_through :public_cache
+    get "/areas", ApiController, :areas
+    get "/areas/:code", ApiController, :area
+    get "/areas/:code/csv", ApiController, :csv
+    get "/compare", ApiController, :compare
+    get "/ranking", ApiController, :ranking
+    get "/search", ApiController, :search
+    get "/offline-pack", ApiController, :offline_pack
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:syli_atlas, :dev_routes) do

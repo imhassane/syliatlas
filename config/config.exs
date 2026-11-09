@@ -27,6 +27,20 @@ config :phoenix_live_view,
   # the attribute set on all root tags. Used for Phoenix.LiveView.ColocatedCSS.
   root_tag_attribute: "phx-r"
 
+# Background jobs. Oban runs on the same SQLite database with the Lite engine.
+config :syli_atlas, Oban,
+  engine: Oban.Engines.Lite,
+  repo: SyliAtlas.Repo,
+  queues: [imports: 1, computations: 2, seo: 1, alerts: 2, moderation: 1],
+  plugins: [
+    {Oban.Plugins.Pruner, max_age: 60 * 60 * 24 * 30},
+    {Oban.Plugins.Cron,
+     crontab: [
+       # Ask every source for a new edition each morning (UTC).
+       {"0 6 * * *", SyliAtlas.Workers.CheckSourcesWorker}
+     ]}
+  ]
+
 # Configure the mailer
 #
 # By default it uses the "Local" adapter which stores the emails
