@@ -15,7 +15,8 @@ config :syli_atlas, SyliAtlasWeb.Endpoint,
   force_ssl: [
     rewrite_on: [:x_forwarded_proto],
     exclude: [
-      # paths: ["/health"],
+      # The platform's health check calls /health over plain HTTP.
+      paths: ["/health"],
       hosts: ["localhost", "127.0.0.1"]
     ]
   ]
