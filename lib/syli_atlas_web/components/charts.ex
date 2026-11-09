@@ -88,7 +88,7 @@ defmodule SyliAtlasWeb.Charts do
       </text>
       <line class="ref-line" x1={@g.x.(@from)} x2={@g.x.(@from)} y1={@g.top} y2={@g.bottom} />
       <line class="ref-line" x1={@g.x.(@to)} x2={@g.x.(@to)} y1={@g.top} y2={@g.bottom} />
-      <g :for={s <- Enum.reverse(@series)} data-series={s.id}>
+      <g :for={s <- Enum.reverse(@series)} class="draw" data-series={s.id}>
         <path
           class="series"
           d={path(s.values, @g, 2015, @estimate_from)}
