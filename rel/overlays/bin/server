@@ -1,0 +1,8 @@
+#!/bin/sh
+# Starts the release: migrations and first data (SyliAtlas.Release.setup/0),
+# then the web server.
+set -eu
+
+cd -P -- "$(dirname -- "$0")"
+./syli_atlas eval SyliAtlas.Release.setup
+PHX_SERVER=true exec ./syli_atlas start
