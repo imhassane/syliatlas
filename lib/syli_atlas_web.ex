@@ -86,6 +86,7 @@ defmodule SyliAtlasWeb do
       import Phoenix.HTML
       # Core UI components
       import SyliAtlasWeb.CoreComponents
+      import SyliAtlasWeb.UI
       import SyliAtlasWeb.PageComponents
       import SyliAtlasWeb.Format
 
