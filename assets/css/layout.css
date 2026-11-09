@@ -127,3 +127,10 @@
 /* The footer always reaches the bottom of the window, even on a short page. */
 body { min-height: 100svh; display: flex; flex-direction: column; }
 body > main { flex: 1 0 auto; }
+
+/* The first block of a page sits close to the header: the breadcrumb or the
+   eyebrow comes right under the navigation. */
+main > section.section:first-of-type { padding-top: 40px; }
+@media (max-width: 39.99rem) {
+  main > section.section:first-of-type { padding-top: 24px; }
+}
