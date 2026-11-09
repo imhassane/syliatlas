@@ -11,60 +11,127 @@ defmodule SyliAtlasWeb.Layouts do
   # and other static content.
   embed_templates "layouts/*"
 
+  alias SyliAtlasWeb.Paths
+
   @doc """
-  Renders your app layout.
-
-  This function is typically invoked from every template,
-  and it often contains your application menu, sidebar,
-  or similar.
-
-  ## Examples
-
-      <Layouts.app flash={@flash}>
-        <h1>Content</h1>
-      </Layouts.app>
-
+  Public site layout: header, offline banner, content, footer. Public pages
+  carry no session, so they can be cached by the CDN and the service worker.
   """
-  attr :flash, :map, required: true, doc: "the map of flash messages"
+  attr :locale, :string, required: true
+  attr :current, :atom, default: nil
+  attr :alternates, :list, default: []
+  slot :inner_block, required: true
 
-  attr :current_scope, :map,
-    default: nil,
-    doc: "the current [scope](https://phoenix.hexdocs.pm/scopes.html)"
+  def public(assigns) do
+    ~H"""
+    <a class="skip" href="#main">{gettext("Skip to content")}</a>
+    <div class="offline-banner" role="status">
+      {gettext("You are offline. Figures shown are the ones saved on this device.")}
+    </div>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href={Paths.home(@locale)} aria-label="Syli Atlas">
+          <.logo size={28} />
+          <b>syli <span>atlas</span></b>
+        </a>
+        <nav class="nav" aria-label={gettext("Main")}>
+          <a href={Paths.home(@locale)} aria-current={@current == :home && "page"}>{gettext("Home")}</a>
+          <a href={Paths.ranking(@locale)} aria-current={@current == :ranking && "page"}>{gettext(
+            "Countries"
+          )}</a>
+          <a href={Paths.compare(@locale, [])} aria-current={@current == :compare && "page"}>{gettext(
+            "Compare"
+          )}</a>
+          <a href={Paths.method(@locale)} aria-current={@current == :method && "page"}>{gettext(
+            "Method"
+          )}</a>
+        </nav>
+        <div class="header-actions">
+          <button type="button" class="btn btn-quiet" data-install>{gettext("Install the app")}</button>
+          <a
+            :for={{lang, href} <- @alternates}
+            :if={lang != @locale and lang in ["fr", "en"]}
+            class="btn btn-quiet"
+            href={href}
+            hreflang={lang}
+            lang={lang}
+          >
+            {String.upcase(lang)}
+          </a>
+          <button
+            type="button"
+            class="icon-btn"
+            data-theme-toggle
+            aria-label={gettext("Switch theme")}
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            ><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+          </button>
+          <a class="btn btn-secondary" href={Paths.login(@locale)}>{gettext("Sign in")}</a>
+        </div>
+      </div>
+    </header>
+    <main id="main">
+      {render_slot(@inner_block)}
+    </main>
+    <footer class="site-footer">
+      <div class="wrap row between gap-6" style="align-items: flex-start">
+        <div class="stack gap-1" style="max-width: 380px">
+          <a class="brand" href={Paths.home(@locale)}><b>syli <span>atlas</span></b></a>
+          <p class="muted small">
+            {gettext("African economies in verifiable figures. Free, open, in French and English.")}
+          </p>
+        </div>
+        <nav aria-label={gettext("Footer")}>
+          <div class="stack gap-1">
+            <b>{gettext("Explore")}</b>
+            <a href={Paths.ranking(@locale)}>{gettext("All countries")}</a>
+            <a href={Paths.compare(@locale, [])}>{gettext("Compare")}</a>
+          </div>
+          <div class="stack gap-1">
+            <b>{gettext("Data")}</b>
+            <a href="/api/v1/areas">{gettext("Public API")}</a>
+            <a href={Paths.method(@locale)}>{gettext("Method and sources")}</a>
+          </div>
+        </nav>
+      </div>
+    </footer>
+    """
+  end
 
+  attr :size, :integer, default: 28
+
+  def logo(assigns) do
+    ~H"""
+    <svg width={@size} height={@size} viewBox="0 0 28 28" aria-hidden="true">
+      <rect width="13" height="13" rx="3" fill="var(--ink)" />
+      <rect x="15" width="13" height="13" rx="3" fill="#4b3bff" />
+      <rect y="15" width="13" height="13" rx="3" fill="#4b3bff" />
+      <rect x="15" y="15" width="13" height="13" rx="3" fill="#ff6b3d" />
+    </svg>
+    """
+  end
+
+  @doc "Layout for LiveViews outside the admin (sign-in, discussions)."
+  attr :flash, :map, required: true
+  attr :locale, :string, default: "fr"
+  attr :current_scope, :map, default: nil
   slot :inner_block, required: true
 
   def app(assigns) do
     ~H"""
-    <header class="navbar px-4 sm:px-6 lg:px-8">
-      <div class="flex-1">
-        <a href="/" class="flex-1 flex w-fit items-center gap-2">
-          <img src={~p"/images/logo.svg"} width="36" />
-          <span class="text-sm font-semibold">v{Application.spec(:phoenix, :vsn)}</span>
-        </a>
-      </div>
-      <div class="flex-none">
-        <ul class="flex px-1 space-x-4 items-center">
-          <li>
-            <a href="https://phoenixframework.org/" class="btn btn-ghost">Website</a>
-          </li>
-          <li>
-            <a href="https://github.com/phoenixframework/phoenix" class="btn btn-ghost">GitHub</a>
-          </li>
-          <li>
-            <a href="https://phoenix.hexdocs.pm/overview.html" class="btn btn-primary">
-              Get Started <span aria-hidden="true">&rarr;</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </header>
-
-    <main class="px-4 py-20 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl space-y-4">
-        {render_slot(@inner_block)}
-      </div>
-    </main>
-
+    <.public locale={@locale}>
+      {render_slot(@inner_block)}
+    </.public>
     <.flash_group flash={@flash} />
     """
   end
