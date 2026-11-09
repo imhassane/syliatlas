@@ -14,6 +14,7 @@ defmodule SyliAtlasWeb.Paths do
   def compare(locale, slugs),
     do: "/#{locale}/#{segment(locale, :compare)}/" <> Enum.join(slugs, "/")
 
+  def regions(locale), do: "/#{locale}/regions"
   def ranking(locale), do: "/#{locale}/#{segment(locale, :ranking)}"
   def search(locale), do: "/#{locale}/#{segment(locale, :search)}"
   def method(locale), do: "/#{locale}/#{segment(locale, :method)}"

@@ -112,6 +112,9 @@ defmodule SyliAtlasWeb.Layouts do
       <a href={Paths.ranking(@locale)} aria-current={@current == :ranking && "page"}>{gettext(
         "Countries"
       )}</a>
+      <a href={Paths.regions(@locale)} aria-current={@current == :regions && "page"}>{gettext(
+        "Regions"
+      )}</a>
       <a href={Paths.compare(@locale, [])} aria-current={@current == :compare && "page"}>{gettext(
         "Compare"
       )}</a>

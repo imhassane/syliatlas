@@ -50,6 +50,7 @@ defmodule SyliAtlasWeb.Router do
     get "/classement", RankingController, :index
     get "/recherche", SearchController, :index
     get "/pays/:slug", AreaController, :show
+    get "/regions", RegionsController, :index
     get "/regions/:slug", AreaController, :show
     get "/comparer", CompareController, :show
     get "/comparer/*slugs", CompareController, :show
@@ -63,6 +64,7 @@ defmodule SyliAtlasWeb.Router do
     get "/ranking", RankingController, :index
     get "/search", SearchController, :index
     get "/countries/:slug", AreaController, :show
+    get "/regions", RegionsController, :index
     get "/regions/:slug", AreaController, :show
     get "/compare", CompareController, :show
     get "/compare/*slugs", CompareController, :show

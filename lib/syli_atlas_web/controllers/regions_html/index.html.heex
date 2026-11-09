@@ -1,0 +1,240 @@
+<Layouts.public locale={@locale} current={:regions} alternates={@alternates}>
+  <.section variant="alt">
+    <div class="regions-hero">
+      <div class="stack gap-4 grow">
+        <nav aria-label={gettext("Breadcrumb")}>
+          <ol class="crumbs">
+            <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+            <li aria-current="page">{gettext("Regions")}</li>
+          </ol>
+        </nav>
+        <.section_head
+          level={1}
+          size="display"
+          eyebrow={gettext("Compare the regions")}
+          title={gettext("Five regions, side by side.")}
+        >
+          <:intro>
+            {gettext(
+              "North, West, Central, East and Southern Africa, as the African Union divides the continent. Totals computed by Syli Atlas from IMF figures, country by country."
+            )}
+          </:intro>
+        </.section_head>
+        <nav class="region-chips" aria-label={gettext("Highlight a region")}>
+          <a
+            :for={r <- @regions}
+            href={link_with(@locale, @kept, "focus", if(@focus == r.code, do: "", else: r.code)) <> "#regions-chart"}
+            class="chip chip-series"
+            style={"--dot: var(--r-#{r.code})"}
+            aria-current={@focus == r.code && "true"}
+          ><i aria-hidden="true"></i>{Area.name(r, @locale)}</a>
+        </nav>
+      </div>
+      <div class="regions-map">
+        <.africa_map
+          id="regions-map"
+          countries={@map_countries}
+          mode={:regions}
+          focus={@focus}
+          locale={@locale}
+          label={gettext("Map of the five regions of the African Union")}
+        />
+      </div>
+    </div>
+  </.section>
+
+  <.section id="regions-chart" tight={:bottom}>
+    <div class="map-toolbar">
+      <nav class="seg" aria-label={gettext("Indicator")}>
+        <a
+          :for={ind <- @indicators}
+          href={link_with(@locale, @kept, "indicator", ind) <> "#regions-chart"}
+          aria-current={ind == @indicator && "true"}
+        >
+          {indicator_tab(ind)}
+        </a>
+      </nav>
+      <.filter_sheet id="regions-period" title={gettext("Period")} summary={"#{@from} → #{@to}"}>
+        <.period_form
+          action={Paths.regions(@locale)}
+          from={@from}
+          to={@to}
+          hidden={
+            Enum.reject(
+              [{"indicator", @kept["indicator"]}, {"focus", @kept["focus"]}],
+              &is_nil(elem(&1, 1))
+            )
+          }
+        />
+      </.filter_sheet>
+    </div>
+    <div class="grid grid-2 regions-grid">
+      <.card pad>
+        <.card_head
+          title={
+            if(@indicator == "real_gdp_index",
+              do: gettext("Real GDP, base 100 in %{year}", year: @from),
+              else: indicator_label(@indicator)
+            )
+          }
+          subtitle={indicator_help(@indicator) <> " · " <> gettext("dashed: estimates and projections")}
+        />
+        <% series = series(@areas, @indicator, @from, @focus, @locale) %>
+        <Charts.line_chart
+          id="regions-line"
+          indicator={@indicator}
+          from={@from}
+          to={@to}
+          locale={@locale}
+          label={gettext("Regions of Africa, 2015 to 2030")}
+          series={series}
+        />
+        <.chart_legend series={series} />
+      </.card>
+      <.card>
+        <div class="pad">
+          <.card_head
+            title={ranked_title(@indicator, @from, @to)}
+            subtitle={gettext("Regions, Africa and the world")}
+          />
+        </div>
+        <% rows = ranked(@areas, @indicator, @to, @locale) %>
+        <.rank_list
+          items={rank_items(rows, @indicator, @locale, @from, @to, mode: ranked_mode(@indicator))}
+          current={@focus || "africa"}
+          bars
+        />
+      </.card>
+    </div>
+  </.section>
+
+  <.section tight={:top}>
+    <h2 class="h1">{gettext("Every indicator in %{year}", year: @to)}</h2>
+    <.card>
+      <.data_table
+        id="regions-table"
+        wide
+        caption={gettext("Every indicator in %{year}", year: @to)}
+        rows={table_rows(@areas)}
+        current={Enum.find(@areas, &(&1["profile"]["code"] == @focus))}
+      >
+        <:head :let={a} label={gettext("Region")}>
+          <a
+            href={Paths.with_period(Paths.area(@locale, a["profile"]), @from, @to)}
+            class="row-dot"
+            style={"--dot: var(#{color(a["profile"]["code"])})"}
+          >
+            <i aria-hidden="true"></i>{a["profile"]["name"][@locale]}
+          </a>
+        </:head>
+        <:col :let={a} label={gettext("GDP")}>
+          {value(PublicData.at(a["profile"]["series"]["gdp_usd_bn"], @to), "gdp_usd_bn", @locale)}
+        </:col>
+        <:col :let={a} label={gettext("Share of African GDP")}>
+          {if a["profile"]["code"] == "WLD",
+            do: "—",
+            else:
+              number(PublicData.at(a["profile"]["share_of_africa_gdp"], @to) || 100.0, 1, @locale) <>
+                " %"}
+        </:col>
+        <:col :let={a} label={gettext("Population")}>
+          {value(
+            PublicData.at(a["profile"]["series"]["population_m"], @to),
+            "population_m",
+            @locale
+          )}
+        </:col>
+        <:col :let={a} label={gettext("GDP per capita")}>
+          {value(
+            PublicData.at(a["profile"]["series"]["gdp_per_capita_usd"], @to),
+            "gdp_per_capita_usd",
+            @locale
+          )}
+        </:col>
+        <:col :let={a} label={gettext("Growth")}>
+          {value(
+            PublicData.at(a["profile"]["series"]["real_gdp_growth"], @to),
+            "real_gdp_growth",
+            @locale
+          )}
+        </:col>
+        <:col :let={a} label={gettext("Inflation")}>
+          {value(PublicData.at(a["profile"]["series"]["inflation"], @to), "inflation", @locale)}
+        </:col>
+        <:col :let={a} label={gettext("Public debt")}>
+          {value(
+            PublicData.at(a["profile"]["series"]["public_debt_pct_gdp"], @to),
+            "public_debt_pct_gdp",
+            @locale
+          )}
+        </:col>
+        <:col :let={a} label={gettext("GDP in dollars %{from} → %{to}", from: @from, to: @to)}>
+          <b class={tone(a["period"]["changes"]["gdp_usd_bn"], "gdp_usd_bn")}>{change(
+            a["period"]["changes"]["gdp_usd_bn"],
+            "gdp_usd_bn",
+            @locale
+          )}</b>
+        </:col>
+        <:col :let={a} label={gettext("Real GDP %{from} → %{to}", from: @from, to: @to)}>
+          <span class={tone(a["period"]["changes"]["real_gdp_index"], "real_gdp_index")}>{change(
+            a["period"]["changes"]["real_gdp_index"],
+            "real_gdp_index",
+            @locale
+          )}</span>
+        </:col>
+      </.data_table>
+    </.card>
+    <p class="src">
+      {gettext(
+        "GDP and population: sums of the countries. GDP per capita: total GDP divided by population. Growth and inflation: averages weighted by GDP in purchasing power parity. Debt: weighted by GDP in dollars."
+      )}
+    </p>
+  </.section>
+
+  <.section variant="alt">
+    <.section_head
+      eyebrow={gettext("Who carries each region")}
+      title={gettext("The weight of the large economies, and who moves fastest.")}
+    />
+    <div class="grid grid-carry">
+      <a
+        :for={c <- @carry}
+        class="card carry-card"
+        href={Paths.with_period(Paths.area(@locale, c.region), @from, @to)}
+      >
+        <span class="row-dot carry-name" style={"--dot: var(--r-#{c.region.code})"}><i aria-hidden="true"></i>{Area.name(
+          c.region,
+          @locale
+        )}</span>
+        <span class="eyebrow carry-eyebrow">{gettext("Share of the region's GDP, %{year}",
+          year: @to
+        )}</span>
+        <div class="stack gap-2">
+          <div :for={h <- c.heavy} class="stack gap-1">
+            <div class="carry-row">
+              <span>{h["name"]}</span><b class="num">{number(h["share"], 1, @locale)} %</b>
+            </div>
+            <span class="bar-track carry-bar" aria-hidden="true"><span
+              class="bar-fill"
+              style={"width: #{round(h["share"])}%; background: var(--r-#{c.region.code})"}
+            ></span></span>
+          </div>
+        </div>
+        <div class="carry-foot small">
+          <span :if={c.fastest}><span class="subtle">{gettext("Fastest:")}</span> {c.fastest[
+            "name"
+          ]} ({change(c.fastest["value"], "gdp_usd_bn", @locale)})</span>
+          <span :if={c.slowest}><span class="subtle">{gettext("Slowest:")}</span> {c.slowest[
+            "name"
+          ]} ({change(c.slowest["value"], "gdp_usd_bn", @locale)})</span>
+          <span class="subtle">{ngettext("1 country", "%{count} countries", c.count)} · {gettext(
+            "GDP in dollars %{from} → %{to}",
+            from: @from,
+            to: @to
+          )}</span>
+        </div>
+        <span class="qcard-cta">{gettext("See the region")} →</span>
+      </a>
+    </div>
+  </.section>
+</Layouts.public>
