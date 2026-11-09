@@ -24,7 +24,9 @@ defmodule SyliAtlas.Release do
     # The import broadcasts to the admin; outside the running app, PubSub
     # must be started for it.
     {:ok, _} = Application.ensure_all_started(:phoenix_pubsub)
-    {:ok, _} = Supervisor.start_link([{Phoenix.PubSub, name: SyliAtlas.PubSub}], strategy: :one_for_one)
+
+    {:ok, _} =
+      Supervisor.start_link([{Phoenix.PubSub, name: SyliAtlas.PubSub}], strategy: :one_for_one)
 
     {:ok, _, _} =
       Ecto.Migrator.with_repo(SyliAtlas.Repo, fn _repo ->
@@ -34,6 +36,11 @@ defmodule SyliAtlas.Release do
         if SyliAtlas.Sources.published_edition("imf_weo") == nil do
           {:ok, _status, edition} = SyliAtlas.Imports.import_snapshot!()
           IO.puts("IMF edition #{edition.code} online")
+        end
+
+        # Snapshots added after the data was imported: build them once.
+        if SyliAtlas.Profiles.Queries.map_countries("fr") == nil do
+          SyliAtlas.Profiles.Queries.refresh_snapshots!()
         end
       end)
 

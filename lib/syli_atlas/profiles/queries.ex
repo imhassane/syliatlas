@@ -52,7 +52,8 @@ defmodule SyliAtlas.Profiles.Queries do
           'slug', json(jsonb_extract(p.doc, '$.slug')),
           'kind', jsonb_extract(p.doc, '$.kind'),
           'series', json(jsonb_extract(p.doc, '$.series')),
-          'real_gdp_change_pct', #{change_sql("real_gdp_index")}
+          'real_gdp_change_pct', #{change_sql("real_gdp_index")},
+          'gdp_change_pct', #{change_sql("gdp_usd_bn")}
         ) AS item
         FROM json_each(?1) AS c
         JOIN profiles AS p ON p.area_code = c.value
@@ -87,6 +88,67 @@ defmodule SyliAtlas.Profiles.Queries do
       """,
       [nil, from, to, Keyword.get(opts, :region), Keyword.get(opts, :locale, "fr")]
     )
+  end
+
+  @doc """
+  Every country for the home map, read from its snapshot (built once per
+  edition by `refresh_snapshots!/0`): figures in the default arrival year,
+  GDP in current dollars and its change since the default reference year,
+  rank in Africa by GDP, and the GDP series for the panel's sparkline.
+  """
+  def map_countries(locale \\ "fr") when locale in ["fr", "en"] do
+    run(:map_countries, "SELECT json(doc) FROM snapshots WHERE key = ?1", ["map:" <> locale])
+  end
+
+  @doc "Rebuilds the snapshots from the profiles. Run inside the rebuild transaction."
+  def refresh_snapshots! do
+    {from, to} = SyliAtlas.Profiles.Builder.default_period()
+    now = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
+
+    for locale <- ["fr", "en"] do
+      Repo.query!(
+        """
+        INSERT INTO snapshots (key, doc, inserted_at, updated_at)
+        VALUES ('map:' || ?1, jsonb((#{map_sql()})), ?4, ?4)
+        ON CONFLICT(key) DO UPDATE SET doc = excluded.doc, updated_at = excluded.updated_at
+        """,
+        [locale, from, to, now]
+      )
+    end
+
+    :ok
+  end
+
+  # ?1 locale, ?2 reference year, ?3 arrival year.
+  defp map_sql do
+    """
+    SELECT json_object('from', ?2, 'to', ?3, 'countries', json_group_array(json_object(
+      'code', code, 'name', name, 'slug', slug, 'region', region, 'region_name', region_name,
+      'gdp', gdp, 'gdp_change', gdp_change, 'real_change', real_change,
+      'rank', CASE WHEN gdp IS NULL THEN NULL ELSE rnk END, 'of', ranked,
+      'gdppc', gdppc, 'inflation', inflation, 'debt', debt, 'growth', growth,
+      'series', json(gdp_series)))) FROM (
+      SELECT *, rank() OVER (ORDER BY gdp IS NULL, gdp DESC) AS rnk,
+             count(gdp) OVER () AS ranked
+      FROM (
+        SELECT a.code, a.region_code AS region,
+               CASE WHEN ?1 = 'en' THEN a.name_en ELSE a.name_fr END AS name,
+               CASE WHEN ?1 = 'en' THEN a.slug_en ELSE a.slug_fr END AS slug,
+               CASE WHEN ?1 = 'en' THEN r.name_en ELSE r.name_fr END AS region_name,
+               #{value_sql("gdp_usd_bn", "?3")} AS gdp,
+               #{change_sql("gdp_usd_bn")} AS gdp_change,
+               #{change_sql("real_gdp_index")} AS real_change,
+               #{value_sql("gdp_per_capita_usd", "?3")} AS gdppc,
+               #{value_sql("inflation", "?3")} AS inflation,
+               #{value_sql("public_debt_pct_gdp", "?3")} AS debt,
+               #{value_sql("real_gdp_growth", "?3")} AS growth,
+               jsonb_extract(p.doc, '$.series.gdp_usd_bn') AS gdp_series
+        FROM profiles AS p
+        JOIN areas AS a ON a.code = p.area_code
+        LEFT JOIN areas AS r ON r.code = a.region_code
+        WHERE a.kind = 'country')
+      ORDER BY rnk)
+    """
   end
 
   @doc "Areas whose name matches, accents and case ignored."

@@ -79,4 +79,18 @@ defmodule SyliAtlas.ProfilesTest do
              "#{stat.name}: p95 #{stat.p95} µs"
     end
   end
+
+  test "map snapshot: one row per country, ranked by GDP in dollars" do
+    %{"from" => 2020, "to" => 2025, "countries" => countries} =
+      SyliAtlas.Profiles.Queries.map_countries("fr") |> Jason.decode!()
+
+    assert length(countries) == 54
+    [first | _] = countries
+    assert first["rank"] == 1
+    ranked = Enum.filter(countries, & &1["gdp"])
+    assert Enum.map(ranked, & &1["gdp"]) == Enum.sort(Enum.map(ranked, & &1["gdp"]), :desc)
+    civ = Enum.find(countries, &(&1["code"] == "CIV"))
+    assert civ["real_change"] == 37.1
+    assert is_list(civ["series"]) and length(civ["series"]) == 16
+  end
 end
