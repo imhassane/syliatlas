@@ -33,7 +33,12 @@ config :syli_atlas, Oban,
   repo: SyliAtlas.Repo,
   queues: [imports: 1, computations: 2, seo: 1, alerts: 2, moderation: 1],
   plugins: [
-    {Oban.Plugins.Pruner, max_age: 60 * 60 * 24 * 30}
+    {Oban.Plugins.Pruner, max_age: 60 * 60 * 24 * 30},
+    {Oban.Plugins.Cron,
+     crontab: [
+       # Ask every source for a new edition each morning (UTC).
+       {"0 6 * * *", SyliAtlas.Workers.CheckSourcesWorker}
+     ]}
   ]
 
 # Configure the mailer
