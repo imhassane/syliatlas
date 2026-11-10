@@ -43,7 +43,7 @@
     </div>
   </.section>
 
-  <.section id="regions-chart" tight={:bottom}>
+  <.section id="regions-chart" tight={:bottom} class="defer-phone defer-chart">
     <div class="map-toolbar">
       <nav class="seg" aria-label={gettext("Indicator")}>
         <a
@@ -108,7 +108,7 @@
     </div>
   </.section>
 
-  <.section tight={:top}>
+  <.section tight={:top} class="defer defer-table">
     <h2 class="h1">{gettext("Every indicator in %{year}", year: @to)}</h2>
     <.card>
       <.data_table
@@ -184,7 +184,7 @@
     </p>
   </.section>
 
-  <.section variant="alt">
+  <.section variant="alt" class="defer defer-carry">
     <.section_head
       eyebrow={gettext("Who carries each region")}
       title={gettext("The weight of the large economies, and who moves fastest.")}

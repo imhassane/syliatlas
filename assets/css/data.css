@@ -80,3 +80,28 @@
   .pager-summary { width: 100%; text-align: center; }
   .pager-step-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 }
+
+/* Long pages: sections always below the first screen are laid out and painted
+   only when they come near it (content-visibility). The size is an estimate
+   until they have rendered once, then remembered (auto), so the scrollbar
+   does not jump. Never on what the first screen shows: that would delay it.
+   `defer-phone` sections are below the first screen on phones only. */
+.defer { content-visibility: auto; contain-intrinsic-size: auto none auto var(--defer-h, 800px); }
+@media (max-width: 47.99rem) {
+  .defer-phone { content-visibility: auto; contain-intrinsic-size: auto none auto var(--defer-h, 800px); }
+}
+/* Measured content heights of the regions page (padding excluded, as
+   contain-intrinsic-size counts the content box only): phones first. */
+.defer-chart { --defer-h: 1060px; }
+.defer-table { --defer-h: 2490px; }
+.defer-carry { --defer-h: 2160px; }
+@media (min-width: 48rem) {
+  .defer-table { --defer-h: 2450px; }
+  .defer-carry { --defer-h: 1100px; }
+}
+@media (min-width: 64rem) {
+  .defer-table { --defer-h: 610px; }
+}
+@media (min-width: 80rem) {
+  .defer-carry { --defer-h: 1020px; }
+}
