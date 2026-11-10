@@ -18,6 +18,9 @@ defmodule SyliAtlasWeb.PageComponents do
       "inflation" -> gettext("Inflation")
       "public_debt_pct_gdp" -> gettext("Public debt")
       "population_m" -> gettext("Population")
+      "fiscal_balance_pct_gdp" -> gettext("Fiscal balance")
+      "current_account_pct_gdp" -> gettext("Current account")
+      "unemployment" -> gettext("Unemployment")
     end
   end
 
@@ -47,6 +50,19 @@ defmodule SyliAtlasWeb.PageComponents do
 
       "population_m" ->
         gettext("Number of inhabitants, IMF estimate.")
+
+      "fiscal_balance_pct_gdp" ->
+        gettext(
+          "Revenue minus spending of the general government, as a share of GDP. Negative: a deficit."
+        )
+
+      "current_account_pct_gdp" ->
+        gettext(
+          "Balance of trade, income and transfers with the rest of the world, as a share of GDP."
+        )
+
+      "unemployment" ->
+        gettext("Share of the labour force without a job. The IMF covers few African countries.")
     end
   end
 

@@ -97,7 +97,72 @@ defmodule SyliAtlasWeb.PageController do
         ),
       alternates: Seo.alternates_for_header(paths),
       edition: Sources.published_edition("imf_weo"),
-      sources: Sources.list_sources()
+      data_sources: data_sources(Sources.published_edition("imf_weo"))
     )
+  end
+
+  # The sources the pages actually show, with their terms and the date of
+  # what is online. Planned sources are not listed until they are imported.
+  defp data_sources(edition) do
+    ratings = SyliAtlas.Ratings.document()
+    market = if SyliAtlas.Market.public?(), do: SyliAtlas.Market.overview()
+
+    [
+      %{
+        id: "imf_weo",
+        name: gettext("IMF · World Economic Outlook"),
+        url: "https://www.imf.org/en/Publications/WEO",
+        what:
+          gettext(
+            "GDP, growth, inflation, public debt, fiscal balance, current account, unemployment, population"
+          ),
+        terms: gettext("Free reuse with attribution, non-commercial use"),
+        terms_url: "https://www.imf.org/en/About/copyright-and-terms",
+        updated: gettext("April and October"),
+        online: edition && edition.label
+      },
+      %{
+        id: "ratings",
+        name: gettext("S&P Global Ratings, Moody's, Fitch Ratings"),
+        url: nil,
+        what: gettext("Sovereign credit ratings"),
+        terms:
+          gettext("Read from each agency's release, linked under every rating; never scraped"),
+        terms_url: nil,
+        updated: gettext("At each decision"),
+        online: ratings && ratings["as_of"]
+      }
+    ] ++
+      if(market,
+        do: [
+          %{
+            id: "mansa",
+            name: "MansaAPI",
+            url: "https://mansaapi.com",
+            what: gettext("Stock exchange closes and indices, dollar exchange rates"),
+            terms:
+              gettext("Shown on Syli Atlas with the credit “Data by MansaAPI”; not redistributed"),
+            terms_url: "https://mansaapi.com/licensing",
+            updated: gettext("Every trading day"),
+            online: market["as_of"] && String.slice(to_string(market["as_of"]), 0, 10)
+          }
+        ],
+        else: []
+      ) ++
+      [
+        %{
+          id: "currencies",
+          name: gettext("ISO 4217 and central banks"),
+          url: nil,
+          what:
+            gettext(
+              "Currency codes and fixed parities (CFA francs, Comorian franc, escudo, dobra…)"
+            ),
+          terms: gettext("Public facts"),
+          terms_url: nil,
+          updated: gettext("When a parity changes"),
+          online: nil
+        }
+      ]
   end
 end

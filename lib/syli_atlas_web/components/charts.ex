@@ -117,7 +117,12 @@ defmodule SyliAtlasWeb.Charts do
 
   defp geometry(assigns, size) do
     values = assigns.series |> Enum.flat_map(& &1.values) |> Enum.filter(&is_number/1)
-    floor_with = if assigns.indicator in ["real_gdp_growth", "inflation"], do: [0], else: []
+
+    floor_with =
+      if assigns.indicator in ~w(real_gdp_growth inflation fiscal_balance_pct_gdp current_account_pct_gdp),
+        do: [0],
+        else: []
+
     {lo, hi} = Enum.min_max(values ++ floor_with, fn -> {0, 1} end)
     {lo, hi, step} = nice(lo, hi)
     right = size.w - size.end_width
@@ -206,10 +211,11 @@ defmodule SyliAtlasWeb.Charts do
 
   defp tick(v, "real_gdp_index", locale), do: Format.number(v, 0, locale)
 
-  defp tick(v, ind, locale) when ind in ["real_gdp_growth", "inflation", "public_debt_pct_gdp"],
-    do: Format.number(v, 0, locale) <> " %"
-
-  defp tick(v, _ind, locale), do: Format.number(v, 0, locale)
+  defp tick(v, ind, locale) do
+    if ind in SyliAtlas.Sources.Indicators.rate_keys(),
+      do: Format.number(v, 0, locale) <> " %",
+      else: Format.number(v, 0, locale)
+  end
 
   defp fmt(n), do: :erlang.float_to_binary(n * 1.0, decimals: 1)
 end

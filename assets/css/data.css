@@ -105,3 +105,24 @@
 @media (min-width: 80rem) {
   .defer-carry { --defer-h: 1020px; }
 }
+
+/* Country profile: the section menu, kept at the top while scrolling, and
+   the convergence criteria (SyliAtlasWeb.EconomyComponents). */
+.section-nav { position: sticky; top: 0; z-index: 20; background: var(--page); border-bottom: 1px solid var(--border); }
+.section-nav-inner { display: flex; gap: 8px; padding-top: 10px; padding-bottom: 10px; overflow-x: auto; scrollbar-width: none; }
+.section-nav-inner::-webkit-scrollbar { display: none; }
+.section-nav a { flex: none; display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border-radius: 999px; background: var(--muted); color: var(--ink); font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; }
+.section-nav a:hover { background: var(--accent-bg); color: var(--accent-text); }
+.section[id] { scroll-margin-top: 64px; }
+.criteria { list-style: none; margin: 0; padding: 0; }
+.criteria li { display: flex; gap: 12px; align-items: center; justify-content: space-between; min-height: 64px; border-top: 1px solid var(--border-faint); }
+.criteria-text { display: flex; flex-direction: column; gap: 2px; }
+.criteria-text b { font-weight: 600; }
+@media (min-width: 60rem) { .stats.stats-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 59.99rem) { .stats.stats-3 > div:last-child:nth-child(odd) { grid-column: 1 / -1; } }
+
+/* Method page: one card per source. */
+.source-card p { margin: 0; }
+.source-facts { display: grid; gap: 10px; margin: 4px 0 0; }
+.source-facts dt { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-subtle); }
+.source-facts dd { margin: 2px 0 0; font-size: 15px; }

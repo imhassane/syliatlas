@@ -9,7 +9,9 @@ defmodule SyliAtlas.Profiles.Builder do
     * GDP and population are summed;
     * GDP per capita is total GDP divided by total population;
     * growth and inflation are weighted by PPP GDP;
-    * public debt is weighted by GDP in US dollars.
+    * public debt, the fiscal balance and the current account are
+      weighted by GDP in US dollars;
+    * unemployment has no group value: the IMF covers too few countries.
 
   A country with no value for a year is left out of that year's total.
   """
@@ -88,7 +90,7 @@ defmodule SyliAtlas.Profiles.Builder do
       },
       "series" => Map.new(series, fn {k, v} -> {k, Enum.map(v, &round_value/1)} end),
       "share_of_africa_gdp" => share(series["gdp_usd_bn"], africa_gdp),
-      "missing" => missing(series),
+      "missing" => missing(series, area.kind),
       "members" => members(area, countries),
       "default_period" => %{
         "from" => from,
@@ -163,7 +165,7 @@ defmodule SyliAtlas.Profiles.Builder do
         rows = with_all.([k, "gdp_per_capita_ppp", "population_m"])
         ratio(sum_or_nil(rows, &(at.(&1, k) * ppp_weight.(&1))), sum_or_nil(rows, ppp_weight), 1)
 
-      "public_debt_pct_gdp" ->
+      k when k in ["public_debt_pct_gdp", "fiscal_balance_pct_gdp", "current_account_pct_gdp"] ->
         rows = with_all.([key, "gdp_usd_bn"])
 
         ratio(
@@ -171,6 +173,11 @@ defmodule SyliAtlas.Profiles.Builder do
           sum_or_nil(rows, &at.(&1, "gdp_usd_bn")),
           1
         )
+
+      # Too few African countries have an IMF unemployment rate for a
+      # group average to mean anything.
+      "unemployment" ->
+        nil
     end
   end
 
@@ -193,10 +200,16 @@ defmodule SyliAtlas.Profiles.Builder do
     end)
   end
 
-  defp missing(series) do
+  # Groups have no unemployment rate by design (see the moduledoc): it is
+  # not a gap.
+  @not_aggregated ["real_gdp_index", "unemployment"]
+
+  defp missing(series, kind) do
+    skip = if kind in ["region", "continent"], do: @not_aggregated, else: ["real_gdp_index"]
+
     series
     |> Enum.filter(fn {key, values} ->
-      key != "real_gdp_index" and Enum.any?(values, &is_nil/1)
+      key not in skip and Enum.any?(values, &is_nil/1)
     end)
     |> Enum.map(fn {key, values} ->
       years =

@@ -28,11 +28,52 @@ defmodule SyliAtlas.Imports do
   end
 
   @doc "Imports the snapshot shipped in priv/data, so the site works without network."
-  def import_snapshot!(file \\ "imf_weo_2026_10.json") do
+  def import_snapshot!(file \\ "imf_weo_2026_10.json", opts \\ []) do
     payload =
       Application.app_dir(:syli_atlas, "priv/data/" <> file) |> File.read!() |> Jason.decode!()
 
-    import_payload(payload["edition_label"], payload)
+    import_payload(payload["edition_label"], payload, opts)
+  end
+
+  @doc """
+  Indicators the code publishes but the online edition lacks: they were
+  added after it was imported. Empty when nothing is online.
+  """
+  def missing_indicators do
+    case Sources.published_edition(@source) do
+      nil -> []
+      edition -> SyliAtlas.Sources.Indicators.keys() -- Sources.edition_indicators(edition)
+    end
+  end
+
+  @doc """
+  Fills indicators added to the code since the online edition was
+  imported: the bundled snapshot when it is that edition, else the IMF API.
+  """
+  def backfill_missing_indicators! do
+    edition = Sources.published_edition(@source)
+    snapshot = "imf_weo_2026_10.json"
+
+    snapshot_label =
+      Application.app_dir(:syli_atlas, "priv/data/" <> snapshot)
+      |> File.read!()
+      |> Jason.decode!()
+      |> Map.fetch!("edition_label")
+
+    cond do
+      edition == nil or missing_indicators() == [] ->
+        :ok
+
+      ImfParser.edition_code(snapshot_label) == {:ok, edition.code} ->
+        import_snapshot!(snapshot, force: true)
+
+      true ->
+        %{label: edition.label, force: true}
+        |> SyliAtlas.Workers.ImportEditionWorker.new()
+        |> SyliAtlas.Repo.insert!()
+
+        {:ok, :queued}
+    end
   end
 
   defp run(edition, payload) do

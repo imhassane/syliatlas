@@ -13,7 +13,9 @@
     <RatingComponents.rating_pill :if={@rating} entry={@rating} rated={@rated} href="#notation" />
   </.section>
 
-  <.section>
+  <EconomyComponents.section_nav items={@sections} />
+
+  <.section id="economie">
     <.area_kpis
       kpis={@kpis}
       data={@data}
@@ -125,7 +127,13 @@
       <.list_pager page={@members} href={@members_href} />
       <.card_foot :if={@profile["missing"] not in [nil, []]}>
         {gettext("Not included for lack of data: %{codes}",
-          codes: Enum.join(List.wrap(@profile["missing"]), ", ")
+          codes:
+            @profile["missing"]
+            |> List.wrap()
+            |> Enum.map_join(", ", fn
+              %{"indicator" => k} -> indicator_label(k)
+              other -> to_string(other)
+            end)
         )}
       </.card_foot>
     </.card>
@@ -138,6 +146,27 @@
       <a class="btn btn-secondary" href={Paths.ranking(@locale)}>{gettext("African ranking")}</a>
     </div>
   </.section>
+
+  <EconomyComponents.finances_section
+    profile={@profile}
+    data={@data}
+    name={@name}
+    comparison={@comparison}
+    convergence={@convergence || nil}
+    from={@from}
+    to={@to}
+    locale={@locale}
+  />
+
+  <EconomyComponents.money_section
+    :if={@currency}
+    currency={@currency}
+    fx={@fx}
+    profile={@profile}
+    name={@name}
+    to={@to}
+    locale={@locale}
+  />
 
   <RatingComponents.rating_section
     :if={@rating}
@@ -161,7 +190,7 @@
     locale={@locale}
   />
 
-  <.section variant="alt">
+  <.section id="questions" variant="alt">
     <div class="grid grid-2">
       <div class="stack gap-4">
         <h2 class="h1">{gettext("Questions")}</h2>

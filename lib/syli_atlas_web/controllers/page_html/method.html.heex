@@ -9,18 +9,72 @@
         )}
       </p>
 
+      <p>
+        {gettext(
+          "Every figure on the site names its source just below it. Syli Atlas is a non-commercial project: it uses each source within the terms below."
+        )}
+      </p>
+    </div>
+  </.section>
+
+  <.section tight={:top}>
+    <div class="stack gap-3" id="data-sources">
       <h2 class="h2">{gettext("Sources")}</h2>
+      <p class="muted">{gettext("What each one provides, its terms and what is online")}</p>
+      <div class="grid grid-2">
+        <.card
+          :for={s <- @data_sources}
+          pad
+          class="stack gap-2 source-card"
+          id={"source-" <> s.id}
+        >
+          <h3 class="h2">
+            <a :if={s.url} href={s.url} rel="noopener">{s.name}</a>
+            <span :if={!s.url}>{s.name}</span>
+          </h3>
+          <p>{s.what}</p>
+          <dl class="source-facts">
+            <div>
+              <dt>{gettext("Terms")}</dt>
+              <dd>
+                <a :if={s.terms_url} href={s.terms_url} rel="noopener">{s.terms}</a>
+                <span :if={!s.terms_url}>{s.terms}</span>
+              </dd>
+            </div>
+            <div>
+              <dt>{gettext("Updated")}</dt>
+              <dd>{s.updated}</dd>
+            </div>
+            <div :if={s.online}>
+              <dt>{gettext("Online")}</dt>
+              <dd>{s.online}</dd>
+            </div>
+          </dl>
+        </.card>
+      </div>
+    </div>
+  </.section>
+
+  <.section tight={:top}>
+    <div class="prose stack gap-4">
+      <h2 class="h2">{gettext("What Syli Atlas computes")}</h2>
+      <p>
+        {gettext(
+          "These figures are calculations, not data from a source. The page says so where they appear, and names the series they come from."
+        )}
+      </p>
       <ul>
-        <li :for={s <- @sources}>
-          <a href={s.url} rel="noopener">{s.name}</a>
-          ·
-          <span class="muted">{if s.role == "primary",
-            do: gettext("primary source"),
-            else: gettext("supplement")}</span>
-          <span :if={s.status != "active"} class="pill">{gettext("planned")}</span>
+        <li>{gettext("Real GDP index, chained from the IMF growth rates.")}</li>
+        <li>{gettext("Totals and averages of the regions and of Africa.")}</li>
+        <li>
+          {gettext(
+            "UEMOA and CEMAC convergence criteria, checked against IMF figures. The IMF does not publish CEMAC's reference fiscal balance: that criterion is not computed."
+          )}
+        </li>
+        <li>
+          {gettext("The common rating scale (AAA = 22, default = 1) and the rating verdicts.")}
         </li>
       </ul>
-      <p :if={@edition}>{gettext("Edition online: %{label}.", label: @edition.label)}</p>
 
       <h2 class="h2">{gettext("Daily updates")}</h2>
       <p>
@@ -43,6 +97,11 @@
           )}
         </li>
         <li>{gettext("Public debt of a group is weighted by GDP in dollars.")}</li>
+        <li>
+          {gettext(
+            "The fiscal balance and the current account of a group are weighted by GDP in dollars. Groups have no unemployment rate: the IMF covers too few African countries."
+          )}
+        </li>
         <li>
           {gettext(
             "A country missing a value for a year is left out of the group for that year, and the page says so."
