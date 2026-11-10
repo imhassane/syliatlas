@@ -2,7 +2,7 @@ defmodule SyliAtlasWeb.RegionsController do
   @moduledoc "The five regions of the African Union side by side, with Africa and the world."
   use SyliAtlasWeb, :controller
 
-  alias SyliAtlas.Geo
+  alias SyliAtlas.Geo.Area
   alias SyliAtlasWeb.{PageComponents, Paths, PublicData, Seo}
 
   plug :put_layout, false
@@ -16,13 +16,10 @@ defmodule SyliAtlasWeb.RegionsController do
     indicator =
       if params["indicator"] in @indicators, do: params["indicator"], else: "gdp_usd_bn"
 
-    regions = Geo.list_regions()
+    data = PublicData.regions(locale, from, to)
+    regions = Enum.map(data["regions"], &region/1)
+    by_code = Map.new(regions, &{&1.code, &1})
     focus = Enum.find_value(regions, &(&1.code == params["focus"] && &1.code))
-
-    areas =
-      (Enum.map(regions, & &1.code) ++ ["africa", "WLD"])
-      |> Enum.map(&PublicData.area(&1, from, to))
-      |> Enum.reject(&is_nil/1)
 
     paths = %{"fr" => Paths.regions("fr"), "en" => Paths.regions("en")}
     kept = Map.take(params, ~w(indicator from to focus))
@@ -49,39 +46,31 @@ defmodule SyliAtlasWeb.RegionsController do
       focus: focus,
       kept: kept,
       regions: regions,
-      areas: areas,
-      map_countries: (PublicData.map(locale) || %{"countries" => []})["countries"],
-      carry: Enum.map(regions, &carry(&1, from, to, locale))
+      areas: data["areas"],
+      map_countries: (data["map"] || %{"countries" => []})["countries"],
+      carry: Enum.map(data["carry"], &carry(&1, by_code))
     )
   end
 
-  # Who carries a region: the largest economies' share of its GDP in `to`,
-  # and its fastest and slowest GDP growth in dollars over the period.
-  defp carry(region, from, to, locale) do
-    weights =
-      PublicData.ranking("gdp_usd_bn", from, to,
-        mode: "value",
-        region: region.code,
-        locale: locale
-      )
+  # The region's fields as stored in the snapshot, as the struct the template takes.
+  defp region(fields) do
+    %Area{
+      code: fields["code"],
+      kind: fields["kind"],
+      name_fr: fields["name_fr"],
+      name_en: fields["name_en"],
+      slug_fr: fields["slug_fr"],
+      slug_en: fields["slug_en"]
+    }
+  end
 
-    growth =
-      PublicData.ranking("gdp_usd_bn", from, to, region: region.code, locale: locale)
-      |> Enum.filter(&is_number(&1["value"]))
-
-    total = weights |> Enum.map(&(&1["value"] || 0)) |> Enum.sum()
-
+  defp carry(c, by_code) do
     %{
-      region: region,
-      count: length(weights),
-      heavy:
-        weights
-        |> Enum.take(3)
-        |> Enum.map(
-          &Map.put(&1, "share", if(total > 0, do: (&1["value"] || 0) / total * 100, else: 0))
-        ),
-      fastest: List.first(growth),
-      slowest: List.last(growth)
+      region: Map.fetch!(by_code, c["region"]),
+      count: c["count"],
+      heavy: c["heavy"],
+      fastest: c["fastest"],
+      slowest: c["slowest"]
     }
   end
 end
