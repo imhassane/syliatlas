@@ -26,23 +26,45 @@ defmodule SyliAtlas.Ratings do
       |> Jason.decode!()
       |> Map.fetch!("ratings")
 
-    Enum.each(rows, &put_rating!/1)
+    Enum.each(rows, &seed_rating!/1)
+    drop_stale!(rows)
     rebuild!()
     length(rows)
   end
+
+  # A bundled row whose date was corrected in the file leaves its old copy
+  # behind; remove the rows the file no longer lists, unless a person
+  # checked or approved them in the admin.
+  defp drop_stale!(rows) do
+    import Ecto.Query
+
+    keys = MapSet.new(rows, &{&1["country_code"], &1["agency"], &1["action_date"] || ""})
+
+    Repo.all(from r in Rating, where: is_nil(r.reviewed_at))
+    |> Enum.reject(&MapSet.member?(keys, {&1.country_code, &1.agency, &1.action_date}))
+    |> Enum.each(&Repo.delete!/1)
+  end
+
+  # A decision checked in the admin wins over the bundled file.
+  defp seed_rating!(attrs) do
+    case get_rating(attrs["country_code"], attrs["agency"], attrs["action_date"] || "") do
+      %Rating{reviewed_at: %DateTime{}} = rating ->
+        rating
+
+      existing ->
+        existing |> Kernel.||(%Rating{}) |> Rating.changeset(attrs) |> Repo.insert_or_update!()
+    end
+  end
+
+  defp get_rating(country_code, agency, action_date),
+    do: Repo.get_by(Rating, country_code: country_code, agency: agency, action_date: action_date)
 
   @doc "Inserts a decision, or updates the one of the same agency, country and date."
   def put_rating!(attrs) do
     attrs = Map.new(attrs, fn {k, v} -> {to_string(k), v} end)
 
-    existing =
-      Repo.get_by(Rating,
-        country_code: attrs["country_code"],
-        agency: attrs["agency"],
-        action_date: attrs["action_date"] || ""
-      )
-
-    (existing || %Rating{})
+    (get_rating(attrs["country_code"], attrs["agency"], attrs["action_date"] || "") ||
+       %Rating{})
     |> Rating.changeset(attrs)
     |> Repo.insert_or_update!()
   end
@@ -86,6 +108,17 @@ defmodule SyliAtlas.Ratings do
 
     :persistent_term.put(@doc_key, doc || :none)
     doc
+  end
+
+  @doc "Every decision recorded for a country, newest first."
+  def history(code) do
+    import Ecto.Query
+
+    Repo.all(
+      from r in Rating,
+        where: r.country_code == ^code,
+        order_by: [desc: r.action_date, asc: r.agency]
+    )
   end
 
   @doc "A country's entry in the document, or nil."

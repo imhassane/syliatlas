@@ -48,3 +48,14 @@ config :syli_atlas, SyliAtlas.Market.RawStore,
 config :syli_atlas, SyliAtlas.Market.Sources.Mansa,
   api_key: "test-key",
   req_options: [plug: {Req.Test, SyliAtlas.Market.Sources.Mansa}, retry: false]
+
+# Admin credentials and the ratings watch, stubbed (Req.Test).
+config :syli_atlas, :admin, username: "admin", password: "test-password"
+
+config :syli_atlas, SyliAtlas.Ratings.Extractor,
+  api_key: "test-key",
+  req_options: [plug: {Req.Test, SyliAtlas.Ratings.Extractor}, retry: false]
+
+config :syli_atlas, SyliAtlas.Ratings.Watch,
+  feeds: [{"test", "https://feeds.test/ratings.xml"}],
+  req_options: [plug: {Req.Test, SyliAtlas.Ratings.Watch}, retry: false]

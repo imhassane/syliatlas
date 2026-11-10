@@ -33,6 +33,26 @@ defmodule SyliAtlasWeb.RatingsPagesTest do
     assert html =~ ~s(id="rating-pill")
     assert html =~ ~s(id="notation")
     assert html =~ ~s(id="rating-verdict")
+    assert html =~ ~s(id="climat")
+    assert html =~ ~s(id="climate-wgi")
+    assert html =~ "Climat des affaires"
+  end
+
+  test "a country outside B-READY says so", %{conn: conn} do
+    html = conn |> get(SyliAtlasWeb.Paths.area("fr", "country", "kenya")) |> html_response(200)
+    assert html =~ ~s(id="climate-bready-none")
+  end
+
+  test "a country's ratings page: verdict, history and sources", %{conn: conn} do
+    html = conn |> get("/fr/notations/cote-d-ivoire") |> html_response(200)
+    assert html =~ ~s(id="rating-history-rows")
+    assert html =~ "<h1"
+    assert html =~ "BreadcrumbList"
+
+    assert build_conn() |> get("/en/credit-ratings/cote-d-ivoire") |> html_response(200) =~
+             "Decisions"
+
+    assert_error_sent 404, fn -> get(build_conn(), "/fr/notations/atlantide") end
   end
 
   test "the home page shows the ratings block", %{conn: conn} do

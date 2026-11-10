@@ -37,6 +37,23 @@ if config_env() != :test do
       )
 end
 
+# Admin (/admin): HTTP basic auth with the Railway variables ADMIN_USER and
+# ADMIN_PASSWORD. Without both, /admin answers 404.
+# Ratings watch: the AI extraction uses the Railway variable ANTHROPIC_API_KEY.
+# Without it, the watch still collects the news but proposes nothing.
+if config_env() != :test do
+  config :syli_atlas, :admin,
+    username: System.get_env("ADMIN_USER"),
+    password: System.get_env("ADMIN_PASSWORD")
+
+  config :syli_atlas, SyliAtlas.Ratings.Extractor,
+    api_key:
+      (case System.get_env("ANTHROPIC_API_KEY") do
+         v when v in [nil, ""] -> nil
+         v -> String.trim(v)
+       end)
+end
+
 # Raw payloads go to Cloudflare R2 when its four variables are set, else to
 # the disk next to the database (a Railway volume).
 if r2_bucket = System.get_env("R2_BUCKET") do

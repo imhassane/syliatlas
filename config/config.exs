@@ -43,7 +43,10 @@ config :syli_atlas, Oban,
        # a full import after the first, a catch-up of what is still behind
        # after the second (see MarketImportWorker).
        {"45 16 * * 1-5", SyliAtlas.Workers.MarketImportWorker},
-       {"15 20 * * 1-5", SyliAtlas.Workers.MarketImportWorker, args: %{"mode" => "catchup"}}
+       {"15 20 * * 1-5", SyliAtlas.Workers.MarketImportWorker, args: %{"mode" => "catchup"}},
+       # Ratings news watch: proposals for /admin/notations (agencies often
+       # publish on Friday evenings, so the Saturday run catches them).
+       {"20 7 * * *", SyliAtlas.Workers.RatingsWatchWorker}
      ]}
   ]
 

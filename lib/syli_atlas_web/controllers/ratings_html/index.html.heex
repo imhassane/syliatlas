@@ -102,9 +102,7 @@
             <tr :for={e <- @rows} id={"rating-#{e["code"]}"}>
               <td class="l mono subtle" data-label="#">{e["rank"] || "—"}</td>
               <th scope="row" class="l">
-                <a href={Paths.area(@locale, "country", e["slug"][@locale]) <> "#notation"}>{e[
-                  "name"
-                ][@locale]}</a>
+                <a href={Paths.rating(@locale, e["slug"][@locale])}>{e["name"][@locale]}</a>
               </th>
               <td :for={code <- ~w(sp moodys fitch)} class="l" data-label={agency_name(code)}>
                 <%= if a = agency(e, code) do %>

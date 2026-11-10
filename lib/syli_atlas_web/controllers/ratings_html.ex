@@ -24,5 +24,13 @@ defmodule SyliAtlasWeb.RatingsHTML do
   def width(nil), do: 0
   def width(average), do: Float.round(average / Scale.max() * 100, 1)
 
+  @doc "The site a source link points to, for its label."
+  def source_host(url) do
+    case URI.parse(url) do
+      %URI{host: host} when is_binary(host) -> String.replace_prefix(host, "www.", "")
+      _ -> url
+    end
+  end
+
   def threshold, do: Float.round(Scale.investment_grade() / Scale.max() * 100, 1)
 end

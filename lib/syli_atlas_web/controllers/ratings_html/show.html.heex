@@ -1,0 +1,66 @@
+<Layouts.public locale={@locale} current={:ratings} alternates={@alternates}>
+  <div class="wrap">
+    <nav aria-label={gettext("Breadcrumb")}>
+      <ol class="crumbs rt-crumbs">
+        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+        <li><a href={Paths.ratings(@locale)}>{gettext("Sovereign ratings")}</a></li>
+        <li aria-current="page">{@name}</li>
+      </ol>
+    </nav>
+  </div>
+
+  <.rating_section entry={@entry} name={@name} rated={@doc["rated"]} locale={@locale} page />
+
+  <.section :if={@history != []} id="rating-history" variant="alt">
+    <.section_head
+      eyebrow={gettext("History")}
+      title={gettext("Decisions of the agencies for %{name}", name: @name)}
+      size="h2"
+    />
+    <div class="card table-box">
+      <table class="table table-stack" id="rating-history-rows">
+        <caption class="vh">
+          {gettext("Decisions of the agencies for %{name}", name: @name)}
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col" class="l">{gettext("Date")}</th>
+            <th scope="col" class="l">{gettext("Agency")}</th>
+            <th scope="col" class="l">{gettext("Decision")}</th>
+            <th scope="col" class="l">{gettext("Rating")}</th>
+            <th scope="col" class="l">{gettext("Outlook")}</th>
+            <th scope="col" class="l">{gettext("Source")}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={r <- @history}>
+            <td class="l num" data-label={gettext("Date")}>
+              {date_text(r.action_date, @locale) || "—"}
+            </td>
+            <td class="l" data-label={gettext("Agency")}>{agency_name(r.agency)}</td>
+            <td class="l" data-label={gettext("Decision")}>{action_label(r.action_type)}</td>
+            <td class="l" data-label={gettext("Rating")}>
+              <b class="num">{Scale.display(r.rating)}</b><span
+                :if={r.needs_check}
+                title={gettext("To check")}
+              >*</span>
+            </td>
+            <td class="l" data-label={gettext("Outlook")}>{outlook_label(r.outlook)}</td>
+            <td class="l" data-label={gettext("Source")}>
+              <a :if={r.source_url} href={r.source_url} rel="nofollow noopener">
+                {source_host(r.source_url)} ↗
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </.section>
+
+  <.section :if={@faq != []} id="rating-faq">
+    <div class="stack gap-3">
+      <h2 class="h2">{gettext("Questions")}</h2>
+      <.faq items={@faq} />
+    </div>
+  </.section>
+</Layouts.public>
