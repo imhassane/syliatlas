@@ -134,3 +134,23 @@ main > section.section:first-of-type { padding-top: 40px; }
 @media (max-width: 39.99rem) {
   main > section.section:first-of-type { padding-top: 24px; }
 }
+
+/* Offline page (shown by the service worker for a page not saved yet). */
+.offline-grid { gap: 48px; }
+.offline-intro { max-width: 40rem; }
+.offline-actions { flex-wrap: wrap; }
+.offline-last { margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+.offline-saved { overflow: hidden; }
+.offline-saved-head { padding: 20px 20px 12px; }
+.offline-list { list-style: none; margin: 0; padding: 0; }
+.offline-list a { display: flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 20px; border-top: 1px solid var(--border-faint); color: var(--ink); text-decoration: none; }
+.offline-list a:hover { background: var(--muted); }
+.offline-list a span:first-of-type { flex: 1; }
+.offline-check { color: var(--success-ink); flex: none; }
+.offline-more { margin: 0; padding: 12px 20px; border-top: 1px solid var(--border-faint); }
+.offline-progress { display: grid; gap: 8px; padding: 16px 20px; border-top: 1px solid var(--border-faint); font-size: 13px; }
+.offline-progress p { margin: 0; font-size: 12px; }
+.offline-progress-line { display: flex; justify-content: space-between; gap: 12px; }
+.offline-bar { block-size: 6px; border-radius: 999px; background: var(--muted); overflow: hidden; }
+.offline-bar i { display: block; block-size: 100%; inline-size: 0; border-radius: inherit; background: var(--accent); }
+@media (max-width: 47.99rem) { .offline-actions .btn { flex: 1 1 100%; justify-content: center; } }

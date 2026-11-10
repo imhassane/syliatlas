@@ -18,6 +18,23 @@ defmodule SyliAtlasWeb.ApiControllerTest do
     assert %{"error" => _} = conn |> get(~p"/api/v1/areas/CIV?from=1990") |> json_response(400)
   end
 
+  test "pages to save for offline reading, in the asked language", %{conn: conn} do
+    %{"pages" => fr} = conn |> get(~p"/api/v1/offline-pages?locale=fr") |> json_response(200)
+    assert "/fr/regions" in fr and "/fr/classement" in fr
+    assert "/fr/pays/cote-d-ivoire" in fr and "/fr/regions/afrique" in fr
+    assert Enum.count(fr, &String.starts_with?(&1, "/fr/pays/")) == 54
+    assert fr == Enum.uniq(fr)
+
+    %{"pages" => en} =
+      build_conn() |> get(~p"/api/v1/offline-pages?locale=en") |> json_response(200)
+
+    assert "/en/countries/cote-d-ivoire" in en and Enum.all?(en, &String.starts_with?(&1, "/en/"))
+
+    # Every listed page exists.
+    for path <- Enum.take_random(fr, 6),
+        do: assert(build_conn() |> get(path) |> html_response(200))
+  end
+
   test "unknown area", %{conn: conn} do
     assert conn |> get(~p"/api/v1/areas/XXX") |> json_response(404)
   end

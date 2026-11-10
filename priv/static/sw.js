@@ -6,13 +6,20 @@
 //
 //   pages: network first (revalidated, a cheap 304), the cached copy when
 //          offline — the last version of every page read stays readable;
+//          a page never saved shows the offline page (/fr/hors-ligne);
 //   /assets, /images, fonts: cache first (asset names change with content);
 //   /api: network first, cached copy offline.
+//
+// Offline reading: each page lists the files it loaded ({type: "save-assets"}),
+// and once a page asks ({type: "save-pages", locale}), the
+// worker saves every country, region and main page of that language that
+// it does not hold yet (list from /api/v1/offline-pages), one at a time,
+// and stops at the first network failure.
 const VERSION = new URL(self.location).searchParams.get("v") || "dev"
 const PAGES = "pages-" + VERSION
 const STATIC = "static-" + VERSION
 const API = "api-v1"
-const OFFLINE_START = ["/fr", "/en"]
+const OFFLINE_START = ["/fr", "/en", "/fr/hors-ligne", "/en/offline"]
 
 self.addEventListener("install", event => {
   event.waitUntil(caches.open(PAGES).then(cache => cache.addAll(OFFLINE_START)).catch(() => {}))
@@ -26,9 +33,50 @@ self.addEventListener("activate", event => {
   })())
 })
 
+let saving = null
+
 self.addEventListener("message", event => {
   if (event.data === "skip-waiting") self.skipWaiting()
+  if (event.data?.type === "save-assets") event.waitUntil(saveAssets(event.data.assets))
+  if (event.data?.type === "save-pages" && !saving) {
+    saving = savePages(event.data.locale === "en" ? "en" : "fr").finally(() => { saving = null })
+    event.waitUntil(saving)
+  }
 })
+
+// The stylesheet, script and fonts of the first visit load before this
+// worker controls the page, so the page lists them and they are saved here:
+// without them, saved pages would show unstyled offline.
+async function saveAssets(urls) {
+  const cache = await caches.open(STATIC)
+  for (const url of urls || []) {
+    const {origin, pathname} = new URL(url, location.origin)
+    if (origin !== location.origin || !/^\/(assets|images|fonts)\//.test(pathname)) continue
+    if (await cache.match(url)) continue
+    try { const res = await fetch(url); if (res.ok) await cache.put(url, res) } catch (_) { return }
+  }
+}
+
+async function savePages(locale) {
+  const cache = await caches.open(PAGES)
+  let paths
+  try {
+    const res = await fetch(`/api/v1/offline-pages?locale=${locale}`)
+    if (!res.ok) return
+    paths = (await res.json()).pages
+  } catch (_) { return }
+  let saved = 0
+  for (const path of paths) {
+    if (await cache.match(path)) { saved++; continue }
+    try {
+      const res = await fetch(path, {credentials: "same-origin"})
+      if (res.ok) { await cache.put(path, res); saved++ }
+    } catch (_) { break }
+    // Leave room for what the visitor is doing.
+    await new Promise(resolve => setTimeout(resolve, 150))
+  }
+  for (const client of await self.clients.matchAll()) client.postMessage({type: "pages-saved", locale, saved, total: paths.length})
+}
 
 async function networkFirst(request, cacheName) {
   const cache = await caches.open(cacheName)
@@ -40,9 +88,11 @@ async function networkFirst(request, cacheName) {
     const cached = await cache.match(request, {ignoreVary: true})
     if (cached) return cached
     if (request.mode === "navigate") {
-      const lang = new URL(request.url).pathname.startsWith("/en") ? "/en" : "/fr"
-      const home = await cache.match(lang)
-      if (home) return home
+      // Not saved: the offline page, shown under the asked address (it says
+      // which page and lists the saved ones), else the home page.
+      const en = new URL(request.url).pathname.startsWith("/en")
+      const fallback = (await cache.match(en ? "/en/offline" : "/fr/hors-ligne")) || (await cache.match(en ? "/en" : "/fr"))
+      if (fallback) return fallback
     }
     throw error
   }
