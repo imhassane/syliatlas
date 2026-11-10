@@ -147,6 +147,13 @@
     locale={@locale}
   />
 
+  <SyliAtlasWeb.ClimateComponents.climate_section
+    :if={@climate}
+    entry={@climate}
+    name={@name}
+    doc={SyliAtlas.Climate.document()}
+  />
+
   <SyliAtlasWeb.MarketComponents.country_market
     :if={@market != []}
     exchanges={@market}

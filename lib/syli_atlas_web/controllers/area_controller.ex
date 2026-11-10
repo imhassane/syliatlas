@@ -48,9 +48,12 @@ defmodule SyliAtlasWeb.AreaController do
       ratings = if area.kind == "country", do: SyliAtlas.Ratings.document()
       rating = SyliAtlas.Ratings.for_country(ratings, area.code)
 
+      climate = area.kind == "country" && SyliAtlas.Climate.for_country(area.code)
+
       faq =
         faq(name, data, from, to, locale) ++
-          SyliAtlasWeb.RatingComponents.faq_items(name, rating, ratings)
+          SyliAtlasWeb.RatingComponents.faq_items(name, rating, ratings) ++
+          SyliAtlasWeb.ClimateComponents.faq_items(name, climate)
 
       members = if(area.kind == "country", do: [], else: members(profile, from, to, locale))
       kept = Map.take(params, ~w(from to peers members))
@@ -92,6 +95,7 @@ defmodule SyliAtlasWeb.AreaController do
         members_max: bar_max(members),
         market: market(area),
         rating: rating,
+        climate: climate,
         rated: (ratings && ratings["rated"]) || 0
       )
     end

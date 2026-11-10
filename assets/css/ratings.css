@@ -95,3 +95,10 @@ dd.rt-inv, dd.rt-spec, dd.rt-high, dd.rt-risk, dd.rt-def, b.rt-inv, b.rt-spec, b
 .adm-form input, .adm-form select { font: inherit; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; background: transparent; color: inherit; }
 .adm-wide { grid-column: 1 / -1; }
 .adm-actions { grid-column: 1 / -1; }
+
+/* Business climate block of a country profile. */
+.cl-row { display: flex; flex-direction: column; gap: 6px; }
+.cl-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.cl-track { flex: none; }
+.cl-above { background: var(--rt-inv); }
+.cl-below { background: var(--rt-high); }

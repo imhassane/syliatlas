@@ -33,6 +33,14 @@ defmodule SyliAtlasWeb.RatingsPagesTest do
     assert html =~ ~s(id="rating-pill")
     assert html =~ ~s(id="notation")
     assert html =~ ~s(id="rating-verdict")
+    assert html =~ ~s(id="climat")
+    assert html =~ ~s(id="climate-wgi")
+    assert html =~ "Climat des affaires"
+  end
+
+  test "a country outside B-READY says so", %{conn: conn} do
+    html = conn |> get(SyliAtlasWeb.Paths.area("fr", "country", "kenya")) |> html_response(200)
+    assert html =~ ~s(id="climate-bready-none")
   end
 
   test "a country's ratings page: verdict, history and sources", %{conn: conn} do
