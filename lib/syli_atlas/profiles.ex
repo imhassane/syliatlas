@@ -49,15 +49,34 @@ defmodule SyliAtlas.Profiles do
       SyliAtlas.Profiles.Queries.refresh_snapshots!()
     end)
 
+    refresh_data_version()
     map_size(docs)
   end
 
-  @doc "A short identifier of the data currently online, used by caches."
+  @version_key {__MODULE__, :data_version}
+
+  @doc """
+  A short identifier of the data currently online, used by caches (ETag,
+  the page version). Kept in memory: read once, then replaced by each
+  rebuild, so pages ask the database nothing for it.
+  """
   def data_version do
-    case Repo.query!("SELECT max(updated_at), count(*) FROM profiles").rows do
-      [[nil, _]] -> "empty"
-      [[updated_at, count]] -> "#{updated_at}-#{count}"
+    case :persistent_term.get(@version_key, nil) do
+      nil -> refresh_data_version()
+      version -> version
     end
+  end
+
+  @doc "Reads the data version from the database and keeps it in memory."
+  def refresh_data_version do
+    version =
+      case Repo.query!("SELECT max(updated_at), count(*) FROM profiles").rows do
+        [[nil, _]] -> "empty"
+        [[updated_at, count]] -> "#{updated_at}-#{count}"
+      end
+
+    :persistent_term.put(@version_key, version)
+    version
   end
 
   # "2026-10" is the October 2026 edition: projections start in 2026.

@@ -11,8 +11,8 @@ defmodule SyliAtlas.Workers.CheckSourcesWorker do
 
   @impl Oban.Worker
   def perform(_job) do
-    source = Sources.get_source!("imf_weo")
-    Sources.touch_source!(source)
+    source = Sources.get_source!("imf_weo") |> Sources.touch_source!()
+    SyliAtlas.Profiles.Queries.touch_checked_at!(source.last_checked_at)
 
     with {:ok, label} <- ImfClient.fetch_label(),
          {:ok, code} <- ImfParser.edition_code(label) do

@@ -13,15 +13,13 @@
         <.search_form locale={@locale} />
         <div class="row gap-1">
           <span class="subtle small">{gettext("Often viewed:")}</span>
-          <a :for={a <- @popular} class="chip" href={Paths.area(@locale, a)}>{SyliAtlas.Geo.Area.name(
-            a,
-            @locale
-          )}</a>
+          <a :for={a <- @popular} class="chip" href={Paths.area(@locale, "country", a["slug"])}>{a[
+            "name"
+          ]}</a>
         </div>
       </div>
       <.headline_window
         africa={@africa}
-        ssa={@ssa}
         world={@world}
         from={@from}
         to={@to}
@@ -33,11 +31,9 @@
   <div class="strip">
     <div class="wrap">
       <span class="pill pill-ok">{gettext("Up to date")}</span>
-      <span class="muted">{gettext("Source: IMF, %{label}", label: @edition && @edition.label)}</span>
-      <span :if={@source && @source.last_checked_at} class="src">
-        {gettext("Last check: %{date}",
-          date: Calendar.strftime(@source.last_checked_at, "%Y-%m-%d %H:%M UTC")
-        )}
+      <span class="muted">{gettext("Source: IMF, %{label}", label: @edition && @edition["label"])}</span>
+      <span :if={@last_checked_at} class="src">
+        {gettext("Last check: %{date}", date: checked_at(@last_checked_at))}
       </span>
       <a class="strip-link" href={Paths.method(@locale)}>{gettext("How we update")} →</a>
     </div>
@@ -123,7 +119,7 @@
     <.region_table regions={@regions} from={@from} to={@to} locale={@locale} />
     <p class="src">
       {gettext("IMF, %{label} · regional totals computed by Syli Atlas (African Union regions)",
-        label: @edition && @edition.label
+        label: @edition && @edition["label"]
       )}
     </p>
   </.section>

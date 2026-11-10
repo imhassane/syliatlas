@@ -25,6 +25,43 @@ defmodule SyliAtlasWeb.PublicPagesTest do
     assert build_conn() |> get("/sw.js?v=test") |> response(200) =~ "skip-waiting"
   end
 
+  test "the home page costs one SQL query: its snapshot", %{conn: conn} do
+    # The data version is kept in memory once read (here by the warm-up).
+    get(build_conn(), "/fr")
+    test_pid = self()
+    handler = "count-home-queries"
+
+    :telemetry.attach(
+      handler,
+      [:syli_atlas, :repo, :query],
+      fn _event, _measures, meta, _ -> send(test_pid, {:query, meta.query}) end,
+      nil
+    )
+
+    try do
+      assert conn |> get("/fr") |> html_response(200) =~ "Md$"
+      queries = collect_queries([])
+      assert [query] = queries, "expected one query, got:\n" <> Enum.join(queries, "\n")
+      assert query =~ "FROM snapshots"
+    after
+      :telemetry.detach(handler)
+    end
+  end
+
+  defp collect_queries(acc) do
+    receive do
+      {:query, q} -> collect_queries([q | acc])
+    after
+      0 -> Enum.reverse(acc)
+    end
+  end
+
+  test "the daily check updates the « last check » line of the home page", %{conn: conn} do
+    at = ~U[2026-11-10 06:00:00Z]
+    SyliAtlas.Profiles.Queries.touch_checked_at!(at)
+    assert conn |> get("/fr") |> html_response(200) =~ "2026-11-10 06:00 UTC"
+  end
+
   test "root redirects to a language", %{conn: conn} do
     assert redirected_to(get(conn, "/")) in ["/fr", "/en"]
   end

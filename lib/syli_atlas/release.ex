@@ -38,8 +38,9 @@ defmodule SyliAtlas.Release do
           IO.puts("IMF edition #{edition.code} online")
         end
 
-        # Snapshots added after the data was imported: build them once.
-        if SyliAtlas.Profiles.Queries.map_countries("fr") == nil do
+        # Snapshots missing, or of an older format than the code: rebuild them.
+        if SyliAtlas.Profiles.Queries.snapshot_format("home:fr") !=
+             SyliAtlas.Profiles.HomeSnapshot.format() do
           SyliAtlas.Profiles.Queries.refresh_snapshots!()
         end
       end)
