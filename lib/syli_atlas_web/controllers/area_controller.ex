@@ -83,10 +83,18 @@ defmodule SyliAtlasWeb.AreaController do
         answer: answer(name, data, from, to, locale),
         members: Pagination.paginate(members, params["members"]),
         members_href: &Pagination.href(paths[locale], kept, "members", &1, "members"),
-        members_max: bar_max(members)
+        members_max: bar_max(members),
+        market: market(area)
       )
     end
   end
+
+  # The exchange(s) serving a country, when the market pages are public.
+  defp market(%{kind: "country", code: code}) do
+    if SyliAtlas.Market.public?(), do: SyliAtlas.Market.for_country(code), else: []
+  end
+
+  defp market(_area), do: []
 
   # Rank of a country among African economies by GDP in dollars in `to`.
   defp gdp_rank(%{"profile" => %{"kind" => "country", "code" => code}}, to) do

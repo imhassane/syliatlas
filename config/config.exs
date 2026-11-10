@@ -31,15 +31,21 @@ config :phoenix_live_view,
 config :syli_atlas, Oban,
   engine: Oban.Engines.Lite,
   repo: SyliAtlas.Repo,
-  queues: [imports: 1, computations: 2, seo: 1, alerts: 2, moderation: 1],
+  queues: [imports: 1, computations: 2, seo: 1, alerts: 2, moderation: 1, market: 1],
   plugins: [
     {Oban.Plugins.Pruner, max_age: 60 * 60 * 24 * 30},
     {Oban.Plugins.Cron,
      crontab: [
        # Ask every source for a new edition each morning (UTC).
-       {"0 6 * * *", SyliAtlas.Workers.CheckSourcesWorker}
+       {"0 6 * * *", SyliAtlas.Workers.CheckSourcesWorker},
+       # Market closes, once every African exchange has closed (UTC, weekdays).
+       {"30 17 * * 1-5", SyliAtlas.Workers.MarketImportWorker}
      ]}
   ]
+
+# Market pages stay hidden while no source licence allows public display,
+# unless in preview (dev and test; MARKET_PREVIEW=true in production).
+config :syli_atlas, SyliAtlas.Market, preview: true
 
 # Configure the mailer
 #

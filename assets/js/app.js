@@ -34,6 +34,7 @@ import {initMap} from "./ui/map"
 import {initUpdates} from "./ui/updates"
 import {initInstall} from "./ui/install"
 import {initCountUp, initScrollReveal} from "./ui/motion"
+import {initMarketSearch} from "./ui/market"
 
 initTheme()
 initDrawer()
@@ -44,6 +45,7 @@ initUpdates()
 initInstall()
 initCountUp()
 initScrollReveal()
+initMarketSearch()
 
 // Public pages are cached and carry no session or CSRF token: LiveView only
 // connects on pages that have one (sign-in, discussions, admin).

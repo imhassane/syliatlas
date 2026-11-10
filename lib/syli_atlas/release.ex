@@ -32,6 +32,7 @@ defmodule SyliAtlas.Release do
       Ecto.Migrator.with_repo(SyliAtlas.Repo, fn _repo ->
         SyliAtlas.Geo.seed_areas!()
         SyliAtlas.Sources.seed_sources!()
+        SyliAtlas.Market.seed!()
 
         if SyliAtlas.Sources.published_edition("imf_weo") == nil do
           {:ok, _status, edition} = SyliAtlas.Imports.import_snapshot!()
@@ -44,6 +45,19 @@ defmodule SyliAtlas.Release do
              SyliAtlas.Profiles.Queries.snapshot_format("regions:fr") !=
                SyliAtlas.Profiles.RegionsSnapshot.format() do
           SyliAtlas.Profiles.Queries.refresh_snapshots!()
+        end
+
+        # Market documents of an older format than the code: rebuild them.
+        if SyliAtlas.Market.overview() == nil or
+             SyliAtlas.Market.overview()["format"] != SyliAtlas.Market.Snapshots.format() do
+          SyliAtlas.Market.Snapshots.rebuild!()
+        end
+
+        # First start with a market source configured: import now rather
+        # than wait for the evening run (the job waits in the database).
+        if SyliAtlas.Market.Sources.Mansa.configured?() and
+             SyliAtlas.Market.overview()["as_of"] == nil do
+          SyliAtlas.Workers.MarketImportWorker.new(%{}) |> SyliAtlas.Repo.insert!()
         end
       end)
 
