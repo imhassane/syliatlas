@@ -1,5 +1,5 @@
 // Syli Atlas: the script of every page. It holds the site's own behaviour
-// (map, drawer, filter sheets, toasts, updates, install, motion) and nothing
+// (map, drawer, filter sheets, toasts, updates, install, offline pages, motion) and nothing
 // heavy: the LiveView client lives in live.js, loaded only by LiveView pages
 // (see SyliAtlasWeb.LiveAssets), so public pages never download it.
 
@@ -14,6 +14,8 @@ import {initPeriodForms} from "./ui/period"
 import {initMap} from "./ui/map"
 import {initUpdates} from "./ui/updates"
 import {initInstall} from "./ui/install"
+import {initOfflinePages} from "./ui/offline"
+import {initOfflinePage} from "./ui/offline_page"
 import {initCountUp, initScrollReveal} from "./ui/motion"
 
 initTheme()
@@ -23,6 +25,8 @@ initPeriodForms()
 initMap()
 initUpdates()
 initInstall()
+initOfflinePages()
+initOfflinePage()
 initCountUp()
 initScrollReveal()
 

@@ -88,6 +88,11 @@ defmodule SyliAtlasWeb.Api.ApiController do
     })
   end
 
+  @doc "Paths of the pages to save for offline reading, in one language."
+  def offline_pages(conn, params) do
+    json(conn, %{pages: SyliAtlasWeb.OfflinePages.list(Params.locale(params))})
+  end
+
   def offline_pack(conn, _params), do: raw(conn, Queries.offline_pack())
 
   @doc "One area as CSV: one row per year, one column per indicator."

@@ -100,6 +100,23 @@ defmodule SyliAtlasWeb.PublicPagesTest do
     assert socket.assigns.live_js
   end
 
+  test "the offline page lists every page that can be saved, and is not indexed", %{conn: conn} do
+    html = conn |> get("/fr/hors-ligne") |> html_response(200)
+    assert html =~ "Cette page n&#39;est pas encore sur cet appareil."
+    assert html =~ ~s(name="robots" content="noindex")
+
+    [json] =
+      Regex.run(~r{id="offline-pages"[^>]*>(.*?)</script>}s, html, capture: :all_but_first)
+
+    %{"pages" => pages, "strings" => strings} = Jason.decode!(json)
+    assert Enum.count(pages, &(&1["kind"] == "country")) == 54
+    assert %{"name" => "Sénégal"} = Enum.find(pages, &(&1["path"] == "/fr/pays/senegal"))
+    assert strings["asked_area"] =~ "%{page}"
+
+    assert build_conn() |> get("/en/offline") |> html_response(200) =~
+             "This page is not on this device yet."
+  end
+
   test "root redirects to a language", %{conn: conn} do
     assert redirected_to(get(conn, "/")) in ["/fr", "/en"]
   end

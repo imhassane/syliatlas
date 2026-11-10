@@ -47,6 +47,7 @@ defmodule SyliAtlasWeb.Router do
 
     get "/", PageController, :home
     get "/methode", PageController, :method
+    get "/hors-ligne", PageController, :offline
     get "/classement", RankingController, :index
     get "/recherche", SearchController, :index
     get "/pays/:slug", AreaController, :show
@@ -61,6 +62,7 @@ defmodule SyliAtlasWeb.Router do
 
     get "/", PageController, :home
     get "/method", PageController, :method
+    get "/offline", PageController, :offline
     get "/ranking", RankingController, :index
     get "/search", SearchController, :index
     get "/countries/:slug", AreaController, :show
@@ -83,6 +85,7 @@ defmodule SyliAtlasWeb.Router do
     get "/ranking", ApiController, :ranking
     get "/search", ApiController, :search
     get "/offline-pack", ApiController, :offline_pack
+    get "/offline-pages", ApiController, :offline_pages
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

@@ -62,6 +62,26 @@ defmodule SyliAtlasWeb.PageController do
     end
   end
 
+  @doc """
+  What the service worker shows when a page is asked offline and is not
+  saved on the device (saved at install, under the asked address). Its
+  script fills in the asked page and the pages saved, from the cache.
+  """
+  def offline(conn, _params) do
+    locale = conn.assigns.locale
+    paths = %{"fr" => Paths.offline("fr"), "en" => Paths.offline("en")}
+
+    render(conn, :offline,
+      page_title: gettext("Offline"),
+      seo:
+        Seo.page(locale, paths, gettext("This page is not saved on this device yet."), %{
+          noindex: true
+        }),
+      alternates: Seo.alternates_for_header(paths),
+      entries: SyliAtlasWeb.OfflinePages.entries(locale)
+    )
+  end
+
   def method(conn, _params) do
     locale = conn.assigns.locale
     paths = %{"fr" => Paths.method("fr"), "en" => Paths.method("en")}

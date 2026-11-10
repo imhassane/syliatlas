@@ -18,6 +18,7 @@ defmodule SyliAtlasWeb.Paths do
   def ranking(locale), do: "/#{locale}/#{segment(locale, :ranking)}"
   def search(locale), do: "/#{locale}/#{segment(locale, :search)}"
   def method(locale), do: "/#{locale}/#{segment(locale, :method)}"
+  def offline(locale), do: "/#{locale}/#{segment(locale, :offline)}"
   def discussion(locale, area), do: area(locale, area) <> "/discussion"
   def login(locale), do: "/#{locale}/#{segment(locale, :login)}"
 
@@ -33,6 +34,8 @@ defmodule SyliAtlasWeb.Paths do
   def segment(_, :search), do: "recherche"
   def segment("en", :method), do: "method"
   def segment(_, :method), do: "methode"
+  def segment("en", :offline), do: "offline"
+  def segment(_, :offline), do: "hors-ligne"
   def segment("en", :login), do: "sign-in"
   def segment(_, :login), do: "connexion"
 end
