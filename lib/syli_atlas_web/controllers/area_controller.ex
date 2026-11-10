@@ -105,15 +105,32 @@ defmodule SyliAtlasWeb.AreaController do
         convergence:
           area.kind == "country" &&
             Convergence.check(area.code, profile["series"], to, Indicators.first_year()),
-        sections: sections(area, rating, climate, market(area))
+        world_bank: area.kind == "country" && SyliAtlas.WorldBank.for_country(area.code),
+        world_bank_doc: SyliAtlas.WorldBank.document(),
+        sections:
+          sections(
+            area,
+            rating,
+            climate,
+            market(area),
+            area.kind == "country" && SyliAtlas.WorldBank.for_country(area.code)
+          )
       )
     end
   end
 
   # Anchors of the section menu, in page order.
-  defp sections(area, rating, climate, market) do
+  defp sections(area, rating, climate, market, wb) do
+    latest = (wb && wb["latest"]) || %{}
+
     [{"economie", gettext("Economy")}, {"finances", gettext("Public finances")}] ++
       if(area.kind == "country", do: [{"monnaie", pgettext("section", "Currency")}], else: []) ++
+      if(wb, do: [{"dette", gettext("Debt")}, {"flux", gettext("Financial inflows")}], else: []) ++
+      if(wb, do: [{"emploi", gettext("Jobs")}], else: []) ++
+      if(Enum.any?(~w(poverty gini electricity internet accounts), &latest[&1]),
+        do: [{"conditions-de-vie", gettext("Living conditions")}],
+        else: []
+      ) ++
       if(rating, do: [{"notation", gettext("Rating")}], else: []) ++
       if(climate, do: [{"climat", gettext("Business climate")}], else: []) ++
       if(market != [], do: [{"market", gettext("Stock exchange")}], else: []) ++

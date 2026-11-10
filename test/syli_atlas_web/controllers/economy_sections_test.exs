@@ -55,4 +55,34 @@ defmodule SyliAtlasWeb.EconomySectionsTest do
     assert has?(doc, "#source-currencies")
     assert LazyHTML.text(doc) =~ "usage non commercial"
   end
+
+  test "World Bank sections on a country page, each with its source" do
+    doc = doc("/fr/pays/zambie")
+
+    for selector <- ~w(#dette #creditors #flux #flow-fdi #emploi #conditions-de-vie #living-table) do
+      assert has?(doc, selector), "missing #{selector}"
+    end
+
+    text = LazyHTML.text(doc)
+    assert text =~ "International Debt Statistics"
+    assert text =~ "OIT"
+    assert "#dette" in (doc |> LazyHTML.query("#section-nav a") |> LazyHTML.attribute("href"))
+  end
+
+  test "the debt page lists the 54 countries, filters by region and sorts" do
+    doc = doc("/fr/dette")
+    assert doc |> LazyHTML.query("#debt-rows tbody tr") |> Enum.count() == 54
+    assert LazyHTML.text(doc) =~ "Banque mondiale"
+
+    west = doc("/fr/dette?region=west_africa&sort=china")
+    assert west |> LazyHTML.query("#debt-rows tbody tr") |> Enum.count() == 15
+    assert has?(west, "#debt-CIV")
+    assert has?(doc("/en/debt"), "#debt-table")
+  end
+
+  test "the debt page is in the sitemap and the menu" do
+    xml = build_conn() |> get("/sitemap.xml") |> response(200)
+    assert xml =~ "/fr/dette"
+    assert has?(doc("/fr"), ~s(a[href="/fr/dette"]))
+  end
 end

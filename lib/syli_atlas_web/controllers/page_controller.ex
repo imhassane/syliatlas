@@ -101,6 +101,31 @@ defmodule SyliAtlasWeb.PageController do
     )
   end
 
+  defp world_bank_sources do
+    sources = SyliAtlas.WorldBank.document()["sources"]
+
+    for {id, what} <- [
+          {"ids", gettext("External debt by creditor, including China, and its service")},
+          {"wdi",
+           gettext(
+             "Investment, remittances and aid inflows, value added and jobs by sector (ILO estimates), poverty, electricity, internet, accounts"
+           )}
+        ],
+        s = sources[id] do
+      %{
+        id: "world_bank_" <> id,
+        name: s["name"],
+        url: s["url"],
+        what: what,
+        terms: gettext("Free reuse with attribution (CC BY 4.0)"),
+        terms_url: "https://www.worldbank.org/en/about/legal/terms-of-use-for-datasets",
+        updated:
+          if(id == "ids", do: gettext("Every December"), else: gettext("Several times a year")),
+        online: s["last_updated"]
+      }
+    end
+  end
+
   # The sources the pages actually show, with their terms and the date of
   # what is online. Planned sources are not listed until they are imported.
   defp data_sources(edition) do
@@ -133,6 +158,7 @@ defmodule SyliAtlasWeb.PageController do
         online: ratings && ratings["as_of"]
       }
     ] ++
+      world_bank_sources() ++
       if(market,
         do: [
           %{

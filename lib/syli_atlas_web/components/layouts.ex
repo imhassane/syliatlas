@@ -126,6 +126,7 @@ defmodule SyliAtlasWeb.Layouts do
       <a href={Paths.ratings(@locale)} aria-current={@current == :ratings && "page"}>{gettext(
         "Ratings"
       )}</a>
+      <a href={Paths.debt(@locale)} aria-current={@current == :debt && "page"}>{gettext("Debt")}</a>
       <a href={Paths.method(@locale)} aria-current={@current == :method && "page"}>{gettext("Method")}</a>
     </nav>
     """

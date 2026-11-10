@@ -25,6 +25,8 @@ defmodule SyliAtlasWeb.Paths do
   def ratings(locale), do: "/#{locale}/#{segment(locale, :ratings)}"
   def rating(locale, slug), do: ratings(locale) <> "/" <> slug
 
+  def debt(locale), do: "/#{locale}/#{segment(locale, :debt)}"
+
   def markets(locale), do: "/#{locale}/#{segment(locale, :markets)}"
   def etfs(locale), do: markets(locale) <> "/etf"
   def exchange(locale, code), do: markets(locale) <> "/" <> code
@@ -50,6 +52,8 @@ defmodule SyliAtlasWeb.Paths do
   def segment(_, :markets), do: "bourses"
   def segment("en", :ratings), do: "credit-ratings"
   def segment(_, :ratings), do: "notations"
+  def segment("en", :debt), do: "debt"
+  def segment(_, :debt), do: "dette"
   def segment("en", :login), do: "sign-in"
   def segment(_, :login), do: "connexion"
 end

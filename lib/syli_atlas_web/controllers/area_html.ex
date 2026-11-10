@@ -1,7 +1,7 @@
 defmodule SyliAtlasWeb.AreaHTML do
   use SyliAtlasWeb, :html
   alias SyliAtlas.Geo.Area
-  alias SyliAtlasWeb.{Charts, EconomyComponents, RatingComponents}
+  alias SyliAtlasWeb.{Charts, EconomyComponents, RatingComponents, WorldBankComponents}
 
   embed_templates "area_html/*"
 
