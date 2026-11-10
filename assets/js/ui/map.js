@@ -3,7 +3,6 @@
 // Without JavaScript each country links to its profile. Here a click shows
 // the country in the panel instead (a bottom sheet on phones), the
 // indicator switch recolours the map, and the arrows walk the ranking.
-import {countUp} from "./motion"
 
 const phone = matchMedia("(max-width: 39.99rem)")
 
@@ -50,7 +49,6 @@ export function initMap() {
   function select(code, {open = true} = {}) {
     const c = data.countries[code]
     if (!c) return
-    const previous = data.countries[selected]
     svg.querySelector(".cty.is-sel")?.classList.remove("is-sel")
     svg.querySelector(`.cty[data-code="${code}"]`)?.classList.add("is-sel")
     selected = code
@@ -72,12 +70,11 @@ export function initMap() {
     drawSpark(c.series)
     if (goto) goto.value = c.name
 
-    // Replay the entrance of the panel's content and the count-up.
+    // Replay the entrance of the panel's content (the figures appear at once).
     const body = panel.querySelector("[data-map-body]")
     body.classList.remove("is-entering")
     void body.offsetWidth
     body.classList.add("is-entering")
-    countUp(gdp, c.gdp, previous && previous.gdp != null ? previous.gdp : 0, {unit: data.unit, signed: false})
 
     if (open && phone.matches && panel.showPopover && !panel.matches(":popover-open")) panel.showPopover()
   }
