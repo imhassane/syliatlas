@@ -60,4 +60,57 @@ defmodule SyliAtlas.Market.QuotaTest do
 
     assert {:cancel, _} = perform_job(MarketImportWorker, %{})
   end
+
+  test "the evening catch-up only fetches the exchanges still behind" do
+    F.import!()
+    alias SyliAtlas.Market.{EodPrice, Reference, Security}
+    import Ecto.Query
+
+    # every exchange is now up to date but the BRVM
+    brvm = Reference.get_exchange("brvm")
+    others = from(s in Security, where: s.exchange_id != ^brvm.id, select: s.id)
+
+    Repo.update_all(from(p in EodPrice, where: p.security_id in subquery(others)),
+      set: [trade_date: Date.utc_today()]
+    )
+
+    mine = from(s in Security, where: s.exchange_id == ^brvm.id, select: s.id)
+    yesterday = Date.add(Date.utc_today(), -1)
+
+    Repo.update_all(from(p in EodPrice, where: p.security_id in subquery(mine)),
+      set: [trade_date: yesterday]
+    )
+
+    paths = :ets.new(:paths, [:bag, :public])
+
+    Req.Test.stub(SyliAtlas.Market.Sources.Mansa, fn conn ->
+      :ets.insert(paths, {conn.request_path})
+      F.mansa_plug(conn)
+    end)
+
+    before = Repo.aggregate(RawPayload, :count)
+    assert :ok = MarketImportWorker.run("mansa", SyliAtlas.Market.Sources.Mansa, "catchup")
+
+    assert :ets.tab2list(paths) == [{"/api/v1/markets/exchanges/ivory-coast/stocks"}]
+    assert Repo.aggregate(RawPayload, :count) == before + 1
+  end
+
+  test "the catch-up calls nothing when every exchange is up to date" do
+    F.import!()
+    Repo.update_all(SyliAtlas.Market.EodPrice, set: [trade_date: Date.utc_today()])
+    Req.Test.stub(SyliAtlas.Market.Sources.Mansa, fn _ -> flunk("no call expected") end)
+    assert :ok = MarketImportWorker.run("mansa", SyliAtlas.Market.Sources.Mansa, "catchup")
+  end
+
+  test "the two weekday passes are scheduled after Mansa's refreshes" do
+    crontab =
+      Application.get_env(:syli_atlas, Oban)[:plugins]
+      |> Enum.find_value(fn
+        {Oban.Plugins.Cron, opts} -> opts[:crontab]
+        _ -> nil
+      end)
+
+    assert {"45 16 * * 1-5", MarketImportWorker} in crontab
+    assert {"15 20 * * 1-5", MarketImportWorker, args: %{"mode" => "catchup"}} in crontab
+  end
 end

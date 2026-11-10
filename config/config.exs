@@ -39,7 +39,11 @@ config :syli_atlas, Oban,
        # Ask every source for a new edition each morning (UTC).
        {"0 6 * * *", SyliAtlas.Workers.CheckSourcesWorker},
        # Market closes, once every African exchange has closed (UTC, weekdays).
-       {"30 17 * * 1-5", SyliAtlas.Workers.MarketImportWorker}
+       # Mansa refreshes most exchanges at 16:30 UTC and the VFEX at 20:00:
+       # a full import after the first, a catch-up of what is still behind
+       # after the second (see MarketImportWorker).
+       {"45 16 * * 1-5", SyliAtlas.Workers.MarketImportWorker},
+       {"15 20 * * 1-5", SyliAtlas.Workers.MarketImportWorker, args: %{"mode" => "catchup"}}
      ]}
   ]
 
