@@ -100,6 +100,29 @@ defmodule SyliAtlas.Profiles.Queries do
     run(:map_countries, "SELECT json(doc) FROM snapshots WHERE key = ?1", ["map:" <> locale])
   end
 
+  @doc "The home page (`SyliAtlas.Profiles.HomeSnapshot`), in one row."
+  def home(locale) when locale in ["fr", "en"] do
+    run(:home, "SELECT json(doc) FROM snapshots WHERE key = ?1", ["home:" <> locale])
+  end
+
+  @doc "Format number of a stored snapshot, nil when it is missing."
+  def snapshot_format(key) do
+    case Repo.query!("SELECT json_extract(doc, '$.format') FROM snapshots WHERE key = ?1", [key]).rows do
+      [[format]] -> format
+      [] -> nil
+    end
+  end
+
+  @doc "Records the daily check in the home snapshots (the « last check » line)."
+  def touch_checked_at!(%DateTime{} = at) do
+    Repo.query!(
+      "UPDATE snapshots SET doc = jsonb_set(doc, '$.last_checked_at', ?1), updated_at = ?2 WHERE key LIKE 'home:%'",
+      [DateTime.to_iso8601(at), at |> DateTime.truncate(:second) |> DateTime.to_iso8601()]
+    )
+
+    :ok
+  end
+
   @doc "Rebuilds the snapshots from the profiles. Run inside the rebuild transaction."
   def refresh_snapshots! do
     {from, to} = SyliAtlas.Profiles.Builder.default_period()
@@ -116,7 +139,22 @@ defmodule SyliAtlas.Profiles.Queries do
       )
     end
 
+    # The home page reads the map just written, so it comes after it.
+    for locale <- ["fr", "en"] do
+      put_snapshot!("home:" <> locale, SyliAtlas.Profiles.HomeSnapshot.build(locale), now)
+    end
+
     :ok
+  end
+
+  defp put_snapshot!(key, doc, now) do
+    Repo.query!(
+      """
+      INSERT INTO snapshots (key, doc, inserted_at, updated_at) VALUES (?1, jsonb(?2), ?3, ?3)
+      ON CONFLICT(key) DO UPDATE SET doc = excluded.doc, updated_at = excluded.updated_at
+      """,
+      [key, Jason.encode!(doc), now]
+    )
   end
 
   # ?1 locale, ?2 reference year, ?3 arrival year.
