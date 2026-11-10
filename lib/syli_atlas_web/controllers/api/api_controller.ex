@@ -65,8 +65,16 @@ defmodule SyliAtlasWeb.Api.ApiController do
     end
   end
 
-  def search(conn, params),
-    do: raw(conn, Queries.search(params["q"] || "", Params.locale(params)))
+  @doc """
+  Site search: grouped results and, when the query names a country and a
+  theme (« dette sénégal »), the figure itself. Same engine as the search
+  page (`SyliAtlasWeb.Search`), used by the suggestions under the field.
+  """
+  def search(conn, params) do
+    locale = Params.locale(params)
+    Gettext.put_locale(SyliAtlasWeb.Gettext, locale)
+    json(conn, SyliAtlasWeb.Search.run(params["q"] || "", locale))
+  end
 
   def version(conn, _params) do
     edition = Sources.published_edition("imf_weo")

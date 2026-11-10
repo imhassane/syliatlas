@@ -186,15 +186,18 @@ defmodule SyliAtlasWeb.PublicPagesTest do
 
     # A country's region list opens on the page holding the country.
     peers =
-      build_conn() |> get("/fr/pays/nigeria") |> html_response(200) |> LazyHTML.from_document()
+      build_conn()
+      |> get("/fr/pays/nigeria/economie")
+      |> html_response(200)
+      |> LazyHTML.from_document()
 
     assert peers |> LazyHTML.query("#peers .is-current") |> LazyHTML.text() =~ "Nigeria"
   end
 
   test "French typography and translations", %{conn: conn} do
-    html = conn |> get("/fr/pays/cote-d-ivoire") |> html_response(200)
+    html = conn |> get("/fr/pays/cote-d-ivoire/economie") |> html_response(200)
     assert html =~ "Tous les indicateurs"
-    assert html =~ "\u202f?"
+    assert build_conn() |> get("/fr/pays/cote-d-ivoire") |> html_response(200) =~ "\u202f?"
   end
 
   test "home map: every country links to its profile, the panel shows GDP in dollars", %{

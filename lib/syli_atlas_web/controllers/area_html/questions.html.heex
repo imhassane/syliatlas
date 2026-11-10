@@ -1,0 +1,30 @@
+<.section id="questions" variant="alt">
+  <div class="grid grid-2">
+    <div class="stack gap-4">
+      <h2 class="h1">{gettext("Questions")}</h2>
+      <.faq items={@faq} />
+    </div>
+    <div class="stack gap-4">
+      <.card pad class="stack gap-2">
+        <p class="eyebrow">{gettext("Discussion")}</p>
+        <h2 class="h2">{gettext("A question, a correction, a source?")}</h2>
+        <p class="muted">
+          {gettext("Every profile has a moderated discussion. Sign in by email to take part.")}
+        </p>
+        <a class="btn btn-secondary" href={Paths.discussion(@locale, @area)} rel="nofollow">{gettext(
+          "Open the discussion"
+        )} →</a>
+      </.card>
+      <.card pad class="stack gap-2">
+        <p class="eyebrow">{gettext("Cite this page")}</p>
+        <p class="small mono cite">
+          {citation(
+            @name,
+            @profile["edition"],
+            SyliAtlasWeb.Seo.url(Paths.area(@locale, @area))
+          )}
+        </p>
+      </.card>
+    </div>
+  </div>
+</.section>

@@ -11,6 +11,8 @@ defmodule SyliAtlasWeb.PublicData do
 
   def compare(codes, from, to), do: codes |> Queries.compare(from, to) |> decode_list()
 
+  def series_for(codes), do: codes |> Queries.series_for() |> decode_list()
+
   def ranking(indicator, from, to, opts),
     do: indicator |> Queries.ranking(from, to, opts) |> decode_list()
 

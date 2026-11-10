@@ -5,6 +5,7 @@ defmodule SyliAtlasWeb.AreaHTML do
   alias SyliAtlasWeb.{
     Charts,
     EconomyComponents,
+    ProfileComponents,
     RatingComponents,
     TradeComponents,
     WorldBankComponents
@@ -20,6 +21,8 @@ defmodule SyliAtlasWeb.AreaHTML do
   attr :area, :map, required: true
   attr :region, :map, default: nil
   attr :name, :string, required: true
+  attr :title, :string, default: nil, doc: "the H1; the area's name by default"
+  attr :tab, :any, default: nil, doc: "label of the open tab, for the breadcrumb"
   attr :locale, :string, required: true
 
   def area_header(assigns) do
@@ -31,11 +34,16 @@ defmodule SyliAtlasWeb.AreaHTML do
           <li :if={@region}>
             <a href={Paths.area(@locale, @region)}>{Area.name(@region, @locale)}</a>
           </li>
-          <li aria-current="page">{@name}</li>
+          <%= if @tab do %>
+            <li><a href={Paths.area(@locale, @area)}>{@name}</a></li>
+            <li aria-current="page">{@tab}</li>
+          <% else %>
+            <li aria-current="page">{@name}</li>
+          <% end %>
         </ol>
       </nav>
       <p class="eyebrow">{kind_label(@area.kind)} · {@area.code}</p>
-      <h1 class="display area-title">{@name}</h1>
+      <h1 class={["display area-title", @tab && "area-title-tab"]}>{@title || @name}</h1>
     </div>
     """
   end

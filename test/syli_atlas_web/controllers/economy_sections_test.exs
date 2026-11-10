@@ -10,9 +10,9 @@ defmodule SyliAtlasWeb.EconomySectionsTest do
   defp has?(doc, selector), do: LazyHTML.query(doc, selector) |> Enum.count() > 0
 
   test "a UEMOA country: section menu, public finances with the criteria, currency" do
-    doc = doc("/fr/pays/cote-d-ivoire")
+    doc = doc("/fr/pays/cote-d-ivoire/finances-et-dette")
 
-    for selector <- ~w(#section-nav #economie #finances #balance-chart #convergence #monnaie) do
+    for selector <- ~w(#profile-tabs #finances #balance-chart #convergence #monnaie) do
       assert has?(doc, selector), "missing #{selector}"
     end
 
@@ -21,14 +21,23 @@ defmodule SyliAtlasWeb.EconomySectionsTest do
     assert text =~ "655,957"
     assert text =~ "Source : FMI"
 
-    anchors =
-      doc |> LazyHTML.query("#section-nav a") |> LazyHTML.attribute("href")
+    tabs = doc |> LazyHTML.query("#profile-tabs a") |> LazyHTML.attribute("href")
 
-    assert "#finances" in anchors and "#monnaie" in anchors and "#notation" in anchors
+    for path <-
+          ~w(/fr/pays/cote-d-ivoire /fr/pays/cote-d-ivoire/economie /fr/pays/cote-d-ivoire/commerce /fr/pays/cote-d-ivoire/marches) do
+      assert path in tabs, "missing tab #{path}"
+    end
+
+    current =
+      doc
+      |> LazyHTML.query(~s(#profile-tabs a[aria-current="page"]))
+      |> LazyHTML.attribute("href")
+
+    assert current == ["/fr/pays/cote-d-ivoire/finances-et-dette"]
   end
 
   test "a country outside the CFA unions shows its current account instead" do
-    doc = doc("/en/countries/nigeria")
+    doc = doc("/en/countries/nigeria/finances-and-debt")
     assert has?(doc, "#finances") and has?(doc, "#current-chart")
     refute has?(doc, "#convergence")
     assert LazyHTML.text(doc) =~ "no fixed peg"
@@ -57,16 +66,19 @@ defmodule SyliAtlasWeb.EconomySectionsTest do
   end
 
   test "World Bank sections on a country page, each with its source" do
-    doc = doc("/fr/pays/zambie")
+    finances = doc("/fr/pays/zambie/finances-et-dette")
+    society = doc("/fr/pays/zambie/societe")
 
-    for selector <- ~w(#dette #creditors #flux #flow-fdi #emploi #conditions-de-vie #living-table) do
-      assert has?(doc, selector), "missing #{selector}"
+    for selector <- ~w(#dette #creditors) do
+      assert has?(finances, selector), "missing #{selector}"
     end
 
-    text = LazyHTML.text(doc)
-    assert text =~ "International Debt Statistics"
-    assert text =~ "OIT"
-    assert "#dette" in (doc |> LazyHTML.query("#section-nav a") |> LazyHTML.attribute("href"))
+    for selector <- ~w(#flux #flow-fdi #emploi #conditions-de-vie #living-table) do
+      assert has?(society, selector), "missing #{selector}"
+    end
+
+    assert LazyHTML.text(finances) =~ "International Debt Statistics"
+    assert LazyHTML.text(society) =~ "OIT"
   end
 
   test "the debt page lists the 54 countries, filters by region and sorts" do
@@ -87,7 +99,7 @@ defmodule SyliAtlasWeb.EconomySectionsTest do
   end
 
   test "trade section, with BACI as source" do
-    doc = doc("/fr/pays/cote-d-ivoire")
+    doc = doc("/fr/pays/cote-d-ivoire/commerce")
     assert has?(doc, "#commerce") and has?(doc, "#top-exports") and has?(doc, "#top-clients")
     text = LazyHTML.text(doc)
     assert text =~ "Cacao"
@@ -96,10 +108,10 @@ defmodule SyliAtlasWeb.EconomySectionsTest do
   end
 
   test "IMF risk of debt distress: on the country page and the debt page" do
-    doc = doc("/fr/pays/ethiopie")
+    doc = doc("/fr/pays/ethiopie/finances-et-dette")
     assert has?(doc, "#debt-distress")
     assert LazyHTML.text(doc) =~ "En surendettement"
-    refute has?(doc("/fr/pays/nigeria"), "#debt-distress")
+    refute has?(doc("/fr/pays/nigeria/finances-et-dette"), "#debt-distress")
 
     page = doc("/fr/dette?sort=risk")
     first = page |> LazyHTML.query("#debt-rows tbody tr") |> Enum.at(0) |> LazyHTML.text()

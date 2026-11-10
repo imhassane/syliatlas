@@ -127,6 +127,16 @@ defmodule SyliAtlas.Profiles.Builder do
     end
   end
 
+  @doc """
+  Totals of a group of countries, by the same rules as regions (sums,
+  weighted averages), with its real GDP index. `members` are series maps
+  (`%{indicator => [value per year]}`).
+  """
+  def aggregate_series(members) do
+    series = aggregate(members)
+    Map.put(series, "real_gdp_index", volume_index(series["real_gdp_growth"]))
+  end
+
   defp aggregate(members) do
     n = length(Indicators.years())
 

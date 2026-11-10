@@ -63,7 +63,7 @@
           <tbody>
             <tr :for={r <- @rows} id={"debt-" <> r.code}>
               <th scope="row" class="l">
-                <a href={Paths.area(@locale, "country", r.slug) <> "#dette"}>{r.name}</a>
+                <a href={Paths.country_tab(@locale, r.slug, :finances) <> "#dette"}>{r.name}</a>
               </th>
               <td data-label={gettext("Public debt, % of GDP · %{year}", year: @year)}>
                 <b class={["num", (is_number(r.debt) and r.debt > 70) && "down"]}>{pct(

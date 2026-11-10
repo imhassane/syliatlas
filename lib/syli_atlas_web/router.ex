@@ -48,6 +48,7 @@ defmodule SyliAtlasWeb.Router do
     get "/health", HealthController, :show
     get "/sitemap.xml", SitemapController, :sitemap
     get "/robots.txt", SitemapController, :robots
+    get "/llms.txt", SitemapController, :llms
   end
 
   scope "/", SyliAtlasWeb do
@@ -64,12 +65,15 @@ defmodule SyliAtlasWeb.Router do
     get "/classement", RankingController, :index
     get "/recherche", SearchController, :index
     get "/pays/:slug", AreaController, :show
+    get "/pays/:slug/:tab", AreaController, :show
     get "/regions", RegionsController, :index
     get "/regions/:slug", AreaController, :show
     get "/comparer", CompareController, :show
     get "/comparer/*slugs", CompareController, :show
     get "/notations", RatingsController, :index
     get "/dette", DebtController, :index
+    get "/communautes", CommunityController, :index
+    get "/communautes/:slug", CommunityController, :show
     get "/notations/:slug", RatingsController, :show
     get "/bourses", MarketController, :index
     get "/bourses/etf", MarketController, :etfs
@@ -86,12 +90,15 @@ defmodule SyliAtlasWeb.Router do
     get "/ranking", RankingController, :index
     get "/search", SearchController, :index
     get "/countries/:slug", AreaController, :show
+    get "/countries/:slug/:tab", AreaController, :show
     get "/regions", RegionsController, :index
     get "/regions/:slug", AreaController, :show
     get "/compare", CompareController, :show
     get "/compare/*slugs", CompareController, :show
     get "/credit-ratings", RatingsController, :index
     get "/debt", DebtController, :index
+    get "/economic-communities", CommunityController, :index
+    get "/economic-communities/:slug", CommunityController, :show
     get "/credit-ratings/:slug", RatingsController, :show
     get "/stock-exchanges", MarketController, :index
     get "/stock-exchanges/etf", MarketController, :etfs
@@ -110,6 +117,7 @@ defmodule SyliAtlasWeb.Router do
     post "/notations/:id/approuver", RatingsController, :approve
     post "/notations/:id/rejeter", RatingsController, :reject
     post "/notations/verifier/:id", RatingsController, :check
+    get "/recherches", SearchMissesController, :index
   end
 
   scope "/api/v1", SyliAtlasWeb.Api do

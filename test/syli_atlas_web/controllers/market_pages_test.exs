@@ -138,25 +138,35 @@ defmodule SyliAtlasWeb.MarketPagesTest do
     assert html |> LazyHTML.query("#etf-goldx .market-flag") |> LazyHTML.text() =~ "or physique"
   end
 
+  test "the search finds exchanges and securities, by name or ticker", %{conn: _conn} do
+    SyliAtlasWeb.Search.Index.reset()
+    assert hd(SyliAtlasWeb.Search.run("BRVM", "fr")["results"])["path"] == "/fr/bourses/brvm"
+    hit = hd(SyliAtlasWeb.Search.run("ALPT", "fr")["results"])
+    assert hit["path"] == "/fr/bourses/brvm/alpt" and hit["type"] == "security"
+  end
+
   test "unknown exchange or security is a 404", %{conn: conn} do
     assert_error_sent 404, fn -> get(conn, "/fr/bourses/nowhere") end
     assert_error_sent 404, fn -> get(build_conn(), "/fr/bourses/brvm/nothing") end
   end
 
   test "a country page shows its exchange", %{conn: conn} do
-    html = doc(conn, "/fr/pays/cote-d-ivoire")
+    html = doc(conn, "/fr/pays/cote-d-ivoire/marches")
     block = LazyHTML.query(html, "#market")
     assert LazyHTML.text(block) =~ "BRVM"
     assert LazyHTML.text(block) =~ "bourse régionale"
-    nigeria = doc(build_conn(), "/en/countries/nigeria")
+    nigeria = doc(build_conn(), "/en/countries/nigeria/markets")
 
     assert LazyHTML.query(nigeria, ~s(#market a[href="/en/stock-exchanges/ngx"])) |> Enum.count() ==
              1
   end
 
   test "the menu links to the exchanges while they are public", %{conn: conn} do
+    SyliAtlasWeb.Search.Index.reset()
     html = doc(conn, "/fr")
     assert LazyHTML.query(html, ~s(#header-nav a[href="/fr/bourses"])) |> Enum.count() == 1
+    assert LazyHTML.query(html, ~s(.site-footer a[href="/fr/bourses/brvm"])) |> Enum.count() == 1
+    assert LazyHTML.text(LazyHTML.query(html, ".footer-credits")) =~ "Data by MansaAPI"
   end
 
   test "the figures carry the credit the licence asks for, linked to the source", %{
@@ -169,7 +179,7 @@ defmodule SyliAtlasWeb.MarketPagesTest do
       assert LazyHTML.text(links) =~ "Data by MansaAPI"
     end
 
-    country = doc(conn, "/fr/pays/cote-d-ivoire")
+    country = doc(conn, "/fr/pays/cote-d-ivoire/marches")
 
     assert LazyHTML.query(country, ~s(#market [data-credit] a[href="https://mansaapi.com"]))
            |> Enum.count() == 1

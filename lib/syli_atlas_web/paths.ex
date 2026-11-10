@@ -11,6 +11,42 @@ defmodule SyliAtlasWeb.Paths do
   def area(locale, "country", slug), do: "/#{locale}/#{segment(locale, :country)}/#{slug}"
   def area(locale, _kind, slug), do: "/#{locale}/regions/#{slug}"
 
+  @tabs [:overview, :economy, :finances, :trade, :society, :markets]
+
+  @doc "The tabs of a country profile, in page order."
+  def tabs, do: @tabs
+
+  @doc "A tab of a country profile; the overview is the profile's own URL."
+  def area_tab(locale, area, :overview), do: area(locale, area)
+  def area_tab(locale, area, tab), do: area(locale, area) <> "/" <> tab_segment(locale, tab)
+
+  @doc "A tab of a country profile from its slug."
+  def country_tab(locale, slug, :overview), do: area(locale, "country", slug)
+
+  def country_tab(locale, slug, tab),
+    do: area(locale, "country", slug) <> "/" <> tab_segment(locale, tab)
+
+  def tab_segment("en", :economy), do: "economy"
+  def tab_segment(_, :economy), do: "economie"
+  def tab_segment("en", :finances), do: "finances-and-debt"
+  def tab_segment(_, :finances), do: "finances-et-dette"
+  def tab_segment("en", :trade), do: "trade"
+  def tab_segment(_, :trade), do: "commerce"
+  def tab_segment("en", :society), do: "society"
+  def tab_segment(_, :society), do: "societe"
+  def tab_segment("en", :markets), do: "markets"
+  def tab_segment(_, :markets), do: "marches"
+
+  @doc "The tab named by a URL segment, in either language, or nil."
+  def tab_from_segment(segment) do
+    Enum.find(@tabs -- [:overview], fn tab ->
+      segment in [tab_segment("fr", tab), tab_segment("en", tab)]
+    end)
+  end
+
+  def communities(locale), do: "/#{locale}/#{segment(locale, :communities)}"
+  def community(locale, slug), do: communities(locale) <> "/" <> slug
+
   def compare(locale, slugs),
     do: "/#{locale}/#{segment(locale, :compare)}/" <> Enum.join(slugs, "/")
 
@@ -52,6 +88,8 @@ defmodule SyliAtlasWeb.Paths do
   def segment(_, :markets), do: "bourses"
   def segment("en", :ratings), do: "credit-ratings"
   def segment(_, :ratings), do: "notations"
+  def segment("en", :communities), do: "economic-communities"
+  def segment(_, :communities), do: "communautes"
   def segment("en", :debt), do: "debt"
   def segment(_, :debt), do: "dette"
   def segment("en", :login), do: "sign-in"
