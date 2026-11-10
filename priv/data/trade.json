@@ -1,0 +1,5826 @@
+{
+ "source": {
+  "name": "CEPII, BACI",
+  "url": "https://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=37",
+  "license": "Licence Ouverte Etalab 2.0",
+  "version": "202601",
+  "nomenclature": "HS22"
+ },
+ "year": 2024,
+ "chapters": {
+  "01": {
+   "fr": "Animaux vivants",
+   "en": "Live animals"
+  },
+  "02": {
+   "fr": "Viandes",
+   "en": "Meat"
+  },
+  "03": {
+   "fr": "Poissons et fruits de mer",
+   "en": "Fish and seafood"
+  },
+  "04": {
+   "fr": "Produits laitiers, œufs, miel",
+   "en": "Dairy, eggs, honey"
+  },
+  "05": {
+   "fr": "Autres produits d'origine animale",
+   "en": "Other animal products"
+  },
+  "06": {
+   "fr": "Plantes et fleurs coupées",
+   "en": "Plants and cut flowers"
+  },
+  "07": {
+   "fr": "Légumes",
+   "en": "Vegetables"
+  },
+  "08": {
+   "fr": "Fruits et noix (dont cajou)",
+   "en": "Fruit and nuts (incl. cashews)"
+  },
+  "09": {
+   "fr": "Café, thé, épices",
+   "en": "Coffee, tea, spices"
+  },
+  "10": {
+   "fr": "Céréales",
+   "en": "Cereals"
+  },
+  "11": {
+   "fr": "Farines et malt",
+   "en": "Flour and malt"
+  },
+  "12": {
+   "fr": "Graines oléagineuses",
+   "en": "Oil seeds"
+  },
+  "13": {
+   "fr": "Gommes et résines",
+   "en": "Gums and resins"
+  },
+  "14": {
+   "fr": "Matières à tresser",
+   "en": "Plaiting materials"
+  },
+  "15": {
+   "fr": "Huiles et graisses (dont palme)",
+   "en": "Fats and oils (incl. palm)"
+  },
+  "16": {
+   "fr": "Préparations de viande et de poisson",
+   "en": "Meat and fish preparations"
+  },
+  "17": {
+   "fr": "Sucres",
+   "en": "Sugar"
+  },
+  "18": {
+   "fr": "Cacao et ses préparations",
+   "en": "Cocoa and cocoa products"
+  },
+  "19": {
+   "fr": "Préparations à base de céréales",
+   "en": "Cereal preparations"
+  },
+  "20": {
+   "fr": "Préparations de légumes et de fruits",
+   "en": "Vegetable and fruit preparations"
+  },
+  "21": {
+   "fr": "Préparations alimentaires diverses",
+   "en": "Other food preparations"
+  },
+  "22": {
+   "fr": "Boissons",
+   "en": "Beverages"
+  },
+  "23": {
+   "fr": "Résidus alimentaires, aliments pour animaux",
+   "en": "Food residues, animal feed"
+  },
+  "24": {
+   "fr": "Tabac",
+   "en": "Tobacco"
+  },
+  "25": {
+   "fr": "Sel, soufre, ciment, pierres",
+   "en": "Salt, sulphur, cement, stone"
+  },
+  "26": {
+   "fr": "Minerais (fer, cuivre, cobalt, manganèse…)",
+   "en": "Ores (iron, copper, cobalt, manganese…)"
+  },
+  "27": {
+   "fr": "Pétrole, gaz, charbon",
+   "en": "Oil, gas, coal"
+  },
+  "28": {
+   "fr": "Produits chimiques inorganiques",
+   "en": "Inorganic chemicals"
+  },
+  "29": {
+   "fr": "Produits chimiques organiques",
+   "en": "Organic chemicals"
+  },
+  "30": {
+   "fr": "Produits pharmaceutiques",
+   "en": "Pharmaceuticals"
+  },
+  "31": {
+   "fr": "Engrais",
+   "en": "Fertilisers"
+  },
+  "32": {
+   "fr": "Teintures et peintures",
+   "en": "Dyes and paints"
+  },
+  "33": {
+   "fr": "Huiles essentielles, cosmétiques",
+   "en": "Essential oils, cosmetics"
+  },
+  "34": {
+   "fr": "Savons et détergents",
+   "en": "Soaps and detergents"
+  },
+  "35": {
+   "fr": "Matières albuminoïdes, colles",
+   "en": "Albuminoids, glues"
+  },
+  "36": {
+   "fr": "Explosifs",
+   "en": "Explosives"
+  },
+  "37": {
+   "fr": "Produits photographiques",
+   "en": "Photographic goods"
+  },
+  "38": {
+   "fr": "Produits chimiques divers",
+   "en": "Other chemicals"
+  },
+  "39": {
+   "fr": "Plastiques",
+   "en": "Plastics"
+  },
+  "40": {
+   "fr": "Caoutchouc",
+   "en": "Rubber"
+  },
+  "41": {
+   "fr": "Peaux et cuirs",
+   "en": "Hides and skins"
+  },
+  "42": {
+   "fr": "Articles en cuir",
+   "en": "Leather goods"
+  },
+  "43": {
+   "fr": "Pelleteries",
+   "en": "Furskins"
+  },
+  "44": {
+   "fr": "Bois",
+   "en": "Wood"
+  },
+  "45": {
+   "fr": "Liège",
+   "en": "Cork"
+  },
+  "46": {
+   "fr": "Vannerie",
+   "en": "Basketwork"
+  },
+  "47": {
+   "fr": "Pâtes à papier",
+   "en": "Wood pulp"
+  },
+  "48": {
+   "fr": "Papiers et cartons",
+   "en": "Paper and paperboard"
+  },
+  "49": {
+   "fr": "Produits de l'édition",
+   "en": "Printed matter"
+  },
+  "50": {
+   "fr": "Soie",
+   "en": "Silk"
+  },
+  "51": {
+   "fr": "Laine",
+   "en": "Wool"
+  },
+  "52": {
+   "fr": "Coton",
+   "en": "Cotton"
+  },
+  "53": {
+   "fr": "Autres fibres végétales",
+   "en": "Other vegetable fibres"
+  },
+  "54": {
+   "fr": "Filaments synthétiques",
+   "en": "Man-made filaments"
+  },
+  "55": {
+   "fr": "Fibres synthétiques",
+   "en": "Man-made staple fibres"
+  },
+  "56": {
+   "fr": "Ouates, ficelles, cordages",
+   "en": "Wadding, twine, ropes"
+  },
+  "57": {
+   "fr": "Tapis",
+   "en": "Carpets"
+  },
+  "58": {
+   "fr": "Tissus spéciaux",
+   "en": "Special fabrics"
+  },
+  "59": {
+   "fr": "Tissus techniques",
+   "en": "Technical fabrics"
+  },
+  "60": {
+   "fr": "Étoffes de bonneterie",
+   "en": "Knitted fabrics"
+  },
+  "61": {
+   "fr": "Vêtements en maille",
+   "en": "Knitted clothing"
+  },
+  "62": {
+   "fr": "Vêtements, autres qu'en maille",
+   "en": "Woven clothing"
+  },
+  "63": {
+   "fr": "Autres articles textiles",
+   "en": "Other textile articles"
+  },
+  "64": {
+   "fr": "Chaussures",
+   "en": "Footwear"
+  },
+  "65": {
+   "fr": "Coiffures",
+   "en": "Headgear"
+  },
+  "66": {
+   "fr": "Parapluies, cannes",
+   "en": "Umbrellas, sticks"
+  },
+  "67": {
+   "fr": "Plumes, fleurs artificielles",
+   "en": "Feathers, artificial flowers"
+  },
+  "68": {
+   "fr": "Ouvrages en pierre, ciment",
+   "en": "Stone and cement articles"
+  },
+  "69": {
+   "fr": "Céramique",
+   "en": "Ceramics"
+  },
+  "70": {
+   "fr": "Verre",
+   "en": "Glass"
+  },
+  "71": {
+   "fr": "Or, diamants et métaux précieux",
+   "en": "Gold, diamonds and precious metals"
+  },
+  "72": {
+   "fr": "Fonte, fer et acier",
+   "en": "Iron and steel"
+  },
+  "73": {
+   "fr": "Ouvrages en fer ou acier",
+   "en": "Iron and steel articles"
+  },
+  "74": {
+   "fr": "Cuivre",
+   "en": "Copper"
+  },
+  "75": {
+   "fr": "Nickel",
+   "en": "Nickel"
+  },
+  "76": {
+   "fr": "Aluminium",
+   "en": "Aluminium"
+  },
+  "78": {
+   "fr": "Plomb",
+   "en": "Lead"
+  },
+  "79": {
+   "fr": "Zinc",
+   "en": "Zinc"
+  },
+  "80": {
+   "fr": "Étain",
+   "en": "Tin"
+  },
+  "81": {
+   "fr": "Autres métaux (cobalt, titane…)",
+   "en": "Other base metals (cobalt, titanium…)"
+  },
+  "82": {
+   "fr": "Outils",
+   "en": "Tools"
+  },
+  "83": {
+   "fr": "Ouvrages divers en métaux",
+   "en": "Misc. metal articles"
+  },
+  "84": {
+   "fr": "Machines",
+   "en": "Machinery"
+  },
+  "85": {
+   "fr": "Machines et appareils électriques",
+   "en": "Electrical equipment"
+  },
+  "86": {
+   "fr": "Matériel ferroviaire",
+   "en": "Railway equipment"
+  },
+  "87": {
+   "fr": "Véhicules",
+   "en": "Vehicles"
+  },
+  "88": {
+   "fr": "Aéronefs",
+   "en": "Aircraft"
+  },
+  "89": {
+   "fr": "Navires",
+   "en": "Ships"
+  },
+  "90": {
+   "fr": "Instruments d'optique et de mesure",
+   "en": "Optical and measuring instruments"
+  },
+  "91": {
+   "fr": "Horlogerie",
+   "en": "Clocks and watches"
+  },
+  "92": {
+   "fr": "Instruments de musique",
+   "en": "Musical instruments"
+  },
+  "93": {
+   "fr": "Armes et munitions",
+   "en": "Arms and ammunition"
+  },
+  "94": {
+   "fr": "Meubles",
+   "en": "Furniture"
+  },
+  "95": {
+   "fr": "Jouets et articles de sport",
+   "en": "Toys and sports goods"
+  },
+  "96": {
+   "fr": "Ouvrages divers",
+   "en": "Misc. manufactured articles"
+  },
+  "97": {
+   "fr": "Objets d'art",
+   "en": "Works of art"
+  },
+  "99": {
+   "fr": "Non classé",
+   "en": "Not classified"
+  }
+ },
+ "partners": {
+  "CHN": {
+   "fr": "Chine",
+   "en": "China"
+  },
+  "IND": {
+   "fr": "Inde",
+   "en": "India"
+  },
+  "ESP": {
+   "fr": "Espagne",
+   "en": "Spain"
+  },
+  "USA": {
+   "fr": "États-Unis",
+   "en": "United States"
+  },
+  "FRA": {
+   "fr": "France",
+   "en": "France"
+  },
+  "PRT": {
+   "fr": "Portugal",
+   "en": "Portugal"
+  },
+  "GBR": {
+   "fr": "Royaume-Uni",
+   "en": "United Kingdom"
+  },
+  "FIN": {
+   "fr": "Finlande",
+   "en": "Finland"
+  },
+  "BEL": {
+   "fr": "Belgique",
+   "en": "Belgium"
+  },
+  "SWE": {
+   "fr": "Suède",
+   "en": "Sweden"
+  },
+  "UGA": {
+   "fr": "Ouganda",
+   "en": "Uganda"
+  },
+  "TZA": {
+   "fr": "Tanzanie",
+   "en": "Tanzania"
+  },
+  "KEN": {
+   "fr": "Kenya",
+   "en": "Kenya"
+  },
+  "BGD": {
+   "fr": "Bangladesh",
+   "en": "Bangladesh"
+  },
+  "PAK": {
+   "fr": "Pakistan",
+   "en": "Pakistan"
+  },
+  "MAR": {
+   "fr": "Maroc",
+   "en": "Morocco"
+  },
+  "CHE": {
+   "fr": "Suisse",
+   "en": "Switzerland"
+  },
+  "ARE": {
+   "fr": "Émirats arabes unis",
+   "en": "United Arab Emirates"
+  },
+  "CIV": {
+   "fr": "Côte d'Ivoire",
+   "en": "Côte d'Ivoire"
+  },
+  "RUS": {
+   "fr": "Russie",
+   "en": "Russia"
+  },
+  "GHA": {
+   "fr": "Ghana",
+   "en": "Ghana"
+  },
+  "ZAF": {
+   "fr": "Afrique du Sud",
+   "en": "South Africa"
+  },
+  "NAM": {
+   "fr": "Namibie",
+   "en": "Namibia"
+  },
+  "CAN": {
+   "fr": "Canada",
+   "en": "Canada"
+  },
+  "TUN": {
+   "fr": "Tunisie",
+   "en": "Tunisia"
+  },
+  "LKA": {
+   "fr": "Sri Lanka",
+   "en": "Sri Lanka"
+  },
+  "EGY": {
+   "fr": "Égypte",
+   "en": "Egypt"
+  },
+  "CMR": {
+   "fr": "Cameroun",
+   "en": "Cameroon"
+  },
+  "JPN": {
+   "fr": "Japon",
+   "en": "Japan"
+  },
+  "NLD": {
+   "fr": "Pays-Bas",
+   "en": "Netherlands"
+  },
+  "MLI": {
+   "fr": "Mali",
+   "en": "Mali"
+  },
+  "NGA": {
+   "fr": "Nigeria",
+   "en": "Nigeria"
+  },
+  "MYS": {
+   "fr": "Malaisie",
+   "en": "Malaysia"
+  },
+  "DEU": {
+   "fr": "Allemagne",
+   "en": "Germany"
+  },
+  "BRA": {
+   "fr": "Brésil",
+   "en": "Brazil"
+  },
+  "KOR": {
+   "fr": "Corée du Sud",
+   "en": "South Korea"
+  },
+  "SAU": {
+   "fr": "Arabie saoudite",
+   "en": "Saudi Arabia"
+  },
+  "ZMB": {
+   "fr": "Zambie",
+   "en": "Zambia"
+  },
+  "THA": {
+   "fr": "Thaïlande",
+   "en": "Thailand"
+  },
+  "SGP": {
+   "fr": "Singapour",
+   "en": "Singapore"
+  },
+  "AGO": {
+   "fr": "Angola",
+   "en": "Angola"
+  },
+  "GRC": {
+   "fr": "Grèce",
+   "en": "Greece"
+  },
+  "TUR": {
+   "fr": "Turquie",
+   "en": "Türkiye"
+  },
+  "ITA": {
+   "fr": "Italie",
+   "en": "Italy"
+  },
+  "ISR": {
+   "fr": "Israël",
+   "en": "Israel"
+  },
+  "SVK": {
+   "fr": "Slovaquie",
+   "en": "Slovakia"
+  },
+  "IDN": {
+   "fr": "Indonésie",
+   "en": "Indonesia"
+  },
+  "IRL": {
+   "fr": "Irlande",
+   "en": "Ireland"
+  },
+  "SEN": {
+   "fr": "Sénégal",
+   "en": "Senegal"
+  },
+  "DNK": {
+   "fr": "Danemark",
+   "en": "Denmark"
+  },
+  "S19": {
+   "fr": "Other Asia, nes",
+   "en": "Other Asia, nes"
+  },
+  "OMN": {
+   "fr": "Oman",
+   "en": "Oman"
+  },
+  "AUS": {
+   "fr": "Australie",
+   "en": "Australia"
+  },
+  "AUT": {
+   "fr": "Autriche",
+   "en": "Austria"
+  },
+  "ZWE": {
+   "fr": "Zimbabwe",
+   "en": "Zimbabwe"
+  },
+  "MDG": {
+   "fr": "Madagascar",
+   "en": "Madagascar"
+  },
+  "BWA": {
+   "fr": "Botswana",
+   "en": "Botswana"
+  },
+  "TGO": {
+   "fr": "Togo",
+   "en": "Togo"
+  },
+  "TCD": {
+   "fr": "Tchad",
+   "en": "Chad"
+  },
+  "POL": {
+   "fr": "Pologne",
+   "en": "Poland"
+  },
+  "QAT": {
+   "fr": "Qatar",
+   "en": "Qatar"
+  },
+  "BHR": {
+   "fr": "Bahreïn",
+   "en": "Bahrain"
+  },
+  "MOZ": {
+   "fr": "Mozambique",
+   "en": "Mozambique"
+  },
+  "MUS": {
+   "fr": "Maurice",
+   "en": "Mauritius"
+  },
+  "CYP": {
+   "fr": "Chypre",
+   "en": "Cyprus"
+  },
+  "NER": {
+   "fr": "Niger",
+   "en": "Niger"
+  },
+  "BEN": {
+   "fr": "Bénin",
+   "en": "Benin"
+  },
+  "BFA": {
+   "fr": "Burkina Faso",
+   "en": "Burkina Faso"
+  },
+  "HKG": {
+   "fr": "Hong Kong",
+   "en": "Hong Kong"
+  },
+  "DZA": {
+   "fr": "Algérie",
+   "en": "Algeria"
+  },
+  "SSD": {
+   "fr": "Soudan du Sud",
+   "en": "South Sudan"
+  },
+  "COD": {
+   "fr": "RD Congo",
+   "en": "DR Congo"
+  },
+  "BHS": {
+   "fr": "Bahamas",
+   "en": "Bahamas"
+  }
+ },
+ "countries": {
+  "AGO": {
+   "exports_usd": 42285090254,
+   "imports_usd": 14536768346,
+   "exports_by_year": {
+    "2022": 51579174943,
+    "2023": 39982915851,
+    "2024": 42285090254
+   },
+   "top_exports": [
+    {
+     "chapter": "27",
+     "value": 35219418388,
+     "share": 83.3
+    },
+    {
+     "chapter": "71",
+     "value": 3367938023,
+     "share": 8.0
+    },
+    {
+     "chapter": "89",
+     "value": 2714342739,
+     "share": 6.4
+    },
+    {
+     "chapter": "84",
+     "value": 206684327,
+     "share": 0.5
+    },
+    {
+     "chapter": "72",
+     "value": 89945651,
+     "share": 0.2
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHN",
+     "value": 16035662083,
+     "share": 37.9
+    },
+    {
+     "code": "IND",
+     "value": 5994459436,
+     "share": 14.2
+    },
+    {
+     "code": "ESP",
+     "value": 2731556887,
+     "share": 6.5
+    },
+    {
+     "code": "USA",
+     "value": 2705258387,
+     "share": 6.4
+    },
+    {
+     "code": "FRA",
+     "value": 1751523580,
+     "share": 4.1
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 2522676075,
+     "share": 17.4
+    },
+    {
+     "code": "PRT",
+     "value": 1314468619,
+     "share": 9.0
+    },
+    {
+     "code": "IND",
+     "value": 811008720,
+     "share": 5.6
+    },
+    {
+     "code": "USA",
+     "value": 782527496,
+     "share": 5.4
+    },
+    {
+     "code": "GBR",
+     "value": 763539862,
+     "share": 5.3
+    }
+   ],
+   "africa_share_exports": 4.8,
+   "africa_share_imports": 7.5,
+   "first_chapter_share": 83.3,
+   "top5_share": 98.4,
+   "hhi": 0.704
+  },
+  "BDI": {
+   "exports_usd": 68168783,
+   "imports_usd": 483961976,
+   "exports_by_year": {
+    "2022": 206598113,
+    "2023": 362679178,
+    "2024": 68168783
+   },
+   "top_exports": [
+    {
+     "chapter": "09",
+     "value": 37775427,
+     "share": 55.4
+    },
+    {
+     "chapter": "26",
+     "value": 20618261,
+     "share": 30.2
+    },
+    {
+     "chapter": "10",
+     "value": 1197669,
+     "share": 1.8
+    },
+    {
+     "chapter": "74",
+     "value": 950609,
+     "share": 1.4
+    },
+    {
+     "chapter": "84",
+     "value": 776202,
+     "share": 1.1
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHN",
+     "value": 22899981,
+     "share": 33.6
+    },
+    {
+     "code": "FIN",
+     "value": 5333450,
+     "share": 7.8
+    },
+    {
+     "code": "BEL",
+     "value": 4567082,
+     "share": 6.7
+    },
+    {
+     "code": "USA",
+     "value": 3781252,
+     "share": 5.5
+    },
+    {
+     "code": "SWE",
+     "value": 3035876,
+     "share": 4.5
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 89727873,
+     "share": 18.5
+    },
+    {
+     "code": "UGA",
+     "value": 72497273,
+     "share": 15.0
+    },
+    {
+     "code": "TZA",
+     "value": 61497159,
+     "share": 12.7
+    },
+    {
+     "code": "KEN",
+     "value": 56213614,
+     "share": 11.6
+    },
+    {
+     "code": "BEL",
+     "value": 35855739,
+     "share": 7.4
+    }
+   ],
+   "africa_share_exports": 7.8,
+   "africa_share_imports": 46.2,
+   "first_chapter_share": 55.4,
+   "top5_share": 89.9,
+   "hhi": 0.4
+  },
+  "BEN": {
+   "exports_usd": 1471280794,
+   "imports_usd": 4599661597,
+   "exports_by_year": {
+    "2022": 1880799475,
+    "2023": 1834838616,
+    "2024": 1471280794
+   },
+   "top_exports": [
+    {
+     "chapter": "52",
+     "value": 532565522,
+     "share": 36.2
+    },
+    {
+     "chapter": "12",
+     "value": 403339676,
+     "share": 27.4
+    },
+    {
+     "chapter": "23",
+     "value": 117314411,
+     "share": 8.0
+    },
+    {
+     "chapter": "08",
+     "value": 96021130,
+     "share": 6.5
+    },
+    {
+     "chapter": "15",
+     "value": 45590318,
+     "share": 3.1
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "BGD",
+     "value": 480809890,
+     "share": 32.7
+    },
+    {
+     "code": "IND",
+     "value": 190817879,
+     "share": 13.0
+    },
+    {
+     "code": "CHN",
+     "value": 181025125,
+     "share": 12.3
+    },
+    {
+     "code": "PAK",
+     "value": 148786372,
+     "share": 10.1
+    },
+    {
+     "code": "USA",
+     "value": 70895967,
+     "share": 4.8
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "IND",
+     "value": 860643496,
+     "share": 18.7
+    },
+    {
+     "code": "CHN",
+     "value": 659983390,
+     "share": 14.3
+    },
+    {
+     "code": "FRA",
+     "value": 337160595,
+     "share": 7.3
+    },
+    {
+     "code": "USA",
+     "value": 282244205,
+     "share": 6.1
+    },
+    {
+     "code": "MAR",
+     "value": 239320919,
+     "share": 5.2
+    }
+   ],
+   "africa_share_exports": 12.5,
+   "africa_share_imports": 20.5,
+   "first_chapter_share": 36.2,
+   "top5_share": 81.2,
+   "hhi": 0.221
+  },
+  "BFA": {
+   "exports_usd": 9459680149,
+   "imports_usd": 6277811923,
+   "exports_by_year": {
+    "2022": 8389325564,
+    "2023": 8231975034,
+    "2024": 9459680149
+   },
+   "top_exports": [
+    {
+     "chapter": "71",
+     "value": 8265799377,
+     "share": 87.4
+    },
+    {
+     "chapter": "52",
+     "value": 354540722,
+     "share": 3.7
+    },
+    {
+     "chapter": "08",
+     "value": 227706713,
+     "share": 2.4
+    },
+    {
+     "chapter": "12",
+     "value": 177942789,
+     "share": 1.9
+    },
+    {
+     "chapter": "25",
+     "value": 71671515,
+     "share": 0.8
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHE",
+     "value": 6331516847,
+     "share": 66.9
+    },
+    {
+     "code": "ARE",
+     "value": 1477296572,
+     "share": 15.6
+    },
+    {
+     "code": "UGA",
+     "value": 432617988,
+     "share": 4.6
+    },
+    {
+     "code": "IND",
+     "value": 177024728,
+     "share": 1.9
+    },
+    {
+     "code": "CIV",
+     "value": 168798997,
+     "share": 1.8
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 1013555507,
+     "share": 16.1
+    },
+    {
+     "code": "CIV",
+     "value": 833594411,
+     "share": 13.3
+    },
+    {
+     "code": "RUS",
+     "value": 751381598,
+     "share": 12.0
+    },
+    {
+     "code": "GHA",
+     "value": 573330479,
+     "share": 9.1
+    },
+    {
+     "code": "FRA",
+     "value": 330545737,
+     "share": 5.3
+    }
+   ],
+   "africa_share_exports": 11.0,
+   "africa_share_imports": 32.5,
+   "first_chapter_share": 87.4,
+   "top5_share": 96.2,
+   "hhi": 0.766
+  },
+  "BWA": {
+   "exports_usd": 4174071578,
+   "imports_usd": 6462216117,
+   "exports_by_year": {
+    "2022": 8196997459,
+    "2023": 6531404411,
+    "2024": 4174071578
+   },
+   "top_exports": [
+    {
+     "chapter": "71",
+     "value": 2752960177,
+     "share": 66.0
+    },
+    {
+     "chapter": "26",
+     "value": 821820405,
+     "share": 19.7
+    },
+    {
+     "chapter": "85",
+     "value": 163098494,
+     "share": 3.9
+    },
+    {
+     "chapter": "28",
+     "value": 81469738,
+     "share": 2.0
+    },
+    {
+     "chapter": "02",
+     "value": 44935259,
+     "share": 1.1
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "IND",
+     "value": 1183311539,
+     "share": 28.3
+    },
+    {
+     "code": "CHN",
+     "value": 768616090,
+     "share": 18.4
+    },
+    {
+     "code": "BEL",
+     "value": 725114451,
+     "share": 17.4
+    },
+    {
+     "code": "ZAF",
+     "value": 486561615,
+     "share": 11.7
+    },
+    {
+     "code": "USA",
+     "value": 413685363,
+     "share": 9.9
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "ZAF",
+     "value": 4330411555,
+     "share": 67.0
+    },
+    {
+     "code": "NAM",
+     "value": 972650095,
+     "share": 15.1
+    },
+    {
+     "code": "CHN",
+     "value": 239077663,
+     "share": 3.7
+    },
+    {
+     "code": "CAN",
+     "value": 192164384,
+     "share": 3.0
+    },
+    {
+     "code": "IND",
+     "value": 158738470,
+     "share": 2.5
+    }
+   ],
+   "africa_share_exports": 14.6,
+   "africa_share_imports": 85.4,
+   "first_chapter_share": 66.0,
+   "top5_share": 92.7,
+   "hhi": 0.476
+  },
+  "CAF": {
+   "exports_usd": 245289956,
+   "imports_usd": 826854552,
+   "exports_by_year": {
+    "2022": 171095059,
+    "2023": 207500571,
+    "2024": 245289956
+   },
+   "top_exports": [
+    {
+     "chapter": "88",
+     "value": 115179112,
+     "share": 47.0
+    },
+    {
+     "chapter": "44",
+     "value": 52803854,
+     "share": 21.5
+    },
+    {
+     "chapter": "71",
+     "value": 21717504,
+     "share": 8.9
+    },
+    {
+     "chapter": "83",
+     "value": 20537192,
+     "share": 8.4
+    },
+    {
+     "chapter": "87",
+     "value": 14216610,
+     "share": 5.8
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "PAK",
+     "value": 62727667,
+     "share": 25.6
+    },
+    {
+     "code": "TUN",
+     "value": 40146366,
+     "share": 16.4
+    },
+    {
+     "code": "CHN",
+     "value": 33068089,
+     "share": 13.5
+    },
+    {
+     "code": "LKA",
+     "value": 28053276,
+     "share": 11.4
+    },
+    {
+     "code": "EGY",
+     "value": 11779351,
+     "share": 4.8
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CMR",
+     "value": 205912806,
+     "share": 24.9
+    },
+    {
+     "code": "CHN",
+     "value": 174227033,
+     "share": 21.1
+    },
+    {
+     "code": "FRA",
+     "value": 56126148,
+     "share": 6.8
+    },
+    {
+     "code": "USA",
+     "value": 48446240,
+     "share": 5.9
+    },
+    {
+     "code": "JPN",
+     "value": 32878524,
+     "share": 4.0
+    }
+   ],
+   "africa_share_exports": 24.1,
+   "africa_share_imports": 35.8,
+   "first_chapter_share": 47.0,
+   "top5_share": 91.6,
+   "hhi": 0.287
+  },
+  "CIV": {
+   "exports_usd": 26046254420,
+   "imports_usd": 18563443290,
+   "exports_by_year": {
+    "2022": 14025705216,
+    "2023": 22029916843,
+    "2024": 26046254420
+   },
+   "top_exports": [
+    {
+     "chapter": "18",
+     "value": 9112512572,
+     "share": 35.0
+    },
+    {
+     "chapter": "71",
+     "value": 5862554857,
+     "share": 22.5
+    },
+    {
+     "chapter": "27",
+     "value": 3380308921,
+     "share": 13.0
+    },
+    {
+     "chapter": "40",
+     "value": 2722516206,
+     "share": 10.5
+    },
+    {
+     "chapter": "08",
+     "value": 1721121254,
+     "share": 6.6
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHE",
+     "value": 5504336341,
+     "share": 21.1
+    },
+    {
+     "code": "NLD",
+     "value": 2738954091,
+     "share": 10.5
+    },
+    {
+     "code": "MLI",
+     "value": 1669188129,
+     "share": 6.4
+    },
+    {
+     "code": "FRA",
+     "value": 1312651278,
+     "share": 5.0
+    },
+    {
+     "code": "USA",
+     "value": 1204598640,
+     "share": 4.6
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 3291202031,
+     "share": 17.7
+    },
+    {
+     "code": "NGA",
+     "value": 2342138537,
+     "share": 12.6
+    },
+    {
+     "code": "FRA",
+     "value": 1301426532,
+     "share": 7.0
+    },
+    {
+     "code": "BEL",
+     "value": 884912011,
+     "share": 4.8
+    },
+    {
+     "code": "IND",
+     "value": 879599204,
+     "share": 4.7
+    }
+   ],
+   "africa_share_exports": 18.8,
+   "africa_share_imports": 23.2,
+   "first_chapter_share": 35.0,
+   "top5_share": 87.6,
+   "hhi": 0.206
+  },
+  "CMR": {
+   "exports_usd": 6916336107,
+   "imports_usd": 8230007371,
+   "exports_by_year": {
+    "2022": 6913979799,
+    "2023": 6735469454,
+    "2024": 6916336107
+   },
+   "top_exports": [
+    {
+     "chapter": "27",
+     "value": 3529747158,
+     "share": 51.0
+    },
+    {
+     "chapter": "18",
+     "value": 1909617174,
+     "share": 27.6
+    },
+    {
+     "chapter": "44",
+     "value": 599287140,
+     "share": 8.7
+    },
+    {
+     "chapter": "71",
+     "value": 248912754,
+     "share": 3.6
+    },
+    {
+     "chapter": "08",
+     "value": 180903186,
+     "share": 2.6
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "NLD",
+     "value": 1402866347,
+     "share": 20.3
+    },
+    {
+     "code": "CHN",
+     "value": 1070439315,
+     "share": 15.5
+    },
+    {
+     "code": "MYS",
+     "value": 747142854,
+     "share": 10.8
+    },
+    {
+     "code": "FRA",
+     "value": 531655482,
+     "share": 7.7
+    },
+    {
+     "code": "DEU",
+     "value": 497257207,
+     "share": 7.2
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 3642971901,
+     "share": 44.3
+    },
+    {
+     "code": "FRA",
+     "value": 583795587,
+     "share": 7.1
+    },
+    {
+     "code": "IND",
+     "value": 532578472,
+     "share": 6.5
+    },
+    {
+     "code": "BEL",
+     "value": 414347578,
+     "share": 5.0
+    },
+    {
+     "code": "BRA",
+     "value": 278386661,
+     "share": 3.4
+    }
+   ],
+   "africa_share_exports": 7.3,
+   "africa_share_imports": 7.0,
+   "first_chapter_share": 51.0,
+   "top5_share": 93.5,
+   "hhi": 0.347
+  },
+  "COD": {
+   "exports_usd": 29599508708,
+   "imports_usd": 11520867171,
+   "exports_by_year": {
+    "2022": 24695933444,
+    "2023": 21510124685,
+    "2024": 29599508708
+   },
+   "top_exports": [
+    {
+     "chapter": "74",
+     "value": 20679175351,
+     "share": 69.9
+    },
+    {
+     "chapter": "26",
+     "value": 3862971457,
+     "share": 13.1
+    },
+    {
+     "chapter": "81",
+     "value": 3050697136,
+     "share": 10.3
+    },
+    {
+     "chapter": "27",
+     "value": 628216903,
+     "share": 2.1
+    },
+    {
+     "chapter": "71",
+     "value": 528020190,
+     "share": 1.8
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHN",
+     "value": 21593151117,
+     "share": 73.0
+    },
+    {
+     "code": "KOR",
+     "value": 965972774,
+     "share": 3.3
+    },
+    {
+     "code": "IND",
+     "value": 863945372,
+     "share": 2.9
+    },
+    {
+     "code": "SAU",
+     "value": 861078855,
+     "share": 2.9
+    },
+    {
+     "code": "ESP",
+     "value": 734087239,
+     "share": 2.5
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 4334804555,
+     "share": 37.6
+    },
+    {
+     "code": "ZAF",
+     "value": 1360028383,
+     "share": 11.8
+    },
+    {
+     "code": "ZMB",
+     "value": 1201413653,
+     "share": 10.4
+    },
+    {
+     "code": "IND",
+     "value": 543692884,
+     "share": 4.7
+    },
+    {
+     "code": "UGA",
+     "value": 478332049,
+     "share": 4.2
+    }
+   ],
+   "africa_share_exports": 4.6,
+   "africa_share_imports": 36.2,
+   "first_chapter_share": 69.9,
+   "top5_share": 97.2,
+   "hhi": 0.517
+  },
+  "COG": {
+   "exports_usd": 8512232385,
+   "imports_usd": 4393168473,
+   "exports_by_year": {
+    "2022": 13494040434,
+    "2023": 13217349926,
+    "2024": 8512232385
+   },
+   "top_exports": [
+    {
+     "chapter": "27",
+     "value": 5899774102,
+     "share": 69.3
+    },
+    {
+     "chapter": "74",
+     "value": 1879898854,
+     "share": 22.1
+    },
+    {
+     "chapter": "44",
+     "value": 290206012,
+     "share": 3.4
+    },
+    {
+     "chapter": "26",
+     "value": 184939808,
+     "share": 2.2
+    },
+    {
+     "chapter": "18",
+     "value": 90498445,
+     "share": 1.1
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHN",
+     "value": 4209953745,
+     "share": 49.5
+    },
+    {
+     "code": "IND",
+     "value": 596719379,
+     "share": 7.0
+    },
+    {
+     "code": "THA",
+     "value": 527850464,
+     "share": 6.2
+    },
+    {
+     "code": "SGP",
+     "value": 472844824,
+     "share": 5.6
+    },
+    {
+     "code": "SAU",
+     "value": 403670027,
+     "share": 4.7
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 1654058569,
+     "share": 37.7
+    },
+    {
+     "code": "FRA",
+     "value": 390572618,
+     "share": 8.9
+    },
+    {
+     "code": "USA",
+     "value": 227786154,
+     "share": 5.2
+    },
+    {
+     "code": "AGO",
+     "value": 216144968,
+     "share": 4.9
+    },
+    {
+     "code": "IND",
+     "value": 169183191,
+     "share": 3.9
+    }
+   ],
+   "africa_share_exports": 1.1,
+   "africa_share_imports": 12.2,
+   "first_chapter_share": 69.3,
+   "top5_share": 98.1,
+   "hhi": 0.531
+  },
+  "COM": {
+   "exports_usd": 49868368,
+   "imports_usd": 352663102,
+   "exports_by_year": {
+    "2022": 84262902,
+    "2023": 106276002,
+    "2024": 49868368
+   },
+   "top_exports": [
+    {
+     "chapter": "09",
+     "value": 23991258,
+     "share": 48.1
+    },
+    {
+     "chapter": "89",
+     "value": 12853704,
+     "share": 25.8
+    },
+    {
+     "chapter": "33",
+     "value": 7061560,
+     "share": 14.2
+    },
+    {
+     "chapter": "72",
+     "value": 1674010,
+     "share": 3.4
+    },
+    {
+     "chapter": "85",
+     "value": 1360189,
+     "share": 2.7
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "IND",
+     "value": 15939852,
+     "share": 32.0
+    },
+    {
+     "code": "GRC",
+     "value": 7340571,
+     "share": 14.7
+    },
+    {
+     "code": "FRA",
+     "value": 4994204,
+     "share": 10.0
+    },
+    {
+     "code": "PAK",
+     "value": 3977470,
+     "share": 8.0
+    },
+    {
+     "code": "TUR",
+     "value": 2303424,
+     "share": 4.6
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 96572382,
+     "share": 27.4
+    },
+    {
+     "code": "IND",
+     "value": 34271514,
+     "share": 9.7
+    },
+    {
+     "code": "FRA",
+     "value": 31749947,
+     "share": 9.0
+    },
+    {
+     "code": "TZA",
+     "value": 31155117,
+     "share": 8.8
+    },
+    {
+     "code": "PAK",
+     "value": 26108599,
+     "share": 7.4
+    }
+   ],
+   "africa_share_exports": 2.2,
+   "africa_share_imports": 15.8,
+   "first_chapter_share": 48.1,
+   "top5_share": 94.2,
+   "hhi": 0.32
+  },
+  "CPV": {
+   "exports_usd": 86460243,
+   "imports_usd": 997253053,
+   "exports_by_year": {
+    "2022": 95141400,
+    "2023": 100798287,
+    "2024": 86460243
+   },
+   "top_exports": [
+    {
+     "chapter": "16",
+     "value": 58545090,
+     "share": 67.7
+    },
+    {
+     "chapter": "61",
+     "value": 3780520,
+     "share": 4.4
+    },
+    {
+     "chapter": "72",
+     "value": 3242679,
+     "share": 3.8
+    },
+    {
+     "chapter": "64",
+     "value": 2759421,
+     "share": 3.2
+    },
+    {
+     "chapter": "95",
+     "value": 2675967,
+     "share": 3.1
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "ESP",
+     "value": 48802209,
+     "share": 56.4
+    },
+    {
+     "code": "ITA",
+     "value": 11026024,
+     "share": 12.8
+    },
+    {
+     "code": "PRT",
+     "value": 10995158,
+     "share": 12.7
+    },
+    {
+     "code": "IND",
+     "value": 5306088,
+     "share": 6.1
+    },
+    {
+     "code": "USA",
+     "value": 4354308,
+     "share": 5.0
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "PRT",
+     "value": 410606541,
+     "share": 41.2
+    },
+    {
+     "code": "CHN",
+     "value": 112478971,
+     "share": 11.3
+    },
+    {
+     "code": "NLD",
+     "value": 91291432,
+     "share": 9.2
+    },
+    {
+     "code": "ESP",
+     "value": 83686304,
+     "share": 8.4
+    },
+    {
+     "code": "ITA",
+     "value": 69556857,
+     "share": 7.0
+    }
+   ],
+   "africa_share_exports": 2.0,
+   "africa_share_imports": 2.1,
+   "first_chapter_share": 67.7,
+   "top5_share": 82.2,
+   "hhi": 0.467
+  },
+  "DJI": {
+   "exports_usd": 192703509,
+   "imports_usd": 6903459756,
+   "exports_by_year": {
+    "2022": 588153224,
+    "2023": 527814117,
+    "2024": 192703509
+   },
+   "top_exports": [
+    {
+     "chapter": "01",
+     "value": 103756223,
+     "share": 53.8
+    },
+    {
+     "chapter": "28",
+     "value": 32959657,
+     "share": 17.1
+    },
+    {
+     "chapter": "09",
+     "value": 11530213,
+     "share": 6.0
+    },
+    {
+     "chapter": "12",
+     "value": 8864329,
+     "share": 4.6
+    },
+    {
+     "chapter": "74",
+     "value": 7481216,
+     "share": 3.9
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "SAU",
+     "value": 100432454,
+     "share": 52.1
+    },
+    {
+     "code": "CHN",
+     "value": 20551289,
+     "share": 10.7
+    },
+    {
+     "code": "EGY",
+     "value": 13798208,
+     "share": 7.2
+    },
+    {
+     "code": "ISR",
+     "value": 9931000,
+     "share": 5.2
+    },
+    {
+     "code": "SVK",
+     "value": 8151413,
+     "share": 4.2
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 3036197729,
+     "share": 44.0
+    },
+    {
+     "code": "IND",
+     "value": 930431493,
+     "share": 13.5
+    },
+    {
+     "code": "MAR",
+     "value": 831735994,
+     "share": 12.0
+    },
+    {
+     "code": "TUR",
+     "value": 387446188,
+     "share": 5.6
+    },
+    {
+     "code": "IDN",
+     "value": 329084171,
+     "share": 4.8
+    }
+   ],
+   "africa_share_exports": 8.3,
+   "africa_share_imports": 14.6,
+   "first_chapter_share": 53.8,
+   "top5_share": 85.4,
+   "hhi": 0.329
+  },
+  "DZA": {
+   "exports_usd": 48039608084,
+   "imports_usd": 43621474967,
+   "exports_by_year": {
+    "2022": 62192436700,
+    "2023": 55689574538,
+    "2024": 48039608084
+   },
+   "top_exports": [
+    {
+     "chapter": "27",
+     "value": 43635674074,
+     "share": 90.8
+    },
+    {
+     "chapter": "31",
+     "value": 1048466733,
+     "share": 2.2
+    },
+    {
+     "chapter": "28",
+     "value": 1039826134,
+     "share": 2.2
+    },
+    {
+     "chapter": "72",
+     "value": 717810371,
+     "share": 1.5
+    },
+    {
+     "chapter": "25",
+     "value": 586612003,
+     "share": 1.2
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "ITA",
+     "value": 11776821466,
+     "share": 24.5
+    },
+    {
+     "code": "FRA",
+     "value": 6918102957,
+     "share": 14.4
+    },
+    {
+     "code": "ESP",
+     "value": 6006510969,
+     "share": 12.5
+    },
+    {
+     "code": "KOR",
+     "value": 3633265301,
+     "share": 7.6
+    },
+    {
+     "code": "USA",
+     "value": 2514823664,
+     "share": 5.2
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 11671496696,
+     "share": 26.8
+    },
+    {
+     "code": "FRA",
+     "value": 5172582608,
+     "share": 11.9
+    },
+    {
+     "code": "ITA",
+     "value": 2930026321,
+     "share": 6.7
+    },
+    {
+     "code": "TUR",
+     "value": 2871302463,
+     "share": 6.6
+    },
+    {
+     "code": "BRA",
+     "value": 2567007389,
+     "share": 5.9
+    }
+   ],
+   "africa_share_exports": 5.1,
+   "africa_share_imports": 4.3,
+   "first_chapter_share": 90.8,
+   "top5_share": 97.9,
+   "hhi": 0.826
+  },
+  "EGY": {
+   "exports_usd": 53006222753,
+   "imports_usd": 99202455435,
+   "exports_by_year": {
+    "2022": 57852413662,
+    "2023": 52092214007,
+    "2024": 53006222753
+   },
+   "top_exports": [
+    {
+     "chapter": "27",
+     "value": 8676935312,
+     "share": 16.4
+    },
+    {
+     "chapter": "85",
+     "value": 3507856683,
+     "share": 6.6
+    },
+    {
+     "chapter": "71",
+     "value": 3404088158,
+     "share": 6.4
+    },
+    {
+     "chapter": "08",
+     "value": 2949154493,
+     "share": 5.6
+    },
+    {
+     "chapter": "39",
+     "value": 2635415390,
+     "share": 5.0
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "SAU",
+     "value": 5799914703,
+     "share": 10.9
+    },
+    {
+     "code": "TUR",
+     "value": 4503991693,
+     "share": 8.5
+    },
+    {
+     "code": "ARE",
+     "value": 3261696889,
+     "share": 6.2
+    },
+    {
+     "code": "USA",
+     "value": 2971043183,
+     "share": 5.6
+    },
+    {
+     "code": "ITA",
+     "value": 2636590347,
+     "share": 5.0
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 16701805729,
+     "share": 16.8
+    },
+    {
+     "code": "SAU",
+     "value": 8396098442,
+     "share": 8.5
+    },
+    {
+     "code": "USA",
+     "value": 6609594503,
+     "share": 6.7
+    },
+    {
+     "code": "RUS",
+     "value": 6007182808,
+     "share": 6.1
+    },
+    {
+     "code": "TUR",
+     "value": 4225874162,
+     "share": 4.3
+    }
+   ],
+   "africa_share_exports": 15.8,
+   "africa_share_imports": 2.2,
+   "first_chapter_share": 16.4,
+   "top5_share": 40.0,
+   "hhi": 0.055
+  },
+  "ERI": {
+   "exports_usd": 573916127,
+   "imports_usd": 345682974,
+   "exports_by_year": {
+    "2022": 854024090,
+    "2023": 546999999,
+    "2024": 573916127
+   },
+   "top_exports": [
+    {
+     "chapter": "26",
+     "value": 549346214,
+     "share": 95.7
+    },
+    {
+     "chapter": "62",
+     "value": 10528967,
+     "share": 1.8
+    },
+    {
+     "chapter": "30",
+     "value": 6094280,
+     "share": 1.1
+    },
+    {
+     "chapter": "13",
+     "value": 3584049,
+     "share": 0.6
+    },
+    {
+     "chapter": "84",
+     "value": 2036211,
+     "share": 0.4
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHN",
+     "value": 451785818,
+     "share": 78.7
+    },
+    {
+     "code": "KOR",
+     "value": 97838636,
+     "share": 17.0
+    },
+    {
+     "code": "IRL",
+     "value": 6251022,
+     "share": 1.1
+    },
+    {
+     "code": "FRA",
+     "value": 4016797,
+     "share": 0.7
+    },
+    {
+     "code": "ITA",
+     "value": 3987796,
+     "share": 0.7
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 159573991,
+     "share": 46.2
+    },
+    {
+     "code": "TUR",
+     "value": 39725035,
+     "share": 11.5
+    },
+    {
+     "code": "USA",
+     "value": 36080000,
+     "share": 10.4
+    },
+    {
+     "code": "ITA",
+     "value": 26123524,
+     "share": 7.6
+    },
+    {
+     "code": "SAU",
+     "value": 13221234,
+     "share": 3.8
+    }
+   ],
+   "africa_share_exports": 0.1,
+   "africa_share_imports": 4.3,
+   "first_chapter_share": 95.7,
+   "top5_share": 99.6,
+   "hhi": 0.917
+  },
+  "ETH": {
+   "exports_usd": 3207962444,
+   "imports_usd": 7224165284,
+   "exports_by_year": {
+    "2022": 4467707882,
+    "2023": 3935952728,
+    "2024": 3207962444
+   },
+   "top_exports": [
+    {
+     "chapter": "09",
+     "value": 1466582612,
+     "share": 45.7
+    },
+    {
+     "chapter": "12",
+     "value": 359855254,
+     "share": 11.2
+    },
+    {
+     "chapter": "06",
+     "value": 321427252,
+     "share": 10.0
+    },
+    {
+     "chapter": "07",
+     "value": 192251225,
+     "share": 6.0
+    },
+    {
+     "chapter": "61",
+     "value": 180694888,
+     "share": 5.6
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHN",
+     "value": 409299720,
+     "share": 12.8
+    },
+    {
+     "code": "USA",
+     "value": 409207241,
+     "share": 12.8
+    },
+    {
+     "code": "SAU",
+     "value": 376338722,
+     "share": 11.7
+    },
+    {
+     "code": "DEU",
+     "value": 249761089,
+     "share": 7.8
+    },
+    {
+     "code": "NLD",
+     "value": 214320316,
+     "share": 6.7
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 3142043611,
+     "share": 43.5
+    },
+    {
+     "code": "FRA",
+     "value": 747720436,
+     "share": 10.4
+    },
+    {
+     "code": "IND",
+     "value": 443274541,
+     "share": 6.1
+    },
+    {
+     "code": "USA",
+     "value": 385922158,
+     "share": 5.3
+    },
+    {
+     "code": "GBR",
+     "value": 379618130,
+     "share": 5.3
+    }
+   ],
+   "africa_share_exports": 5.5,
+   "africa_share_imports": 4.6,
+   "first_chapter_share": 45.7,
+   "top5_share": 78.5,
+   "hhi": 0.243
+  },
+  "GAB": {
+   "exports_usd": 8037633267,
+   "imports_usd": 2670723791,
+   "exports_by_year": {
+    "2022": 8968490649,
+    "2023": 12520533196,
+    "2024": 8037633267
+   },
+   "top_exports": [
+    {
+     "chapter": "27",
+     "value": 5439397353,
+     "share": 67.7
+    },
+    {
+     "chapter": "26",
+     "value": 1686948316,
+     "share": 21.0
+    },
+    {
+     "chapter": "44",
+     "value": 713995947,
+     "share": 8.9
+    },
+    {
+     "chapter": "15",
+     "value": 112841181,
+     "share": 1.4
+    },
+    {
+     "chapter": "72",
+     "value": 24959658,
+     "share": 0.3
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHN",
+     "value": 2914732142,
+     "share": 36.3
+    },
+    {
+     "code": "IDN",
+     "value": 1055548146,
+     "share": 13.1
+    },
+    {
+     "code": "BRA",
+     "value": 729523917,
+     "share": 9.1
+    },
+    {
+     "code": "MYS",
+     "value": 586993722,
+     "share": 7.3
+    },
+    {
+     "code": "IND",
+     "value": 524856201,
+     "share": 6.5
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 720644399,
+     "share": 27.0
+    },
+    {
+     "code": "FRA",
+     "value": 603660939,
+     "share": 22.6
+    },
+    {
+     "code": "USA",
+     "value": 144857758,
+     "share": 5.4
+    },
+    {
+     "code": "BEL",
+     "value": 112374334,
+     "share": 4.2
+    },
+    {
+     "code": "TUR",
+     "value": 95523055,
+     "share": 3.6
+    }
+   ],
+   "africa_share_exports": 0.7,
+   "africa_share_imports": 7.8,
+   "first_chapter_share": 67.7,
+   "top5_share": 99.3,
+   "hhi": 0.51
+  },
+  "GHA": {
+   "exports_usd": 15919632733,
+   "imports_usd": 20266231445,
+   "exports_by_year": {
+    "2022": 20372994046,
+    "2023": 17918307822,
+    "2024": 15919632733
+   },
+   "top_exports": [
+    {
+     "chapter": "71",
+     "value": 5942492535,
+     "share": 37.3
+    },
+    {
+     "chapter": "27",
+     "value": 4212071448,
+     "share": 26.5
+    },
+    {
+     "chapter": "18",
+     "value": 2711386983,
+     "share": 17.0
+    },
+    {
+     "chapter": "26",
+     "value": 677185916,
+     "share": 4.3
+    },
+    {
+     "chapter": "08",
+     "value": 418906294,
+     "share": 2.6
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHE",
+     "value": 4276628220,
+     "share": 26.9
+    },
+    {
+     "code": "CHN",
+     "value": 1995964719,
+     "share": 12.5
+    },
+    {
+     "code": "IND",
+     "value": 1699783498,
+     "share": 10.7
+    },
+    {
+     "code": "USA",
+     "value": 1201544812,
+     "share": 7.5
+    },
+    {
+     "code": "NLD",
+     "value": 727351049,
+     "share": 4.6
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 9840781899,
+     "share": 48.6
+    },
+    {
+     "code": "IND",
+     "value": 1285718996,
+     "share": 6.3
+    },
+    {
+     "code": "NLD",
+     "value": 1252542247,
+     "share": 6.2
+    },
+    {
+     "code": "USA",
+     "value": 876427132,
+     "share": 4.3
+    },
+    {
+     "code": "BEL",
+     "value": 607412561,
+     "share": 3.0
+    }
+   ],
+   "africa_share_exports": 11.8,
+   "africa_share_imports": 7.3,
+   "first_chapter_share": 37.3,
+   "top5_share": 87.7,
+   "hhi": 0.242
+  },
+  "GIN": {
+   "exports_usd": 9643413837,
+   "imports_usd": 7724062886,
+   "exports_by_year": {
+    "2022": 11151039676,
+    "2023": 18049300944,
+    "2024": 9643413837
+   },
+   "top_exports": [
+    {
+     "chapter": "26",
+     "value": 8331969001,
+     "share": 86.4
+    },
+    {
+     "chapter": "18",
+     "value": 485237784,
+     "share": 5.0
+    },
+    {
+     "chapter": "71",
+     "value": 464895205,
+     "share": 4.8
+    },
+    {
+     "chapter": "08",
+     "value": 98539121,
+     "share": 1.0
+    },
+    {
+     "chapter": "27",
+     "value": 48545386,
+     "share": 0.5
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHN",
+     "value": 7637875666,
+     "share": 79.2
+    },
+    {
+     "code": "IND",
+     "value": 722576211,
+     "share": 7.5
+    },
+    {
+     "code": "MYS",
+     "value": 279678496,
+     "share": 2.9
+    },
+    {
+     "code": "IRL",
+     "value": 157368463,
+     "share": 1.6
+    },
+    {
+     "code": "DEU",
+     "value": 134981069,
+     "share": 1.4
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 3929782561,
+     "share": 50.9
+    },
+    {
+     "code": "IND",
+     "value": 812733210,
+     "share": 10.5
+    },
+    {
+     "code": "FRA",
+     "value": 233624156,
+     "share": 3.0
+    },
+    {
+     "code": "BEL",
+     "value": 232191017,
+     "share": 3.0
+    },
+    {
+     "code": "BRA",
+     "value": 203064258,
+     "share": 2.6
+    }
+   ],
+   "africa_share_exports": 0.7,
+   "africa_share_imports": 9.4,
+   "first_chapter_share": 86.4,
+   "top5_share": 97.7,
+   "hhi": 0.752
+  },
+  "GMB": {
+   "exports_usd": 205544176,
+   "imports_usd": 2037718790,
+   "exports_by_year": {
+    "2022": 224719569,
+    "2023": 254991827,
+    "2024": 205544176
+   },
+   "top_exports": [
+    {
+     "chapter": "08",
+     "value": 30320837,
+     "share": 14.8
+    },
+    {
+     "chapter": "12",
+     "value": 27852526,
+     "share": 13.6
+    },
+    {
+     "chapter": "03",
+     "value": 24941545,
+     "share": 12.1
+    },
+    {
+     "chapter": "23",
+     "value": 20469871,
+     "share": 10.0
+    },
+    {
+     "chapter": "26",
+     "value": 20456457,
+     "share": 10.0
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHN",
+     "value": 78487307,
+     "share": 38.2
+    },
+    {
+     "code": "IND",
+     "value": 46876738,
+     "share": 22.8
+    },
+    {
+     "code": "MLI",
+     "value": 12511213,
+     "share": 6.1
+    },
+    {
+     "code": "TUR",
+     "value": 8535804,
+     "share": 4.2
+    },
+    {
+     "code": "KOR",
+     "value": 7875347,
+     "share": 3.8
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 441019867,
+     "share": 21.6
+    },
+    {
+     "code": "SEN",
+     "value": 265749031,
+     "share": 13.0
+    },
+    {
+     "code": "BRA",
+     "value": 166239592,
+     "share": 8.2
+    },
+    {
+     "code": "IND",
+     "value": 137599538,
+     "share": 6.8
+    },
+    {
+     "code": "USA",
+     "value": 94772132,
+     "share": 4.7
+    }
+   ],
+   "africa_share_exports": 14.3,
+   "africa_share_imports": 22.3,
+   "first_chapter_share": 14.8,
+   "top5_share": 60.5,
+   "hhi": 0.091
+  },
+  "GNB": {
+   "exports_usd": 215881106,
+   "imports_usd": 529447057,
+   "exports_by_year": {
+    "2022": 211273275,
+    "2023": 104784673,
+    "2024": 215881106
+   },
+   "top_exports": [
+    {
+     "chapter": "08",
+     "value": 202452713,
+     "share": 93.8
+    },
+    {
+     "chapter": "23",
+     "value": 4625825,
+     "share": 2.1
+    },
+    {
+     "chapter": "03",
+     "value": 2205474,
+     "share": 1.0
+    },
+    {
+     "chapter": "18",
+     "value": 1451933,
+     "share": 0.7
+    },
+    {
+     "chapter": "12",
+     "value": 1437877,
+     "share": 0.7
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "IND",
+     "value": 199276660,
+     "share": 92.3
+    },
+    {
+     "code": "TUR",
+     "value": 6176236,
+     "share": 2.9
+    },
+    {
+     "code": "KOR",
+     "value": 1405040,
+     "share": 0.7
+    },
+    {
+     "code": "FIN",
+     "value": 1261331,
+     "share": 0.6
+    },
+    {
+     "code": "NLD",
+     "value": 1205871,
+     "share": 0.6
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "PRT",
+     "value": 127338545,
+     "share": 24.1
+    },
+    {
+     "code": "CHN",
+     "value": 97036625,
+     "share": 18.3
+    },
+    {
+     "code": "SEN",
+     "value": 94535756,
+     "share": 17.9
+    },
+    {
+     "code": "PAK",
+     "value": 50541161,
+     "share": 9.5
+    },
+    {
+     "code": "NLD",
+     "value": 22898383,
+     "share": 4.3
+    }
+   ],
+   "africa_share_exports": 0.4,
+   "africa_share_imports": 24.1,
+   "first_chapter_share": 93.8,
+   "top5_share": 98.3,
+   "hhi": 0.88
+  },
+  "GNQ": {
+   "exports_usd": 4471120029,
+   "imports_usd": 1008644468,
+   "exports_by_year": {
+    "2022": 7211450754,
+    "2023": 5134646257,
+    "2024": 4471120029
+   },
+   "top_exports": [
+    {
+     "chapter": "27",
+     "value": 4160168134,
+     "share": 93.0
+    },
+    {
+     "chapter": "29",
+     "value": 225239718,
+     "share": 5.0
+    },
+    {
+     "chapter": "44",
+     "value": 57407893,
+     "share": 1.3
+    },
+    {
+     "chapter": "72",
+     "value": 15531565,
+     "share": 0.3
+    },
+    {
+     "chapter": "76",
+     "value": 3854856,
+     "share": 0.1
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHN",
+     "value": 986264446,
+     "share": 22.1
+    },
+    {
+     "code": "ESP",
+     "value": 691647358,
+     "share": 15.5
+    },
+    {
+     "code": "IND",
+     "value": 583986594,
+     "share": 13.1
+    },
+    {
+     "code": "ITA",
+     "value": 297448034,
+     "share": 6.7
+    },
+    {
+     "code": "JPN",
+     "value": 199108635,
+     "share": 4.5
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 170081311,
+     "share": 16.9
+    },
+    {
+     "code": "ESP",
+     "value": 156368603,
+     "share": 15.5
+    },
+    {
+     "code": "USA",
+     "value": 93504639,
+     "share": 9.3
+    },
+    {
+     "code": "AGO",
+     "value": 92446117,
+     "share": 9.2
+    },
+    {
+     "code": "GBR",
+     "value": 58733915,
+     "share": 5.8
+    }
+   ],
+   "africa_share_exports": 2.6,
+   "africa_share_imports": 18.6,
+   "first_chapter_share": 93.0,
+   "top5_share": 99.7,
+   "hhi": 0.868
+  },
+  "KEN": {
+   "exports_usd": 8699310560,
+   "imports_usd": 24791828087,
+   "exports_by_year": {
+    "2022": 8014760835,
+    "2023": 8003354889,
+    "2024": 8699310560
+   },
+   "top_exports": [
+    {
+     "chapter": "09",
+     "value": 1719711625,
+     "share": 19.8
+    },
+    {
+     "chapter": "27",
+     "value": 918492719,
+     "share": 10.6
+    },
+    {
+     "chapter": "06",
+     "value": 854868710,
+     "share": 9.8
+    },
+    {
+     "chapter": "08",
+     "value": 405952839,
+     "share": 4.7
+    },
+    {
+     "chapter": "61",
+     "value": 302993610,
+     "share": 3.5
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "UGA",
+     "value": 962926151,
+     "share": 11.1
+    },
+    {
+     "code": "USA",
+     "value": 764287334,
+     "share": 8.8
+    },
+    {
+     "code": "ARE",
+     "value": 753876959,
+     "share": 8.7
+    },
+    {
+     "code": "NLD",
+     "value": 631284049,
+     "share": 7.3
+    },
+    {
+     "code": "PAK",
+     "value": 570435666,
+     "share": 6.6
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 6158584901,
+     "share": 24.8
+    },
+    {
+     "code": "IND",
+     "value": 2934756259,
+     "share": 11.8
+    },
+    {
+     "code": "ARE",
+     "value": 2516594422,
+     "share": 10.2
+    },
+    {
+     "code": "MYS",
+     "value": 1425253719,
+     "share": 5.7
+    },
+    {
+     "code": "USA",
+     "value": 1142343176,
+     "share": 4.6
+    }
+   ],
+   "africa_share_exports": 37.3,
+   "africa_share_imports": 10.2,
+   "first_chapter_share": 19.8,
+   "top5_share": 48.4,
+   "hhi": 0.072
+  },
+  "LBR": {
+   "exports_usd": 2434599778,
+   "imports_usd": 22920994866,
+   "exports_by_year": {
+    "2022": 1966255189,
+    "2023": 2321279625,
+    "2024": 2434599778
+   },
+   "top_exports": [
+    {
+     "chapter": "71",
+     "value": 921026301,
+     "share": 37.8
+    },
+    {
+     "chapter": "89",
+     "value": 488826385,
+     "share": 20.1
+    },
+    {
+     "chapter": "26",
+     "value": 302658827,
+     "share": 12.4
+    },
+    {
+     "chapter": "18",
+     "value": 222730859,
+     "share": 9.1
+    },
+    {
+     "chapter": "27",
+     "value": 194071239,
+     "share": 8.0
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHE",
+     "value": 893786492,
+     "share": 36.7
+    },
+    {
+     "code": "DEU",
+     "value": 245013860,
+     "share": 10.1
+    },
+    {
+     "code": "MYS",
+     "value": 136123652,
+     "share": 5.6
+    },
+    {
+     "code": "CHN",
+     "value": 105586191,
+     "share": 4.3
+    },
+    {
+     "code": "DNK",
+     "value": 98946319,
+     "share": 4.1
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 13064153258,
+     "share": 57.0
+    },
+    {
+     "code": "KOR",
+     "value": 5215048853,
+     "share": 22.8
+    },
+    {
+     "code": "JPN",
+     "value": 1666567207,
+     "share": 7.3
+    },
+    {
+     "code": "BRA",
+     "value": 457913883,
+     "share": 2.0
+    },
+    {
+     "code": "DEU",
+     "value": 444403087,
+     "share": 1.9
+    }
+   ],
+   "africa_share_exports": 3.6,
+   "africa_share_imports": 1.7,
+   "first_chapter_share": 37.8,
+   "top5_share": 87.4,
+   "hhi": 0.22
+  },
+  "LBY": {
+   "exports_usd": 30492348843,
+   "imports_usd": 20888236056,
+   "exports_by_year": {
+    "2022": 39677408935,
+    "2023": 35576080159,
+    "2024": 30492348843
+   },
+   "top_exports": [
+    {
+     "chapter": "27",
+     "value": 29238146508,
+     "share": 95.9
+    },
+    {
+     "chapter": "72",
+     "value": 468569983,
+     "share": 1.5
+    },
+    {
+     "chapter": "29",
+     "value": 226383910,
+     "share": 0.7
+    },
+    {
+     "chapter": "28",
+     "value": 181709219,
+     "share": 0.6
+    },
+    {
+     "chapter": "74",
+     "value": 138310014,
+     "share": 0.5
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "ITA",
+     "value": 7510844254,
+     "share": 24.6
+    },
+    {
+     "code": "DEU",
+     "value": 4608136075,
+     "share": 15.1
+    },
+    {
+     "code": "GBR",
+     "value": 2786615188,
+     "share": 9.1
+    },
+    {
+     "code": "GRC",
+     "value": 2621439177,
+     "share": 8.6
+    },
+    {
+     "code": "ESP",
+     "value": 2546801770,
+     "share": 8.4
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 3583209253,
+     "share": 17.2
+    },
+    {
+     "code": "TUR",
+     "value": 2798283206,
+     "share": 13.4
+    },
+    {
+     "code": "ITA",
+     "value": 2425917695,
+     "share": 11.6
+    },
+    {
+     "code": "EGY",
+     "value": 1948130443,
+     "share": 9.3
+    },
+    {
+     "code": "GRC",
+     "value": 1186683153,
+     "share": 5.7
+    }
+   ],
+   "africa_share_exports": 0.9,
+   "africa_share_imports": 14.0,
+   "first_chapter_share": 95.9,
+   "top5_share": 99.2,
+   "hhi": 0.92
+  },
+  "LSO": {
+   "exports_usd": 1101813236,
+   "imports_usd": 1907040217,
+   "exports_by_year": {
+    "2022": 1166687546,
+    "2023": 1114327449,
+    "2024": 1101813236
+   },
+   "top_exports": [
+    {
+     "chapter": "71",
+     "value": 380785324,
+     "share": 34.6
+    },
+    {
+     "chapter": "61",
+     "value": 195805678,
+     "share": 17.8
+    },
+    {
+     "chapter": "62",
+     "value": 138507434,
+     "share": 12.6
+    },
+    {
+     "chapter": "22",
+     "value": 83321587,
+     "share": 7.6
+    },
+    {
+     "chapter": "51",
+     "value": 69407856,
+     "share": 6.3
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "ZAF",
+     "value": 466687074,
+     "share": 42.4
+    },
+    {
+     "code": "USA",
+     "value": 254782284,
+     "share": 23.1
+    },
+    {
+     "code": "BEL",
+     "value": 240840746,
+     "share": 21.9
+    },
+    {
+     "code": "IND",
+     "value": 45596242,
+     "share": 4.1
+    },
+    {
+     "code": "CHN",
+     "value": 29328439,
+     "share": 2.7
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "ZAF",
+     "value": 1490688577,
+     "share": 78.2
+    },
+    {
+     "code": "CHN",
+     "value": 203687067,
+     "share": 10.7
+    },
+    {
+     "code": "S19",
+     "value": 61439983,
+     "share": 3.2
+    },
+    {
+     "code": "IND",
+     "value": 27939677,
+     "share": 1.5
+    },
+    {
+     "code": "JPN",
+     "value": 19450843,
+     "share": 1.0
+    }
+   ],
+   "africa_share_exports": 44.0,
+   "africa_share_imports": 80.6,
+   "first_chapter_share": 34.6,
+   "top5_share": 78.9,
+   "hhi": 0.182
+  },
+  "MAR": {
+   "exports_usd": 67541630203,
+   "imports_usd": 87599365317,
+   "exports_by_year": {
+    "2022": 50177493127,
+    "2023": 52005201590,
+    "2024": 67541630203
+   },
+   "top_exports": [
+    {
+     "chapter": "85",
+     "value": 12602686146,
+     "share": 18.7
+    },
+    {
+     "chapter": "87",
+     "value": 12046657665,
+     "share": 17.8
+    },
+    {
+     "chapter": "31",
+     "value": 9388363197,
+     "share": 13.9
+    },
+    {
+     "chapter": "62",
+     "value": 5354715154,
+     "share": 7.9
+    },
+    {
+     "chapter": "88",
+     "value": 2981187480,
+     "share": 4.4
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "ESP",
+     "value": 13159723052,
+     "share": 19.5
+    },
+    {
+     "code": "FRA",
+     "value": 12712228670,
+     "share": 18.8
+    },
+    {
+     "code": "DEU",
+     "value": 4002319496,
+     "share": 5.9
+    },
+    {
+     "code": "GBR",
+     "value": 2614333888,
+     "share": 3.9
+    },
+    {
+     "code": "ITA",
+     "value": 2563719481,
+     "share": 3.8
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "ESP",
+     "value": 14328301004,
+     "share": 16.4
+    },
+    {
+     "code": "CHN",
+     "value": 10066987139,
+     "share": 11.5
+    },
+    {
+     "code": "FRA",
+     "value": 9133082229,
+     "share": 10.4
+    },
+    {
+     "code": "USA",
+     "value": 7149272839,
+     "share": 8.2
+    },
+    {
+     "code": "DEU",
+     "value": 4587493545,
+     "share": 5.2
+    }
+   ],
+   "africa_share_exports": 7.4,
+   "africa_share_imports": 3.2,
+   "first_chapter_share": 18.7,
+   "top5_share": 62.7,
+   "hhi": 0.103
+  },
+  "MDG": {
+   "exports_usd": 3468695898,
+   "imports_usd": 5093098096,
+   "exports_by_year": {
+    "2022": 4478522357,
+    "2023": 4188178133,
+    "2024": 3468695898
+   },
+   "top_exports": [
+    {
+     "chapter": "09",
+     "value": 562773309,
+     "share": 16.2
+    },
+    {
+     "chapter": "75",
+     "value": 474462729,
+     "share": 13.7
+    },
+    {
+     "chapter": "62",
+     "value": 448336020,
+     "share": 12.9
+    },
+    {
+     "chapter": "61",
+     "value": 400018799,
+     "share": 11.5
+    },
+    {
+     "chapter": "26",
+     "value": 247842728,
+     "share": 7.1
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "USA",
+     "value": 622715507,
+     "share": 18.0
+    },
+    {
+     "code": "FRA",
+     "value": 578762879,
+     "share": 16.7
+    },
+    {
+     "code": "CHN",
+     "value": 284870620,
+     "share": 8.2
+    },
+    {
+     "code": "IND",
+     "value": 213810577,
+     "share": 6.2
+    },
+    {
+     "code": "JPN",
+     "value": 187634716,
+     "share": 5.4
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 1341842003,
+     "share": 26.3
+    },
+    {
+     "code": "OMN",
+     "value": 652734066,
+     "share": 12.8
+    },
+    {
+     "code": "FRA",
+     "value": 330143416,
+     "share": 6.5
+    },
+    {
+     "code": "IND",
+     "value": 272930644,
+     "share": 5.4
+    },
+    {
+     "code": "ZAF",
+     "value": 230268677,
+     "share": 4.5
+    }
+   ],
+   "africa_share_exports": 9.0,
+   "africa_share_imports": 13.0,
+   "first_chapter_share": 16.2,
+   "top5_share": 61.4,
+   "hhi": 0.089
+  },
+  "MLI": {
+   "exports_usd": 1252645123,
+   "imports_usd": 6025053080,
+   "exports_by_year": {
+    "2022": 7548668070,
+    "2023": 9244482551,
+    "2024": 1252645123
+   },
+   "top_exports": [
+    {
+     "chapter": "71",
+     "value": 705387479,
+     "share": 56.3
+    },
+    {
+     "chapter": "52",
+     "value": 158846524,
+     "share": 12.7
+    },
+    {
+     "chapter": "27",
+     "value": 127652568,
+     "share": 10.2
+    },
+    {
+     "chapter": "12",
+     "value": 48055605,
+     "share": 3.8
+    },
+    {
+     "chapter": "26",
+     "value": 44484728,
+     "share": 3.6
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "UGA",
+     "value": 361013933,
+     "share": 28.8
+    },
+    {
+     "code": "AUS",
+     "value": 217137466,
+     "share": 17.3
+    },
+    {
+     "code": "IND",
+     "value": 180820870,
+     "share": 14.4
+    },
+    {
+     "code": "NGA",
+     "value": 124265497,
+     "share": 9.9
+    },
+    {
+     "code": "CHE",
+     "value": 121122637,
+     "share": 9.7
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CIV",
+     "value": 1669188129,
+     "share": 27.7
+    },
+    {
+     "code": "SEN",
+     "value": 1310564148,
+     "share": 21.8
+    },
+    {
+     "code": "CHN",
+     "value": 1004831968,
+     "share": 16.7
+    },
+    {
+     "code": "FRA",
+     "value": 337552574,
+     "share": 5.6
+    },
+    {
+     "code": "AUT",
+     "value": 175499766,
+     "share": 2.9
+    }
+   ],
+   "africa_share_exports": 44.6,
+   "africa_share_imports": 57.8,
+   "first_chapter_share": 56.3,
+   "top5_share": 86.6,
+   "hhi": 0.348
+  },
+  "MOZ": {
+   "exports_usd": 13464160018,
+   "imports_usd": 16079170982,
+   "exports_by_year": {
+    "2022": 10514224688,
+    "2023": 12863090841,
+    "2024": 13464160018
+   },
+   "top_exports": [
+    {
+     "chapter": "27",
+     "value": 7639197191,
+     "share": 56.7
+    },
+    {
+     "chapter": "76",
+     "value": 2098477577,
+     "share": 15.6
+    },
+    {
+     "chapter": "71",
+     "value": 777973431,
+     "share": 5.8
+    },
+    {
+     "chapter": "26",
+     "value": 537095275,
+     "share": 4.0
+    },
+    {
+     "chapter": "07",
+     "value": 380165364,
+     "share": 2.8
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "IND",
+     "value": 2521812650,
+     "share": 18.7
+    },
+    {
+     "code": "CHN",
+     "value": 1769217968,
+     "share": 13.1
+    },
+    {
+     "code": "SGP",
+     "value": 1285283571,
+     "share": 9.5
+    },
+    {
+     "code": "ZAF",
+     "value": 1093226409,
+     "share": 8.1
+    },
+    {
+     "code": "KOR",
+     "value": 1090248329,
+     "share": 8.1
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "ZAF",
+     "value": 6453976026,
+     "share": 40.1
+    },
+    {
+     "code": "CHN",
+     "value": 2495548355,
+     "share": 15.5
+    },
+    {
+     "code": "IND",
+     "value": 1081662757,
+     "share": 6.7
+    },
+    {
+     "code": "ARE",
+     "value": 520044421,
+     "share": 3.2
+    },
+    {
+     "code": "OMN",
+     "value": 509415410,
+     "share": 3.2
+    }
+   ],
+   "africa_share_exports": 17.6,
+   "africa_share_imports": 44.0,
+   "first_chapter_share": 56.7,
+   "top5_share": 84.9,
+   "hhi": 0.354
+  },
+  "MRT": {
+   "exports_usd": 4748117316,
+   "imports_usd": 5412664975,
+   "exports_by_year": {
+    "2022": 4157501228,
+    "2023": 4202054449,
+    "2024": 4748117316
+   },
+   "top_exports": [
+    {
+     "chapter": "26",
+     "value": 1730589580,
+     "share": 36.4
+    },
+    {
+     "chapter": "71",
+     "value": 1626695515,
+     "share": 34.3
+    },
+    {
+     "chapter": "03",
+     "value": 1067433860,
+     "share": 22.5
+    },
+    {
+     "chapter": "23",
+     "value": 107299796,
+     "share": 2.3
+    },
+    {
+     "chapter": "15",
+     "value": 47053874,
+     "share": 1.0
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHN",
+     "value": 1324484614,
+     "share": 27.9
+    },
+    {
+     "code": "CHE",
+     "value": 760097557,
+     "share": 16.0
+    },
+    {
+     "code": "CAN",
+     "value": 722424006,
+     "share": 15.2
+    },
+    {
+     "code": "ESP",
+     "value": 389914332,
+     "share": 8.2
+    },
+    {
+     "code": "ARE",
+     "value": 146907426,
+     "share": 3.1
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 1055607858,
+     "share": 19.5
+    },
+    {
+     "code": "ARE",
+     "value": 838474211,
+     "share": 15.5
+    },
+    {
+     "code": "MAR",
+     "value": 401685705,
+     "share": 7.4
+    },
+    {
+     "code": "FRA",
+     "value": 315769017,
+     "share": 5.8
+    },
+    {
+     "code": "ESP",
+     "value": 255813959,
+     "share": 4.7
+    }
+   ],
+   "africa_share_exports": 13.2,
+   "africa_share_imports": 15.5,
+   "first_chapter_share": 36.4,
+   "top5_share": 96.5,
+   "hhi": 0.302
+  },
+  "MUS": {
+   "exports_usd": 2551781579,
+   "imports_usd": 6988272590,
+   "exports_by_year": {
+    "2022": 2458729089,
+    "2023": 2844981829,
+    "2024": 2551781579
+   },
+   "top_exports": [
+    {
+     "chapter": "16",
+     "value": 299078845,
+     "share": 11.7
+    },
+    {
+     "chapter": "17",
+     "value": 267325310,
+     "share": 10.5
+    },
+    {
+     "chapter": "62",
+     "value": 167887184,
+     "share": 6.6
+    },
+    {
+     "chapter": "61",
+     "value": 150047398,
+     "share": 5.9
+    },
+    {
+     "chapter": "31",
+     "value": 139566468,
+     "share": 5.5
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "FRA",
+     "value": 285548976,
+     "share": 11.2
+    },
+    {
+     "code": "USA",
+     "value": 232782338,
+     "share": 9.1
+    },
+    {
+     "code": "ZAF",
+     "value": 214368564,
+     "share": 8.4
+    },
+    {
+     "code": "ZWE",
+     "value": 203975597,
+     "share": 8.0
+    },
+    {
+     "code": "MDG",
+     "value": 203438249,
+     "share": 8.0
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 1305395053,
+     "share": 18.7
+    },
+    {
+     "code": "ARE",
+     "value": 794399442,
+     "share": 11.4
+    },
+    {
+     "code": "IND",
+     "value": 779828796,
+     "share": 11.2
+    },
+    {
+     "code": "ZAF",
+     "value": 578480129,
+     "share": 8.3
+    },
+    {
+     "code": "FRA",
+     "value": 422309709,
+     "share": 6.0
+    }
+   ],
+   "africa_share_exports": 39.3,
+   "africa_share_imports": 13.6,
+   "first_chapter_share": 11.7,
+   "top5_share": 40.2,
+   "hhi": 0.051
+  },
+  "MWI": {
+   "exports_usd": 1002022244,
+   "imports_usd": 3239481171,
+   "exports_by_year": {
+    "2022": 861241671,
+    "2023": 1127407459,
+    "2024": 1002022244
+   },
+   "top_exports": [
+    {
+     "chapter": "24",
+     "value": 578038322,
+     "share": 57.7
+    },
+    {
+     "chapter": "07",
+     "value": 104863953,
+     "share": 10.5
+    },
+    {
+     "chapter": "09",
+     "value": 81800570,
+     "share": 8.2
+    },
+    {
+     "chapter": "23",
+     "value": 43967448,
+     "share": 4.4
+    },
+    {
+     "chapter": "12",
+     "value": 40247576,
+     "share": 4.0
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "BEL",
+     "value": 122499064,
+     "share": 12.2
+    },
+    {
+     "code": "IND",
+     "value": 82405302,
+     "share": 8.2
+    },
+    {
+     "code": "ZAF",
+     "value": 63664991,
+     "share": 6.4
+    },
+    {
+     "code": "DEU",
+     "value": 54279613,
+     "share": 5.4
+    },
+    {
+     "code": "TUR",
+     "value": 53351849,
+     "share": 5.3
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "ZAF",
+     "value": 539889330,
+     "share": 16.7
+    },
+    {
+     "code": "CHN",
+     "value": 530747014,
+     "share": 16.4
+    },
+    {
+     "code": "TZA",
+     "value": 303945483,
+     "share": 9.4
+    },
+    {
+     "code": "ARE",
+     "value": 278762922,
+     "share": 8.6
+    },
+    {
+     "code": "IND",
+     "value": 238827334,
+     "share": 7.4
+    }
+   ],
+   "africa_share_exports": 31.1,
+   "africa_share_imports": 37.5,
+   "first_chapter_share": 57.7,
+   "top5_share": 84.8,
+   "hhi": 0.355
+  },
+  "NAM": {
+   "exports_usd": 8024762760,
+   "imports_usd": 9267310557,
+   "exports_by_year": {
+    "2022": 6173418832,
+    "2023": 6334128917,
+    "2024": 8024762760
+   },
+   "top_exports": [
+    {
+     "chapter": "71",
+     "value": 1998252180,
+     "share": 24.9
+    },
+    {
+     "chapter": "26",
+     "value": 1642187830,
+     "share": 20.5
+    },
+    {
+     "chapter": "28",
+     "value": 1013103198,
+     "share": 12.6
+    },
+    {
+     "chapter": "03",
+     "value": 775586253,
+     "share": 9.7
+    },
+    {
+     "chapter": "74",
+     "value": 714649916,
+     "share": 8.9
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHN",
+     "value": 1825669971,
+     "share": 22.8
+    },
+    {
+     "code": "ZAF",
+     "value": 1246878250,
+     "share": 15.5
+    },
+    {
+     "code": "BWA",
+     "value": 972650095,
+     "share": 12.1
+    },
+    {
+     "code": "BEL",
+     "value": 704789455,
+     "share": 8.8
+    },
+    {
+     "code": "ZMB",
+     "value": 507680020,
+     "share": 6.3
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "ZAF",
+     "value": 3615502992,
+     "share": 39.0
+    },
+    {
+     "code": "CHN",
+     "value": 988803854,
+     "share": 10.7
+    },
+    {
+     "code": "ZMB",
+     "value": 365168267,
+     "share": 3.9
+    },
+    {
+     "code": "ARE",
+     "value": 316168913,
+     "share": 3.4
+    },
+    {
+     "code": "IND",
+     "value": 299685778,
+     "share": 3.2
+    }
+   ],
+   "africa_share_exports": 39.2,
+   "africa_share_imports": 50.5,
+   "first_chapter_share": 24.9,
+   "top5_share": 76.6,
+   "hhi": 0.141
+  },
+  "NER": {
+   "exports_usd": 1571362332,
+   "imports_usd": 1678540614,
+   "exports_by_year": {
+    "2022": 3274455344,
+    "2023": 1726074953,
+    "2024": 1571362332
+   },
+   "top_exports": [
+    {
+     "chapter": "12",
+     "value": 713719530,
+     "share": 45.4
+    },
+    {
+     "chapter": "27",
+     "value": 450514548,
+     "share": 28.7
+    },
+    {
+     "chapter": "28",
+     "value": 240015425,
+     "share": 15.3
+    },
+    {
+     "chapter": "84",
+     "value": 43682150,
+     "share": 2.8
+    },
+    {
+     "chapter": "24",
+     "value": 20475448,
+     "share": 1.3
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHN",
+     "value": 606546290,
+     "share": 38.6
+    },
+    {
+     "code": "FRA",
+     "value": 317959836,
+     "share": 20.2
+    },
+    {
+     "code": "IND",
+     "value": 135312415,
+     "share": 8.6
+    },
+    {
+     "code": "TGO",
+     "value": 94723315,
+     "share": 6.0
+    },
+    {
+     "code": "TCD",
+     "value": 90727135,
+     "share": 5.8
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 332638924,
+     "share": 19.8
+    },
+    {
+     "code": "IND",
+     "value": 187484240,
+     "share": 11.2
+    },
+    {
+     "code": "NGA",
+     "value": 168950459,
+     "share": 10.1
+    },
+    {
+     "code": "TUR",
+     "value": 81355982,
+     "share": 4.8
+    },
+    {
+     "code": "FRA",
+     "value": 66004087,
+     "share": 3.9
+    }
+   ],
+   "africa_share_exports": 21.4,
+   "africa_share_imports": 25.0,
+   "first_chapter_share": 45.4,
+   "top5_share": 93.5,
+   "hhi": 0.313
+  },
+  "NGA": {
+   "exports_usd": 63699820016,
+   "imports_usd": 50981849703,
+   "exports_by_year": {
+    "2022": 72156186170,
+    "2023": 62817452147,
+    "2024": 63699820016
+   },
+   "top_exports": [
+    {
+     "chapter": "27",
+     "value": 54632072702,
+     "share": 85.8
+    },
+    {
+     "chapter": "18",
+     "value": 2539276625,
+     "share": 4.0
+    },
+    {
+     "chapter": "31",
+     "value": 1010424954,
+     "share": 1.6
+    },
+    {
+     "chapter": "12",
+     "value": 885847241,
+     "share": 1.4
+    },
+    {
+     "chapter": "89",
+     "value": 678577426,
+     "share": 1.1
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "ESP",
+     "value": 6534249613,
+     "share": 10.3
+    },
+    {
+     "code": "IND",
+     "value": 6209089280,
+     "share": 9.7
+    },
+    {
+     "code": "USA",
+     "value": 5948680710,
+     "share": 9.3
+    },
+    {
+     "code": "FRA",
+     "value": 4839956088,
+     "share": 7.6
+    },
+    {
+     "code": "NLD",
+     "value": 3395292653,
+     "share": 5.3
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 16061010721,
+     "share": 31.5
+    },
+    {
+     "code": "USA",
+     "value": 4646946691,
+     "share": 9.1
+    },
+    {
+     "code": "BEL",
+     "value": 4403039279,
+     "share": 8.6
+    },
+    {
+     "code": "IND",
+     "value": 3037711835,
+     "share": 6.0
+    },
+    {
+     "code": "NLD",
+     "value": 1789599052,
+     "share": 3.5
+    }
+   ],
+   "africa_share_exports": 11.9,
+   "africa_share_imports": 3.4,
+   "first_chapter_share": 85.8,
+   "top5_share": 93.9,
+   "hhi": 0.738
+  },
+  "RWA": {
+   "exports_usd": 579987731,
+   "imports_usd": 2096648514,
+   "exports_by_year": {
+    "2022": 1043238928,
+    "2023": 1368783789,
+    "2024": 579987731
+   },
+   "top_exports": [
+    {
+     "chapter": "26",
+     "value": 225040303,
+     "share": 38.8
+    },
+    {
+     "chapter": "09",
+     "value": 155949628,
+     "share": 26.9
+    },
+    {
+     "chapter": "88",
+     "value": 47821288,
+     "share": 8.2
+    },
+    {
+     "chapter": "80",
+     "value": 25204444,
+     "share": 4.3
+    },
+    {
+     "chapter": "62",
+     "value": 18463164,
+     "share": 3.2
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHN",
+     "value": 159743066,
+     "share": 27.5
+    },
+    {
+     "code": "THA",
+     "value": 51299416,
+     "share": 8.8
+    },
+    {
+     "code": "POL",
+     "value": 50228284,
+     "share": 8.7
+    },
+    {
+     "code": "GBR",
+     "value": 38450770,
+     "share": 6.6
+    },
+    {
+     "code": "PAK",
+     "value": 33322909,
+     "share": 5.7
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 508498485,
+     "share": 24.3
+    },
+    {
+     "code": "KEN",
+     "value": 314780234,
+     "share": 15.0
+    },
+    {
+     "code": "UGA",
+     "value": 269282417,
+     "share": 12.8
+    },
+    {
+     "code": "TZA",
+     "value": 163777079,
+     "share": 7.8
+    },
+    {
+     "code": "IND",
+     "value": 100612684,
+     "share": 4.8
+    }
+   ],
+   "africa_share_exports": 7.7,
+   "africa_share_imports": 42.4,
+   "first_chapter_share": 38.8,
+   "top5_share": 81.4,
+   "hhi": 0.235
+  },
+  "SDN": {
+   "exports_usd": 3060915094,
+   "imports_usd": 3694511477,
+   "exports_by_year": {
+    "2022": 5948665770,
+    "2023": 4945718870,
+    "2024": 3060915094
+   },
+   "top_exports": [
+    {
+     "chapter": "12",
+     "value": 937441821,
+     "share": 30.6
+    },
+    {
+     "chapter": "01",
+     "value": 863009043,
+     "share": 28.2
+    },
+    {
+     "chapter": "27",
+     "value": 680061749,
+     "share": 22.2
+    },
+    {
+     "chapter": "07",
+     "value": 210699489,
+     "share": 6.9
+    },
+    {
+     "chapter": "13",
+     "value": 179732412,
+     "share": 5.9
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "SAU",
+     "value": 798659598,
+     "share": 26.1
+    },
+    {
+     "code": "CHN",
+     "value": 560841463,
+     "share": 18.3
+    },
+    {
+     "code": "IND",
+     "value": 419296349,
+     "share": 13.7
+    },
+    {
+     "code": "MYS",
+     "value": 315230732,
+     "share": 10.3
+    },
+    {
+     "code": "EGY",
+     "value": 292380803,
+     "share": 9.6
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "EGY",
+     "value": 865951473,
+     "share": 23.4
+    },
+    {
+     "code": "CHN",
+     "value": 833012441,
+     "share": 22.5
+    },
+    {
+     "code": "IND",
+     "value": 544773999,
+     "share": 14.7
+    },
+    {
+     "code": "SAU",
+     "value": 516288116,
+     "share": 14.0
+    },
+    {
+     "code": "TUR",
+     "value": 275612798,
+     "share": 7.5
+    }
+   ],
+   "africa_share_exports": 10.4,
+   "africa_share_imports": 27.3,
+   "first_chapter_share": 30.6,
+   "top5_share": 93.8,
+   "hhi": 0.232
+  },
+  "SEN": {
+   "exports_usd": 6679440641,
+   "imports_usd": 16211533033,
+   "exports_by_year": {
+    "2022": 6738530246,
+    "2023": 5916443727,
+    "2024": 6679440641
+   },
+   "top_exports": [
+    {
+     "chapter": "27",
+     "value": 2045958399,
+     "share": 30.6
+    },
+    {
+     "chapter": "71",
+     "value": 827725047,
+     "share": 12.4
+    },
+    {
+     "chapter": "03",
+     "value": 463173429,
+     "share": 6.9
+    },
+    {
+     "chapter": "28",
+     "value": 458448717,
+     "share": 6.9
+    },
+    {
+     "chapter": "25",
+     "value": 425775058,
+     "share": 6.4
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "MLI",
+     "value": 1310564148,
+     "share": 19.6
+    },
+    {
+     "code": "CHN",
+     "value": 886965527,
+     "share": 13.3
+    },
+    {
+     "code": "IND",
+     "value": 686406639,
+     "share": 10.3
+    },
+    {
+     "code": "CHE",
+     "value": 605827052,
+     "share": 9.1
+    },
+    {
+     "code": "ESP",
+     "value": 288863464,
+     "share": 4.3
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 3557843899,
+     "share": 21.9
+    },
+    {
+     "code": "FRA",
+     "value": 1266779237,
+     "share": 7.8
+    },
+    {
+     "code": "RUS",
+     "value": 951953479,
+     "share": 5.9
+    },
+    {
+     "code": "IND",
+     "value": 920474177,
+     "share": 5.7
+    },
+    {
+     "code": "ARE",
+     "value": 645219845,
+     "share": 4.0
+    }
+   ],
+   "africa_share_exports": 37.5,
+   "africa_share_imports": 11.5,
+   "first_chapter_share": 30.6,
+   "top5_share": 63.2,
+   "hhi": 0.129
+  },
+  "SLE": {
+   "exports_usd": 1517629776,
+   "imports_usd": 2062251236,
+   "exports_by_year": {
+    "2022": 1325201856,
+    "2023": 1562828119,
+    "2024": 1517629776
+   },
+   "top_exports": [
+    {
+     "chapter": "26",
+     "value": 1099367151,
+     "share": 72.4
+    },
+    {
+     "chapter": "18",
+     "value": 144777934,
+     "share": 9.5
+    },
+    {
+     "chapter": "71",
+     "value": 109317888,
+     "share": 7.2
+    },
+    {
+     "chapter": "85",
+     "value": 21641423,
+     "share": 1.4
+    },
+    {
+     "chapter": "15",
+     "value": 16652714,
+     "share": 1.1
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHN",
+     "value": 952794606,
+     "share": 62.8
+    },
+    {
+     "code": "NLD",
+     "value": 143271916,
+     "share": 9.4
+    },
+    {
+     "code": "IND",
+     "value": 90165420,
+     "share": 5.9
+    },
+    {
+     "code": "BEL",
+     "value": 52691525,
+     "share": 3.5
+    },
+    {
+     "code": "DEU",
+     "value": 43012856,
+     "share": 2.8
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 810657702,
+     "share": 39.3
+    },
+    {
+     "code": "IND",
+     "value": 341356923,
+     "share": 16.6
+    },
+    {
+     "code": "USA",
+     "value": 100250530,
+     "share": 4.9
+    },
+    {
+     "code": "TUR",
+     "value": 90966910,
+     "share": 4.4
+    },
+    {
+     "code": "ESP",
+     "value": 80745568,
+     "share": 3.9
+    }
+   ],
+   "africa_share_exports": 1.5,
+   "africa_share_imports": 8.0,
+   "first_chapter_share": 72.4,
+   "top5_share": 91.6,
+   "hhi": 0.54
+  },
+  "SOM": {
+   "exports_usd": 508953682,
+   "imports_usd": 3200447944,
+   "exports_by_year": {
+    "2022": 702769245,
+    "2023": 961234057,
+    "2024": 508953682
+   },
+   "top_exports": [
+    {
+     "chapter": "01",
+     "value": 394009118,
+     "share": 77.4
+    },
+    {
+     "chapter": "12",
+     "value": 26816910,
+     "share": 5.3
+    },
+    {
+     "chapter": "84",
+     "value": 16617884,
+     "share": 3.3
+    },
+    {
+     "chapter": "72",
+     "value": 12502322,
+     "share": 2.5
+    },
+    {
+     "chapter": "13",
+     "value": 10081228,
+     "share": 2.0
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "SAU",
+     "value": 352157274,
+     "share": 69.2
+    },
+    {
+     "code": "IND",
+     "value": 34712956,
+     "share": 6.8
+    },
+    {
+     "code": "QAT",
+     "value": 22417898,
+     "share": 4.4
+    },
+    {
+     "code": "TUR",
+     "value": 21180011,
+     "share": 4.2
+    },
+    {
+     "code": "BHR",
+     "value": 16089936,
+     "share": 3.2
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 968414410,
+     "share": 30.3
+    },
+    {
+     "code": "IND",
+     "value": 803324929,
+     "share": 25.1
+    },
+    {
+     "code": "TUR",
+     "value": 356187907,
+     "share": 11.1
+    },
+    {
+     "code": "BRA",
+     "value": 154092422,
+     "share": 4.8
+    },
+    {
+     "code": "KEN",
+     "value": 129803205,
+     "share": 4.1
+    }
+   ],
+   "africa_share_exports": 2.8,
+   "africa_share_imports": 8.6,
+   "first_chapter_share": 77.4,
+   "top5_share": 90.5,
+   "hhi": 0.605
+  },
+  "SSD": {
+   "exports_usd": 506954792,
+   "imports_usd": 1126170633,
+   "exports_by_year": {
+    "2022": 561668362,
+    "2023": 672067038,
+    "2024": 506954792
+   },
+   "top_exports": [
+    {
+     "chapter": "27",
+     "value": 467132644,
+     "share": 92.1
+    },
+    {
+     "chapter": "72",
+     "value": 21978547,
+     "share": 4.3
+    },
+    {
+     "chapter": "03",
+     "value": 4188863,
+     "share": 0.8
+    },
+    {
+     "chapter": "74",
+     "value": 2806446,
+     "share": 0.6
+    },
+    {
+     "chapter": "44",
+     "value": 2537803,
+     "share": 0.5
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHN",
+     "value": 299967036,
+     "share": 59.2
+    },
+    {
+     "code": "SGP",
+     "value": 157850510,
+     "share": 31.1
+    },
+    {
+     "code": "UGA",
+     "value": 34665337,
+     "share": 6.8
+    },
+    {
+     "code": "JPN",
+     "value": 9125518,
+     "share": 1.8
+    },
+    {
+     "code": "FRA",
+     "value": 1314953,
+     "share": 0.3
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "UGA",
+     "value": 490069618,
+     "share": 43.5
+    },
+    {
+     "code": "KEN",
+     "value": 219817285,
+     "share": 19.5
+    },
+    {
+     "code": "CHN",
+     "value": 166173531,
+     "share": 14.8
+    },
+    {
+     "code": "USA",
+     "value": 57389239,
+     "share": 5.1
+    },
+    {
+     "code": "JPN",
+     "value": 30504219,
+     "share": 2.7
+    }
+   ],
+   "africa_share_exports": 6.9,
+   "africa_share_imports": 65.3,
+   "first_chapter_share": 92.1,
+   "top5_share": 98.3,
+   "hhi": 0.851
+  },
+  "STP": {
+   "exports_usd": 48987676,
+   "imports_usd": 145474691,
+   "exports_by_year": {
+    "2022": 22171067,
+    "2023": 56933406,
+    "2024": 48987676
+   },
+   "top_exports": [
+    {
+     "chapter": "18",
+     "value": 21330095,
+     "share": 43.5
+    },
+    {
+     "chapter": "15",
+     "value": 6789108,
+     "share": 13.9
+    },
+    {
+     "chapter": "27",
+     "value": 6414928,
+     "share": 13.1
+    },
+    {
+     "chapter": "89",
+     "value": 4532025,
+     "share": 9.3
+    },
+    {
+     "chapter": "87",
+     "value": 2835913,
+     "share": 5.8
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "PAK",
+     "value": 10023358,
+     "share": 20.5
+    },
+    {
+     "code": "NLD",
+     "value": 8492807,
+     "share": 17.3
+    },
+    {
+     "code": "FRA",
+     "value": 6837221,
+     "share": 14.0
+    },
+    {
+     "code": "POL",
+     "value": 6637291,
+     "share": 13.5
+    },
+    {
+     "code": "DEU",
+     "value": 4879629,
+     "share": 10.0
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "PRT",
+     "value": 64778070,
+     "share": 44.5
+    },
+    {
+     "code": "CHN",
+     "value": 20910323,
+     "share": 14.4
+    },
+    {
+     "code": "AGO",
+     "value": 20295116,
+     "share": 14.0
+    },
+    {
+     "code": "JPN",
+     "value": 10537121,
+     "share": 7.2
+    },
+    {
+     "code": "TUR",
+     "value": 4619634,
+     "share": 3.2
+    }
+   ],
+   "africa_share_exports": 0.4,
+   "africa_share_imports": 16.1,
+   "first_chapter_share": 43.5,
+   "top5_share": 85.6,
+   "hhi": 0.241
+  },
+  "SWZ": {
+   "exports_usd": 2172779553,
+   "imports_usd": 1959142733,
+   "exports_by_year": {
+    "2022": 2176723846,
+    "2023": 2309732241,
+    "2024": 2172779553
+   },
+   "top_exports": [
+    {
+     "chapter": "33",
+     "value": 633531463,
+     "share": 29.2
+    },
+    {
+     "chapter": "17",
+     "value": 432205438,
+     "share": 19.9
+    },
+    {
+     "chapter": "38",
+     "value": 271975873,
+     "share": 12.5
+    },
+    {
+     "chapter": "62",
+     "value": 155884347,
+     "share": 7.2
+    },
+    {
+     "chapter": "44",
+     "value": 142276942,
+     "share": 6.5
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "ZAF",
+     "value": 1494124301,
+     "share": 68.8
+    },
+    {
+     "code": "KEN",
+     "value": 93429716,
+     "share": 4.3
+    },
+    {
+     "code": "NGA",
+     "value": 85723858,
+     "share": 3.9
+    },
+    {
+     "code": "MOZ",
+     "value": 60359167,
+     "share": 2.8
+    },
+    {
+     "code": "ZWE",
+     "value": 51413581,
+     "share": 2.4
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "ZAF",
+     "value": 1689392802,
+     "share": 86.2
+    },
+    {
+     "code": "CHN",
+     "value": 50511898,
+     "share": 2.6
+    },
+    {
+     "code": "USA",
+     "value": 42206826,
+     "share": 2.2
+    },
+    {
+     "code": "DEU",
+     "value": 20479564,
+     "share": 1.0
+    },
+    {
+     "code": "IND",
+     "value": 19365924,
+     "share": 1.0
+    }
+   ],
+   "africa_share_exports": 90.6,
+   "africa_share_imports": 88.9,
+   "first_chapter_share": 29.2,
+   "top5_share": 75.3,
+   "hhi": 0.154
+  },
+  "SYC": {
+   "exports_usd": 898937879,
+   "imports_usd": 1618018606,
+   "exports_by_year": {
+    "2022": 654235886,
+    "2023": 693274948,
+    "2024": 898937879
+   },
+   "top_exports": [
+    {
+     "chapter": "03",
+     "value": 295762879,
+     "share": 32.9
+    },
+    {
+     "chapter": "16",
+     "value": 237464946,
+     "share": 26.4
+    },
+    {
+     "chapter": "27",
+     "value": 225515502,
+     "share": 25.1
+    },
+    {
+     "chapter": "74",
+     "value": 40615006,
+     "share": 4.5
+    },
+    {
+     "chapter": "89",
+     "value": 25687261,
+     "share": 2.9
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "ARE",
+     "value": 277967757,
+     "share": 30.9
+    },
+    {
+     "code": "FRA",
+     "value": 91093936,
+     "share": 10.1
+    },
+    {
+     "code": "MUS",
+     "value": 64362179,
+     "share": 7.2
+    },
+    {
+     "code": "GBR",
+     "value": 64151513,
+     "share": 7.1
+    },
+    {
+     "code": "JPN",
+     "value": 54374135,
+     "share": 6.0
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "ARE",
+     "value": 528722115,
+     "share": 32.7
+    },
+    {
+     "code": "CYP",
+     "value": 126602897,
+     "share": 7.8
+    },
+    {
+     "code": "FRA",
+     "value": 111322551,
+     "share": 6.9
+    },
+    {
+     "code": "IND",
+     "value": 99647557,
+     "share": 6.2
+    },
+    {
+     "code": "ZAF",
+     "value": 88058510,
+     "share": 5.4
+    }
+   ],
+   "africa_share_exports": 11.5,
+   "africa_share_imports": 10.1,
+   "first_chapter_share": 32.9,
+   "top5_share": 91.8,
+   "hhi": 0.244
+  },
+  "TCD": {
+   "exports_usd": 3480675780,
+   "imports_usd": 1158481587,
+   "exports_by_year": {
+    "2022": 4278846465,
+    "2023": 4466577898,
+    "2024": 3480675780
+   },
+   "top_exports": [
+    {
+     "chapter": "27",
+     "value": 3181697619,
+     "share": 91.4
+    },
+    {
+     "chapter": "12",
+     "value": 204483259,
+     "share": 5.9
+    },
+    {
+     "chapter": "13",
+     "value": 51791430,
+     "share": 1.5
+    },
+    {
+     "chapter": "52",
+     "value": 35873907,
+     "share": 1.0
+    },
+    {
+     "chapter": "85",
+     "value": 1864534,
+     "share": 0.1
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "DEU",
+     "value": 997338869,
+     "share": 28.7
+    },
+    {
+     "code": "CHN",
+     "value": 755184873,
+     "share": 21.7
+    },
+    {
+     "code": "FRA",
+     "value": 665939427,
+     "share": 19.1
+    },
+    {
+     "code": "NLD",
+     "value": 488735721,
+     "share": 14.0
+    },
+    {
+     "code": "TUR",
+     "value": 180325891,
+     "share": 5.2
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 373789136,
+     "share": 32.3
+    },
+    {
+     "code": "FRA",
+     "value": 113036793,
+     "share": 9.8
+    },
+    {
+     "code": "TUR",
+     "value": 92839904,
+     "share": 8.0
+    },
+    {
+     "code": "NER",
+     "value": 90727135,
+     "share": 7.8
+    },
+    {
+     "code": "IND",
+     "value": 82171000,
+     "share": 7.1
+    }
+   ],
+   "africa_share_exports": 0.3,
+   "africa_share_imports": 17.3,
+   "first_chapter_share": 91.4,
+   "top5_share": 99.9,
+   "hhi": 0.839
+  },
+  "TGO": {
+   "exports_usd": 2327328052,
+   "imports_usd": 11173900244,
+   "exports_by_year": {
+    "2022": 3653519090,
+    "2023": 5525799201,
+    "2024": 2327328052
+   },
+   "top_exports": [
+    {
+     "chapter": "27",
+     "value": 526835646,
+     "share": 22.6
+    },
+    {
+     "chapter": "12",
+     "value": 458010768,
+     "share": 19.7
+    },
+    {
+     "chapter": "25",
+     "value": 427345558,
+     "share": 18.4
+    },
+    {
+     "chapter": "08",
+     "value": 230199584,
+     "share": 9.9
+    },
+    {
+     "chapter": "18",
+     "value": 130452522,
+     "share": 5.6
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "IND",
+     "value": 775439151,
+     "share": 33.3
+    },
+    {
+     "code": "CHN",
+     "value": 212666510,
+     "share": 9.1
+    },
+    {
+     "code": "BEN",
+     "value": 178474961,
+     "share": 7.7
+    },
+    {
+     "code": "ZAF",
+     "value": 123674018,
+     "share": 5.3
+    },
+    {
+     "code": "BFA",
+     "value": 98324673,
+     "share": 4.2
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 3283863396,
+     "share": 29.4
+    },
+    {
+     "code": "IND",
+     "value": 2709481612,
+     "share": 24.2
+    },
+    {
+     "code": "NGA",
+     "value": 576805611,
+     "share": 5.2
+    },
+    {
+     "code": "BRA",
+     "value": 446450090,
+     "share": 4.0
+    },
+    {
+     "code": "HKG",
+     "value": 418846390,
+     "share": 3.7
+    }
+   ],
+   "africa_share_exports": 31.8,
+   "africa_share_imports": 12.8,
+   "first_chapter_share": 22.6,
+   "top5_share": 76.2,
+   "hhi": 0.142
+  },
+  "TUN": {
+   "exports_usd": 23344786434,
+   "imports_usd": 26357289165,
+   "exports_by_year": {
+    "2022": 19401155805,
+    "2023": 24660322376,
+    "2024": 23344786434
+   },
+   "top_exports": [
+    {
+     "chapter": "85",
+     "value": 6300319451,
+     "share": 27.0
+    },
+    {
+     "chapter": "62",
+     "value": 2497345736,
+     "share": 10.7
+    },
+    {
+     "chapter": "15",
+     "value": 1769846199,
+     "share": 7.6
+    },
+    {
+     "chapter": "27",
+     "value": 1234473157,
+     "share": 5.3
+    },
+    {
+     "chapter": "84",
+     "value": 1150125973,
+     "share": 4.9
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "FRA",
+     "value": 5404926944,
+     "share": 23.2
+    },
+    {
+     "code": "ITA",
+     "value": 3882058962,
+     "share": 16.6
+    },
+    {
+     "code": "DEU",
+     "value": 3135921813,
+     "share": 13.4
+    },
+    {
+     "code": "ESP",
+     "value": 1108478997,
+     "share": 4.7
+    },
+    {
+     "code": "USA",
+     "value": 1094707707,
+     "share": 4.7
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "FRA",
+     "value": 3332353947,
+     "share": 12.6
+    },
+    {
+     "code": "ITA",
+     "value": 3229676312,
+     "share": 12.3
+    },
+    {
+     "code": "CHN",
+     "value": 2998530901,
+     "share": 11.4
+    },
+    {
+     "code": "DEU",
+     "value": 2047883656,
+     "share": 7.8
+    },
+    {
+     "code": "DZA",
+     "value": 1947233766,
+     "share": 7.4
+    }
+   ],
+   "africa_share_exports": 9.7,
+   "africa_share_imports": 10.5,
+   "first_chapter_share": 27.0,
+   "top5_share": 55.5,
+   "hhi": 0.105
+  },
+  "TZA": {
+   "exports_usd": 11979635815,
+   "imports_usd": 20548454829,
+   "exports_by_year": {
+    "2022": 10185415723,
+    "2023": 11173814110,
+    "2024": 11979635815
+   },
+   "top_exports": [
+    {
+     "chapter": "71",
+     "value": 5079466450,
+     "share": 42.4
+    },
+    {
+     "chapter": "27",
+     "value": 997281142,
+     "share": 8.3
+    },
+    {
+     "chapter": "08",
+     "value": 711738976,
+     "share": 5.9
+    },
+    {
+     "chapter": "24",
+     "value": 637091955,
+     "share": 5.3
+    },
+    {
+     "chapter": "07",
+     "value": 484003719,
+     "share": 4.0
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "ZAF",
+     "value": 2295049633,
+     "share": 19.2
+    },
+    {
+     "code": "IND",
+     "value": 1834167538,
+     "share": 15.3
+    },
+    {
+     "code": "UGA",
+     "value": 1714017281,
+     "share": 14.3
+    },
+    {
+     "code": "ARE",
+     "value": 625152451,
+     "share": 5.2
+    },
+    {
+     "code": "CHN",
+     "value": 593549714,
+     "share": 5.0
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 6076082581,
+     "share": 29.6
+    },
+    {
+     "code": "IND",
+     "value": 4729384311,
+     "share": 23.0
+    },
+    {
+     "code": "ARE",
+     "value": 1663687593,
+     "share": 8.1
+    },
+    {
+     "code": "KOR",
+     "value": 627375553,
+     "share": 3.1
+    },
+    {
+     "code": "JPN",
+     "value": 599967086,
+     "share": 2.9
+    }
+   ],
+   "africa_share_exports": 51.6,
+   "africa_share_imports": 8.4,
+   "first_chapter_share": 42.4,
+   "top5_share": 65.9,
+   "hhi": 0.2
+  },
+  "UGA": {
+   "exports_usd": 8881087148,
+   "imports_usd": 13758185971,
+   "exports_by_year": {
+    "2022": 5692948633,
+    "2023": 8519977155,
+    "2024": 8881087148
+   },
+   "top_exports": [
+    {
+     "chapter": "71",
+     "value": 4217333175,
+     "share": 47.5
+    },
+    {
+     "chapter": "09",
+     "value": 1561530511,
+     "share": 17.6
+    },
+    {
+     "chapter": "18",
+     "value": 334524244,
+     "share": 3.8
+    },
+    {
+     "chapter": "27",
+     "value": 186879089,
+     "share": 2.1
+    },
+    {
+     "chapter": "17",
+     "value": 166324668,
+     "share": 1.9
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "ARE",
+     "value": 2609435061,
+     "share": 29.4
+    },
+    {
+     "code": "HKG",
+     "value": 1016708183,
+     "share": 11.4
+    },
+    {
+     "code": "IND",
+     "value": 808809604,
+     "share": 9.1
+    },
+    {
+     "code": "KEN",
+     "value": 532578550,
+     "share": 6.0
+    },
+    {
+     "code": "SSD",
+     "value": 490069618,
+     "share": 5.5
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 2683916724,
+     "share": 19.5
+    },
+    {
+     "code": "TZA",
+     "value": 1714017281,
+     "share": 12.5
+    },
+    {
+     "code": "ARE",
+     "value": 1292306704,
+     "share": 9.4
+    },
+    {
+     "code": "IND",
+     "value": 1002129914,
+     "share": 7.3
+    },
+    {
+     "code": "KEN",
+     "value": 962926151,
+     "share": 7.0
+    }
+   ],
+   "africa_share_exports": 26.8,
+   "africa_share_imports": 37.3,
+   "first_chapter_share": 47.5,
+   "top5_share": 72.9,
+   "hhi": 0.261
+  },
+  "ZAF": {
+   "exports_usd": 152235700635,
+   "imports_usd": 101099451203,
+   "exports_by_year": {
+    "2022": 161010990194,
+    "2023": 150658423714,
+    "2024": 152235700635
+   },
+   "top_exports": [
+    {
+     "chapter": "71",
+     "value": 51478809372,
+     "share": 33.8
+    },
+    {
+     "chapter": "26",
+     "value": 20393593894,
+     "share": 13.4
+    },
+    {
+     "chapter": "87",
+     "value": 16284140560,
+     "share": 10.7
+    },
+    {
+     "chapter": "27",
+     "value": 10480059507,
+     "share": 6.9
+    },
+    {
+     "chapter": "72",
+     "value": 6768335210,
+     "share": 4.4
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHN",
+     "value": 28031436476,
+     "share": 18.4
+    },
+    {
+     "code": "GBR",
+     "value": 12624504777,
+     "share": 8.3
+    },
+    {
+     "code": "USA",
+     "value": 12341941007,
+     "share": 8.1
+    },
+    {
+     "code": "IND",
+     "value": 11563522429,
+     "share": 7.6
+    },
+    {
+     "code": "DEU",
+     "value": 7908861818,
+     "share": 5.2
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "CHN",
+     "value": 21482624760,
+     "share": 21.2
+    },
+    {
+     "code": "DEU",
+     "value": 7325164640,
+     "share": 7.2
+    },
+    {
+     "code": "IND",
+     "value": 7243846451,
+     "share": 7.2
+    },
+    {
+     "code": "USA",
+     "value": 5900987007,
+     "share": 5.8
+    },
+    {
+     "code": "OMN",
+     "value": 2967836323,
+     "share": 2.9
+    }
+   ],
+   "africa_share_exports": 21.1,
+   "africa_share_imports": 14.6,
+   "first_chapter_share": 33.8,
+   "top5_share": 69.2,
+   "hhi": 0.155
+  },
+  "ZMB": {
+   "exports_usd": 14520198405,
+   "imports_usd": 11919854890,
+   "exports_by_year": {
+    "2022": 14632498631,
+    "2023": 15595158968,
+    "2024": 14520198405
+   },
+   "top_exports": [
+    {
+     "chapter": "74",
+     "value": 9890477698,
+     "share": 68.1
+    },
+    {
+     "chapter": "26",
+     "value": 937836061,
+     "share": 6.5
+    },
+    {
+     "chapter": "71",
+     "value": 584340224,
+     "share": 4.0
+    },
+    {
+     "chapter": "24",
+     "value": 357299236,
+     "share": 2.5
+    },
+    {
+     "chapter": "25",
+     "value": 350088973,
+     "share": 2.4
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "CHE",
+     "value": 4800964647,
+     "share": 33.1
+    },
+    {
+     "code": "CHN",
+     "value": 2795961964,
+     "share": 19.3
+    },
+    {
+     "code": "IND",
+     "value": 1843412534,
+     "share": 12.7
+    },
+    {
+     "code": "COD",
+     "value": 1201413653,
+     "share": 8.3
+    },
+    {
+     "code": "ZAF",
+     "value": 518651284,
+     "share": 3.6
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "ZAF",
+     "value": 3149030797,
+     "share": 26.4
+    },
+    {
+     "code": "CHN",
+     "value": 1944834650,
+     "share": 16.3
+    },
+    {
+     "code": "ARE",
+     "value": 608883851,
+     "share": 5.1
+    },
+    {
+     "code": "TZA",
+     "value": 542380906,
+     "share": 4.6
+    },
+    {
+     "code": "NAM",
+     "value": 507680020,
+     "share": 4.3
+    }
+   ],
+   "africa_share_exports": 21.7,
+   "africa_share_imports": 44.9,
+   "first_chapter_share": 68.1,
+   "top5_share": 83.5,
+   "hhi": 0.472
+  },
+  "ZWE": {
+   "exports_usd": 7898470170,
+   "imports_usd": 9725390459,
+   "exports_by_year": {
+    "2022": 5338892127,
+    "2023": 9072238206,
+    "2024": 7898470170
+   },
+   "top_exports": [
+    {
+     "chapter": "71",
+     "value": 2857260394,
+     "share": 36.2
+    },
+    {
+     "chapter": "24",
+     "value": 1421148503,
+     "share": 18.0
+    },
+    {
+     "chapter": "75",
+     "value": 986202786,
+     "share": 12.5
+    },
+    {
+     "chapter": "25",
+     "value": 901937471,
+     "share": 11.4
+    },
+    {
+     "chapter": "26",
+     "value": 426118242,
+     "share": 5.4
+    }
+   ],
+   "top_clients": [
+    {
+     "code": "ARE",
+     "value": 2720028930,
+     "share": 34.4
+    },
+    {
+     "code": "CHN",
+     "value": 1992658868,
+     "share": 25.2
+    },
+    {
+     "code": "ZAF",
+     "value": 1393136116,
+     "share": 17.6
+    },
+    {
+     "code": "MOZ",
+     "value": 243742213,
+     "share": 3.1
+    },
+    {
+     "code": "ZMB",
+     "value": 170475918,
+     "share": 2.2
+    }
+   ],
+   "top_suppliers": [
+    {
+     "code": "ZAF",
+     "value": 3900673993,
+     "share": 40.1
+    },
+    {
+     "code": "CHN",
+     "value": 1406204030,
+     "share": 14.5
+    },
+    {
+     "code": "BHS",
+     "value": 731658697,
+     "share": 7.5
+    },
+    {
+     "code": "MOZ",
+     "value": 414220858,
+     "share": 4.3
+    },
+    {
+     "code": "SGP",
+     "value": 333885299,
+     "share": 3.4
+    }
+   ],
+   "africa_share_exports": 25.2,
+   "africa_share_imports": 53.3,
+   "first_chapter_share": 36.2,
+   "top5_share": 83.5,
+   "hhi": 0.199
+  }
+ }
+}

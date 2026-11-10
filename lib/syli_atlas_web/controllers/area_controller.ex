@@ -5,6 +5,8 @@ defmodule SyliAtlasWeb.AreaController do
   alias SyliAtlas.Geo.Area
   import SyliAtlasWeb.Format, only: [change: 3, value: 3]
   alias SyliAtlasWeb.{NotFoundError, PageComponents, Pagination, Paths, PublicData, Seo}
+  alias SyliAtlas.Economy.{Convergence, Currencies}
+  alias SyliAtlas.Sources.Indicators
 
   plug :put_layout, false
 
@@ -96,10 +98,84 @@ defmodule SyliAtlasWeb.AreaController do
         market: market(area),
         rating: rating,
         climate: climate,
-        rated: (ratings && ratings["rated"]) || 0
+        rated: (ratings && ratings["rated"]) || 0,
+        comparison: comparison(area, region, from, to, locale),
+        currency: currency(area, locale),
+        fx: fx(area, locale),
+        convergence:
+          area.kind == "country" &&
+            Convergence.check(area.code, profile["series"], to, Indicators.first_year()),
+        world_bank: area.kind == "country" && SyliAtlas.WorldBank.for_country(area.code),
+        world_bank_doc: SyliAtlas.WorldBank.document(),
+        trade: area.kind == "country" && SyliAtlas.Trade.for_country(area.code),
+        trade_doc: SyliAtlas.Trade.document(),
+        sections:
+          sections(
+            area,
+            rating,
+            climate,
+            market(area),
+            area.kind == "country" && SyliAtlas.WorldBank.for_country(area.code)
+          )
       )
     end
   end
+
+  # Anchors of the section menu, in page order.
+  defp sections(area, rating, climate, market, wb) do
+    latest = (wb && wb["latest"]) || %{}
+
+    [{"economie", gettext("Economy")}, {"finances", gettext("Public finances")}] ++
+      if(area.kind == "country", do: [{"monnaie", pgettext("section", "Currency")}], else: []) ++
+      if(wb, do: [{"dette", gettext("Debt")}], else: []) ++
+      if(area.kind == "country" && SyliAtlas.Trade.for_country(area.code),
+        do: [{"commerce", gettext("Trade")}],
+        else: []
+      ) ++
+      if(wb, do: [{"flux", gettext("Financial inflows")}], else: []) ++
+      if(wb, do: [{"emploi", gettext("Jobs")}], else: []) ++
+      if(Enum.any?(~w(poverty gini electricity internet accounts), &latest[&1]),
+        do: [{"conditions-de-vie", gettext("Living conditions")}],
+        else: []
+      ) ++
+      if(rating, do: [{"notation", gettext("Rating")}], else: []) ++
+      if(climate, do: [{"climat", gettext("Business climate")}], else: []) ++
+      if(market != [], do: [{"market", gettext("Stock exchange")}], else: []) ++
+      [{"questions", gettext("Questions")}]
+  end
+
+  # The line drawn next to a country (its region) or a region (Africa).
+  defp comparison(area, region, from, to, locale) do
+    other =
+      cond do
+        area.kind == "country" and region -> region
+        area.kind == "region" -> Geo.get_area_by_code("africa")
+        true -> nil
+      end
+
+    with %{} <- other, %{"profile" => p} <- PublicData.area(other.code, from, to) do
+      %{name: p["name"][locale], series: p["series"]}
+    else
+      _ -> nil
+    end
+  end
+
+  defp currency(%{kind: "country", code: code}, locale), do: Currencies.for_country(code, locale)
+  defp currency(_area, _locale), do: nil
+
+  # Dollar rate of the country's currency, when a market source allows showing it.
+  defp fx(%{kind: "country", code: code}, locale) do
+    with %{code: cur} <- Currencies.for_country(code, locale),
+         true <- SyliAtlas.Market.public?(),
+         %{"rates" => rates} = doc <- SyliAtlas.Market.fx(),
+         rate when is_number(rate) <- rates["USD/" <> cur] do
+      %{rate: rate, as_of: doc["as_of"]}
+    else
+      _ -> nil
+    end
+  end
+
+  defp fx(_area, _locale), do: nil
 
   # The exchange(s) serving a country, when the market pages are public.
   defp market(%{kind: "country", code: code}) do

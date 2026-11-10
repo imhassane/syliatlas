@@ -105,3 +105,53 @@
 @media (min-width: 80rem) {
   .defer-carry { --defer-h: 1020px; }
 }
+
+/* Country profile: the section menu, kept at the top while scrolling, and
+   the convergence criteria (SyliAtlasWeb.EconomyComponents). */
+.section-nav { position: sticky; top: 0; z-index: 20; background: var(--page); border-bottom: 1px solid var(--border); }
+.section-nav-inner { display: flex; gap: 8px; padding-top: 10px; padding-bottom: 10px; overflow-x: auto; scrollbar-width: none; }
+.section-nav-inner::-webkit-scrollbar { display: none; }
+.section-nav a { flex: none; display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border-radius: 999px; background: var(--muted); color: var(--ink); font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; }
+.section-nav a:hover { background: var(--accent-bg); color: var(--accent-text); }
+.section[id] { scroll-margin-top: 64px; }
+.criteria { list-style: none; margin: 0; padding: 0; }
+.criteria li { display: flex; gap: 12px; align-items: center; justify-content: space-between; min-height: 64px; border-top: 1px solid var(--border-faint); }
+.criteria-text { display: flex; flex-direction: column; gap: 2px; }
+.criteria-text b { font-weight: 600; }
+@media (min-width: 60rem) { .stats.stats-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 59.99rem) { .stats.stats-3 > div:last-child:nth-child(odd) { grid-column: 1 / -1; } }
+
+/* Method page: one card per source. */
+.source-card p { margin: 0; }
+.source-facts { display: grid; gap: 10px; margin: 4px 0 0; }
+.source-facts dt { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-subtle); }
+.source-facts dd { margin: 2px 0 0; font-size: 15px; }
+
+/* Stacked shares: creditors of the debt, sectors (SyliAtlasWeb.WorldBankComponents). */
+.stacked-bar { display: flex; gap: 2px; height: 22px; border-radius: 4px; overflow: hidden; background: var(--muted); }
+.stacked-bar-lg { height: 28px; }
+.stacked-bar > span { display: block; min-width: 2px; }
+.creditor-rows { display: flex; flex-direction: column; gap: 12px; }
+.creditor-row { display: grid; grid-template-columns: 48px 1fr; gap: 14px; align-items: center; }
+.creditor-shares { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 12px; margin: 0; }
+.creditor-shares dt { font-size: 12px; color: var(--ink-subtle); }
+.creditor-shares dd { margin: 2px 0 0; font-size: 22px; font-weight: 500; }
+.share-legend { display: flex !important; flex-wrap: wrap; gap: 6px 18px; margin: 0; }
+
+/* Trade: share lists (SyliAtlasWeb.TradeComponents). */
+.share-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.share-list li { display: grid; grid-template-columns: minmax(120px, 1.2fr) 1fr 64px; gap: 12px; align-items: center; min-height: 36px; font-size: 14px; }
+.share-list b { text-align: right; }
+.share-track { height: 10px; border-radius: 999px; background: var(--muted); overflow: hidden; }
+.share-track > span { display: block; height: 100%; border-radius: 999px; background: var(--c1); }
+.share-track-alt > span { background: var(--c3); }
+
+/* IMF risk of debt distress: a four-step scale and table pills. */
+.risk-low { --risk-bg: var(--success-bg); --risk-ink: var(--success-ink); }
+.risk-moderate { --risk-bg: var(--rt-high-bg); --risk-ink: var(--rt-high-ink); }
+.risk-high { --risk-bg: var(--rt-risk-bg); --risk-ink: var(--rt-risk-ink); }
+.risk-distress { --risk-bg: var(--rt-def-bg); --risk-ink: var(--rt-def-ink); }
+.risk-scale { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+.risk-step { display: flex; align-items: center; justify-content: center; min-height: 40px; padding: 4px 8px; border-radius: 6px; font-size: 13px; text-align: center; background: var(--muted); color: var(--ink-subtle); }
+.risk-step.risk-current { background: var(--risk-bg); color: var(--risk-ink); font-weight: 600; box-shadow: inset 0 0 0 2px var(--risk-ink); }
+.risk-pill { background: var(--risk-bg); color: var(--risk-ink); }

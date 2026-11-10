@@ -4,6 +4,10 @@ defmodule SyliAtlas.Sources.Indicators do
 
   `kind: :rate` values change in percentage points; `kind: :level` values
   change in percent. `real_gdp_index` is derived from `real_gdp_growth`.
+
+  The fiscal balance (net lending or borrowing of the general government),
+  the current account and unemployment come from the same WEO release, so
+  every series of a page shares one source and one edition.
   """
 
   @indicators [
@@ -13,7 +17,10 @@ defmodule SyliAtlas.Sources.Indicators do
     %{key: "gdp_per_capita_ppp", imf: "PPPPC", kind: :level, good: :up},
     %{key: "inflation", imf: "PCPIPCH", kind: :rate, good: :down},
     %{key: "public_debt_pct_gdp", imf: "GGXWDG_NGDP", kind: :rate, good: :down},
-    %{key: "population_m", imf: "LP", kind: :level, good: :neutral}
+    %{key: "population_m", imf: "LP", kind: :level, good: :neutral},
+    %{key: "fiscal_balance_pct_gdp", imf: "GGXCNL_NGDP", kind: :rate, good: :up},
+    %{key: "current_account_pct_gdp", imf: "BCA_NGDPD", kind: :rate, good: :up},
+    %{key: "unemployment", imf: "LUR", kind: :rate, good: :down}
   ]
 
   @derived %{key: "real_gdp_index", imf: nil, kind: :index, good: :up}
@@ -22,6 +29,7 @@ defmodule SyliAtlas.Sources.Indicators do
   @last_year 2030
 
   def all, do: @indicators
+  def rate_keys, do: for(%{kind: :rate, key: key} <- @indicators, do: key)
   def keys, do: Enum.map(@indicators, & &1.key)
   def published_keys, do: ["real_gdp_index" | keys()]
   def get(key), do: Enum.find([@derived | @indicators], &(&1.key == key))

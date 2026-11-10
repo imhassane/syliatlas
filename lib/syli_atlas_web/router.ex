@@ -69,6 +69,7 @@ defmodule SyliAtlasWeb.Router do
     get "/comparer", CompareController, :show
     get "/comparer/*slugs", CompareController, :show
     get "/notations", RatingsController, :index
+    get "/dette", DebtController, :index
     get "/notations/:slug", RatingsController, :show
     get "/bourses", MarketController, :index
     get "/bourses/etf", MarketController, :etfs
@@ -90,6 +91,7 @@ defmodule SyliAtlasWeb.Router do
     get "/compare", CompareController, :show
     get "/compare/*slugs", CompareController, :show
     get "/credit-ratings", RatingsController, :index
+    get "/debt", DebtController, :index
     get "/credit-ratings/:slug", RatingsController, :show
     get "/stock-exchanges", MarketController, :index
     get "/stock-exchanges/etf", MarketController, :etfs

@@ -1,0 +1,130 @@
+<Layouts.public locale={@locale} current={:debt} alternates={@alternates}>
+  <.section id="debt-list" tight={:top}>
+    <nav aria-label={gettext("Breadcrumb")}>
+      <ol class="crumbs">
+        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+        <li aria-current="page">{gettext("Debt")}</li>
+      </ol>
+    </nav>
+
+    <div class="card market-table" id="debt-table">
+      <div class="market-toolbar">
+        <div class="market-toolbar-title">
+          <h1 class="market-h1">{gettext("Debt of the 54 African countries")}</h1>
+          <p class="src">
+            {gettext(
+              "Level, creditors and cost of the debt, country by country · each column names its source"
+            )}
+          </p>
+        </div>
+      </div>
+      <nav class="market-tabs" aria-label={gettext("Filter by region")}>
+        <a
+          href={href(@locale, nil, @sort) <> "#debt-list"}
+          aria-current={@region == nil && "true"}
+        >
+          {gettext("All countries")}<span class="market-tab-count">{@counts[nil]}</span>
+        </a>
+        <a
+          :for={r <- @regions}
+          href={href(@locale, r, @sort) <> "#debt-list"}
+          aria-current={@region && @region.code == r.code && "true"}
+        >
+          {region_name(r, @locale)}<span class="market-tab-count">{@counts[r.code]}</span>
+        </a>
+      </nav>
+
+      <div class="table-box">
+        <table class="table table-stack table-wide" id="debt-rows">
+          <caption class="vh">{gettext("Debt of the 54 African countries")}</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="l">{gettext("Country")}</th>
+              <th
+                :for={
+                  {key, label} <- [
+                    {"debt", gettext("Public debt, % of GDP · %{year}", year: @year)},
+                    {"risk", gettext("Risk of debt distress (IMF)")},
+                    {"external", gettext("External debt")},
+                    {"china", gettext("Owed to China")},
+                    {"bonds", gettext("Owed to bond holders")},
+                    {"service", gettext("Debt service, % of exports")}
+                  ]
+                }
+                scope="col"
+                aria-sort={@sort == key && "descending"}
+              >
+                <a href={href(@locale, @region, key) <> "#debt-list"}>{label}{if(@sort == key,
+                  do: " ↓"
+                )}</a>
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={r <- @rows} id={"debt-" <> r.code}>
+              <th scope="row" class="l">
+                <a href={Paths.area(@locale, "country", r.slug) <> "#dette"}>{r.name}</a>
+              </th>
+              <td data-label={gettext("Public debt, % of GDP · %{year}", year: @year)}>
+                <b class={["num", (is_number(r.debt) and r.debt > 70) && "down"]}>{pct(
+                  r.debt,
+                  @locale
+                )}</b>
+              </td>
+              <td data-label={gettext("Risk of debt distress (IMF)")}>
+                <span class={["pill no-dot", WorldBankComponents.risk_class(r.distress)]}>
+                  {WorldBankComponents.risk_label(r.distress && r.distress["risk"])}
+                </span>
+                <span :if={r.distress} class="small subtle">
+                  {String.slice(r.distress["published"], 0, 4)}
+                </span>
+              </td>
+              <td data-label={gettext("External debt")}>
+                <span :if={r.external} class="num">
+                  {usd(r.external["value"], @locale)}
+                  <span class="small subtle">{r.external["year"]}</span>
+                </span>
+                <span :if={!r.external} class="subtle">—</span>
+              </td>
+              <td data-label={gettext("Owed to China")} class="num">{pct(r.china, @locale)}</td>
+              <td data-label={gettext("Owed to bond holders")} class="num">
+                {pct(r.bonds, @locale)}
+              </td>
+              <td data-label={gettext("Debt service, % of exports")}>
+                <span :if={r.service} class="num">
+                  {pct(r.service["value"], @locale)}
+                  <span class="small subtle">{r.service["year"]}</span>
+                </span>
+                <span :if={!r.service} class="subtle">—</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-foot stack gap-2">
+        <p class="src">
+          {gettext(
+            "Public debt: IMF, World Economic Outlook, gross debt of the general government, % of GDP"
+          )}
+        </p>
+        <p class="src">
+          {gettext(
+            "Risk of debt distress: IMF, list of debt sustainability analyses of low-income countries, as of %{date} · only countries eligible for the IMF's concessional lending are assessed",
+            date: @distress_doc["as_of"]
+          )} · <a href={@distress_doc["source"]["url"]} rel="noopener">imf.org</a>
+        </p>
+        <p class="src">
+          {gettext(
+            "External debt, creditors and service: World Bank, International Debt Statistics and World Development Indicators (updated %{date}), CC BY 4.0 · shares of the public and publicly guaranteed external debt: Syli Atlas calculation · the World Bank does not cover high-income countries such as Seychelles",
+            date: @wb["sources"]["ids"]["last_updated"]
+          )}
+        </p>
+      </div>
+    </div>
+
+    <.card pad class="stack gap-2">
+      <h2 class="h2">{gettext("In short")}</h2>
+      <p data-answer>{@answer}</p>
+    </.card>
+  </.section>
+</Layouts.public>

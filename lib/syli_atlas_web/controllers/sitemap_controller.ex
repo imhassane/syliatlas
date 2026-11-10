@@ -35,7 +35,7 @@ defmodule SyliAtlasWeb.SitemapController do
     as_of = ratings && ratings["as_of"]
 
     static =
-      for fun <- [:home, :ranking, :regions, :method] do
+      for fun <- [:home, :ranking, :regions, :method, :debt] do
         {both(&apply(Paths, fun, [&1])), nil}
       end
 

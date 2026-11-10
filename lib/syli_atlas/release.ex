@@ -41,6 +41,16 @@ defmodule SyliAtlas.Release do
           IO.puts("IMF edition #{edition.code} online")
         end
 
+        # Indicators added since the online edition was imported.
+        case SyliAtlas.Imports.missing_indicators() do
+          [] ->
+            :ok
+
+          missing ->
+            IO.puts("IMF: filling #{Enum.join(missing, ", ")}")
+            SyliAtlas.Imports.backfill_missing_indicators!()
+        end
+
         # Snapshots missing, or of an older format than the code: rebuild them.
         if SyliAtlas.Profiles.Queries.snapshot_format("home:fr") !=
              SyliAtlas.Profiles.HomeSnapshot.format() or

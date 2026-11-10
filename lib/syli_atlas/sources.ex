@@ -78,6 +78,16 @@ defmodule SyliAtlas.Sources do
     end)
   end
 
+  @doc "Indicators an edition has observations for."
+  def edition_indicators(%Edition{id: edition_id}) do
+    from(o in Observation,
+      where: o.edition_id == ^edition_id,
+      distinct: true,
+      select: o.indicator
+    )
+    |> Repo.all()
+  end
+
   @doc "Returns %{area_code => %{indicator => %{year => value}}} for an edition."
   def observations_by_area(%Edition{id: edition_id}) do
     from(o in Observation,

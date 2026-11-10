@@ -106,10 +106,12 @@ defmodule SyliAtlasWeb.UI do
     attr :id, :string
   end
 
+  attr :class, :any, default: nil
+
   @doc "A row of key figures. Each stat's inner block is its note line."
   def stat_grid(assigns) do
     ~H"""
-    <dl class="stats">
+    <dl class={["stats", @class]}>
       <div :for={s <- @stat}>
         <dt>{s.label}</dt>
         <dd class={["big", s[:tone]]} data-kpi={s[:id]}>{s.value}</dd>

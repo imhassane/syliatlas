@@ -50,6 +50,12 @@ defmodule SyliAtlasWeb.Format do
       "public_debt_pct_gdp" ->
         number(v, 1, locale) <> @nbsp <> "%"
 
+      k when k in ["fiscal_balance_pct_gdp", "current_account_pct_gdp"] ->
+        signed(v, locale) <> @nbsp <> "%"
+
+      "unemployment" ->
+        number(v, 1, locale) <> @nbsp <> "%"
+
       "gdp_usd_bn" ->
         number(v, if(v >= 1000, do: 0, else: 1), locale) <> @nbsp <> billions(locale)
 

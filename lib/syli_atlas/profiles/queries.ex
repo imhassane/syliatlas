@@ -26,7 +26,7 @@ defmodule SyliAtlas.Profiles.Queries do
           'from', ?2, 'to', ?3,
           'changes', json((
             SELECT json_group_object(s.key,
-              CASE WHEN s.key IN ('real_gdp_growth', 'inflation', 'public_debt_pct_gdp')
+              CASE WHEN s.key IN (#{rate_list()})
                 THEN round(json_extract(s.value, '$[' || (?3 - #{@first}) || ']')
                          - json_extract(s.value, '$[' || (?2 - #{@first}) || ']'), 1)
                 ELSE round((json_extract(s.value, '$[' || (?3 - #{@first}) || ']')
@@ -266,4 +266,8 @@ defmodule SyliAtlas.Profiles.Queries do
 
     json
   end
+
+  # Rates change in percentage points; the list comes from the indicator
+  # definitions, never from user input.
+  defp rate_list, do: Enum.map_join(Indicators.rate_keys(), ", ", &"'#{&1}'")
 end
