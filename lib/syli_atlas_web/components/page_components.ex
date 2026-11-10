@@ -103,11 +103,24 @@ defmodule SyliAtlasWeb.PageComponents do
   attr :value, :string, default: ""
   attr :id, :string, default: "q"
   attr :autofocus, :boolean, default: false
+  attr :compact, :boolean, default: false, doc: "the header field: no button, shortcut « / »"
 
+  @doc """
+  Search form. Without JavaScript it submits to the search page; with it,
+  `assets/js/ui/search.js` shows suggestions from `/api/v1/search` under the
+  field (combobox, arrows, Enter, Escape).
+  """
   def search_form(assigns) do
     ~H"""
-    <form class="search" role="search" action={SyliAtlasWeb.Paths.search(@locale)} method="get">
-      <label for={@id} class="vh">{gettext("Search a country")}</label>
+    <form
+      class={["search", @compact && "search-compact"]}
+      role="search"
+      action={SyliAtlasWeb.Paths.search(@locale)}
+      method="get"
+      data-search={@locale}
+      data-empty={gettext("Nothing found yet. Press Enter to search the whole site.")}
+    >
+      <label for={@id} class="vh">{gettext("Search a country, a theme, a security")}</label>
       <svg
         width="18"
         height="18"
@@ -123,11 +136,23 @@ defmodule SyliAtlasWeb.PageComponents do
         name="q"
         type="search"
         value={@value}
-        placeholder={gettext("Search a country or a region…")}
+        placeholder={
+          if @compact,
+            do: gettext("Search…"),
+            else: gettext("A country, a theme, a security: « dette Sénégal »")
+        }
         autocomplete="off"
         autofocus={@autofocus}
+        role="combobox"
+        aria-autocomplete="list"
+        aria-expanded="false"
+        aria-controls={@id <> "-list"}
+        data-search-input
+        data-shortcut={@compact && "/"}
       />
-      <button type="submit" class="btn btn-primary">{gettext("Search")}</button>
+      <kbd :if={@compact} class="search-kbd hide-mobile" aria-hidden="true">/</kbd>
+      <button :if={!@compact} type="submit" class="btn btn-primary">{gettext("Search")}</button>
+      <div class="search-pop" id={@id <> "-list"} role="listbox" hidden data-search-list></div>
     </form>
     """
   end

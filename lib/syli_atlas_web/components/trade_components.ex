@@ -126,6 +126,12 @@ defmodule SyliAtlasWeb.TradeComponents do
     end
   end
 
+  @doc false
+  def lead(e, doc, name, locale) do
+    top = List.first(e["top_exports"])
+    trade_lead(e, doc, name, top && chapter(doc, top["chapter"], locale), locale)
+  end
+
   defp trade_lead(e, doc, name, label, locale) do
     clients = e["top_clients"] |> Enum.take(2) |> Enum.map(&partner(doc, &1["code"], locale))
 

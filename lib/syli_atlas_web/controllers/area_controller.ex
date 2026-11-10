@@ -4,7 +4,17 @@ defmodule SyliAtlasWeb.AreaController do
   alias SyliAtlas.Geo
   alias SyliAtlas.Geo.Area
   import SyliAtlasWeb.Format, only: [change: 3, value: 3]
-  alias SyliAtlasWeb.{NotFoundError, PageComponents, Pagination, Paths, PublicData, Seo}
+
+  alias SyliAtlasWeb.{
+    NotFoundError,
+    PageComponents,
+    Pagination,
+    Paths,
+    ProfileComponents,
+    PublicData,
+    Seo
+  }
+
   alias SyliAtlas.Economy.{Convergence, Currencies}
   alias SyliAtlas.Sources.Indicators
 
@@ -15,134 +25,279 @@ defmodule SyliAtlasWeb.AreaController do
   def show(conn, %{"slug" => slug} = params) do
     locale = conn.assigns.locale
     area = Geo.get_area_by_slug(slug, locale) || raise NotFoundError
+    tab = tab(params["tab"])
+    if area.kind != "country" and tab != :overview, do: raise(NotFoundError)
+
     {from, to} = PageComponents.period(params)
     data = PublicData.area(area.code, from, to) || raise NotFoundError
-    profile = data["profile"]
-    paths = %{"fr" => Paths.area("fr", area), "en" => Paths.area("en", area)}
 
-    # Old or foreign slug: send to the canonical URL.
+    paths = %{
+      "fr" => Paths.area_tab("fr", area, tab),
+      "en" => Paths.area_tab("en", area, tab)
+    }
+
+    # Old or foreign slug or tab name: send to the canonical URL.
     if conn.request_path != paths[locale] do
       redirect(conn, to: paths[locale] <> query(conn))
     else
-      name = Area.name(area, locale)
-      region = area.region_code && Geo.get_area_by_code(area.region_code)
-      ranking_scope = if area.kind == "country", do: area.region_code, else: nil
-
-      peers =
-        if area.kind == "country" do
-          PublicData.ranking("gdp_usd_bn", from, to, region: ranking_scope, locale: locale)
-        else
-          Geo.list_regions()
-          |> Enum.map(&PublicData.area(&1.code, from, to))
-          |> Enum.reject(&is_nil/1)
-          |> Enum.map(fn r ->
-            %{
-              "code" => r["profile"]["code"],
-              "name" => r["profile"]["name"][locale],
-              "slug" => r["profile"]["slug"][locale],
-              "kind" => r["profile"]["kind"],
-              "value" => r["period"]["changes"]["gdp_usd_bn"]
-            }
-          end)
-          |> Enum.sort_by(&(-(&1["value"] || -999)))
-        end
-
-      ratings = if area.kind == "country", do: SyliAtlas.Ratings.document()
-      rating = SyliAtlas.Ratings.for_country(ratings, area.code)
-
-      climate = area.kind == "country" && SyliAtlas.Climate.for_country(area.code)
-
-      faq =
-        faq(name, data, from, to, locale) ++
-          SyliAtlasWeb.RatingComponents.faq_items(name, rating, ratings) ++
-          SyliAtlasWeb.ClimateComponents.faq_items(name, climate)
-
-      members = if(area.kind == "country", do: [], else: members(profile, from, to, locale))
-      kept = Map.take(params, ~w(from to peers members))
-
-      peers_page =
-        Map.get(params, "peers") || Pagination.page_of(peers, &(&1["code"] == area.code))
-
-      render(conn, :show,
-        page_title: name <> " · " <> gettext("economy %{from}–%{to}", from: from, to: to),
-        seo:
-          Seo.page(locale, paths, answer(name, data, from, to, locale), %{
-            json_ld: [
-              Seo.breadcrumbs(breadcrumbs(area, region, locale)),
-              Seo.dataset(
-                gettext("Economy of %{name}, 2015–2030", name: name),
-                name,
-                "/api/v1/areas/#{area.code}",
-                profile["edition"]
-              ),
-              Seo.faq(faq)
-            ]
-          }),
-        alternates: Seo.alternates_for_header(paths),
-        area: area,
-        name: name,
-        region: region,
-        data: data,
-        profile: profile,
-        from: from,
-        to: to,
-        kpis: @kpis,
-        peers: Pagination.paginate(peers, peers_page),
-        peers_href: &Pagination.href(paths[locale], kept, "peers", &1, "peers"),
-        peers_max: bar_max(peers),
-        faq: faq,
-        answer: answer(name, data, from, to, locale),
-        members: Pagination.paginate(members, params["members"]),
-        members_href: &Pagination.href(paths[locale], kept, "members", &1, "members"),
-        members_max: bar_max(members),
-        market: market(area),
-        rating: rating,
-        climate: climate,
-        rated: (ratings && ratings["rated"]) || 0,
-        comparison: comparison(area, region, from, to, locale),
-        currency: currency(area, locale),
-        fx: fx(area, locale),
-        convergence:
-          area.kind == "country" &&
-            Convergence.check(area.code, profile["series"], to, Indicators.first_year()),
-        world_bank: area.kind == "country" && SyliAtlas.WorldBank.for_country(area.code),
-        world_bank_doc: SyliAtlas.WorldBank.document(),
-        trade: area.kind == "country" && SyliAtlas.Trade.for_country(area.code),
-        trade_doc: SyliAtlas.Trade.document(),
-        sections:
-          sections(
-            area,
-            rating,
-            climate,
-            market(area),
-            area.kind == "country" && SyliAtlas.WorldBank.for_country(area.code)
-          )
-      )
+      render_profile(conn, params, area, tab, data, from, to, paths)
     end
   end
 
-  # Anchors of the section menu, in page order.
-  defp sections(area, rating, climate, market, wb) do
-    latest = (wb && wb["latest"]) || %{}
+  defp tab(nil), do: :overview
+  defp tab(segment), do: Paths.tab_from_segment(segment) || raise(NotFoundError)
 
-    [{"economie", gettext("Economy")}, {"finances", gettext("Public finances")}] ++
-      if(area.kind == "country", do: [{"monnaie", pgettext("section", "Currency")}], else: []) ++
-      if(wb, do: [{"dette", gettext("Debt")}], else: []) ++
-      if(area.kind == "country" && SyliAtlas.Trade.for_country(area.code),
-        do: [{"commerce", gettext("Trade")}],
-        else: []
-      ) ++
-      if(wb, do: [{"flux", gettext("Financial inflows")}], else: []) ++
-      if(wb, do: [{"emploi", gettext("Jobs")}], else: []) ++
-      if(Enum.any?(~w(poverty gini electricity internet accounts), &latest[&1]),
-        do: [{"conditions-de-vie", gettext("Living conditions")}],
-        else: []
-      ) ++
-      if(rating, do: [{"notation", gettext("Rating")}], else: []) ++
-      if(climate, do: [{"climat", gettext("Business climate")}], else: []) ++
-      if(market != [], do: [{"market", gettext("Stock exchange")}], else: []) ++
-      [{"questions", gettext("Questions")}]
+  defp render_profile(conn, params, area, tab, data, from, to, paths) do
+    locale = conn.assigns.locale
+    profile = data["profile"]
+    country? = area.kind == "country"
+    name = Area.name(area, locale)
+    region = area.region_code && Geo.get_area_by_code(area.region_code)
+    ranking_scope = if country?, do: area.region_code, else: nil
+
+    peers =
+      if country? do
+        PublicData.ranking("gdp_usd_bn", from, to, region: ranking_scope, locale: locale)
+      else
+        Geo.list_regions()
+        |> Enum.map(&PublicData.area(&1.code, from, to))
+        |> Enum.reject(&is_nil/1)
+        |> Enum.map(fn r ->
+          %{
+            "code" => r["profile"]["code"],
+            "name" => r["profile"]["name"][locale],
+            "slug" => r["profile"]["slug"][locale],
+            "kind" => r["profile"]["kind"],
+            "value" => r["period"]["changes"]["gdp_usd_bn"]
+          }
+        end)
+        |> Enum.sort_by(&(-(&1["value"] || -999)))
+      end
+
+    ratings = if country?, do: SyliAtlas.Ratings.document()
+    rating = SyliAtlas.Ratings.for_country(ratings, area.code)
+    climate = country? && SyliAtlas.Climate.for_country(area.code)
+    market = market(area)
+    world_bank = country? && SyliAtlas.WorldBank.for_country(area.code)
+    trade = country? && SyliAtlas.Trade.for_country(area.code)
+    distress = country? && SyliAtlas.DebtDistress.for_country(area.code)
+    tabs = tabs(area, rating, climate, market, world_bank, trade)
+    if tab not in tabs, do: raise(NotFoundError)
+
+    faq =
+      faq(name, data, from, to, locale) ++
+        SyliAtlasWeb.RatingComponents.faq_items(name, rating, ratings) ++
+        SyliAtlasWeb.ClimateComponents.faq_items(name, climate)
+
+    members = if(country?, do: [], else: members(profile, from, to, locale))
+    kept = Map.take(params, ~w(from to peers members))
+
+    peers_page =
+      Map.get(params, "peers") || Pagination.page_of(peers, &(&1["code"] == area.code))
+
+    currency = currency(area, locale)
+    communities = if country?, do: SyliAtlas.Economy.Communities.for_country(area.code), else: []
+    comparison = comparison(area, region, from, to, locale)
+    tab_name = ProfileComponents.tab_label(tab)
+    answer = tab_answer(tab, name, data, from, to, locale, world_bank, trade, rating, ratings)
+
+    ctx = %{
+      locale: locale,
+      area: area,
+      name: name,
+      tab: tab,
+      tabs: tabs,
+      profile: profile,
+      data: data,
+      from: from,
+      to: to,
+      world_bank: world_bank,
+      trade: trade,
+      trade_doc: SyliAtlas.Trade.document(),
+      distress: distress,
+      rating: rating,
+      climate: climate,
+      market: market,
+      currency: currency,
+      communities: communities,
+      region_name: region && Area.name(region, locale),
+      region_peers: if(country?, do: nearest(peers, area.code), else: []),
+      slugs: country_slugs(locale)
+    }
+
+    title =
+      if tab == :overview,
+        do: name <> " · " <> gettext("economy %{from}–%{to}", from: from, to: to),
+        else: name <> " · " <> tab_name
+
+    crumbs =
+      breadcrumbs(area, region, locale) ++
+        if(tab == :overview, do: [], else: [{tab_name, paths[locale]}])
+
+    render(conn, :show,
+      page_title: title,
+      seo:
+        Seo.page(locale, paths, answer, %{
+          json_ld:
+            [
+              Seo.breadcrumbs(crumbs),
+              Seo.dataset(
+                if(tab == :overview,
+                  do: gettext("Economy of %{name}, 2015–2030", name: name),
+                  else: name <> " · " <> tab_name
+                ),
+                name,
+                "/api/v1/areas/#{area.code}",
+                profile["edition"]
+              )
+            ] ++ if(tab == :overview, do: [Seo.faq(faq)], else: [])
+        }),
+      alternates: Seo.alternates_for_header(paths),
+      area: area,
+      name: name,
+      heading: if(tab == :overview, do: name, else: name <> " · " <> tab_name),
+      tab: tab,
+      tab_name: tab_name,
+      tabs: tabs,
+      path: paths[locale],
+      ctx: ctx,
+      region: region,
+      data: data,
+      profile: profile,
+      from: from,
+      to: to,
+      kpis: @kpis,
+      peers: Pagination.paginate(peers, peers_page),
+      peers_href: &Pagination.href(paths[locale], kept, "peers", &1, "peers"),
+      peers_max: bar_max(peers),
+      faq: faq,
+      answer: answer,
+      members: Pagination.paginate(members, params["members"]),
+      members_href: &Pagination.href(paths[locale], kept, "members", &1, "members"),
+      members_max: bar_max(members),
+      market: market,
+      rating: rating,
+      climate: climate,
+      rated: (ratings && ratings["rated"]) || 0,
+      comparison: comparison,
+      currency: currency,
+      fx: fx(area, locale),
+      convergence:
+        country? &&
+          Convergence.check(area.code, profile["series"], to, Indicators.first_year()),
+      world_bank: world_bank,
+      world_bank_doc: SyliAtlas.WorldBank.document(),
+      trade: trade,
+      trade_doc: SyliAtlas.Trade.document()
+    )
   end
+
+  # Tabs with something to show, in page order. A tab without data has no page.
+  @doc "The tabs of a country profile that have data (sitemap, search)."
+  def tabs_for(%{kind: "country"} = area) do
+    tabs(
+      area,
+      SyliAtlas.Ratings.for_country(SyliAtlas.Ratings.document(), area.code),
+      SyliAtlas.Climate.for_country(area.code),
+      market(area),
+      SyliAtlas.WorldBank.for_country(area.code),
+      SyliAtlas.Trade.for_country(area.code)
+    )
+  end
+
+  def tabs_for(_area), do: [:overview]
+
+  defp tabs(%{kind: "country"}, rating, climate, market, world_bank, trade) do
+    [:overview, :economy, :finances] ++
+      if(trade, do: [:trade], else: []) ++
+      if(world_bank, do: [:society], else: []) ++
+      if(rating || climate || market != [], do: [:markets], else: [])
+  end
+
+  defp tabs(_area, _rating, _climate, _market, _wb, _trade), do: [:overview]
+
+  # The five countries of the region closest in GDP, for the related links.
+  defp nearest(peers, code) do
+    case Enum.find_index(peers, &(&1["code"] == code)) do
+      nil ->
+        Enum.take(peers, 5)
+
+      i ->
+        peers
+        |> Enum.with_index()
+        |> Enum.reject(fn {_p, j} -> j == i end)
+        |> Enum.sort_by(fn {_p, j} -> abs(j - i) end)
+        |> Enum.take(5)
+        |> Enum.map(&elem(&1, 0))
+    end
+  end
+
+  defp country_slugs(locale) do
+    for c <- Geo.list_countries(), into: %{} do
+      {c.code, {Area.name(c, locale), Area.slug(c, locale)}}
+    end
+  end
+
+  # The lead sentence of each tab: one figure, its year and its source.
+  defp tab_answer(:finances, name, data, _from, to, locale, _wb, _trade, _r, _rs) do
+    s = data["profile"]["series"]
+
+    SyliAtlasWeb.EconomyComponents.finances_lead(
+      name,
+      PublicData.at(s["fiscal_balance_pct_gdp"], to),
+      PublicData.at(s["public_debt_pct_gdp"], to),
+      PublicData.at(s["current_account_pct_gdp"], to),
+      to,
+      locale
+    )
+  end
+
+  defp tab_answer(:trade, name, _data, _from, _to, locale, _wb, trade, _r, _rs),
+    do: SyliAtlasWeb.TradeComponents.lead(trade, SyliAtlas.Trade.document(), name, locale)
+
+  defp tab_answer(:society, name, _data, _from, _to, locale, wb, _trade, _r, _rs) do
+    l = wb["latest"]
+
+    facts =
+      [
+        l["electricity"] &&
+          gettext("%{v} of the population has electricity (%{year})",
+            v: pct(l["electricity"]["value"], locale),
+            year: l["electricity"]["year"]
+          ),
+        l["poverty"] &&
+          gettext("%{v} live on less than $3.00 a day (%{year})",
+            v: pct(l["poverty"]["value"], locale),
+            year: l["poverty"]["year"]
+          ),
+        l["unemployment_ilo"] &&
+          gettext("unemployment is %{v} (ILO, %{year})",
+            v: pct(l["unemployment_ilo"]["value"], locale),
+            year: l["unemployment_ilo"]["year"]
+          )
+      ]
+      |> Enum.filter(& &1)
+
+    case facts do
+      [] ->
+        gettext("%{name}: jobs, inflows and living conditions (World Bank).", name: name)
+
+      _ ->
+        gettext("%{name}: %{facts} (World Bank).", name: name, facts: Enum.join(facts, ", "))
+    end
+  end
+
+  defp tab_answer(:markets, name, _data, _from, _to, _locale, _wb, _trade, rating, ratings) do
+    case SyliAtlasWeb.RatingComponents.faq_items(name, rating, ratings) do
+      [{_q, a} | _] -> a
+      _ -> gettext("%{name}: stock exchange and business climate.", name: name)
+    end
+  end
+
+  defp tab_answer(_tab, name, data, from, to, locale, _wb, _trade, _r, _rs),
+    do: answer(name, data, from, to, locale)
+
+  defp pct(v, locale), do: SyliAtlasWeb.Format.number(v, 1, locale) <> " %"
 
   # The line drawn next to a country (its region) or a region (Africa).
   defp comparison(area, region, from, to, locale) do

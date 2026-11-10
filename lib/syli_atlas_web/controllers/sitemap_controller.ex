@@ -7,13 +7,72 @@ defmodule SyliAtlasWeb.SitemapController do
   use SyliAtlasWeb, :controller
 
   alias SyliAtlas.{Geo, Market, Ratings}
-  alias SyliAtlas.Geo.Area
   alias SyliAtlasWeb.{Paths, Seo}
 
   def sitemap(conn, _params) do
     conn
     |> put_resp_content_type("application/xml")
     |> send_resp(200, xml(pages()))
+  end
+
+  @doc """
+  `/llms.txt`: what the site holds and where, for language models and
+  answer engines (https://llmstxt.org). Plain Markdown, built from the data.
+  """
+  def llms(conn, _params) do
+    conn
+    |> put_resp_content_type("text/markdown")
+    |> send_resp(200, llms_txt())
+  end
+
+  defp llms_txt do
+    edition = SyliAtlas.Sources.published_edition("imf_weo")
+    countries = Geo.list_countries() |> Enum.sort_by(& &1.name_en)
+
+    country_lines =
+      for c <- countries do
+        "- [#{c.name_en}](#{Seo.url(Paths.area("en", c))}): GDP, growth, inflation, debt, trade, society, rating · " <>
+          "[FR](#{Seo.url(Paths.area("fr", c))}) · [JSON](#{Seo.url("/api/v1/areas/" <> c.code)})"
+      end
+
+    community_lines =
+      for c <- SyliAtlas.Economy.Communities.all() do
+        "- [#{c.short["en"]}, #{c.name["en"]}](#{Seo.url(Paths.community("en", c.slug["en"]))}): members, totals"
+      end
+
+    """
+    # Syli Atlas
+
+    > African economies in verifiable figures, in French and English. Every figure comes from a
+    > named public source (IMF, World Bank, CEPII BACI, rating agencies, MansaAPI for markets),
+    > with its edition and terms on the method page. Non-commercial, free, no account needed.
+
+    IMF edition: #{(edition && edition.label) || "n/a"}. Country profiles have one page per theme:
+    overview, economy, finances and debt, trade, society, markets. Information, not investment advice.
+
+    ## Main pages
+
+    - [Ranking of the 54 countries](#{Seo.url(Paths.ranking("en"))})
+    - [Debt of African countries](#{Seo.url(Paths.debt("en"))})
+    - [Sovereign credit ratings](#{Seo.url(Paths.ratings("en"))})
+    - [Economic communities](#{Seo.url(Paths.communities("en"))})
+    - [Regions of Africa](#{Seo.url(Paths.regions("en"))})
+    - [Method and sources](#{Seo.url(Paths.method("en"))}): sources, editions, licences, calculations
+
+    ## Data
+
+    - [Public JSON API, list of areas](#{Seo.url("/api/v1/areas")})
+    - [Search API](#{Seo.url("/api/v1/search?q=debt+senegal&locale=en")})
+    - [Sitemap](#{Seo.url("/sitemap.xml")})
+
+    ## Economic communities
+
+    #{Enum.join(community_lines, "\n")}
+
+    ## Countries
+
+    #{Enum.join(country_lines, "\n")}
+    """
   end
 
   def robots(conn, _params) do
@@ -35,13 +94,20 @@ defmodule SyliAtlasWeb.SitemapController do
     as_of = ratings && ratings["as_of"]
 
     static =
-      for fun <- [:home, :ranking, :regions, :method, :debt] do
+      for fun <- [:home, :ranking, :regions, :method, :debt, :communities] do
         {both(&apply(Paths, fun, [&1])), nil}
       end
 
+    # A country is listed once per tab that has data: each tab has its
+    # own canonical URL, title and answer.
     areas =
-      for area <- Geo.list_areas() do
-        {both(&Paths.area(&1, area.kind, Area.slug(area, &1))), nil}
+      for area <- Geo.list_areas(), tab <- SyliAtlasWeb.AreaController.tabs_for(area) do
+        {both(&Paths.area_tab(&1, area, tab)), nil}
+      end
+
+    communities =
+      for c <- SyliAtlas.Economy.Communities.all() do
+        {both(&Paths.community(&1, c.slug[&1])), SyliAtlas.Economy.Communities.as_of()}
       end
 
     rating_pages =
@@ -54,7 +120,7 @@ defmodule SyliAtlasWeb.SitemapController do
         []
       end
 
-    static ++ areas ++ rating_pages ++ market_pages()
+    static ++ areas ++ communities ++ rating_pages ++ market_pages()
   end
 
   defp market_pages do

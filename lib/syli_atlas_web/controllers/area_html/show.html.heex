@@ -1,256 +1,154 @@
-<Layouts.public locale={@locale} alternates={@alternates}>
+<Layouts.public locale={@locale} current={:countries} alternates={@alternates}>
   <script type="application/json" id="area-data">
     <%= raw(embedded_json(@profile)) %>
   </script>
 
-  <.section tight={:bottom}>
-    <.area_header area={@area} region={@region} name={@name} locale={@locale} />
-    <.filter_sheet id="period-sheet" title={gettext("Period")} summary={"#{@from} → #{@to}"}>
-      <.period_form action={Paths.area(@locale, @area)} from={@from} to={@to} />
+  <.section tight={:bottom} class="profile-head">
+    <.area_header
+      area={@area}
+      region={@region}
+      name={@name}
+      title={@heading}
+      tab={@tab != :overview && @tab_name}
+      locale={@locale}
+    />
+    <.filter_sheet
+      :if={
+        @tab in [:overview, :economy, :finances] and
+          (@tab != :overview or @area.kind != "country")
+      }
+      id="period-sheet"
+      title={gettext("Period")}
+      summary={"#{@from} → #{@to}"}
+    >
+      <.period_form action={@path} from={@from} to={@to} />
     </.filter_sheet>
-    <p class="lead" data-answer>{@answer}</p>
-    <.source_line edition={@profile["edition"]} locale={@locale} />
-    <RatingComponents.rating_pill :if={@rating} entry={@rating} rated={@rated} href="#notation" />
+    <%!-- On the theme tabs the section itself opens with this answer. --%>
+    <p :if={@tab in [:overview, :economy] or @area.kind != "country"} class="lead" data-answer>
+      {@answer}
+    </p>
+    <.source_line
+      :if={@tab in [:overview, :economy, :finances]}
+      edition={@profile["edition"]}
+      locale={@locale}
+    />
+    <RatingComponents.rating_pill
+      :if={@rating && @tab == :overview}
+      entry={@rating}
+      rated={@rated}
+      href={Paths.area_tab(@locale, @area, :markets) <> "#notation"}
+    />
+    <ProfileComponents.tab_nav
+      :if={@area.kind == "country"}
+      area={@area}
+      tabs={@tabs}
+      current={@tab}
+      locale={@locale}
+    />
   </.section>
 
-  <EconomyComponents.section_nav items={@sections} />
-
-  <.section id="economie">
-    <.area_kpis
-      kpis={@kpis}
-      data={@data}
+  <%= if @area.kind != "country" do %>
+    <.economy {assigns} />
+    <EconomyComponents.finances_section
       profile={@profile}
+      data={@data}
+      name={@name}
+      comparison={@comparison}
       from={@from}
       to={@to}
       locale={@locale}
     />
-
-    <.card pad>
-      <.card_head
-        title={indicator_label("gdp_usd_bn")}
-        subtitle={gettext("Billions of current dollars · dashed: estimates and projections")}
-      />
-      <% series = [
-        %{
-          id: @profile["code"],
-          name: @name,
-          color: "--c1",
-          values: @profile["series"]["gdp_usd_bn"],
-          strong: true
-        }
-      ] %>
-      <Charts.line_chart
-        id="area-chart"
-        indicator="gdp_usd_bn"
-        from={@from}
-        to={@to}
-        locale={@locale}
-        estimate_from={@profile["years"]["estimate_from"]}
-        label={@answer}
-        series={series}
-      />
-    </.card>
-
-    <div class="grid grid-2">
-      <.card id="peers">
-        <div class="pad">
-          <.card_head
-            title={
-              if(@area.kind == "country",
-                do: gettext("In its region"),
-                else: gettext("The five regions")
-              )
-            }
-            subtitle={gettext("GDP in current dollars, %{from} → %{to}", from: @from, to: @to)}
-          />
-        </div>
-        <.rank_list
-          items={
-            rank_items(@peers.entries, "gdp_usd_bn", @locale, @from, @to, bar_max: @peers_max)
-          }
-          start={@peers.offset}
-          current={@area.code}
+    <.questions {assigns} />
+    <ProfileComponents.area_siblings area={@area} locale={@locale} />
+  <% else %>
+    <%= case @tab do %>
+      <% :overview -> %>
+        <ProfileComponents.overview_cards ctx={@ctx} />
+        <ProfileComponents.related_links ctx={@ctx} />
+        <.questions {assigns} />
+      <% :economy -> %>
+        <.economy {assigns} />
+        <ProfileComponents.related_links ctx={@ctx} />
+      <% :finances -> %>
+        <EconomyComponents.finances_section
+          profile={@profile}
+          data={@data}
+          name={@name}
+          comparison={@comparison}
+          convergence={@convergence || nil}
+          from={@from}
+          to={@to}
+          locale={@locale}
         />
-        <.list_pager page={@peers} href={@peers_href} />
-      </.card>
-
-      <.card>
-        <div class="pad">
-          <.card_head
-            title={gettext("All indicators")}
-            subtitle={gettext("Value in %{to} and change since %{from}", from: @from, to: @to)}
-          />
-        </div>
-        <.data_table
-          id="indicators"
-          caption={gettext("All indicators")}
-          rows={SyliAtlas.Sources.Indicators.keys()}
-        >
-          <:head :let={k} label={gettext("Indicator")}>
-            <span title={indicator_help(k)}>{indicator_label(k)}</span>
-          </:head>
-          <:col :let={k} label={to_string(@from)}>
-            {value(PublicData.at(@profile["series"][k], @from), k, @locale)}
-          </:col>
-          <:col :let={k} label={to_string(@to)}>
-            {value(PublicData.at(@profile["series"][k], @to), k, @locale)}
-          </:col>
-          <:col :let={k} label={gettext("Change")}>
-            <b class={tone(@data["period"]["changes"][k], k)}>{change(
-              @data["period"]["changes"][k],
-              k,
-              @locale
-            )}</b>
-          </:col>
-        </.data_table>
-        <.card_foot>
-          <a href={"/api/v1/areas/#{@area.code}/csv"} download>{gettext("Download CSV")}</a>
-          · <a href={"/api/v1/areas/#{@area.code}"}>JSON</a>
-        </.card_foot>
-      </.card>
-    </div>
-
-    <.card :if={@members.total > 0} id="members">
-      <div class="pad">
-        <.card_head
-          title={gettext("Member countries")}
-          subtitle={gettext("GDP in current dollars, %{from} → %{to}", from: @from, to: @to)}
+        <EconomyComponents.money_section
+          :if={@currency}
+          currency={@currency}
+          fx={@fx}
+          profile={@profile}
+          name={@name}
+          to={@to}
+          locale={@locale}
         />
-      </div>
-      <.rank_list
-        items={
-          rank_items(@members.entries, "gdp_usd_bn", @locale, @from, @to, bar_max: @members_max)
-        }
-        start={@members.offset}
-        bars
-      />
-      <.list_pager page={@members} href={@members_href} />
-      <.card_foot :if={@profile["missing"] not in [nil, []]}>
-        {gettext("Not included for lack of data: %{codes}",
-          codes:
-            @profile["missing"]
-            |> List.wrap()
-            |> Enum.map_join(", ", fn
-              %{"indicator" => k} -> indicator_label(k)
-              other -> to_string(other)
-            end)
-        )}
-      </.card_foot>
-    </.card>
-
-    <div class="row gap-2">
-      <a class="btn btn-primary" href={Paths.compare(@locale, [@profile["slug"][@locale]])}>{gettext(
-        "Compare %{name}",
-        name: @name
-      )} →</a>
-      <a class="btn btn-secondary" href={Paths.ranking(@locale)}>{gettext("African ranking")}</a>
-    </div>
-  </.section>
-
-  <EconomyComponents.finances_section
-    profile={@profile}
-    data={@data}
-    name={@name}
-    comparison={@comparison}
-    convergence={@convergence || nil}
-    from={@from}
-    to={@to}
-    locale={@locale}
-  />
-
-  <EconomyComponents.money_section
-    :if={@currency}
-    currency={@currency}
-    fx={@fx}
-    profile={@profile}
-    name={@name}
-    to={@to}
-    locale={@locale}
-  />
-
-  <%= if @world_bank do %>
-    <WorldBankComponents.debt_section
-      entry={@world_bank}
-      doc={@world_bank_doc}
-      name={@name}
-      debt_pct={PublicData.at(@profile["series"]["public_debt_pct_gdp"], @to)}
-      debt_year={@to}
-      distress={SyliAtlas.DebtDistress.for_country(@area.code)}
-      distress_doc={SyliAtlas.DebtDistress.document()}
-      locale={@locale}
-    />
-    <TradeComponents.trade_section
-      :if={@trade}
-      entry={@trade}
-      doc={@trade_doc}
-      name={@name}
-      locale={@locale}
-    />
-    <WorldBankComponents.flows_section
-      entry={@world_bank}
-      doc={@world_bank_doc}
-      name={@name}
-      locale={@locale}
-    />
-    <WorldBankComponents.jobs_section entry={@world_bank} doc={@world_bank_doc} locale={@locale} />
-    <WorldBankComponents.living_section
-      entry={@world_bank}
-      doc={@world_bank_doc}
-      name={@name}
-      locale={@locale}
-    />
+        <WorldBankComponents.debt_section
+          :if={@world_bank}
+          entry={@world_bank}
+          doc={@world_bank_doc}
+          name={@name}
+          debt_pct={PublicData.at(@profile["series"]["public_debt_pct_gdp"], @to)}
+          debt_year={@to}
+          distress={SyliAtlas.DebtDistress.for_country(@area.code)}
+          distress_doc={SyliAtlas.DebtDistress.document()}
+          locale={@locale}
+        />
+        <ProfileComponents.related_links ctx={@ctx} />
+      <% :trade -> %>
+        <TradeComponents.trade_section
+          entry={@trade}
+          doc={@trade_doc}
+          name={@name}
+          locale={@locale}
+        />
+        <ProfileComponents.related_links ctx={@ctx} />
+      <% :society -> %>
+        <WorldBankComponents.flows_section
+          entry={@world_bank}
+          doc={@world_bank_doc}
+          name={@name}
+          locale={@locale}
+        />
+        <WorldBankComponents.jobs_section
+          entry={@world_bank}
+          doc={@world_bank_doc}
+          locale={@locale}
+        />
+        <WorldBankComponents.living_section
+          entry={@world_bank}
+          doc={@world_bank_doc}
+          name={@name}
+          locale={@locale}
+        />
+        <ProfileComponents.related_links ctx={@ctx} />
+      <% :markets -> %>
+        <RatingComponents.rating_section
+          :if={@rating}
+          entry={@rating}
+          name={@name}
+          rated={@rated}
+          locale={@locale}
+        />
+        <SyliAtlasWeb.ClimateComponents.climate_section
+          :if={@climate}
+          entry={@climate}
+          name={@name}
+          doc={SyliAtlas.Climate.document()}
+        />
+        <SyliAtlasWeb.MarketComponents.country_market
+          :if={@market != []}
+          exchanges={@market}
+          name={@name}
+          locale={@locale}
+        />
+        <ProfileComponents.related_links ctx={@ctx} />
+    <% end %>
   <% end %>
-
-  <RatingComponents.rating_section
-    :if={@rating}
-    entry={@rating}
-    name={@name}
-    rated={@rated}
-    locale={@locale}
-  />
-
-  <SyliAtlasWeb.ClimateComponents.climate_section
-    :if={@climate}
-    entry={@climate}
-    name={@name}
-    doc={SyliAtlas.Climate.document()}
-  />
-
-  <SyliAtlasWeb.MarketComponents.country_market
-    :if={@market != []}
-    exchanges={@market}
-    name={@name}
-    locale={@locale}
-  />
-
-  <.section id="questions" variant="alt">
-    <div class="grid grid-2">
-      <div class="stack gap-4">
-        <h2 class="h1">{gettext("Questions")}</h2>
-        <.faq items={@faq} />
-      </div>
-      <div class="stack gap-4">
-        <.card pad class="stack gap-2">
-          <p class="eyebrow">{gettext("Discussion")}</p>
-          <h2 class="h2">{gettext("A question, a correction, a source?")}</h2>
-          <p class="muted">
-            {gettext("Every profile has a moderated discussion. Sign in by email to take part.")}
-          </p>
-          <a class="btn btn-secondary" href={Paths.discussion(@locale, @area)} rel="nofollow">{gettext(
-            "Open the discussion"
-          )} →</a>
-        </.card>
-        <.card pad class="stack gap-2">
-          <p class="eyebrow">{gettext("Cite this page")}</p>
-          <p class="small mono cite">
-            {citation(
-              @name,
-              @profile["edition"],
-              SyliAtlasWeb.Seo.url(Paths.area(@locale, @area))
-            )}
-          </p>
-        </.card>
-      </div>
-    </div>
-  </.section>
 </Layouts.public>

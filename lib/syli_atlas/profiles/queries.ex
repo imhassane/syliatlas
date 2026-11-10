@@ -220,6 +220,26 @@ defmodule SyliAtlas.Profiles.Queries do
     )
   end
 
+  @doc "Name, slug and series of any number of areas, in the given order (community pages)."
+  def series_for(codes) when is_list(codes) do
+    run(
+      :series_for,
+      """
+      SELECT json_group_array(json(item)) FROM (
+        SELECT json_object(
+          'code', p.area_code,
+          'name', json(jsonb_extract(p.doc, '$.name')),
+          'slug', json(jsonb_extract(p.doc, '$.slug')),
+          'series', json(jsonb_extract(p.doc, '$.series'))
+        ) AS item
+        FROM json_each(?1) AS c
+        JOIN profiles AS p ON p.area_code = c.value
+        ORDER BY c.key)
+      """,
+      [Jason.encode!(codes)]
+    )
+  end
+
   @doc "Every document at once, for the offline pack of the installed app."
   def offline_pack do
     run(

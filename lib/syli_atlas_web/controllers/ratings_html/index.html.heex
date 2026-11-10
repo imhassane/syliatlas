@@ -9,7 +9,7 @@
       <ul :for={hidden <- [false, true]} class="ticker-list" aria-hidden={hidden && "true"}>
         <li :for={r <- @doc["recent"]}>
           <a
-            href={Paths.area(@locale, "country", @doc["countries"][r["code"]]["slug"][@locale]) <> "#notation"}
+            href={Paths.country_tab(@locale, @doc["countries"][r["code"]]["slug"][@locale], :markets) <> "#notation"}
             tabindex={hidden && "-1"}
           >
             <b>{@doc["countries"][r["code"]]["name"][@locale]}</b>

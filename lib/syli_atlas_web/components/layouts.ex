@@ -42,7 +42,27 @@ defmodule SyliAtlasWeb.Layouts do
           <b>syli <span>atlas</span></b>
         </a>
         <.main_nav locale={@locale} current={@current} id="header-nav" class="nav nav-desktop" />
+        <div :if={@current != :search} class="header-search hide-mobile">
+          <SyliAtlasWeb.PageComponents.search_form locale={@locale} id="header-q" compact />
+        </div>
         <div class="header-actions">
+          <a
+            :if={@current != :search}
+            class="icon-btn show-mobile"
+            href={Paths.search(@locale)}
+            aria-label={gettext("Search")}
+          >
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              aria-hidden="true"
+            ><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+          </a>
           <button type="button" class="btn btn-quiet hide-mobile" data-install>{gettext(
             "Install the app"
           )}</button>
@@ -75,28 +95,7 @@ defmodule SyliAtlasWeb.Layouts do
     <main id="main">
       {render_slot(@inner_block)}
     </main>
-    <footer class="site-footer">
-      <div class="wrap footer-grid">
-        <div class="stack gap-1 footer-about">
-          <a class="brand" href={Paths.home(@locale)}><b>syli <span>atlas</span></b></a>
-          <p class="muted small">
-            {gettext("African economies in verifiable figures. Free, open, in French and English.")}
-          </p>
-        </div>
-        <nav aria-label={gettext("Footer")} class="footer-nav">
-          <div class="stack gap-1">
-            <b>{gettext("Explore")}</b>
-            <a href={Paths.ranking(@locale)}>{gettext("All countries")}</a>
-            <a href={Paths.compare(@locale, [])}>{gettext("Compare")}</a>
-          </div>
-          <div class="stack gap-1">
-            <b>{gettext("Data")}</b>
-            <a href="/api/v1/areas">{gettext("Public API")}</a>
-            <a href={Paths.method(@locale)}>{gettext("Method and sources")}</a>
-          </div>
-        </nav>
-      </div>
-    </footer>
+    <.site_footer locale={@locale} other_lang={@other_lang} />
     """
   end
 
@@ -104,31 +103,136 @@ defmodule SyliAtlasWeb.Layouts do
   attr :current, :atom, default: nil
   attr :id, :string, required: true
   attr :class, :string, default: "nav"
+  attr :flat, :boolean, default: false, doc: "the phone drawer: every link, no menu"
 
+  # Four entries, the exchanges among them while their data may be shown.
+  # The themes sit in a <details> menu: no JavaScript, keyboard-friendly.
   defp main_nav(assigns) do
+    assigns = assign(assigns, :themes, themes(assigns.locale))
+
     ~H"""
     <nav id={@id} class={@class} aria-label={gettext("Main")}>
-      <a href={Paths.home(@locale)} aria-current={@current == :home && "page"}>{gettext("Home")}</a>
-      <a href={Paths.ranking(@locale)} aria-current={@current == :ranking && "page"}>{gettext(
+      <a :if={@flat} href={Paths.home(@locale)} aria-current={@current == :home && "page"}>{gettext(
+        "Home"
+      )}</a>
+      <a href={Paths.ranking(@locale)} aria-current={@current in [:ranking, :countries] && "page"}>{gettext(
         "Countries"
-      )}</a>
-      <a href={Paths.regions(@locale)} aria-current={@current == :regions && "page"}>{gettext(
-        "Regions"
-      )}</a>
-      <a href={Paths.compare(@locale, [])} aria-current={@current == :compare && "page"}>{gettext(
-        "Compare"
       )}</a>
       <a
         :if={SyliAtlas.Market.public?()}
         href={Paths.markets(@locale)}
         aria-current={@current == :markets && "page"}
       >{gettext("Stock exchanges")}</a>
-      <a href={Paths.ratings(@locale)} aria-current={@current == :ratings && "page"}>{gettext(
-        "Ratings"
+      <%= if @flat do %>
+        <p class="drawer-group">{gettext("Themes")}</p>
+        <a :for={{key, label, href} <- @themes} href={href} aria-current={@current == key && "page"}>{label}</a>
+      <% else %>
+        <details class="nav-menu" data-nav-menu>
+          <summary aria-current={@current in [:debt, :ratings, :regions, :themes, :method] && "true"}>
+            {gettext("Themes")}
+          </summary>
+          <div class="nav-menu-pop">
+            <a
+              :for={{key, label, href} <- @themes}
+              href={href}
+              aria-current={@current == key && "page"}
+            >{label}</a>
+          </div>
+        </details>
+      <% end %>
+      <a href={Paths.compare(@locale, [])} aria-current={@current == :compare && "page"}>{gettext(
+        "Compare"
       )}</a>
-      <a href={Paths.debt(@locale)} aria-current={@current == :debt && "page"}>{gettext("Debt")}</a>
-      <a href={Paths.method(@locale)} aria-current={@current == :method && "page"}>{gettext("Method")}</a>
+      <a :if={@flat} href={Paths.search(@locale)} aria-current={@current == :search && "page"}>{gettext(
+        "Search"
+      )}</a>
     </nav>
+    """
+  end
+
+  defp themes(locale) do
+    [
+      {:debt, gettext("Debt"), Paths.debt(locale)},
+      {:ratings, gettext("Ratings"), Paths.ratings(locale)},
+      {:themes, gettext("Economic communities"), Paths.communities(locale)},
+      {:regions, gettext("Regions"), Paths.regions(locale)},
+      {:method, gettext("Method and sources"), Paths.method(locale)}
+    ]
+  end
+
+  attr :locale, :string, required: true
+  attr :other_lang, :any, default: nil
+
+  @top_countries ~w(NGA ZAF EGY DZA ETH MAR KEN CIV)
+
+  @doc """
+  Footer: the largest economies, the exchanges, the themes, the data and the
+  project, then one line that credits every source with its edition.
+  """
+  def site_footer(assigns) do
+    # From the in-memory search index: no query per page.
+    areas =
+      for %{type: :country} = e <- SyliAtlasWeb.Search.Index.get(), into: %{}, do: {e.code, e}
+
+    meta = SyliAtlasWeb.Search.Index.meta()
+
+    assigns =
+      assigns
+      |> assign(:countries, @top_countries |> Enum.map(&areas[&1]) |> Enum.reject(&is_nil/1))
+      |> assign(:exchanges, meta.exchanges)
+      |> assign(:themes, themes(assigns.locale))
+      |> assign(:edition, meta.edition)
+
+    ~H"""
+    <footer class="site-footer">
+      <div class="wrap footer-grid">
+        <div class="stack gap-1 footer-about">
+          <a class="brand" href={Paths.home(@locale)}><b>syli <span>atlas</span></b></a>
+          <p class="muted small">
+            {gettext("African economies in verifiable figures. Free, open, in French and English.")}
+          </p>
+          <.lang_link :if={@other_lang} lang={@other_lang} class="btn btn-quiet" />
+        </div>
+        <nav aria-label={gettext("Footer")} class="footer-nav">
+          <div class="stack gap-1">
+            <b>{gettext("Countries")}</b>
+            <a :for={c <- @countries} href={c.path[@locale]}>{c.names[@locale]}</a>
+            <a href={Paths.ranking(@locale)}>{gettext("All 54 countries")} →</a>
+          </div>
+          <div :if={@exchanges != []} class="stack gap-1">
+            <b>{gettext("Stock exchanges")}</b>
+            <a :for={e <- Enum.take(@exchanges, 7)} href={e.path[@locale]}>{e.short_name}</a>
+            <a href={Paths.markets(@locale)}>{gettext("All exchanges")} →</a>
+          </div>
+          <div class="stack gap-1">
+            <b>{gettext("Themes")}</b>
+            <a :for={{_k, label, href} <- Enum.take(@themes, 4)} href={href}>{label}</a>
+            <a href={Paths.compare(@locale, [])}>{gettext("Compare")}</a>
+          </div>
+          <div class="stack gap-1">
+            <b>{gettext("Data")}</b>
+            <a href={Paths.method(@locale)}>{gettext("Method and sources")}</a>
+            <a href="/api/v1/areas">{gettext("Public API")}</a>
+            <a href="/llms.txt">llms.txt</a>
+            <a href="/sitemap.xml">{gettext("Site map")}</a>
+          </div>
+        </nav>
+      </div>
+      <div class="wrap footer-credits">
+        <p class="small muted">
+          {gettext("Sources:")} {gettext("IMF")}<span :if={@edition}> ({@edition})</span>
+          · {gettext("World Bank (CC BY 4.0)")} · CEPII, BACI · {gettext(
+            "IMF debt sustainability analyses"
+          )} · {gettext("rating agencies")}<span :if={@exchanges != []}> · Data by MansaAPI</span>.
+          <a href={Paths.method(@locale)}>{gettext("Terms of each source")}</a>
+        </p>
+        <p class="small muted">
+          {gettext(
+            "Information, not investment advice. Figures are those of the sources; totals and rankings are Syli Atlas calculations."
+          )}
+        </p>
+      </div>
+    </footer>
     """
   end
 
@@ -216,7 +320,7 @@ defmodule SyliAtlasWeb.Layouts do
               ><path d="M6 6l12 12M18 6L6 18"></path></svg>
             </button>
           </div>
-          <.main_nav locale={@locale} current={@current} id="drawer-nav" class="drawer-nav" />
+          <.main_nav locale={@locale} current={@current} id="drawer-nav" class="drawer-nav" flat />
           <div class="drawer-foot stack gap-2">
             <button type="button" class="btn btn-secondary" data-install>{gettext("Install the app")}</button>
             <.lang_link :if={@other_lang} lang={@other_lang} class="btn btn-secondary" />

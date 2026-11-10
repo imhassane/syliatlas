@@ -155,3 +155,27 @@
 .risk-step { display: flex; align-items: center; justify-content: center; min-height: 40px; padding: 4px 8px; border-radius: 6px; font-size: 13px; text-align: center; background: var(--muted); color: var(--ink-subtle); }
 .risk-step.risk-current { background: var(--risk-bg); color: var(--risk-ink); font-weight: 600; box-shadow: inset 0 0 0 2px var(--risk-ink); }
 .risk-pill { background: var(--risk-bg); color: var(--risk-ink); }
+
+/* Country profile: one URL per tab (SyliAtlasWeb.ProfileComponents). */
+.tab-nav { display: flex; gap: 4px; margin-top: 20px; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-nav a { flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; margin-bottom: -1px; border-bottom: 2px solid transparent; color: var(--ink-muted); font-size: 15px; font-weight: 500; text-decoration: none; white-space: nowrap; }
+.tab-nav a:hover { color: var(--ink); }
+.tab-nav a[aria-current="page"] { color: var(--accent-text); border-bottom-color: var(--accent); font-weight: 600; }
+.area-title-tab { font-size: clamp(28px, 5vw, 40px); }
+.community-pills .pill { font-size: 13px; padding: 5px 12px; text-decoration: none; }
+.community-pills .pill:hover { background: var(--accent-bg); color: var(--accent-text); }
+.overview-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); }
+.overview-card { display: flex; flex-direction: column; gap: 8px; padding: 20px; color: var(--ink); text-decoration: none; transition: border-color .15s; }
+.overview-card:hover { border-color: var(--accent); }
+.overview-card p { margin: 0; }
+.overview-facts { display: grid; gap: 8px; margin: 8px 0 0; padding-top: 12px; border-top: 1px solid var(--border-faint); }
+.overview-facts > div { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; }
+.overview-facts dt { color: var(--ink-muted); }
+.overview-facts dd { margin: 0; font-weight: 600; text-align: right; }
+.overview-more { margin-top: auto; padding-top: 8px; color: var(--accent-text); font-size: 14px; font-weight: 600; }
+.related-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); }
+.related-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.related-list a { display: flex; align-items: center; min-height: 40px; border-top: 1px solid var(--border-faint); color: var(--ink); text-decoration: none; font-size: 15px; }
+.related-list li:first-child a { border-top: 0; }
+.related-list a:hover { color: var(--accent-text); }

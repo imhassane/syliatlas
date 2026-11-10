@@ -29,8 +29,10 @@ defmodule SyliAtlasWeb.RatingsPagesTest do
 
   test "a country page shows its rating and verdict", %{conn: conn} do
     path = SyliAtlasWeb.Paths.area("fr", "country", "cote-d-ivoire")
-    html = conn |> get(path) |> html_response(200)
-    assert html =~ ~s(id="rating-pill")
+    overview = conn |> get(path) |> html_response(200)
+    assert overview =~ ~s(id="rating-pill")
+    assert overview =~ ~s(href="/fr/pays/cote-d-ivoire/marches#notation")
+    html = build_conn() |> get(path <> "/marches") |> html_response(200)
     assert html =~ ~s(id="notation")
     assert html =~ ~s(id="rating-verdict")
     assert html =~ ~s(id="climat")
@@ -39,7 +41,9 @@ defmodule SyliAtlasWeb.RatingsPagesTest do
   end
 
   test "a country outside B-READY says so", %{conn: conn} do
-    html = conn |> get(SyliAtlasWeb.Paths.area("fr", "country", "kenya")) |> html_response(200)
+    html =
+      conn |> get(SyliAtlasWeb.Paths.country_tab("fr", "kenya", :markets)) |> html_response(200)
+
     assert html =~ ~s(id="climate-bready-none")
   end
 

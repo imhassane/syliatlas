@@ -154,3 +154,45 @@ main > section.section:first-of-type { padding-top: 40px; }
 .offline-bar { block-size: 6px; border-radius: 999px; background: var(--muted); overflow: hidden; }
 .offline-bar i { display: block; block-size: 100%; inline-size: 0; border-radius: inherit; background: var(--accent); }
 @media (max-width: 47.99rem) { .offline-actions .btn { flex: 1 1 100%; justify-content: center; } }
+
+/* Main menu: Countries · Exchanges · Themes ▾ · Compare (SyliAtlasWeb.Layouts). */
+.nav { align-items: center; }
+.nav-menu { position: relative; }
+.nav-menu summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; color: var(--ink-muted); font-size: 15px; font-weight: 500; padding: 10px 12px; border-radius: 999px; }
+.nav-menu summary::-webkit-details-marker { display: none; }
+.nav-menu summary::after { content: ""; width: 6px; height: 6px; border-right: 1.6px solid currentColor; border-bottom: 1.6px solid currentColor; transform: translateY(-2px) rotate(45deg); }
+.nav-menu[open] summary::after { transform: translateY(1px) rotate(-135deg); }
+.nav-menu summary:hover, .nav a:hover { color: var(--ink); }
+.nav-menu summary[aria-current="true"] { color: var(--ink); background: var(--muted); }
+.nav-menu-pop { position: absolute; top: calc(100% + 6px); left: 0; z-index: 40; min-width: 240px; display: flex; flex-direction: column; padding: 6px; border-radius: 12px; background: var(--card); box-shadow: var(--shadow-pop); }
+.nav-menu-pop a { border-radius: 8px; padding: 10px 12px; color: var(--ink); }
+.nav-menu-pop a:hover, .nav-menu-pop a[aria-current="page"] { background: var(--muted); }
+.drawer-group { margin: 14px 16px 2px; font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-subtle); }
+
+/* Header search, with suggestions (assets/js/ui/search.js). */
+.header-search { flex: 1 1 200px; max-width: 320px; margin-left: auto; }
+.header-search + .header-actions { margin-left: 0; }
+.search-compact { max-width: none; }
+.search-compact svg { left: 14px; top: 11px; }
+.search-compact input { min-height: 40px; padding: 0 36px 0 40px; font-size: 15px; box-shadow: none; background: var(--muted); }
+.search-compact input:focus { background: var(--card); box-shadow: var(--shadow-pop); outline: none; }
+.search-kbd { position: absolute; right: 10px; top: 9px; padding: 1px 7px; border-radius: 6px; border: 1px solid var(--border); color: var(--ink-subtle); font-family: var(--mono); font-size: 12px; }
+.search-pop { position: absolute; left: 0; right: 0; top: calc(100% + 6px); z-index: 50; display: flex; flex-direction: column; padding: 6px; border-radius: 14px; background: var(--card); box-shadow: var(--shadow-pop); max-height: 70vh; overflow: auto; }
+.search-pop[hidden] { display: none; }
+.search-compact .search-pop { min-width: 340px; left: auto; }
+.search-option { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 44px; padding: 8px 12px; border-radius: 10px; color: var(--ink); text-decoration: none; font-size: 15px; }
+.search-option[aria-selected="true"], .search-option:hover { background: var(--muted); }
+.search-kind { flex: none; font-size: 12px; color: var(--ink-subtle); }
+.search-answer { background: var(--accent-bg); color: var(--accent-text); font-weight: 600; }
+.search-answer .search-kind { color: var(--accent-text); font-weight: 400; }
+.search-empty { margin: 0; padding: 10px 12px; color: var(--ink-muted); font-size: 14px; }
+#search-results .link-list a { display: flex; justify-content: space-between; gap: 12px; }
+
+/* Footer: four columns, then the sources. */
+.footer-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 28px 40px; flex: 1 1 560px; }
+.footer-credits { display: flex; flex-direction: column; gap: 6px; margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--border-faint); }
+.footer-credits p { margin: 0; }
+.profile-head + .section { padding-top: 32px; }
+.search-answer { flex-direction: column; align-items: flex-start; gap: 2px; }
+.search-compact input:not(:placeholder-shown) ~ .search-kbd { display: none; }
+.footer-about .btn { align-self: flex-start; padding-left: 0; }
