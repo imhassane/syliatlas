@@ -55,6 +55,7 @@ defmodule SyliAtlasWeb.MarketController do
       alternates: Seo.alternates_for_header(paths),
       overview: overview,
       exchanges: all,
+      imported: overview["as_of"] != nil,
       rows: rows,
       q: q,
       region: region,

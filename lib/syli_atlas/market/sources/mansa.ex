@@ -65,7 +65,8 @@ defmodule SyliAtlas.Market.Sources.Mansa do
         params: params,
         headers: [{"x-api-key", api_key() || ""}],
         decode_body: false,
-        retry: :transient,
+        # Never retry a 429: Mansa's limit is daily, every retry is a lost call.
+        retry: &retry?/2,
         max_retries: 2,
         receive_timeout: 30_000
       ]
@@ -76,6 +77,9 @@ defmodule SyliAtlas.Market.Sources.Mansa do
         {:ok, %Req.Response{status: 200, body: body} = r} ->
           {:ok, %{url: url_of(r, path, params), status: 200, body: body}}
 
+        {:ok, %Req.Response{status: 429, body: body}} ->
+          {:error, {:daily_limit, reset_at(body)}}
+
         {:ok, %Req.Response{status: status}} ->
           {:error, {:http_status, status, path}}
 
@@ -83,6 +87,23 @@ defmodule SyliAtlas.Market.Sources.Mansa do
           {:error, {Exception.message(exception), path}}
       end
     end)
+  end
+
+  defp retry?(_request, %Req.Response{status: status}), do: status in [408, 500, 502, 503, 504]
+  defp retry?(_request, _exception), do: true
+
+  # "reset_at" of Mansa's 429 answer, else the next midnight UTC.
+  defp reset_at(body) do
+    with {:ok, %{"error" => %{"reset_at" => text}}} <- Jason.decode(body || ""),
+         {:ok, dt, _} <- DateTime.from_iso8601(text) do
+      DateTime.truncate(dt, :second)
+    else
+      _ ->
+        Date.utc_today()
+        |> Date.add(1)
+        |> DateTime.new!(~T[00:00:00])
+        |> DateTime.truncate(:second)
+    end
   end
 
   defp url_of(_r, path, []), do: @base <> path
