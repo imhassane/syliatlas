@@ -16,7 +16,8 @@ defmodule SyliAtlasWeb.Search.Index do
         rank: 0}
 
   `terms` are normalised (no accents, lower case, no punctuation) and
-  `rank` breaks ties (lower first).
+  `rank` breaks ties (lower first). `keys` holds the same terms with their
+  words and length computed once, so that a query costs no splitting.
   """
 
   alias SyliAtlas.Economy.Communities
@@ -70,6 +71,23 @@ defmodule SyliAtlasWeb.Search.Index do
   def get, do: elem(cached(), 0)
 
   @doc """
+  The entries that may match these query words: those with a word that
+  starts with the same `n` letters as one of them (n = 2 for the exact
+  pass, 1 for the typo-tolerant pass). Avoids comparing every security.
+  """
+  def candidates(query_words, n) when n in [1, 2] do
+    %{prefixes: prefixes, entries: entries} = elem(cached(), 1)
+    table = prefixes[n]
+
+    query_words
+    |> Enum.map(&binary_part(&1, 0, min(n, byte_size(&1))))
+    |> Enum.uniq()
+    |> Enum.flat_map(&Map.get(table, &1, []))
+    |> Enum.uniq()
+    |> Enum.map(&elem(entries, &1))
+  end
+
+  @doc """
   What the footer of every page needs, kept with the index so that a page
   costs no query for it: the IMF edition label and the exchanges shown.
   """
@@ -90,10 +108,25 @@ defmodule SyliAtlasWeb.Search.Index do
     end
   end
 
-  defp build_meta(entries) do
+  @doc false
+  def build_meta(entries) do
     edition = SyliAtlas.Sources.published_edition("imf_weo")
 
+    indexed = Enum.with_index(entries)
+
+    prefixes =
+      Map.new([1, 2], fn n ->
+        table =
+          for {e, i} <- indexed, k <- e.keys, w <- k.words, byte_size(w) >= 1, reduce: %{} do
+            acc -> Map.update(acc, binary_part(w, 0, min(n, byte_size(w))), [i], &[i | &1])
+          end
+
+        {n, Map.new(table, fn {p, is} -> {p, is |> Enum.uniq() |> Enum.reverse()} end)}
+      end)
+
     %{
+      entries: List.to_tuple(entries),
+      prefixes: prefixes,
       edition: edition && edition.label,
       exchanges:
         for %{type: :exchange} = e <- entries do
@@ -113,7 +146,15 @@ defmodule SyliAtlasWeb.Search.Index do
   @doc false
   def build do
     areas = SyliAtlas.Geo.list_areas()
-    countries(areas) ++ regions(areas) ++ communities() ++ pages() ++ market()
+
+    (countries(areas) ++ regions(areas) ++ communities() ++ pages() ++ market())
+    |> Enum.map(fn e -> Map.put(e, :keys, Enum.map(e.terms, &key/1)) end)
+  end
+
+  @doc "A term with its words and its length, as the matcher wants it."
+  def key(term) do
+    words = :binary.split(term, " ", [:global])
+    %{t: term, words: words, len: String.length(term)}
   end
 
   defp countries(areas) do

@@ -96,8 +96,8 @@ defmodule SyliAtlasWeb.Search do
 
     scored =
       cond do
-        text != "" -> match(Index.get(), Enum.uniq([full, text]))
-        topic_words != [] -> match(Index.get(), [Enum.join(topic_words, " ")])
+        text != "" -> match(Enum.uniq([full, text]))
+        topic_words != [] -> match([Enum.join(topic_words, " ")])
         true -> []
       end
 
@@ -136,36 +136,46 @@ defmodule SyliAtlasWeb.Search do
     |> Enum.reverse()
   end
 
-  defp match(entries, texts) do
+  # Two passes: names that start, contain or equal the query, then, only if
+  # none did, the typo-tolerant pass.
+  defp match(texts) do
+    queries = Enum.map(texts, &Index.key/1)
+    words = queries |> Enum.flat_map(& &1.words) |> Enum.uniq()
+
+    case rank(Index.candidates(words, 2), queries, &exact_score/2) do
+      [] -> rank(Index.candidates(words, 1), queries, &fuzzy_score/2)
+      hits -> hits
+    end
+  end
+
+  defp rank(entries, queries, fun) do
     entries
-    |> Enum.map(fn e -> {texts |> Enum.map(&score(e, &1)) |> Enum.max(), e} end)
+    |> Enum.map(fn e -> {best(e.keys, queries, fun), e} end)
     |> Enum.filter(fn {s, _} -> s > 0 end)
     |> Enum.sort_by(fn {s, e} -> {-s, e.rank, e.names["fr"]} end)
   end
 
-  defp score(entry, text) do
-    entry.terms |> Enum.map(&term_score(&1, text)) |> Enum.max(fn -> 0 end)
+  defp best(keys, queries, fun) do
+    Enum.reduce(keys, 0, fn k, acc ->
+      Enum.reduce(queries, acc, fn q, acc2 -> max(acc2, fun.(k, q)) end)
+    end)
   end
 
-  defp term_score(term, text) do
+  defp exact_score(%{t: t}, %{t: t}), do: 100
+
+  defp exact_score(k, q) do
     cond do
-      term == text ->
-        100
+      q.len >= 2 and String.starts_with?(k.t, q.t) ->
+        80 - min(k.len - q.len, 30) / 2
 
-      String.starts_with?(term, text) and String.length(text) >= 2 ->
-        80 - min(String.length(term) - String.length(text), 30) / 2
-
-      String.length(text) >= 3 and Enum.any?(String.split(term), &String.starts_with?(&1, text)) ->
+      q.len >= 3 and Enum.any?(k.words, &String.starts_with?(&1, q.t)) ->
         60
 
-      all_words?(term, text) ->
+      all_words?(k, q) ->
         70
 
-      String.length(text) >= 4 and String.contains?(term, text) ->
+      q.len >= 4 and String.contains?(k.t, q.t) ->
         50
-
-      String.length(text) >= 4 ->
-        fuzzy(term, text)
 
       true ->
         0
@@ -174,28 +184,23 @@ defmodule SyliAtlasWeb.Search do
 
   # Several words, each the start of a word of the name, in any order:
   # « afrique ouest », « guinee equat ».
-  defp all_words?(term, text) do
-    case String.split(text) do
-      [_, _ | _] = words ->
-        tw = String.split(term)
-        Enum.all?(words, fn w -> Enum.any?(tw, &String.starts_with?(&1, w)) end)
+  defp all_words?(k, %{words: [_, _ | _] = words}),
+    do: Enum.all?(words, fn w -> Enum.any?(k.words, &String.starts_with?(&1, w)) end)
 
-      _ ->
-        false
-    end
-  end
+  defp all_words?(_k, _q), do: false
 
   # Typo tolerance: the whole query against the whole name, or each word of
-  # the query against a word of the name.
-  defp fuzzy(term, text) do
-    whole = String.jaro_distance(term, text)
+  # the query (four letters or more) against a word of the name.
+  defp fuzzy_score(_k, %{len: len}) when len < 4, do: 0
 
-    words =
-      for w <- String.split(text), String.length(w) >= 4 do
-        term |> String.split() |> Enum.map(&String.jaro_distance(&1, w)) |> Enum.max(fn -> 0 end)
+  defp fuzzy_score(k, q) do
+    whole = String.jaro_distance(k.t, q.t)
+
+    best =
+      for w <- q.words, byte_size(w) >= 4, kw <- k.words, reduce: whole do
+        acc -> max(acc, String.jaro_distance(kw, w))
       end
 
-    best = Enum.max([whole | words])
     if best >= 0.88, do: round(best * 40), else: 0
   end
 
