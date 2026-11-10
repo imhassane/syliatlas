@@ -30,6 +30,19 @@ defmodule SyliAtlasWeb.PublicData do
     end
   end
 
+  @doc """
+  The regions page data for a period: the stored snapshot for the default
+  period, computed live by the same builder for any other.
+  """
+  def regions(locale, from, to) do
+    with true <- {from, to} == SyliAtlas.Profiles.Builder.default_period(),
+         json when is_binary(json) <- Queries.regions(locale) do
+      Jason.decode!(json)
+    else
+      _ -> SyliAtlas.Profiles.RegionsSnapshot.build(locale, from, to)
+    end
+  end
+
   def search(q, locale), do: q |> Queries.search(locale) |> decode_list()
 
   def at(values, year) when is_list(values), do: Enum.at(values, year - 2015)

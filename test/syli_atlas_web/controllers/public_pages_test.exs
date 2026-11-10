@@ -26,20 +26,44 @@ defmodule SyliAtlasWeb.PublicPagesTest do
   end
 
   test "the home page costs one SQL query: its snapshot", %{conn: conn} do
+    assert_one_snapshot_query(conn, "/fr", "Md$")
+  end
+
+  test "the regions page costs one SQL query for the default period", %{conn: conn} do
+    assert_one_snapshot_query(
+      conn,
+      "/fr/regions?indicator=inflation&focus=east_africa",
+      "regions-table"
+    )
+  end
+
+  test "the regions page is the same with its snapshot or computed live", %{conn: conn} do
+    for path <- ["/fr/regions", "/en/regions?indicator=public_debt_pct_gdp&focus=west_africa"] do
+      stored = conn |> get(path) |> html_response(200)
+      SyliAtlas.Repo.query!("DELETE FROM snapshots WHERE key LIKE 'regions:%'")
+      assert build_conn() |> get(path) |> html_response(200) == stored
+      SyliAtlas.Profiles.Queries.refresh_snapshots!()
+    end
+  end
+
+  defp assert_one_snapshot_query(conn, path, expected) do
     # The data version is kept in memory once read (here by the warm-up).
-    get(build_conn(), "/fr")
+    get(build_conn(), path)
     test_pid = self()
-    handler = "count-home-queries"
+    handler = "count-queries-#{inspect(test_pid)}"
 
     :telemetry.attach(
       handler,
       [:syli_atlas, :repo, :query],
-      fn _event, _measures, meta, _ -> send(test_pid, {:query, meta.query}) end,
+      # The request runs in the test process: queries of other async tests are ignored.
+      fn _event, _measures, meta, _ ->
+        if self() == test_pid, do: send(test_pid, {:query, meta.query})
+      end,
       nil
     )
 
     try do
-      assert conn |> get("/fr") |> html_response(200) =~ "Md$"
+      assert conn |> get(path) |> html_response(200) =~ expected
       queries = collect_queries([])
       assert [query] = queries, "expected one query, got:\n" <> Enum.join(queries, "\n")
       assert query =~ "FROM snapshots"

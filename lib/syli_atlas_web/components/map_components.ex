@@ -75,17 +75,11 @@ defmodule SyliAtlasWeb.MapComponents do
     """
   end
 
+  # The region's slug comes with the country in the map snapshot (no lookup).
   defp href(:regions, c, locale),
-    do: Paths.area(locale, "region", region_slug(c["region"], locale))
+    do: Paths.area(locale, "region", c["region_slug"] || c["region"])
 
   defp href(_, c, locale), do: Paths.area(locale, "country", c["slug"])
-
-  defp region_slug(code, locale) do
-    case SyliAtlas.Geo.get_area_by_code(code) do
-      nil -> code
-      area -> SyliAtlas.Geo.Area.slug(area, locale)
-    end
-  end
 
   defp value_key(key), do: key
 

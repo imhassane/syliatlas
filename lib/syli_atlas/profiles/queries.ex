@@ -105,6 +105,11 @@ defmodule SyliAtlas.Profiles.Queries do
     run(:home, "SELECT json(doc) FROM snapshots WHERE key = ?1", ["home:" <> locale])
   end
 
+  @doc "The regions page for the default period (`SyliAtlas.Profiles.RegionsSnapshot`), in one row."
+  def regions(locale) when locale in ["fr", "en"] do
+    run(:regions, "SELECT json(doc) FROM snapshots WHERE key = ?1", ["regions:" <> locale])
+  end
+
   @doc "Format number of a stored snapshot, nil when it is missing."
   def snapshot_format(key) do
     case Repo.query!("SELECT json_extract(doc, '$.format') FROM snapshots WHERE key = ?1", [key]).rows do
@@ -142,6 +147,12 @@ defmodule SyliAtlas.Profiles.Queries do
     # The home page reads the map just written, so it comes after it.
     for locale <- ["fr", "en"] do
       put_snapshot!("home:" <> locale, SyliAtlas.Profiles.HomeSnapshot.build(locale), now)
+
+      put_snapshot!(
+        "regions:" <> locale,
+        SyliAtlas.Profiles.RegionsSnapshot.build(locale, from, to),
+        now
+      )
     end
 
     :ok
@@ -162,6 +173,7 @@ defmodule SyliAtlas.Profiles.Queries do
     """
     SELECT json_object('from', ?2, 'to', ?3, 'countries', json_group_array(json_object(
       'code', code, 'name', name, 'slug', slug, 'region', region, 'region_name', region_name,
+      'region_slug', region_slug,
       'gdp', gdp, 'gdp_change', gdp_change, 'real_change', real_change,
       'rank', CASE WHEN gdp IS NULL THEN NULL ELSE rnk END, 'of', ranked,
       'gdppc', gdppc, 'inflation', inflation, 'debt', debt, 'growth', growth,
@@ -173,6 +185,7 @@ defmodule SyliAtlas.Profiles.Queries do
                CASE WHEN ?1 = 'en' THEN a.name_en ELSE a.name_fr END AS name,
                CASE WHEN ?1 = 'en' THEN a.slug_en ELSE a.slug_fr END AS slug,
                CASE WHEN ?1 = 'en' THEN r.name_en ELSE r.name_fr END AS region_name,
+           CASE WHEN ?1 = 'en' THEN r.slug_en ELSE r.slug_fr END AS region_slug,
                #{value_sql("gdp_usd_bn", "?3")} AS gdp,
                #{change_sql("gdp_usd_bn")} AS gdp_change,
                #{change_sql("real_gdp_index")} AS real_change,

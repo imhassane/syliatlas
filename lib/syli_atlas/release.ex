@@ -40,7 +40,9 @@ defmodule SyliAtlas.Release do
 
         # Snapshots missing, or of an older format than the code: rebuild them.
         if SyliAtlas.Profiles.Queries.snapshot_format("home:fr") !=
-             SyliAtlas.Profiles.HomeSnapshot.format() do
+             SyliAtlas.Profiles.HomeSnapshot.format() or
+             SyliAtlas.Profiles.Queries.snapshot_format("regions:fr") !=
+               SyliAtlas.Profiles.RegionsSnapshot.format() do
           SyliAtlas.Profiles.Queries.refresh_snapshots!()
         end
       end)
