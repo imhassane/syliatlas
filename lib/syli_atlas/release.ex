@@ -58,7 +58,7 @@ defmodule SyliAtlas.Release do
         mansa? = SyliAtlas.Market.Sources.Mansa.configured?()
 
         IO.puts(
-          "market: Mansa key #{if mansa?, do: "found", else: "MISSING (stock_exchange_api_key)"}"
+          "market: Mansa key #{if mansa?, do: "found", else: "MISSING (STOCK_EXCHANGE_API_KEY)"}"
         )
 
         if mansa? and SyliAtlas.Market.overview()["as_of"] == nil do
