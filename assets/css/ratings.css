@@ -1,0 +1,73 @@
+/* Sovereign ratings: verdict badges, the country section and its scale,
+   the ratings page and the home section (SyliAtlasWeb.RatingComponents). */
+
+/* One colour pair per verdict band: ink on its tint, and a stronger fill for bars. */
+.rt-inv { --rt-ink: var(--rt-inv-ink); --rt-bg: var(--rt-inv-bg); --rt-fill: var(--rt-inv); }
+.rt-spec { --rt-ink: var(--rt-spec-ink); --rt-bg: var(--rt-spec-bg); --rt-fill: var(--rt-spec); }
+.rt-high { --rt-ink: var(--rt-high-ink); --rt-bg: var(--rt-high-bg); --rt-fill: var(--rt-high); }
+.rt-risk { --rt-ink: var(--rt-risk-ink); --rt-bg: var(--rt-risk-bg); --rt-fill: var(--rt-risk); }
+.rt-def { --rt-ink: var(--rt-def-ink); --rt-bg: var(--rt-def-bg); --rt-fill: var(--rt-def); }
+.rt-none { --rt-ink: var(--ink-muted); --rt-bg: var(--muted); --rt-fill: var(--nodata); }
+
+.rt-badge { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 600; line-height: 1.4; color: var(--rt-ink); background: var(--rt-bg); white-space: nowrap; }
+.rt-badge-lg { font-size: 17px; padding: 6px 16px; }
+.rt-chip { display: inline-block; margin-left: 6px; padding: 1px 7px; border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--rt-ink); background: var(--rt-bg); }
+.rt-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--rt-fill); margin-right: 6px; }
+dd.rt-inv, dd.rt-spec, dd.rt-high, dd.rt-risk, dd.rt-def, b.rt-inv, b.rt-spec, b.rt-high, b.rt-risk, b.rt-def { color: var(--rt-ink); }
+
+/* The summary under a country's title. */
+.rt-pill { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; align-self: flex-start; padding: 12px 18px; text-decoration: none; color: var(--ink); }
+.rt-pill-label { font-size: 18px; }
+.rt-pill-more { font-size: 14px; font-weight: 500; color: var(--accent-text); }
+
+/* The country section. */
+.rt-title { font-size: clamp(28px, 3.2vw, 38px); }
+.rt-lead { max-width: 820px; }
+.rt-verdict { display: flex; flex-wrap: wrap; gap: 28px 40px; align-items: center; }
+.rt-verdict > .stack { flex: 1 1 280px; }
+.rt-verdict-scale { flex: 2 1 480px !important; min-width: 0; }
+.rt-big { font-size: 40px; font-weight: 300; letter-spacing: -.03em; }
+.rt-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 0; }
+.rt-facts dt { font-size: 12px; color: var(--ink-subtle); }
+.rt-facts dd { margin: 4px 0 0; font-weight: 600; }
+.rt-agencies { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 16px; }
+.rt-agency { display: flex; flex-direction: column; gap: 4px; }
+.rt-agency-rating { font-size: 30px; font-weight: 300; letter-spacing: -.02em; }
+.rt-agency-empty { box-shadow: inset 0 0 0 1px var(--border-strong); background: transparent; }
+
+/* The scale, from default to AAA: band widths follow the common scale (1–22). */
+.rt-gauge { position: relative; padding-top: 34px; }
+.rt-gauge-bar, .rt-gauge-legend { display: grid; grid-template-columns: 12fr 14fr 14fr 14fr 46fr; gap: 3px; }
+.rt-gauge-bar { height: 16px; }
+.rt-gauge-bar span { background: var(--rt-fill); }
+.rt-gauge-bar span:first-child { border-radius: 4px 0 0 4px; }
+.rt-gauge-bar span:last-child { border-radius: 0 4px 4px 0; }
+.rt-gauge-legend { margin-top: 8px; font-size: 12px; line-height: 1.35; color: var(--ink-subtle); }
+.rt-gauge-legend b { display: block; color: var(--rt-ink); }
+.rt-gauge-marker { position: absolute; top: 0; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; }
+.rt-gauge-marker span { padding: 3px 10px; border-radius: 6px; background: var(--ink); color: var(--page); font-size: 13px; font-weight: 600; white-space: nowrap; }
+.rt-gauge-marker::after { content: ""; width: 2px; height: 10px; background: var(--ink); }
+
+/* The ratings page. */
+.rt-h1 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.rt-bar { display: inline-flex; align-items: center; gap: 10px; min-width: 180px; }
+.rt-bar-track { position: relative; flex: 1; height: 8px; border-radius: 4px; background: var(--muted); }
+.rt-bar-fill { position: absolute; inset: 0 auto 0 0; border-radius: 4px; background: var(--rt-fill); }
+.rt-bar-line { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--ink); }
+
+/* The home section. */
+.rt-spread { display: flex; gap: 2px; height: 40px; border-radius: 6px; overflow: hidden; }
+.rt-spread span { display: grid; place-items: center; min-width: 28px; font-weight: 600; color: var(--rt-ink); background: var(--rt-bg); box-shadow: inset 0 -4px 0 var(--rt-fill); }
+.rt-spread-legend { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 0; padding: 0; list-style: none; font-size: 14px; }
+
+/* The map panel. */
+.map-rating { display: flex; flex-direction: column; gap: 6px; padding: 12px 14px; border-radius: 8px; background: var(--alt); box-shadow: inset 0 0 0 1px var(--border); text-decoration: none; color: var(--ink); }
+.map-rating-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
+.map-rating-title { font-family: var(--mono); font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-subtle); }
+.map-rating b { font-size: 20px; font-weight: 500; }
+
+@media (max-width: 39.99rem) {
+  .rt-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .rt-gauge-legend { font-size: 11px; }
+  .rt-gauge-legend span:nth-child(-n+2) b + * { display: none; }
+}

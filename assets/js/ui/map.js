@@ -64,6 +64,7 @@ export function initMap() {
       if (c.tones[key]) el.classList.add(c.tones[key])
     }
     for (const key of ["gdppc", "growth", "inflation", "debt"]) field(key).textContent = c.text[key]
+    fillRating(c.rating)
     field("href").href = c.href
     field("compare").href = c.compare
     fillIndicatorPill()
@@ -77,6 +78,17 @@ export function initMap() {
     body.classList.add("is-entering")
 
     if (open && phone.matches && panel.showPopover && !panel.matches(":popover-open")) panel.showPopover()
+  }
+
+  // The country's sovereign rating (MapComponents.rating_text/2).
+  function fillRating(rating) {
+    if (!rating || !field("rating")) return
+    field("rating-label").textContent = rating.label
+    const verdict = field("rating-verdict")
+    verdict.textContent = rating.verdict
+    verdict.classList.forEach(cls => cls.startsWith("rt-") && cls !== "rt-badge" && verdict.classList.remove(cls))
+    verdict.classList.add(rating.class)
+    field("rating-detail").textContent = rating.detail
   }
 
   // Same maths as SyliAtlasWeb.Spark.

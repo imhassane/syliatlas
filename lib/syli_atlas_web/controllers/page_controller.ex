@@ -53,6 +53,7 @@ defmodule SyliAtlasWeb.PageController do
           map_indicator:
             if(SyliAtlasWeb.MapScale.valid?(params["carte"]), do: params["carte"], else: "gdp"),
           popular: home["popular"],
+          ratings: SyliAtlas.Ratings.document(),
           edition: home["edition"],
           last_checked_at: home["last_checked_at"]
         )

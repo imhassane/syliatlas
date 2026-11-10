@@ -13,9 +13,12 @@
         <.search_form locale={@locale} />
         <div class="row gap-1">
           <span class="subtle small">{gettext("Often viewed:")}</span>
-          <a :for={a <- @popular} class="chip" href={Paths.area(@locale, "country", a["slug"])}>{a[
-            "name"
-          ]}</a>
+          <a :for={a <- @popular} class="chip" href={Paths.area(@locale, "country", a["slug"])}>
+            {a["name"]}
+            <RatingComponents.rating_chip entry={
+              SyliAtlas.Ratings.for_country(@ratings, a["code"])
+            } />
+          </a>
         </div>
       </div>
       <.headline_window
@@ -52,6 +55,7 @@
       from={@map_from}
       to={@map_to}
       locale={@locale}
+      ratings={@ratings}
     />
   </.section>
 
@@ -106,7 +110,13 @@
     </div>
   </.section>
 
-  <.section>
+  <RatingComponents.home_ratings
+    :if={@ratings && @ratings["rated"] > 0}
+    doc={@ratings}
+    locale={@locale}
+  />
+
+  <.section variant="alt">
     <.section_head
       eyebrow={gettext("The continent in %{year}", year: @to)}
       title={gettext("Five regions, very different paths.")}

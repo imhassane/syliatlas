@@ -44,7 +44,20 @@ defmodule SyliAtlasWeb.Design.ContrastTest do
     {"accent-on-deep", "deep-raised"},
     # filled buttons, the current page of a pager, the skip link
     {"#ffffff", "accent"},
-    {"page", "ink"}
+    {"page", "ink"},
+    # sovereign rating verdicts: ink on its tint, on cards and on the alt surface
+    {"rt-inv-ink", "rt-inv-bg"},
+    {"rt-spec-ink", "rt-spec-bg"},
+    {"rt-high-ink", "rt-high-bg"},
+    {"rt-risk-ink", "rt-risk-bg"},
+    {"rt-def-ink", "rt-def-bg"},
+    {"rt-inv-ink", "card"},
+    {"rt-spec-ink", "card"},
+    {"rt-high-ink", "card"},
+    {"rt-risk-ink", "card"},
+    {"rt-def-ink", "card"},
+    {"rt-high-ink", "alt"},
+    {"rt-risk-ink", "alt"}
   ]
 
   @graphics [
@@ -68,7 +81,13 @@ defmodule SyliAtlasWeb.Design.ContrastTest do
     {"r-southern_africa", "card"},
     # the selected country's outline on the map
     {"map-sel", "seq-2"},
-    {"map-sel", "bad-2"}
+    {"map-sel", "bad-2"},
+    # rating bars and the scale
+    {"rt-inv", "card"},
+    {"rt-spec", "card"},
+    {"rt-high", "card"},
+    {"rt-risk", "card"},
+    {"rt-def", "card"}
   ]
 
   for theme <- [:light, :dark] do
