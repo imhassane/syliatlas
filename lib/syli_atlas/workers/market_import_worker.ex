@@ -1,12 +1,19 @@
 defmodule SyliAtlas.Workers.MarketImportWorker do
   @moduledoc """
-  Runs after the last African close (17:30 UTC, Monday to Friday). Fetches
-  every dataset of a source and keeps each response raw, then enqueues one
-  processing job per payload. About 28 calls a day for Mansa: well under
-  its free quota, checked before every call.
+  Fetches a source and keeps each response raw, then enqueues one
+  processing job per payload. Two passes on weekdays, set on Mansa's own
+  refresh times (most exchanges at 16:30 UTC, the VFEX at 20:00):
+
+    * 16:45 UTC, full: every dataset, about 28 calls;
+    * 20:15 UTC, catch-up (`"mode" => "catchup"`): only the securities of
+      the exchanges whose last session is still before today, at most
+      8 of them, so 1 to 8 calls.
+
+  About 30 calls a day for a free quota of 100, checked before every call.
   """
   use Oban.Worker, queue: :market, max_attempts: 3, unique: [period: 3600]
 
+  import Ecto.Query
   require Logger
   alias SyliAtlas.Market.{Ingestion, Reference, Source}
   alias SyliAtlas.Workers.MarketProcessWorker
@@ -16,23 +23,66 @@ defmodule SyliAtlas.Workers.MarketImportWorker do
     source = Map.get(args, "source", "mansa")
     mod = Source.module(source)
 
-    if function_exported?(mod, :configured?, 0) and not mod.configured?() do
+    if Code.ensure_loaded?(mod) and function_exported?(mod, :configured?, 0) and
+         not mod.configured?() do
       Logger.error("market import #{source}: no API key configured, nothing fetched")
       {:cancel, "#{source}: no API key configured"}
     else
-      run(source, mod)
+      run(source, mod, Map.get(args, "mode", "full"))
     end
   end
 
-  def run(source, mod) do
+  @catchup_max 8
+
+  def run(source, mod, mode \\ "full") do
     exchanges = Reference.mappings(source, "exchange")
     by_id = Map.new(Reference.list_exchanges(), &{&1.id, &1.code})
 
-    plan =
-      [{"exchanges", nil, nil}, {"indices", nil, nil}] ++
-        for({ext, id} <- Enum.sort_by(exchanges, &elem(&1, 0)), do: {"stocks", ext, by_id[id]}) ++
-        [{"etfs", nil, "ngx"}, {"forex", nil, nil}]
+    stocks =
+      for {ext, id} <- Enum.sort_by(exchanges, &elem(&1, 0)), do: {"stocks", ext, by_id[id]}
 
+    plan =
+      case mode do
+        "catchup" ->
+          behind = behind_exchange_ids()
+
+          stocks
+          |> Enum.filter(fn {_, ext, _} -> exchanges[ext] in behind end)
+          |> Enum.take(@catchup_max)
+
+        _full ->
+          [{"exchanges", nil, nil}, {"indices", nil, nil}] ++
+            stocks ++ [{"etfs", nil, "ngx"}, {"forex", nil, nil}]
+      end
+
+    if plan == [] do
+      :ok
+    else
+      fetch_plan(source, mod, plan)
+    end
+  end
+
+  # Exchanges whose last consolidated session is before today. One that
+  # never had any is left to the full import.
+  defp behind_exchange_ids do
+    today = Date.utc_today()
+
+    latest =
+      SyliAtlas.Repo.all(
+        from p in SyliAtlas.Market.EodPrice,
+          join: s in SyliAtlas.Market.Security,
+          on: s.id == p.security_id,
+          group_by: s.exchange_id,
+          select: {s.exchange_id, type(max(p.trade_date), :date)}
+      )
+      |> Map.new()
+
+    for e <- Reference.list_exchanges(),
+        latest[e.id] != nil and Date.compare(latest[e.id], today) == :lt,
+        do: e.id
+  end
+
+  defp fetch_plan(source, mod, plan) do
     {results, stop} =
       Enum.reduce_while(plan, {[], nil}, fn {dataset, ext, code}, {acc, nil} ->
         case mod.fetch(dataset, ext, []) do
