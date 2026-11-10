@@ -11,7 +11,7 @@ defmodule SyliAtlasWeb.DebtController do
 
   plug :put_layout, false
 
-  @sorts ~w(debt external china bonds service)
+  @sorts ~w(debt risk external china bonds service)
   @year 2025
 
   def index(conn, params) do
@@ -52,6 +52,7 @@ defmodule SyliAtlasWeb.DebtController do
       year: @year,
       answer: answer,
       wb: wb,
+      distress_doc: SyliAtlas.DebtDistress.document(),
       counts:
         Map.new([nil | regions], fn
           nil -> {nil, length(all)}
@@ -76,6 +77,7 @@ defmodule SyliAtlasWeb.DebtController do
       bonds: c && c["shares"]["bonds"],
       creditors_year: c && c["year"],
       service: latest["ppg_service_pct_exports"],
+      distress: SyliAtlas.DebtDistress.for_country(r["code"]),
       wb_as_of: wb["as_of"]
     }
   end
@@ -85,6 +87,7 @@ defmodule SyliAtlasWeb.DebtController do
     v =
       case sort do
         "debt" -> row.debt
+        "risk" -> SyliAtlas.DebtDistress.level(row.distress)
         "external" -> row.external && row.external["value"]
         "china" -> row.china
         "bonds" -> row.bonds

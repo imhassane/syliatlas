@@ -145,3 +145,13 @@
 .share-track { height: 10px; border-radius: 999px; background: var(--muted); overflow: hidden; }
 .share-track > span { display: block; height: 100%; border-radius: 999px; background: var(--c1); }
 .share-track-alt > span { background: var(--c3); }
+
+/* IMF risk of debt distress: a four-step scale and table pills. */
+.risk-low { --risk-bg: var(--success-bg); --risk-ink: var(--success-ink); }
+.risk-moderate { --risk-bg: var(--rt-high-bg); --risk-ink: var(--rt-high-ink); }
+.risk-high { --risk-bg: var(--rt-risk-bg); --risk-ink: var(--rt-risk-ink); }
+.risk-distress { --risk-bg: var(--rt-def-bg); --risk-ink: var(--rt-def-ink); }
+.risk-scale { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+.risk-step { display: flex; align-items: center; justify-content: center; min-height: 40px; padding: 4px 8px; border-radius: 6px; font-size: 13px; text-align: center; background: var(--muted); color: var(--ink-subtle); }
+.risk-step.risk-current { background: var(--risk-bg); color: var(--risk-ink); font-weight: 600; box-shadow: inset 0 0 0 2px var(--risk-ink); }
+.risk-pill { background: var(--risk-bg); color: var(--risk-ink); }

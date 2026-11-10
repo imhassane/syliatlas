@@ -94,4 +94,15 @@ defmodule SyliAtlasWeb.EconomySectionsTest do
     assert text =~ "CEPII, BACI"
     assert has?(doc("/fr/methode"), "#source-baci")
   end
+
+  test "IMF risk of debt distress: on the country page and the debt page" do
+    doc = doc("/fr/pays/ethiopie")
+    assert has?(doc, "#debt-distress")
+    assert LazyHTML.text(doc) =~ "En surendettement"
+    refute has?(doc("/fr/pays/nigeria"), "#debt-distress")
+
+    page = doc("/fr/dette?sort=risk")
+    first = page |> LazyHTML.query("#debt-rows tbody tr") |> Enum.at(0) |> LazyHTML.text()
+    assert first =~ "En surendettement"
+  end
 end

@@ -44,6 +44,7 @@
                 :for={
                   {key, label} <- [
                     {"debt", gettext("Public debt, % of GDP · %{year}", year: @year)},
+                    {"risk", gettext("Risk of debt distress (IMF)")},
                     {"external", gettext("External debt")},
                     {"china", gettext("Owed to China")},
                     {"bonds", gettext("Owed to bond holders")},
@@ -69,6 +70,14 @@
                   r.debt,
                   @locale
                 )}</b>
+              </td>
+              <td data-label={gettext("Risk of debt distress (IMF)")}>
+                <span class={["pill no-dot", WorldBankComponents.risk_class(r.distress)]}>
+                  {WorldBankComponents.risk_label(r.distress && r.distress["risk"])}
+                </span>
+                <span :if={r.distress} class="small subtle">
+                  {String.slice(r.distress["published"], 0, 4)}
+                </span>
               </td>
               <td data-label={gettext("External debt")}>
                 <span :if={r.external} class="num">
@@ -97,6 +106,12 @@
           {gettext(
             "Public debt: IMF, World Economic Outlook, gross debt of the general government, % of GDP"
           )}
+        </p>
+        <p class="src">
+          {gettext(
+            "Risk of debt distress: IMF, list of debt sustainability analyses of low-income countries, as of %{date} · only countries eligible for the IMF's concessional lending are assessed",
+            date: @distress_doc["as_of"]
+          )} · <a href={@distress_doc["source"]["url"]} rel="noopener">imf.org</a>
         </p>
         <p class="src">
           {gettext(

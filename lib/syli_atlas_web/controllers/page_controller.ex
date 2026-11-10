@@ -185,6 +185,18 @@ defmodule SyliAtlasWeb.PageController do
     ] ++
       world_bank_sources() ++
       trade_sources() ++
+      [
+        %{
+          id: "imf_dsa",
+          name: gettext("IMF · Debt sustainability analyses of low-income countries"),
+          url: SyliAtlas.DebtDistress.document()["source"]["url"],
+          what: gettext("Risk of external debt distress, with the date of each analysis"),
+          terms: gettext("Public assessment, linked; not recomputed"),
+          terms_url: nil,
+          updated: gettext("Every quarter"),
+          online: SyliAtlas.DebtDistress.document()["as_of"]
+        }
+      ] ++
       if(market,
         do: [
           %{

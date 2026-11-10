@@ -1,6 +1,7 @@
 defmodule SyliAtlasWeb.DebtHTML do
   use SyliAtlasWeb, :html
   alias SyliAtlas.Geo.Area
+  alias SyliAtlasWeb.WorldBankComponents
 
   embed_templates "debt_html/*"
 

@@ -33,6 +33,8 @@ defmodule SyliAtlasWeb.WorldBankComponents do
   attr :name, :string, required: true
   attr :debt_pct, :any, default: nil, doc: "IMF public debt, % of GDP, for the headline"
   attr :debt_year, :integer, default: nil
+  attr :distress, :map, default: nil, doc: "IMF risk of debt distress, or nil when not assessed"
+  attr :distress_doc, :map, default: %{}
   attr :locale, :string, required: true
 
   @doc "External debt: total, by creditor, and its service."
@@ -91,6 +93,39 @@ defmodule SyliAtlasWeb.WorldBankComponents do
           {gettext("of exports of goods, services and income")}
         </:stat>
       </.stat_grid>
+
+      <.card :if={@distress} pad class="stack gap-3" id="debt-distress">
+        <.card_head
+          title={gettext("Risk of debt distress")}
+          subtitle={gettext("IMF and World Bank debt sustainability analysis")}
+        />
+        <div class="risk-scale" role="img" aria-label={risk_label(@distress["risk"])}>
+          <span
+            :for={r <- ~w(low moderate high distress)}
+            class={["risk-step", "risk-" <> r, @distress["risk"] == r && "risk-current"]}
+          >
+            {risk_label(r)}
+          </span>
+        </div>
+        <p>
+          {gettext("Latest analysis published on %{date}: %{risk}.",
+            date: @distress["published"],
+            risk: String.downcase(risk_label(@distress["risk"]))
+          )}
+          <span :if={@distress["arrears"]}>{gettext(
+            "The country has unresolved arrears to external creditors."
+          )}</span>
+          <span :if={@distress["restructuring"]}>{gettext(
+            "The debt is being restructured under an IMF programme."
+          )}</span>
+        </p>
+        <p class="src">
+          {gettext(
+            "Source: IMF, list of debt sustainability analyses of low-income countries, as of %{date}",
+            date: @distress_doc["as_of"]
+          )} · <a href={@distress_doc["source"]["url"]} rel="noopener">imf.org</a>
+        </p>
+      </.card>
 
       <.card :if={@c} pad class="stack gap-4" id="creditors">
         <.card_head
@@ -358,6 +393,15 @@ defmodule SyliAtlasWeb.WorldBankComponents do
     </.section>
     """
   end
+
+  def risk_label("low"), do: gettext("Low")
+  def risk_label("moderate"), do: gettext("Moderate")
+  def risk_label("high"), do: gettext("High")
+  def risk_label("distress"), do: gettext("In debt distress")
+  def risk_label(_), do: gettext("Not assessed")
+
+  def risk_class(nil), do: "pill-neutral"
+  def risk_class(%{"risk" => r}), do: "risk-pill risk-" <> r
 
   # Helpers --------------------------------------------------------------
 

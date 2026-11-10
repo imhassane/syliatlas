@@ -175,6 +175,8 @@
       name={@name}
       debt_pct={PublicData.at(@profile["series"]["public_debt_pct_gdp"], @to)}
       debt_year={@to}
+      distress={SyliAtlas.DebtDistress.for_country(@area.code)}
+      distress_doc={SyliAtlas.DebtDistress.document()}
       locale={@locale}
     />
     <TradeComponents.trade_section
