@@ -1,0 +1,149 @@
+defmodule SyliAtlasWeb.MarketPagesTest do
+  use SyliAtlasWeb.ConnCase, async: false
+  alias SyliAtlas.MarketFixtures, as: F
+
+  setup do
+    SyliAtlas.Fixtures.load_snapshot!()
+    F.import!()
+    :ok
+  end
+
+  defp doc(conn, path), do: conn |> get(path) |> html_response(200) |> LazyHTML.from_document()
+
+  test "the list shows every exchange, the scrolling band and the source", %{conn: conn} do
+    html = doc(conn, "/fr/bourses")
+    assert html |> LazyHTML.query("#market-list tbody tr") |> Enum.count() == 21
+    assert html |> LazyHTML.query(".ticker-list") |> Enum.count() == 2
+    assert html |> LazyHTML.query(".ticker-list[aria-hidden=true]") |> Enum.count() == 1
+    text = LazyHTML.text(html)
+    assert text =~ "Mansa Markets"
+    assert text =~ "pas un conseil en investissement"
+    # Missing, old and suspicious indices are shown as such.
+    assert html |> LazyHTML.query("#exchange-egx") |> LazyHTML.text() =~ "indice non fourni"
+    assert html |> LazyHTML.query("#exchange-mse") |> LazyHTML.text() =~ "ancienne"
+    assert html |> LazyHTML.query("#exchange-jse .market-check") |> Enum.count() == 1
+  end
+
+  test "the list is searched, filtered and sorted through the URL", %{conn: conn} do
+    rows = fn path ->
+      doc(conn, path)
+      |> LazyHTML.query("#market-list tbody tr")
+      |> Enum.map(&LazyHTML.attribute(&1, "id"))
+    end
+
+    assert rows.("/fr/bourses?q=cote+d%27ivoire") |> List.flatten() == ["exchange-brvm"]
+    assert rows.("/fr/bourses?q=XOF") |> List.flatten() == ["exchange-brvm"]
+    assert rows.("/en/stock-exchanges?q=nigeria") |> List.flatten() == ["exchange-ngx"]
+
+    west = rows.("/fr/bourses?region=west_africa") |> List.flatten()
+    assert Enum.sort(west) == Enum.sort(~w(exchange-ngx exchange-brvm exchange-gse exchange-bvc))
+
+    by_change = rows.("/fr/bourses?sort=change") |> List.flatten()
+    assert hd(by_change) == "exchange-jse"
+
+    assert List.last(rows.("/fr/bourses?sort=change&dir=asc") |> List.flatten()) in ~w(exchange-egx exchange-casablanca exchange-vfex exchange-nsx exchange-bvmac exchange-bvc exchange-use exchange-ese)
+
+    none = doc(conn, "/fr/bourses?q=zzzz")
+    assert LazyHTML.query(none, "#market-none") |> Enum.count() == 1
+    # A filtered list is not indexed.
+    assert conn |> get("/fr/bourses?q=xof") |> html_response(200) =~
+             ~s(name="robots" content="noindex)
+  end
+
+  test "headers line up with their columns: text left, figures right", %{conn: conn} do
+    html = doc(conn, "/fr/bourses")
+
+    heads =
+      html
+      |> LazyHTML.query("#market-list thead th")
+      |> Enum.map(&(LazyHTML.attribute(&1, "class") |> List.first("")))
+
+    first_row =
+      html
+      |> LazyHTML.query("#market-list tbody tr:first-child > *")
+      |> Enum.map(&(LazyHTML.attribute(&1, "class") |> List.first("")))
+
+    assert length(heads) == length(first_row)
+
+    for {h, c} <- Enum.zip(heads, first_row) do
+      assert String.contains?(h, "l") == String.contains?(c, "l"), "header #{h} vs cell #{c}"
+    end
+  end
+
+  test "an exchange page: index, session, movers, securities, sources", %{conn: conn} do
+    html = doc(conn, "/fr/bourses/brvm")
+    text = LazyHTML.text(html)
+    assert text =~ "520,74"
+    assert text =~ "+50,6"
+    assert html |> LazyHTML.query("#securities-table tbody tr") |> Enum.count() == 5
+
+    assert html |> LazyHTML.query("#security-ecla .market-flag") |> LazyHTML.text() =~
+             "à vérifier"
+
+    assert html |> LazyHTML.query("#index-chart-empty") |> Enum.count() == 1
+    assert html |> LazyHTML.query(".market-sources li") |> Enum.count() == 1
+    # Member countries link to their profiles.
+    assert html
+           |> LazyHTML.query(~s(.market-countries a[href="/fr/pays/cote-d-ivoire"]))
+           |> Enum.count() == 1
+  end
+
+  test "an exchange's securities are paged by 20", %{conn: conn} do
+    html = doc(conn, "/en/stock-exchanges/jse")
+    assert html |> LazyHTML.query("#securities-table tbody tr") |> Enum.count() == 20
+    html2 = doc(conn, "/en/stock-exchanges/jse?page=13")
+    assert html2 |> LazyHTML.query("#securities-table tbody tr") |> Enum.count() == 10
+  end
+
+  test "a security page, its canonical URL and its value in dollars", %{conn: conn} do
+    html = doc(conn, "/fr/bourses/brvm/alpt")
+    text = LazyHTML.text(html)
+    assert text =~ "Alpha Télécom Sénégal"
+    assert text =~ "4 000 XOF"
+    assert text =~ "≈ 6,7 $"
+    assert html |> LazyHTML.query("#price-chart-empty") |> Enum.count() == 1
+    assert conn |> get("/fr/bourses/brvm/ALPT") |> redirected_to() == "/fr/bourses/brvm/alpt"
+  end
+
+  test "the funds page", %{conn: conn} do
+    html = doc(conn, "/fr/bourses/etf")
+    assert html |> LazyHTML.query("#etfs-table tbody tr") |> Enum.count() == 2
+    assert html |> LazyHTML.query("#etf-goldx .market-flag") |> LazyHTML.text() =~ "or physique"
+  end
+
+  test "unknown exchange or security is a 404", %{conn: conn} do
+    assert_error_sent 404, fn -> get(conn, "/fr/bourses/nowhere") end
+    assert_error_sent 404, fn -> get(build_conn(), "/fr/bourses/brvm/nothing") end
+  end
+
+  test "a country page shows its exchange", %{conn: conn} do
+    html = doc(conn, "/fr/pays/cote-d-ivoire")
+    block = LazyHTML.query(html, "#market")
+    assert LazyHTML.text(block) =~ "BRVM"
+    assert LazyHTML.text(block) =~ "bourse régionale"
+    nigeria = doc(build_conn(), "/en/countries/nigeria")
+
+    assert LazyHTML.query(nigeria, ~s(#market a[href="/en/stock-exchanges/ngx"])) |> Enum.count() ==
+             1
+  end
+
+  test "the menu links to the exchanges while they are public", %{conn: conn} do
+    html = doc(conn, "/fr")
+    assert LazyHTML.query(html, ~s(#header-nav a[href="/fr/bourses"])) |> Enum.count() == 1
+  end
+
+  describe "when no licence allows public display and preview is off" do
+    setup do
+      Application.put_env(:syli_atlas, SyliAtlas.Market, preview: false)
+      on_exit(fn -> Application.put_env(:syli_atlas, SyliAtlas.Market, preview: true) end)
+    end
+
+    test "the pages, the menu link and the country block are hidden", %{conn: conn} do
+      assert_error_sent 404, fn -> get(conn, "/fr/bourses") end
+      home = doc(build_conn(), "/fr")
+      assert LazyHTML.query(home, ~s(#header-nav a[href="/fr/bourses"])) |> Enum.count() == 0
+      country = doc(build_conn(), "/fr/pays/cote-d-ivoire")
+      assert LazyHTML.query(country, "#market") |> Enum.count() == 0
+    end
+  end
+end

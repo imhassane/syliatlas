@@ -17,6 +17,7 @@ import {initInstall} from "./ui/install"
 import {initOfflinePages} from "./ui/offline"
 import {initOfflinePage} from "./ui/offline_page"
 import {initCountUp, initScrollReveal} from "./ui/motion"
+import {initMarketSearch} from "./ui/market"
 
 initTheme()
 initDrawer()
@@ -29,6 +30,7 @@ initOfflinePages()
 initOfflinePage()
 initCountUp()
 initScrollReveal()
+initMarketSearch()
 
 // The lines below enable quality of life phoenix_live_reload
 // development features:

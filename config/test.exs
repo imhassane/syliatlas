@@ -39,3 +39,12 @@ config :phoenix,
 
 # Run Oban jobs inline during tests, without cron or queues.
 config :syli_atlas, Oban, testing: :manual
+
+# Market data: raw payloads on disk, the Mansa API stubbed (Req.Test).
+config :syli_atlas, SyliAtlas.Market.RawStore,
+  adapter: SyliAtlas.Market.RawStore.Local,
+  root: Path.expand("../tmp/test_raw", __DIR__)
+
+config :syli_atlas, SyliAtlas.Market.Sources.Mansa,
+  api_key: "test-key",
+  req_options: [plug: {Req.Test, SyliAtlas.Market.Sources.Mansa}, retry: false]

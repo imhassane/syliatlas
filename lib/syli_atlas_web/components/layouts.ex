@@ -118,6 +118,11 @@ defmodule SyliAtlasWeb.Layouts do
       <a href={Paths.compare(@locale, [])} aria-current={@current == :compare && "page"}>{gettext(
         "Compare"
       )}</a>
+      <a
+        :if={SyliAtlas.Market.public?()}
+        href={Paths.markets(@locale)}
+        aria-current={@current == :markets && "page"}
+      >{gettext("Stock exchanges")}</a>
       <a href={Paths.method(@locale)} aria-current={@current == :method && "page"}>{gettext("Method")}</a>
     </nav>
     """

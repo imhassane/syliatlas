@@ -23,6 +23,26 @@ end
 config :syli_atlas, SyliAtlasWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT", "4000"))]
 
+# Market data. The Mansa key is the Railway variable `stock_exchange_api_key`
+# (lower case: environment variable names are case-sensitive). Without it,
+# the daily market import cancels itself and the pages show no figures.
+if config_env() != :test do
+  config :syli_atlas, SyliAtlas.Market.Sources.Mansa,
+    api_key: System.get_env("stock_exchange_api_key")
+end
+
+# Raw payloads go to Cloudflare R2 when its four variables are set, else to
+# the disk next to the database (a Railway volume).
+if r2_bucket = System.get_env("R2_BUCKET") do
+  config :syli_atlas, SyliAtlas.Market.RawStore.R2,
+    account_id: System.fetch_env!("R2_ACCOUNT_ID"),
+    access_key_id: System.fetch_env!("R2_ACCESS_KEY_ID"),
+    secret_access_key: System.fetch_env!("R2_SECRET_ACCESS_KEY"),
+    bucket: r2_bucket
+
+  config :syli_atlas, SyliAtlas.Market.RawStore, adapter: SyliAtlas.Market.RawStore.R2
+end
+
 if config_env() == :dev do
   # Reload browser tabs when matching files change.
   config :syli_atlas, SyliAtlasWeb.Endpoint,
@@ -51,6 +71,16 @@ if config_env() == :prod do
   config :syli_atlas, SyliAtlas.Repo,
     database: database_path,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5")
+
+  # Market pages: hidden until a source licence allows public display, or
+  # shown in preview with MARKET_PREVIEW=true.
+  config :syli_atlas, SyliAtlas.Market, preview: System.get_env("MARKET_PREVIEW") == "true"
+
+  unless System.get_env("R2_BUCKET") do
+    config :syli_atlas, SyliAtlas.Market.RawStore,
+      adapter: SyliAtlas.Market.RawStore.Local,
+      root: Path.join(Path.dirname(database_path), "raw")
+  end
 
   # The secret key base is used to sign/encrypt cookies and other secrets.
   # A default value is used in config/dev.exs and config/test.exs but you

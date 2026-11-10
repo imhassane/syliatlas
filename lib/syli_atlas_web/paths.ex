@@ -22,6 +22,13 @@ defmodule SyliAtlasWeb.Paths do
   def discussion(locale, area), do: area(locale, area) <> "/discussion"
   def login(locale), do: "/#{locale}/#{segment(locale, :login)}"
 
+  def markets(locale), do: "/#{locale}/#{segment(locale, :markets)}"
+  def etfs(locale), do: markets(locale) <> "/etf"
+  def exchange(locale, code), do: markets(locale) <> "/" <> code
+
+  def security(locale, exchange_code, ticker),
+    do: exchange(locale, exchange_code) <> "/" <> String.downcase(ticker)
+
   def with_period(path, from, to), do: path <> "?from=#{from}&to=#{to}"
 
   def segment("en", :country), do: "countries"
@@ -36,6 +43,8 @@ defmodule SyliAtlasWeb.Paths do
   def segment(_, :method), do: "methode"
   def segment("en", :offline), do: "offline"
   def segment(_, :offline), do: "hors-ligne"
+  def segment("en", :markets), do: "stock-exchanges"
+  def segment(_, :markets), do: "bourses"
   def segment("en", :login), do: "sign-in"
   def segment(_, :login), do: "connexion"
 end

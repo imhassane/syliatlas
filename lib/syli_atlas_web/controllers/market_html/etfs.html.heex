@@ -1,0 +1,89 @@
+<Layouts.public locale={@locale} current={:markets} alternates={@alternates}>
+  <.section variant="alt">
+    <nav aria-label={gettext("Breadcrumb")}>
+      <ol class="crumbs">
+        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+        <li><a href={Paths.markets(@locale)}>{gettext("Stock exchanges")}</a></li>
+        <li aria-current="page">ETF</li>
+      </ol>
+    </nav>
+    <.section_head
+      level={1}
+      size="display"
+      eyebrow={gettext("Exchange-traded funds")}
+      title={gettext("Funds exposed to Africa")}
+    >
+      <:intro :if={@doc["etfs"] != []}>
+        {gettext(
+          "%{count} funds are listed in Africa in our data. On %{date}, they traded %{value} in all.",
+          count: length(@doc["etfs"]),
+          date: day(@doc["date"], @locale),
+          value: amount(@doc["value"], "NGN", @locale)
+        )}
+      </:intro>
+    </.section_head>
+    <p class="src">{attribution(@doc["sources"], @doc["date"], @locale)}</p>
+  </.section>
+
+  <.section id="etfs">
+    <div :if={@doc["etfs"] == []} class="card pad" id="etfs-empty">
+      <p class="muted">{gettext("No fund in our data yet: the first import has not run.")}</p>
+    </div>
+    <.card :if={@doc["etfs"] != []}>
+      <div class="table-box">
+        <table class="table table-stack table-wide" id="etfs-table">
+          <caption class="vh">{gettext("Funds listed in Africa")}</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="l">{gettext("Fund")}</th>
+              <th scope="col" class="l">{gettext("Exchange")}</th>
+              <th scope="col" class="l">{gettext("Issuer")}</th>
+              <th scope="col">{gettext("Close")}</th>
+              <th scope="col">{gettext("Daily change")}</th>
+              <th scope="col">{gettext("Volume")}</th>
+              <th scope="col">{gettext("Value traded")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={f <- @doc["etfs"]} id={"etf-#{String.downcase(f["ticker"])}"}>
+              <th scope="row" class="l">
+                <a href={Paths.security(@locale, f["exchange"]["code"], f["ticker"])}>{f["name"]}</a>
+                <span :if={etf_tag(f)} class="pill pill-info no-dot market-flag">{etf_tag(f)}</span>
+              </th>
+              <td class="l" data-label={gettext("Exchange")}>
+                <a href={Paths.exchange(@locale, f["exchange"]["code"])}>{f["exchange"][
+                  "short_name"
+                ]}</a>
+              </td>
+              <td class="l muted" data-label={gettext("Issuer")}>{f["issuer"] || "—"}</td>
+              <td class="num" data-label={gettext("Close")}>{price(f["close"], @locale)}</td>
+              <td data-label={gettext("Daily change")}>
+                <b class={["num", tone(f["change_pct"])]}>{pct(f["change_pct"], @locale)}</b>
+              </td>
+              <td class="num" data-label={gettext("Volume")}>{integer(f["volume"], @locale)}</td>
+              <td class="num" data-label={gettext("Value traded")}>
+                {amount(f["value"], f["currency"], @locale)}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="src market-legend">
+        {gettext("Sorted by value traded · prices in the currency of the exchange")}
+      </p>
+    </.card>
+    <.card pad class="stack gap-2">
+      <p class="eyebrow">{gettext("Funds listed outside Africa")}</p>
+      <p class="muted">
+        {gettext(
+          "Funds listed in New York, London or Paris that invest in African companies will be added from their issuers' pages, the only source of their figures."
+        )}
+      </p>
+      <p class="small muted">
+        {gettext(
+          "Information, not investment advice. A fund « Africa » can be concentrated on a few countries: check its holdings with the issuer."
+        )}
+      </p>
+    </.card>
+  </.section>
+</Layouts.public>

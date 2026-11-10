@@ -55,6 +55,10 @@ defmodule SyliAtlasWeb.Router do
     get "/regions/:slug", AreaController, :show
     get "/comparer", CompareController, :show
     get "/comparer/*slugs", CompareController, :show
+    get "/bourses", MarketController, :index
+    get "/bourses/etf", MarketController, :etfs
+    get "/bourses/:exchange", MarketController, :exchange
+    get "/bourses/:exchange/:ticker", MarketController, :security
   end
 
   scope "/en", SyliAtlasWeb do
@@ -70,6 +74,10 @@ defmodule SyliAtlasWeb.Router do
     get "/regions/:slug", AreaController, :show
     get "/compare", CompareController, :show
     get "/compare/*slugs", CompareController, :show
+    get "/stock-exchanges", MarketController, :index
+    get "/stock-exchanges/etf", MarketController, :etfs
+    get "/stock-exchanges/:exchange", MarketController, :exchange
+    get "/stock-exchanges/:exchange/:ticker", MarketController, :security
   end
 
   scope "/api/v1", SyliAtlasWeb.Api do

@@ -1,0 +1,229 @@
+<Layouts.public locale={@locale} current={:markets} alternates={@alternates}>
+  <.section variant="alt">
+    <nav aria-label={gettext("Breadcrumb")}>
+      <ol class="crumbs">
+        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+        <li><a href={Paths.markets(@locale)}>{gettext("Stock exchanges")}</a></li>
+        <li aria-current="page">{@e["short_name"]}</li>
+      </ol>
+    </nav>
+    <div class="stack gap-3">
+      <p class="eyebrow">
+        {if length(@e["countries"]) > 1,
+          do:
+            gettext("Regional exchange · %{count} countries · %{region}",
+              count: length(@e["countries"]),
+              region: region_label(@e["region"])
+            ),
+          else: gettext("Stock exchange · %{region}", region: region_label(@e["region"]))}
+      </p>
+      <h1 class="display area-title">{@e["short_name"]}</h1>
+      <p :if={@e["name"] != @e["short_name"]} class="muted">{@e["name"]}</p>
+    </div>
+    <p class="lead" data-answer>{@answer}</p>
+    <p class="src">
+      {attribution(@doc["sources"], @doc["index"]["date"] || @doc["session"]["date"], @locale)}
+    </p>
+    <nav
+      :if={@e["country_names"] != []}
+      class="row gap-2 market-countries"
+      aria-label={gettext("Countries served")}
+    >
+      <a :for={c <- @e["country_names"]} class="chip" href={country_href(c, @locale)}>{c["name"][
+        @locale
+      ]}</a>
+    </nav>
+  </.section>
+
+  <.section>
+    <dl class="stats">
+      <div>
+        <dt>{@e["index_name"] || gettext("Main index")}</dt>
+        <dd class="big">{price(@doc["index"]["value"], @locale)}</dd>
+        <dd class="small muted"><.freshness index={@doc["index"]} locale={@locale} /></dd>
+      </div>
+      <div>
+        <dt>{gettext("Session")}</dt>
+        <dd class={["big", tone(@doc["index"]["change_pct"])]}>
+          {pct(@doc["index"]["change_pct"], @locale)}
+        </dd>
+        <dd :if={@doc["index"]["flags"]["suspect"]} class="small">
+          <span class="pill pill-warn no-dot">{gettext("to check")}</span>
+        </dd>
+      </div>
+      <div>
+        <dt>{gettext("Since 1 January")}</dt>
+        <dd class={["big", tone(@doc["index"]["ytd_pct"])]}>
+          {ytd(@doc["index"]["ytd_pct"], @locale)}
+        </dd>
+        <dd class="small muted">{gettext("as given by the source")}</dd>
+      </div>
+      <div>
+        <dt>{gettext("Traded that day")}</dt>
+        <dd class="big">{amount(@doc["session"]["value"], @e["currency"], @locale)}</dd>
+        <dd class="small muted">
+          {usd(SyliAtlas.Market.to_usd(@doc["session"]["value"], @e["currency"], @fx), @locale)}
+          <span :if={@doc["session"]["top"]}>
+            · {gettext("%{share} % on %{name}",
+              share: number(@doc["session"]["top"]["share"], 0, @locale),
+              name: @doc["session"]["top"]["name"]
+            )}
+          </span>
+        </dd>
+      </div>
+    </dl>
+
+    <div class="grid grid-2 market-grid">
+      <.card pad>
+        <.card_head
+          title={@e["index_name"] || gettext("Main index")}
+          subtitle={gettext("Points · sessions received by Syli Atlas")}
+        />
+        <.index_chart
+          :if={length(@doc["history"]) >= 2}
+          id="index-chart"
+          history={@doc["history"]}
+          label={@answer}
+          locale={@locale}
+        />
+        <div :if={length(@doc["history"]) < 2} class="market-empty-chart" id="index-chart-empty">
+          <p class="h3">{gettext("History being built")}</p>
+          <p class="muted small">
+            {gettext(
+              "Every close is recorded from the first import on. The curve appears from the second session."
+            )}
+          </p>
+        </div>
+      </.card>
+      <.card pad class="stack gap-3">
+        <.card_head
+          title={gettext("Session of %{date}", date: day(@doc["session"]["date"], @locale))}
+          subtitle={gettext("%{count} listed securities", count: @e["listed"])}
+        />
+        <% s = @doc["session"]
+        total = max(s["up"] + s["down"] + s["flat"] + s["none"], 1) %>
+        <div
+          class="market-breadth"
+          role="img"
+          aria-label={
+            gettext("%{up} up, %{flat} unchanged, %{down} down, %{none} without trade",
+              up: s["up"],
+              flat: s["flat"],
+              down: s["down"],
+              none: s["none"]
+            )
+          }
+        >
+          <span class="b-up" style={"width: #{s["up"] / total * 100}%"}></span>
+          <span class="b-flat" style={"width: #{s["flat"] / total * 100}%"}></span>
+          <span class="b-down" style={"width: #{s["down"] / total * 100}%"}></span>
+          <span class="b-none" style={"width: #{s["none"] / total * 100}%"}></span>
+        </div>
+        <div>
+          <.list_row label={gettext("Up")} value={to_string(s["up"])} tone="up" />
+          <.list_row label={gettext("Unchanged")} value={to_string(s["flat"])} />
+          <.list_row label={gettext("Down")} value={to_string(s["down"])} tone="down" />
+          <.list_row label={gettext("Without trade")} value={to_string(s["none"])} />
+        </div>
+      </.card>
+    </div>
+
+    <div :if={@doc["movers_up"] != [] or @doc["movers_down"] != []} class="grid grid-2">
+      <.card :for={
+        {title, list} <- [
+          {gettext("Biggest rises"), @doc["movers_up"]},
+          {gettext("Biggest falls"), @doc["movers_down"]}
+        ]
+      }>
+        <div class="pad">
+          <.card_head title={title} subtitle={gettext("Securities traded that day")} />
+        </div>
+        <ol class="rank-list market-movers">
+          <li :for={{m, i} <- Enum.with_index(list, 1)}>
+            <span class="num subtle">{i}</span>
+            <a href={Paths.security(@locale, @e["code"], m["ticker"])}>{m["name"]}
+            <span class="mono small muted">{m["ticker"]}</span></a>
+            <b class={["num", tone(m["change_pct"])]}>{pct(m["change_pct"], @locale)}</b>
+          </li>
+        </ol>
+      </.card>
+    </div>
+  </.section>
+
+  <.section id="securities" tight={:top}>
+    <h2 class="h1">{gettext("Listed securities")}</h2>
+    <.card>
+      <div class="table-box">
+        <table class="table table-stack market-securities" id="securities-table">
+          <caption class="vh">
+            {gettext("Securities listed on the %{exchange}", exchange: @e["short_name"])}
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col" class="l">{gettext("Company")}</th>
+              <th scope="col" class="l">{gettext("Code")}</th>
+              <th scope="col">{gettext("Close")} ({@e["currency"]})</th>
+              <th scope="col">{gettext("Daily change")}</th>
+              <th scope="col">{gettext("Volume")}</th>
+              <th scope="col">{gettext("Value traded")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={r <- @page.entries} id={"security-#{String.downcase(r["ticker"])}"}>
+              <th scope="row" class="l">
+                <a href={Paths.security(@locale, @e["code"], r["ticker"])}>{r["name"]}</a>
+                <span
+                  :if={security_flag(r)}
+                  class={[
+                    "pill no-dot market-flag",
+                    if(elem(security_flag(r), 0) == :warn, do: "pill-warn", else: "pill-neutral")
+                  ]}
+                >{elem(security_flag(r), 1)}</span>
+              </th>
+              <td class="l mono small muted" data-label={gettext("Code")}>{r["ticker"]}</td>
+              <td class="num" data-label={gettext("Close")}>{price(r["close"], @locale)}</td>
+              <td data-label={gettext("Daily change")}>
+                <b class={["num", tone(r["change_pct"])]}>{pct(r["change_pct"], @locale)}</b>
+              </td>
+              <td class="num" data-label={gettext("Volume")}>{integer(r["volume"], @locale)}</td>
+              <td class="num" data-label={gettext("Value traded")}>
+                {amount(r["value"], @e["currency"], @locale)}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="market-table-foot">
+        <span class="src">{gettext(
+          "Sorted by value traded · value = close × volume, computed by Syli Atlas"
+        )}</span>
+        <.list_pager page={@page} href={@page_href} />
+      </div>
+    </.card>
+  </.section>
+
+  <.section variant="alt">
+    <div class="grid grid-2">
+      <.card pad class="stack gap-3">
+        <p class="eyebrow">{gettext("Where these figures come from")}</p>
+        <.market_sources sources={@doc["sources"]} locale={@locale} />
+        <p :if={@doc["issues"] != []} class="small muted">
+          {gettext("Flagged on this page:")}
+          {Enum.map_join(@doc["issues"], " · ", &issue_text(&1, @locale))}
+        </p>
+        <a class="market-more" href={Paths.method(@locale)}>{gettext("Method and sources")} →</a>
+      </.card>
+      <.card pad class="stack gap-2">
+        <p class="eyebrow">{gettext("Cite this page")}</p>
+        <p class="small mono cite">
+          Syli Atlas, « {@e["short_name"]} », {attribution(
+            @doc["sources"],
+            @doc["index"]["date"],
+            @locale
+          )}. {SyliAtlasWeb.Seo.url(Paths.exchange(@locale, @e["code"]))}
+        </p>
+        <p class="small muted">{gettext("Information, not investment advice.")}</p>
+      </.card>
+    </div>
+  </.section>
+</Layouts.public>
