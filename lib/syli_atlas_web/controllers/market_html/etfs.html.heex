@@ -38,7 +38,7 @@
               <th scope="col" class="l">{gettext("Fund")}</th>
               <th scope="col" class="l">{gettext("Exchange")}</th>
               <th scope="col" class="l">{gettext("Issuer")}</th>
-              <th scope="col">{gettext("Close")}</th>
+              <th scope="col">{pgettext("price", "Close")}</th>
               <th scope="col">{gettext("Daily change")}</th>
               <th scope="col">{gettext("Volume")}</th>
               <th scope="col">{gettext("Value traded")}</th>
@@ -56,7 +56,9 @@
                 ]}</a>
               </td>
               <td class="l muted" data-label={gettext("Issuer")}>{f["issuer"] || "—"}</td>
-              <td class="num" data-label={gettext("Close")}>{price(f["close"], @locale)}</td>
+              <td class="num" data-label={pgettext("price", "Close")}>
+                {price(f["close"], @locale)}
+              </td>
               <td data-label={gettext("Daily change")}>
                 <b class={["num", tone(f["change_pct"])]}>{pct(f["change_pct"], @locale)}</b>
               </td>

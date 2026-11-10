@@ -24,6 +24,33 @@ defmodule SyliAtlasWeb.MarketPagesTest do
     assert html |> LazyHTML.query("#exchange-jse .market-check") |> Enum.count() == 1
   end
 
+  test "the header sums up the session: indices up, down and missing", %{conn: conn} do
+    html = doc(conn, "/fr/bourses")
+    exchanges = SyliAtlas.Market.overview()["exchanges"]
+    given = Enum.filter(exchanges, & &1["index"]["value"])
+    up = Enum.count(given, &Decimal.gt?(&1["index"]["change_pct"], 0))
+    down = Enum.count(given, &Decimal.lt?(&1["index"]["change_pct"], 0))
+
+    assert up > 0
+    assert html |> LazyHTML.query("#summary-up") |> LazyHTML.text() == "▲ #{up}"
+    assert html |> LazyHTML.query("#summary-down") |> LazyHTML.text() == "▼ #{down}"
+
+    assert html |> LazyHTML.query("#summary-missing") |> LazyHTML.text() ==
+             "#{length(exchanges) - length(given)}"
+
+    assert html |> LazyHTML.query("#market-hero h1") |> LazyHTML.text() == "Bourses africaines"
+  end
+
+  test "before any import the header and the table give way to « figures on their way »" do
+    SyliAtlas.Repo.delete_all(SyliAtlas.Market.EodPrice)
+    SyliAtlas.Repo.delete_all(SyliAtlas.Market.IndexValue)
+    SyliAtlas.Market.Snapshots.rebuild!()
+
+    html = doc(build_conn(), "/fr/bourses")
+    assert html |> LazyHTML.query("#market-empty") |> Enum.count() == 1
+    assert html |> LazyHTML.query("#market-summary, #market-table, .ticker") |> Enum.count() == 0
+  end
+
   test "the list is searched, filtered and sorted through the URL", %{conn: conn} do
     rows = fn path ->
       doc(conn, path)
