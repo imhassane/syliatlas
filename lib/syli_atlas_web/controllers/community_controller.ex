@@ -102,7 +102,24 @@ defmodule SyliAtlasWeb.CommunityController do
     end
   end
 
+  # Totals change only with the IMF data: computed once per data version,
+  # kept in memory (the six communities together take ~10 ms to add up).
   defp summary(community, _locale) do
+    key = {__MODULE__, :summary, community.code}
+    version = SyliAtlas.Profiles.data_version()
+
+    case :persistent_term.get(key, nil) do
+      {^version, s} ->
+        s
+
+      _ ->
+        s = compute_summary(community)
+        :persistent_term.put(key, {version, s})
+        s
+    end
+  end
+
+  defp compute_summary(community) do
     members = PublicData.series_for(community.members)
     series = Builder.aggregate_series(Enum.map(members, & &1["series"]))
 
