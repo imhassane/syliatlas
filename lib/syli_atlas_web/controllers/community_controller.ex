@@ -102,6 +102,9 @@ defmodule SyliAtlasWeb.CommunityController do
     end
   end
 
+  @doc "The six communities with their totals for #{@year} (cached; regions page)."
+  def summaries, do: Enum.map(Communities.all(), &summary(&1, nil))
+
   # Totals change only with the IMF data: computed once per data version,
   # kept in memory (the six communities together take ~10 ms to add up).
   defp summary(community, _locale) do

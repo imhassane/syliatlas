@@ -26,6 +26,7 @@ defmodule SyliAtlasWeb.RegionsController do
     filtered? = map_size(kept) > 0
 
     render(conn, :index,
+      communities: SyliAtlasWeb.CommunityController.summaries(),
       page_title: gettext("The regions of Africa compared"),
       seo:
         Seo.page(
