@@ -230,4 +230,52 @@
       </a>
     </div>
   </.section>
+
+  <.section id="communities">
+    <.section_head
+      eyebrow={gettext("Economic communities")}
+      title={gettext("Communities and monetary unions")}
+    >
+      <:intro>
+        {gettext(
+          "Totals of the members in %{year}, from IMF figures, by the same rules as the regions.",
+          year: 2025
+        )}
+      </:intro>
+      <:actions>
+        <a class="btn btn-secondary" href={Paths.communities(@locale)}>{gettext(
+          "Compare the communities"
+        )} →</a>
+      </:actions>
+    </.section_head>
+    <div class="grid grid-3">
+      <a
+        :for={c <- @communities}
+        class="card pad stack gap-2 community-card"
+        href={Paths.community(@locale, c.community.slug[@locale])}
+        id={"community-#{c.community.code}"}
+      >
+        <p class="eyebrow">
+          {c.community.short[@locale]} · {ngettext(
+            "1 country",
+            "%{count} countries",
+            length(c.community.members)
+          )}
+        </p>
+        <b>{c.community.name[@locale]}</b>
+        <div class="carry-row small">
+          <span class="muted">{gettext("GDP %{year}", year: 2025)}</span>
+          <b class="num">{value(c.gdp, "gdp_usd_bn", @locale)}</b>
+        </div>
+        <div class="carry-row small">
+          <span class="muted">{gettext("Growth %{year}", year: 2025)}</span>
+          <b class={["num", tone(c.growth, "real_gdp_growth")]}>{value(
+            c.growth,
+            "real_gdp_growth",
+            @locale
+          )}</b>
+        </div>
+      </a>
+    </div>
+  </.section>
 </Layouts.public>

@@ -15,21 +15,17 @@ defmodule SyliAtlasWeb.SiteStructureTest do
     doc = doc("/fr/pays/senegal")
     top = hrefs(doc, "#header-nav > a")
     assert top == ["/fr/classement", "/fr/bourses", "/fr/comparer/"]
-    themes = hrefs(doc, "#header-nav details a")
-
-    assert themes == [
-             "/fr/dette",
-             "/fr/notations",
-             "/fr/communautes",
-             "/fr/regions",
-             "/fr/methode"
-           ]
+    themes = hrefs(doc, "#header-nav details .nav-mega-item")
+    assert themes == ["/fr/dette", "/fr/notations", "/fr/regions"]
+    panel = doc |> LazyHTML.query("#header-nav details") |> LazyHTML.text()
+    assert panel =~ "54 pays" and panel =~ "CEDEAO"
+    assert hrefs(doc, "#header-nav .nav-mega-foot a") == ["/fr/methode"]
 
     assert hrefs(doc, ~s(#header-nav a[aria-current="page"])) == ["/fr/classement"]
     assert LazyHTML.query(doc, "#header-q[data-search-input]") |> Enum.count() == 1
     # The drawer holds every link, flat.
-    assert "/fr/communautes" in hrefs(doc, "#drawer-nav a")
-    assert "/fr/recherche" in hrefs(doc, "#drawer-nav a")
+    assert "/fr/regions" in hrefs(doc, "#drawer-nav a")
+    assert LazyHTML.query(doc, "#drawer-q[data-search-input]") |> Enum.count() == 1
   end
 
   test "the footer: countries, exchanges, themes, data, and the sources with the edition" do
@@ -41,6 +37,12 @@ defmodule SyliAtlasWeb.SiteStructureTest do
     text = doc |> LazyHTML.query(".footer-credits") |> LazyHTML.text()
     assert text =~ "IMF (" and text =~ "CC BY 4.0" and text =~ "BACI"
     assert text =~ "not investment advice"
+  end
+
+  test "the regions page shows the communities" do
+    doc = doc("/fr/regions")
+    assert LazyHTML.query(doc, "#communities .community-card") |> Enum.count() == 6
+    assert "/fr/communautes/uemoa" in hrefs(doc, "#communities a")
   end
 
   test "the sitemap lists each tab with data and the communities" do

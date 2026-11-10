@@ -106,57 +106,122 @@ defmodule SyliAtlasWeb.Layouts do
   attr :flat, :boolean, default: false, doc: "the phone drawer: every link, no menu"
 
   # Four entries, the exchanges among them while their data may be shown.
-  # The themes sit in a <details> menu: no JavaScript, keyboard-friendly.
+  # The themes open a <details> panel (no JavaScript, keyboard-friendly):
+  # one line per theme with what it holds and how many countries, then the
+  # method. A theme appears once its Africa-wide page exists.
   defp main_nav(assigns) do
-    assigns = assign(assigns, :themes, themes(assigns.locale))
+    assigns =
+      assign(assigns,
+        themes: themes(assigns.locale),
+        exchanges: length(SyliAtlasWeb.Search.Index.meta().exchanges)
+      )
 
     ~H"""
     <nav id={@id} class={@class} aria-label={gettext("Main")}>
-      <a :if={@flat} href={Paths.home(@locale)} aria-current={@current == :home && "page"}>{gettext(
-        "Home"
-      )}</a>
-      <a href={Paths.ranking(@locale)} aria-current={@current in [:ranking, :countries] && "page"}>{gettext(
-        "Countries"
-      )}</a>
-      <a
-        :if={SyliAtlas.Market.public?()}
-        href={Paths.markets(@locale)}
-        aria-current={@current == :markets && "page"}
-      >{gettext("Stock exchanges")}</a>
       <%= if @flat do %>
+        <a href={Paths.ranking(@locale)} aria-current={@current in [:ranking, :countries] && "page"}>
+          <span>{gettext("Countries")}</span><span class="drawer-meta">→</span>
+        </a>
+        <a
+          :if={SyliAtlas.Market.public?()}
+          href={Paths.markets(@locale)}
+          aria-current={@current == :markets && "page"}
+        >
+          <span>{gettext("Stock exchanges")}</span>
+          <span :if={@exchanges > 0} class="drawer-meta">{ngettext(
+            "1 exchange",
+            "%{count} exchanges",
+            @exchanges
+          )}</span>
+        </a>
         <p class="drawer-group">{gettext("Themes")}</p>
-        <a :for={{key, label, href} <- @themes} href={href} aria-current={@current == key && "page"}>{label}</a>
+        <a
+          :for={t <- @themes}
+          href={t.href}
+          aria-current={@current in t.current && "page"}
+          class="drawer-sub"
+        >
+          <span>{t.label}</span><span :if={t.short} class="drawer-meta">{t.short}</span>
+        </a>
+        <a href={Paths.compare(@locale, [])} aria-current={@current == :compare && "page"}>{gettext(
+          "Compare"
+        )}</a>
       <% else %>
+        <a href={Paths.ranking(@locale)} aria-current={@current in [:ranking, :countries] && "page"}>{gettext(
+          "Countries"
+        )}</a>
+        <a
+          :if={SyliAtlas.Market.public?()}
+          href={Paths.markets(@locale)}
+          aria-current={@current == :markets && "page"}
+        >{gettext("Stock exchanges")}</a>
         <details class="nav-menu" data-nav-menu>
           <summary aria-current={@current in [:debt, :ratings, :regions, :themes, :method] && "true"}>
             {gettext("Themes")}
           </summary>
-          <div class="nav-menu-pop">
+          <div class="nav-menu-pop nav-mega">
             <a
-              :for={{key, label, href} <- @themes}
-              href={href}
-              aria-current={@current == key && "page"}
-            >{label}</a>
+              :for={t <- @themes}
+              href={t.href}
+              aria-current={@current in t.current && "page"}
+              class="nav-mega-item"
+            >
+              <b>{t.label}</b>
+              <span>{t.description}</span>
+            </a>
+            <div class="nav-mega-foot">
+              <p>
+                {gettext(
+                  "Each theme compares the 54 countries; a country profile has the same theme in a tab."
+                )}
+              </p>
+              <a href={Paths.method(@locale)} aria-current={@current == :method && "page"}>{gettext(
+                "Method and sources"
+              )} →</a>
+            </div>
           </div>
         </details>
+        <a href={Paths.compare(@locale, [])} aria-current={@current == :compare && "page"}>{gettext(
+          "Compare"
+        )}</a>
       <% end %>
-      <a href={Paths.compare(@locale, [])} aria-current={@current == :compare && "page"}>{gettext(
-        "Compare"
-      )}</a>
-      <a :if={@flat} href={Paths.search(@locale)} aria-current={@current == :search && "page"}>{gettext(
-        "Search"
-      )}</a>
     </nav>
     """
   end
 
+  # The themes of the menu, with live counts (both from memory: no query).
   defp themes(locale) do
+    rated = (SyliAtlas.Ratings.document() || %{})["rated"]
+
     [
-      {:debt, gettext("Debt"), Paths.debt(locale)},
-      {:ratings, gettext("Ratings"), Paths.ratings(locale)},
-      {:themes, gettext("Economic communities"), Paths.communities(locale)},
-      {:regions, gettext("Regions"), Paths.regions(locale)},
-      {:method, gettext("Method and sources"), Paths.method(locale)}
+      %{
+        key: :debt,
+        current: [:debt],
+        label: gettext("Debt"),
+        href: Paths.debt(locale),
+        description: gettext("Levels, creditors, risk of debt distress · 54 countries"),
+        short: gettext("54 countries")
+      },
+      %{
+        key: :ratings,
+        current: [:ratings],
+        label: gettext("Ratings"),
+        href: Paths.ratings(locale),
+        description:
+          if(rated,
+            do: gettext("S&P, Moody's, Fitch · %{n} countries rated", n: rated),
+            else: "S&P, Moody's, Fitch"
+          ),
+        short: rated && gettext("%{n} rated", n: rated)
+      },
+      %{
+        key: :regions,
+        current: [:regions, :themes],
+        label: gettext("Regions and communities"),
+        href: Paths.regions(locale),
+        description: gettext("AU regions, ECOWAS, AES, WAEMU, CEMAC, EAC, SADC"),
+        short: nil
+      }
     ]
   end
 
@@ -206,7 +271,8 @@ defmodule SyliAtlasWeb.Layouts do
           </div>
           <div class="stack gap-1">
             <b>{gettext("Themes")}</b>
-            <a :for={{_k, label, href} <- Enum.take(@themes, 4)} href={href}>{label}</a>
+            <a :for={t <- @themes} href={t.href}>{t.label}</a>
+            <a href={Paths.communities(@locale)}>{gettext("Economic communities")}</a>
             <a href={Paths.compare(@locale, [])}>{gettext("Compare")}</a>
           </div>
           <div class="stack gap-1">
@@ -320,7 +386,12 @@ defmodule SyliAtlasWeb.Layouts do
               ><path d="M6 6l12 12M18 6L6 18"></path></svg>
             </button>
           </div>
+          <SyliAtlasWeb.PageComponents.search_form locale={@locale} id="drawer-q" compact />
           <.main_nav locale={@locale} current={@current} id="drawer-nav" class="drawer-nav" flat />
+          <p class="drawer-links small">
+            <a href={Paths.method(@locale)}>{gettext("Method and sources")}</a>
+            · <a href="/api/v1/areas">{gettext("Open data")}</a>
+          </p>
           <div class="drawer-foot stack gap-2">
             <button type="button" class="btn btn-secondary" data-install>{gettext("Install the app")}</button>
             <.lang_link :if={@other_lang} lang={@other_lang} class="btn btn-secondary" />
