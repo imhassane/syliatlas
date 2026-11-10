@@ -27,8 +27,22 @@ defmodule SyliAtlas.Ratings do
       |> Map.fetch!("ratings")
 
     Enum.each(rows, &seed_rating!/1)
+    drop_stale!(rows)
     rebuild!()
     length(rows)
+  end
+
+  # A bundled row whose date was corrected in the file leaves its old copy
+  # behind; remove the rows the file no longer lists, unless a person
+  # checked or approved them in the admin.
+  defp drop_stale!(rows) do
+    import Ecto.Query
+
+    keys = MapSet.new(rows, &{&1["country_code"], &1["agency"], &1["action_date"] || ""})
+
+    Repo.all(from r in Rating, where: is_nil(r.reviewed_at))
+    |> Enum.reject(&MapSet.member?(keys, {&1.country_code, &1.agency, &1.action_date}))
+    |> Enum.each(&Repo.delete!/1)
   end
 
   # A decision checked in the admin wins over the bundled file.

@@ -84,6 +84,30 @@ defmodule SyliAtlas.Ratings.ReviewTest do
     refute Enum.any?(Review.to_check(), &(&1.id == row.id))
   end
 
+  test "the seed removes bundled rows the file no longer lists, but keeps approved ones" do
+    stale =
+      Ratings.put_rating!(%{
+        country_code: "AGO",
+        agency: "fitch",
+        rating: "B-",
+        action_date: "2001-01"
+      })
+
+    {:ok, p} =
+      Review.propose(%{
+        "country_code" => "KEN",
+        "agency" => "fitch",
+        "rating" => "B",
+        "action_date" => "2026-11-01"
+      })
+
+    {:ok, approved} = Review.approve(p, %{"source_url" => "https://www.fitchratings.com/x"})
+
+    Ratings.seed!()
+    refute SyliAtlas.Repo.get(Rating, stale.id)
+    assert SyliAtlas.Repo.get(Rating, approved.id)
+  end
+
   test "rejecting keeps the rating online unchanged" do
     before = Ratings.document()["countries"]["CIV"]
     assert {:ok, %{status: "rejected"}} = Review.reject(proposal())

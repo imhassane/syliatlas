@@ -567,7 +567,7 @@ msgstr "La dette publique d'un groupe est pondérée par le PIB en dollars."
 
 #: lib/syli_atlas_web/controllers/area_html/show.html.heex:167
 #: lib/syli_atlas_web/controllers/ratings_html/index.html.heex:163
-#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:61
+#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:62
 #, elixir-autogen, elixir-format
 msgid "Questions"
 msgstr "Questions"
@@ -1846,11 +1846,11 @@ msgstr "Classés par valeur échangée · cours dans la monnaie de la bourse"
 msgid "Sorted by value traded · value = close × volume, computed by Syli Atlas"
 msgstr "Classés par valeur échangée · valeur = cours × volume, calculée par Syli Atlas"
 
-#: lib/syli_atlas_web/components/rating_components.ex:377
+#: lib/syli_atlas_web/components/rating_components.ex:379
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:154
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:200
-#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:31
-#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:48
+#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:32
+#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:49
 #, elixir-autogen, elixir-format
 msgid "Source"
 msgstr "Source"
@@ -2252,7 +2252,7 @@ msgstr[1] "à %{count} crans de la catégorie investissement"
 msgid "%{count} on average of the agencies: %{names}."
 msgstr "%{count} en moyenne des agences : %{names}."
 
-#: lib/syli_atlas_web/components/rating_components.ex:302
+#: lib/syli_atlas_web/components/rating_components.ex:304
 #, elixir-autogen, elixir-format
 msgid "%{name} is no. %{rank} of the %{of} African countries rated, %{tier}."
 msgstr "%{name} est %{rank}ᵉ sur les %{of} pays africains notés, %{tier}."
@@ -2278,7 +2278,7 @@ msgstr "%{name} : %{agencies} (moyenne %{rating} sur l'échelle commune)."
 msgid "%{name}: average rating %{rating} on a scale from default to AAA, %{gap}"
 msgstr "%{name} : note moyenne %{rating} sur une échelle allant du défaut à AAA, %{gap}"
 
-#: lib/syli_atlas_web/components/rating_components.ex:423
+#: lib/syli_atlas_web/components/rating_components.ex:425
 #, elixir-autogen, elixir-format
 msgid "%{rated} countries are rated. Only %{investment} are investment grade on average; most are « highly speculative » (B)."
 msgstr "%{rated} pays sont notés. Seuls %{investment} sont en catégorie investissement en moyenne ; la plupart sont « très spéculatifs » (B)."
@@ -2318,7 +2318,7 @@ msgstr "%{rating} : note très faible"
 msgid "%{rating}: a weak rating, highly speculative"
 msgstr "%{rating} : note faible, en catégorie très spéculative"
 
-#: lib/syli_atlas_web/components/rating_components.ex:451
+#: lib/syli_atlas_web/components/rating_components.ex:453
 #, elixir-autogen, elixir-format
 msgid "+ %{count} country without a rating"
 msgid_plural "+ %{count} countries without a rating"
@@ -2346,12 +2346,12 @@ msgstr "Une note est une opinion sur le risque de crédit, pas un conseil en inv
 msgid "Average"
 msgstr "Moyenne"
 
-#: lib/syli_atlas_web/components/rating_components.ex:461
+#: lib/syli_atlas_web/components/rating_components.ex:463
 #, elixir-autogen, elixir-format
 msgid "Best rated"
 msgstr "Les mieux notés"
 
-#: lib/syli_atlas_web/components/rating_components.ex:346
+#: lib/syli_atlas_web/components/rating_components.ex:348
 #, elixir-autogen, elixir-format
 msgid "Category"
 msgstr "Catégorie"
@@ -2416,7 +2416,7 @@ msgstr "Très spéculative (B)"
 msgid "How many African countries are investment grade?"
 msgstr "Combien de pays africains sont en catégorie investissement ?"
 
-#: lib/syli_atlas_web/components/rating_components.ex:350
+#: lib/syli_atlas_web/components/rating_components.ex:352
 #, elixir-autogen, elixir-format
 msgid "In Africa"
 msgstr "En Afrique"
@@ -2432,7 +2432,7 @@ msgstr "En bref"
 msgid "Investment grade"
 msgstr "Catégorie investissement"
 
-#: lib/syli_atlas_web/components/rating_components.ex:477
+#: lib/syli_atlas_web/components/rating_components.ex:479
 #, elixir-autogen, elixir-format
 msgid "Latest changes"
 msgstr "Derniers changements"
@@ -2447,12 +2447,12 @@ msgstr "Dernières décisions des agences"
 msgid "Long-term foreign-currency ratings by S&P, Moody's and Fitch, latest decision of each agency."
 msgstr "Notes en devises à long terme de S&P, Moody's et Fitch, dernière décision de chaque agence."
 
-#: lib/syli_atlas_web/components/rating_components.ex:498
+#: lib/syli_atlas_web/components/rating_components.ex:500
 #, elixir-autogen, elixir-format
 msgid "Long-term foreign-currency ratings · average on a common scale computed by Syli Atlas · sources: the agencies' releases · not investment advice"
 msgstr "Notes en devises, long terme · moyenne sur une échelle commune calculée par Syli Atlas · sources : communiqués des agences · pas un conseil en investissement"
 
-#: lib/syli_atlas_web/components/rating_components.ex:392
+#: lib/syli_atlas_web/components/rating_components.ex:394
 #, elixir-autogen, elixir-format
 msgid "Long-term foreign-currency ratings, from the agencies' releases · verdict and common scale: Syli Atlas's reading of the agencies' categories · a rating is an opinion on credit risk, not investment advice"
 msgstr "Notes en devises, long terme, d'après les communiqués des agences · verdict et échelle commune : lecture Syli Atlas des catégories des agences · une note est une opinion sur le risque de crédit, pas un conseil en investissement"
@@ -2489,7 +2489,7 @@ msgstr "Non notés"
 msgid "Not yet investment grade, but at the top of the speculative grade: the country borrows on the markets, at a higher cost than an investment-grade one."
 msgstr "Pas encore en catégorie investissement, mais dans le haut de la catégorie spéculative : le pays emprunte sur les marchés, plus cher qu'un pays « investissement »."
 
-#: lib/syli_atlas_web/components/rating_components.ex:510
+#: lib/syli_atlas_web/components/rating_components.ex:512
 #, elixir-autogen, elixir-format
 msgid "Rated countries by category: %{parts}; %{unrated} without a rating"
 msgstr "Pays notés par catégorie : %{parts} ; %{unrated} sans note"
@@ -2499,8 +2499,8 @@ msgstr "Pays notés par catégorie : %{parts} ; %{unrated} sans note"
 msgid "Ratings"
 msgstr "Notations"
 
-#: lib/syli_atlas_web/components/rating_components.ex:330
-#: lib/syli_atlas_web/components/rating_components.ex:431
+#: lib/syli_atlas_web/components/rating_components.ex:332
+#: lib/syli_atlas_web/components/rating_components.ex:433
 #, elixir-autogen, elixir-format
 msgid "Ratings of the 54 countries"
 msgstr "Classement des 54 pays"
@@ -2520,7 +2520,7 @@ msgstr "S&P, Moody's, Fitch · notes en devises, long terme · chaque note renvo
 msgid "Search a country or a rating"
 msgstr "Rechercher un pays ou une note"
 
-#: lib/syli_atlas_web/components/rating_components.ex:471
+#: lib/syli_atlas_web/components/rating_components.ex:473
 #, elixir-autogen, elixir-format
 msgid "See the %{count} rated countries"
 msgstr "Voir les %{count} pays notés"
@@ -2556,7 +2556,7 @@ msgstr "Notations souveraines des pays africains"
 msgid "Sovereign ratings of the 54 African countries (S&P, Moody's, Fitch)"
 msgstr "Notations souveraines des 54 pays africains (S&P, Moody's, Fitch)"
 
-#: lib/syli_atlas_web/components/rating_components.ex:420
+#: lib/syli_atlas_web/components/rating_components.ex:422
 #, elixir-autogen, elixir-format
 msgid "Sovereign ratings · S&P, Moody's, Fitch"
 msgstr "Notations souveraines · S&P, Moody's, Fitch"
@@ -2581,7 +2581,7 @@ msgstr "Risque très élevé (CCC)"
 msgid "The African Union finds that the three main agencies poorly reflect the continent's realities and launched AfCRA, a private agency based in Mauritius, on 7 October 2026. A 2024 Reuters investigation found no evidence of systematic bias in the region's sovereign ratings."
 msgstr "L'Union africaine juge que les trois grandes agences reflètent mal les réalités du continent et a lancé l'AfCRA, agence privée installée à Maurice, le 7 octobre 2026. Une enquête de Reuters (2024) n'a pourtant trouvé aucune preuve de biais systématique dans les notes souveraines de la région."
 
-#: lib/syli_atlas_web/components/rating_components.ex:385
+#: lib/syli_atlas_web/components/rating_components.ex:387
 #, elixir-autogen, elixir-format
 msgid "The African agency, launched on 7 October 2026, has not published a rating yet."
 msgstr "L'agence africaine, lancée le 7 octobre 2026, n'a pas encore publié de note."
@@ -2611,14 +2611,14 @@ msgstr "Le débat sur les notes africaines"
 msgid "They do not borrow on international markets or have not asked for a rating. Not being rated is not a bad rating."
 msgstr "Ils n'empruntent pas sur les marchés internationaux ou n'ont pas demandé de note. Ne pas être noté n'est pas une mauvaise note."
 
-#: lib/syli_atlas_web/components/rating_components.ex:369
+#: lib/syli_atlas_web/components/rating_components.ex:371
 #: lib/syli_atlas_web/controllers/ratings_html/index.html.heex:111
-#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:44
+#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:45
 #, elixir-autogen, elixir-format
 msgid "To check"
 msgstr "À vérifier"
 
-#: lib/syli_atlas_web/components/rating_components.ex:354
+#: lib/syli_atlas_web/components/rating_components.ex:356
 #, elixir-autogen, elixir-format
 msgid "Trend"
 msgstr "Tendance"
@@ -2650,7 +2650,7 @@ msgstr "Que veut dire « catégorie spéculative » ?"
 msgid "What is the credit rating of %{name}?"
 msgstr "Quelle est la note de %{name} ?"
 
-#: lib/syli_atlas_web/components/rating_components.ex:421
+#: lib/syli_atlas_web/components/rating_components.ex:423
 #, elixir-autogen, elixir-format
 msgid "What the rating agencies think."
 msgstr "Ce que pensent les agences de notation."
@@ -2710,8 +2710,8 @@ msgstr "perspective négative"
 msgid "no outlook"
 msgstr "sans perspective"
 
-#: lib/syli_atlas_web/components/climate_components.ex:171
-#: lib/syli_atlas_web/components/rating_components.ex:351
+#: lib/syli_atlas_web/components/climate_components.ex:172
+#: lib/syli_atlas_web/components/rating_components.ex:353
 #, elixir-autogen, elixir-format
 msgid "no. %{rank} of %{of}"
 msgstr "%{rank}ᵉ sur %{of}"
@@ -2726,7 +2726,7 @@ msgstr "%{rank}ᵉ sur %{of} en Afrique"
 msgid "none"
 msgstr "aucun"
 
-#: lib/syli_atlas_web/components/rating_components.ex:524
+#: lib/syli_atlas_web/components/rating_components.ex:526
 #, elixir-autogen, elixir-format
 msgid "not rated"
 msgstr "non noté"
@@ -2766,12 +2766,12 @@ msgstr "perspective stable"
 msgid "upgraded"
 msgstr "relevée"
 
-#: lib/syli_atlas_web/components/climate_components.ex:179
+#: lib/syli_atlas_web/components/climate_components.ex:180
 #, elixir-autogen, elixir-format
 msgid "%{label}: %{score} out of 100, African median %{median}"
 msgstr "%{label} : %{score} sur 100, médiane africaine %{median}"
 
-#: lib/syli_atlas_web/components/climate_components.ex:139
+#: lib/syli_atlas_web/components/climate_components.ex:140
 #, elixir-autogen, elixir-format
 msgid "%{name} is not covered yet: B-READY adds countries edition after edition (%{count} African economies in the latest one)."
 msgstr "%{name} n'est pas encore couvert : B-READY ajoute des pays à chaque édition (%{count} économies africaines dans la dernière)."
@@ -2803,8 +2803,8 @@ msgid_plural "Above the African median on %{count} indicators out of %{of}."
 msgstr[0] "Au-dessus de la médiane africaine sur %{count} indicateur sur %{of}."
 msgstr[1] "Au-dessus de la médiane africaine sur %{count} indicateurs sur %{of}."
 
-#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:27
-#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:39
+#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:28
+#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:40
 #, elixir-autogen, elixir-format
 msgid "Agency"
 msgstr "Agence"
@@ -2844,23 +2844,23 @@ msgstr "Maîtrise de la corruption"
 msgid "Credit rating of %{name}: S&P, Moody's, Fitch"
 msgstr "Note de crédit de %{name} : S&P, Moody's, Fitch"
 
-#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:26
-#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:36
+#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:27
+#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:37
 #, elixir-autogen, elixir-format
 msgid "Date"
 msgstr "Date"
 
-#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:28
-#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:40
+#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:29
+#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:41
 #, elixir-autogen, elixir-format
 msgid "Decision"
 msgstr "Décision"
 
 #: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:17
-#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:22
+#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:23
 #, elixir-autogen, elixir-format
 msgid "Decisions of the agencies for %{name}"
-msgstr "Décisions des agences pour %{name}"
+msgstr "Décisions des agences : %{name}"
 
 #: lib/syli_atlas_web/components/climate_components.ex:98
 #, elixir-autogen, elixir-format
@@ -2877,7 +2877,7 @@ msgstr "Efficacité des pouvoirs publics"
 msgid "History"
 msgstr "Historique"
 
-#: lib/syli_atlas_web/components/rating_components.ex:321
+#: lib/syli_atlas_web/components/rating_components.ex:323
 #, elixir-autogen, elixir-format
 msgid "History of decisions"
 msgstr "Historique des décisions"
@@ -2897,13 +2897,13 @@ msgstr "%{name} : le climat des affaires est-il favorable ?"
 msgid "Operational efficiency"
 msgstr "Efficacité opérationnelle"
 
-#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:30
-#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:47
+#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:31
+#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:48
 #, elixir-autogen, elixir-format
 msgid "Outlook"
 msgstr "Perspective"
 
-#: lib/syli_atlas_web/components/rating_components.ex:328
+#: lib/syli_atlas_web/components/rating_components.ex:330
 #, elixir-autogen, elixir-format
 msgid "Profile of %{name}"
 msgstr "Fiche %{name}"
@@ -2918,8 +2918,8 @@ msgstr "Services publics aux entreprises"
 msgid "Quality of public services and of the administration."
 msgstr "Qualité des services publics et de l'administration."
 
-#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:29
-#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:41
+#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:30
+#: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:42
 #, elixir-autogen, elixir-format
 msgid "Rating"
 msgstr "Note"
@@ -2939,7 +2939,7 @@ msgstr "Qualité de la réglementation"
 msgid "Rule of law"
 msgstr "État de droit"
 
-#: lib/syli_atlas_web/components/climate_components.ex:150
+#: lib/syli_atlas_web/components/climate_components.ex:151
 #, elixir-autogen, elixir-format
 msgid "Sources: World Bank, Worldwide Governance Indicators (CC BY 4.0) and Business Ready (CC BY 3.0 IGO) · the line marks the African median · ranks among the African countries covered"
 msgstr "Sources : Banque mondiale, Worldwide Governance Indicators (CC BY 4.0) et Business Ready (CC BY 3.0 IGO) · le trait marque la médiane africaine · rangs parmi les pays africains couverts"
@@ -2963,3 +2963,8 @@ msgstr "Worldwide Governance Indicators %{year} (Banque mondiale), score de 0 à
 #, elixir-autogen, elixir-format
 msgid "average of the three pillars · no. %{rank} of the %{of} African economies covered"
 msgstr "moyenne des trois piliers · %{rank}ᵉ sur les %{of} économies africaines couvertes"
+
+#: lib/syli_atlas_web/components/rating_components.ex:299
+#, elixir-autogen, elixir-format
+msgid "%{name}: %{headline}"
+msgstr "%{name} : %{headline}"
