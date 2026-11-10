@@ -23,12 +23,18 @@ end
 config :syli_atlas, SyliAtlasWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT", "4000"))]
 
-# Market data. The Mansa key is the Railway variable `stock_exchange_api_key`
-# (lower case: environment variable names are case-sensitive). Without it,
-# the daily market import cancels itself and the pages show no figures.
+# Market data. The Mansa key is the Railway variable STOCK_EXCHANGE_API_KEY
+# (the lower-case spelling is accepted too: environment variable names are
+# case-sensitive). Without it, the market import cancels itself and the
+# pages show "figures on their way".
 if config_env() != :test do
   config :syli_atlas, SyliAtlas.Market.Sources.Mansa,
-    api_key: System.get_env("stock_exchange_api_key")
+    api_key:
+      Enum.find_value(
+        ["STOCK_EXCHANGE_API_KEY", "stock_exchange_api_key"],
+        &(System.get_env(&1)
+          |> then(fn v -> if v in [nil, ""], do: nil, else: String.trim(v) end))
+      )
 end
 
 # Raw payloads go to Cloudflare R2 when its four variables are set, else to

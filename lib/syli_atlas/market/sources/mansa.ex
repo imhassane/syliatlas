@@ -7,7 +7,7 @@ defmodule SyliAtlas.Market.Sources.Mansa do
   Datasets and their cost on a normal day: `exchanges` (1, every index),
   `indices` (1, adds the change since 1 January), `stocks` (one per 200
   securities of an exchange, 24 for all 21), `etfs` (1, the NGX's) and
-  `forex` (1). The key is read from the `stock_exchange_api_key`
+  `forex` (1). The key is read from the `STOCK_EXCHANGE_API_KEY`
   environment variable.
   """
   @behaviour SyliAtlas.Market.Source
