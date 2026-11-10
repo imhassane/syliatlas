@@ -47,7 +47,11 @@ defmodule SyliAtlasWeb.AreaController do
 
       ratings = if area.kind == "country", do: SyliAtlas.Ratings.document()
       rating = SyliAtlas.Ratings.for_country(ratings, area.code)
-      faq = faq(name, data, from, to, locale) ++ rating_faq(name, rating, ratings)
+
+      faq =
+        faq(name, data, from, to, locale) ++
+          SyliAtlasWeb.RatingComponents.faq_items(name, rating, ratings)
+
       members = if(area.kind == "country", do: [], else: members(profile, from, to, locale))
       kept = Map.take(params, ~w(from to peers members))
 
@@ -91,30 +95,6 @@ defmodule SyliAtlasWeb.AreaController do
         rated: (ratings && ratings["rated"]) || 0
       )
     end
-  end
-
-  defp rating_faq(_name, nil, _doc), do: []
-
-  defp rating_faq(name, %{"band" => nil}, _doc) do
-    [
-      {gettext("What is the credit rating of %{name}?", name: name),
-       gettext("%{name} is not rated by S&P, Moody's or Fitch.", name: name)}
-    ]
-  end
-
-  defp rating_faq(name, rating, doc) do
-    alias SyliAtlasWeb.RatingComponents, as: R
-
-    [
-      {gettext("What is the credit rating of %{name}?", name: name),
-       gettext("%{agencies}: %{verdict}, %{category}, %{gap}, %{rank}.",
-         agencies: R.agencies_text(rating),
-         verdict: String.downcase(R.verdict(rating["band"])),
-         category: String.downcase(R.category(rating["band"])),
-         gap: R.gap_text(rating),
-         rank: R.rank_text(rating, doc["rated"])
-       )}
-    ]
   end
 
   # The exchange(s) serving a country, when the market pages are public.

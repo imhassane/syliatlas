@@ -4,7 +4,7 @@ defmodule SyliAtlasWeb.RatingsController do
   alias SyliAtlas.Geo.Area
   alias SyliAtlas.Ratings
   alias SyliAtlas.Ratings.Scale
-  alias SyliAtlasWeb.{Paths, RatingComponents, Seo}
+  alias SyliAtlasWeb.{NotFoundError, Paths, RatingComponents, Seo}
 
   plug :put_layout, false
 
@@ -62,6 +62,62 @@ defmodule SyliAtlasWeb.RatingsController do
       counts: counts,
       answer: answer,
       faq: faq
+    )
+  end
+
+  @doc "One country: its verdict, the current rating of each agency and every decision recorded."
+  def show(conn, %{"slug" => slug}) do
+    locale = conn.assigns.locale
+    doc = Ratings.document() || raise NotFoundError
+
+    entry =
+      doc["countries"] |> Map.values() |> Enum.find(&(&1["slug"][locale] == slug)) ||
+        raise NotFoundError
+
+    name = entry["name"][locale]
+
+    paths = %{
+      "fr" => Paths.rating("fr", entry["slug"]["fr"]),
+      "en" => Paths.rating("en", entry["slug"]["en"])
+    }
+
+    faq = RatingComponents.faq_items(name, entry, doc)
+    description = description(entry, name)
+
+    render(conn, :show,
+      page_title: gettext("Credit rating of %{name}: S&P, Moody's, Fitch", name: name),
+      seo:
+        Seo.page(locale, paths, description, %{
+          # A country without any rating has nothing to say beyond the main page.
+          noindex: is_nil(entry["band"]),
+          json_ld: [
+            Seo.breadcrumbs([
+              {"Syli Atlas", Paths.home(locale)},
+              {gettext("Sovereign ratings"), Paths.ratings(locale)},
+              {name, paths[locale]}
+            ]),
+            Seo.faq(faq)
+          ]
+        }),
+      alternates: Seo.alternates_for_header(paths),
+      doc: doc,
+      entry: entry,
+      name: name,
+      history: Ratings.history(entry["code"]),
+      faq: faq
+    )
+  end
+
+  defp description(%{"band" => nil}, name),
+    do: gettext("%{name} is not rated by S&P, Moody's or Fitch.", name: name)
+
+  defp description(entry, name) do
+    gettext("%{name}: %{agencies}. %{verdict}, %{category}, %{gap}.",
+      name: name,
+      agencies: RatingComponents.agencies_text(entry),
+      verdict: RatingComponents.verdict(entry["band"]),
+      category: String.downcase(RatingComponents.category(entry["band"])),
+      gap: RatingComponents.gap_text(entry)
     )
   end
 

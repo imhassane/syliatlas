@@ -25,6 +25,17 @@ defmodule SyliAtlasWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  pipeline :admin do
+    plug SyliAtlasWeb.Plugs.AdminAuth
+    plug :put_layout, false
+    plug :admin_locale
+  end
+
+  defp admin_locale(conn, _opts) do
+    Gettext.put_locale(SyliAtlasWeb.Gettext, "fr")
+    assign(conn, :locale, "fr")
+  end
+
   pipeline :fr do
     plug SyliAtlasWeb.Plugs.Locale, "fr"
   end
@@ -35,6 +46,8 @@ defmodule SyliAtlasWeb.Router do
 
   scope "/", SyliAtlasWeb do
     get "/health", HealthController, :show
+    get "/sitemap.xml", SitemapController, :sitemap
+    get "/robots.txt", SitemapController, :robots
   end
 
   scope "/", SyliAtlasWeb do
@@ -56,6 +69,7 @@ defmodule SyliAtlasWeb.Router do
     get "/comparer", CompareController, :show
     get "/comparer/*slugs", CompareController, :show
     get "/notations", RatingsController, :index
+    get "/notations/:slug", RatingsController, :show
     get "/bourses", MarketController, :index
     get "/bourses/etf", MarketController, :etfs
     get "/bourses/:exchange", MarketController, :exchange
@@ -76,10 +90,24 @@ defmodule SyliAtlasWeb.Router do
     get "/compare", CompareController, :show
     get "/compare/*slugs", CompareController, :show
     get "/credit-ratings", RatingsController, :index
+    get "/credit-ratings/:slug", RatingsController, :show
     get "/stock-exchanges", MarketController, :index
     get "/stock-exchanges/etf", MarketController, :etfs
     get "/stock-exchanges/:exchange", MarketController, :exchange
     get "/stock-exchanges/:exchange/:ticker", MarketController, :security
+  end
+
+  # Validation of the ratings (and, later, other data entered by hand).
+  scope "/admin", SyliAtlasWeb.Admin do
+    pipe_through [:browser, :admin]
+
+    get "/", RatingsController, :root
+    get "/notations", RatingsController, :index
+    post "/notations", RatingsController, :create
+    post "/notations/veille", RatingsController, :watch
+    post "/notations/:id/approuver", RatingsController, :approve
+    post "/notations/:id/rejeter", RatingsController, :reject
+    post "/notations/verifier/:id", RatingsController, :check
   end
 
   scope "/api/v1", SyliAtlasWeb.Api do

@@ -24,6 +24,7 @@ defmodule SyliAtlas.Ratings.Rating do
     field :needs_check, :boolean, default: false
     field :source_url, :string
     field :note, :string
+    field :reviewed_at, :utc_datetime
 
     timestamps(type: :utc_datetime)
   end
@@ -39,9 +40,12 @@ defmodule SyliAtlas.Ratings.Rating do
       :action_type,
       :needs_check,
       :source_url,
-      :note
+      :note,
+      :reviewed_at
     ])
     |> update_change(:rating, &Scale.normalize/1)
+    # An unknown date is stored as "", not NULL (part of the unique key).
+    |> then(&if(get_field(&1, :action_date), do: &1, else: force_change(&1, :action_date, "")))
     |> validate_required([:country_code, :agency, :rating])
     |> validate_inclusion(:agency, @agencies)
     |> validate_inclusion(:outlook, @outlooks)

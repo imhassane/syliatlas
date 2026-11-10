@@ -23,6 +23,7 @@ defmodule SyliAtlasWeb.Paths do
   def login(locale), do: "/#{locale}/#{segment(locale, :login)}"
 
   def ratings(locale), do: "/#{locale}/#{segment(locale, :ratings)}"
+  def rating(locale, slug), do: ratings(locale) <> "/" <> slug
 
   def markets(locale), do: "/#{locale}/#{segment(locale, :markets)}"
   def etfs(locale), do: markets(locale) <> "/etf"

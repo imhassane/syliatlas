@@ -185,6 +185,29 @@ defmodule SyliAtlasWeb.RatingComponents do
 
   # Components -------------------------------------------------------------
 
+  @doc "Question and answer on a country's rating, for the FAQ of its pages."
+  def faq_items(_name, nil, _doc), do: []
+
+  def faq_items(name, %{"band" => nil}, _doc) do
+    [
+      {gettext("What is the credit rating of %{name}?", name: name),
+       gettext("%{name} is not rated by S&P, Moody's or Fitch.", name: name)}
+    ]
+  end
+
+  def faq_items(name, rating, doc) do
+    [
+      {gettext("What is the credit rating of %{name}?", name: name),
+       gettext("%{agencies}: %{verdict}, %{category}, %{gap}, %{rank}.",
+         agencies: agencies_text(rating),
+         verdict: String.downcase(verdict(rating["band"])),
+         category: String.downcase(category(rating["band"])),
+         gap: gap_text(rating),
+         rank: rank_text(rating, doc["rated"])
+       )}
+    ]
+  end
+
   attr :band, :string, default: nil
   attr :class, :any, default: nil
   slot :inner_block, required: true
@@ -259,15 +282,21 @@ defmodule SyliAtlasWeb.RatingComponents do
   attr :rated, :integer, required: true
   attr :locale, :string, required: true
 
-  @doc "The full section of a country profile."
+  attr :page, :boolean,
+    default: false,
+    doc: "on the country's ratings page: h1, link back to the profile"
+
+  @doc "The full section of a country profile, or the top of the country's ratings page."
   def rating_section(assigns) do
     ~H"""
-    <section class="section" id="notation">
+    <section class={["section", @page && "rt-page-top"]} id="notation">
       <div class="wrap stack gap-4">
         <div class="head-row">
           <div class="section-head">
             <p class="eyebrow">{gettext("Sovereign rating")}</p>
-            <h2 class="h1 rt-title">{headline(@entry, @name)}</h2>
+            <.dynamic_tag tag_name={if @page, do: "h1", else: "h2"} class="h1 rt-title">
+              {headline(@entry, @name)}
+            </.dynamic_tag>
             <p class="lead rt-lead">
               <%= if @entry["band"] do %>
                 {gettext("%{name} is no. %{rank} of the %{of} African countries rated, %{tier}.",
@@ -283,6 +312,21 @@ defmodule SyliAtlasWeb.RatingComponents do
             </p>
           </div>
           <div class="head-actions">
+            <a
+              :if={!@page and @entry["band"]}
+              class="btn btn-secondary"
+              id="rating-history-link"
+              href={Paths.rating(@locale, @entry["slug"][@locale])}
+            >
+              {gettext("History of decisions")} →
+            </a>
+            <a
+              :if={@page}
+              class="btn btn-secondary"
+              href={Paths.area(@locale, "country", @entry["slug"][@locale])}
+            >
+              {gettext("Profile of %{name}", name: @name)} →
+            </a>
             <a class="btn btn-secondary" href={Paths.ratings(@locale)}>{gettext(
               "Ratings of the 54 countries"
             )} →</a>
