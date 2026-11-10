@@ -22,6 +22,14 @@ defmodule SyliAtlasWeb.PublicData do
     end
   end
 
+  @doc "The home page snapshot, or nil before the first import."
+  def home(locale) do
+    case Queries.home(locale) do
+      nil -> nil
+      json -> Jason.decode!(json)
+    end
+  end
+
   def search(q, locale), do: q |> Queries.search(locale) |> decode_list()
 
   def at(values, year) when is_list(values), do: Enum.at(values, year - 2015)
