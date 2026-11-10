@@ -49,10 +49,23 @@
         if (!navigator.onLine) document.documentElement.classList.add("is-offline");
       })();
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <%!-- Fonts are served by the site (assets/css/fonts.css): nothing blocks the
+         first paint on another origin. Inter Tight sets the titles and text, so
+         it starts first; the monospace eyebrows can wait. --%>
     <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="preload"
+      href="/fonts/inter-tight-latin-v5.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link
+      rel="preload"
+      href="/fonts/jetbrains-mono-latin-500-v5.woff2"
+      as="font"
+      type="font/woff2"
+      fetchpriority="low"
+      crossorigin
     />
     <link phx-track-static rel="stylesheet" href={~p"/assets/js/app.css"} />
     <%!-- Cross-document view transitions: wait for the visible content before animating. --%>
