@@ -85,4 +85,13 @@ defmodule SyliAtlasWeb.EconomySectionsTest do
     assert xml =~ "/fr/dette"
     assert has?(doc("/fr"), ~s(a[href="/fr/dette"]))
   end
+
+  test "trade section, with BACI as source" do
+    doc = doc("/fr/pays/cote-d-ivoire")
+    assert has?(doc, "#commerce") and has?(doc, "#top-exports") and has?(doc, "#top-clients")
+    text = LazyHTML.text(doc)
+    assert text =~ "Cacao"
+    assert text =~ "CEPII, BACI"
+    assert has?(doc("/fr/methode"), "#source-baci")
+  end
 end

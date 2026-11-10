@@ -177,6 +177,13 @@
       debt_year={@to}
       locale={@locale}
     />
+    <TradeComponents.trade_section
+      :if={@trade}
+      entry={@trade}
+      doc={@trade_doc}
+      name={@name}
+      locale={@locale}
+    />
     <WorldBankComponents.flows_section
       entry={@world_bank}
       doc={@world_bank_doc}

@@ -107,6 +107,8 @@ defmodule SyliAtlasWeb.AreaController do
             Convergence.check(area.code, profile["series"], to, Indicators.first_year()),
         world_bank: area.kind == "country" && SyliAtlas.WorldBank.for_country(area.code),
         world_bank_doc: SyliAtlas.WorldBank.document(),
+        trade: area.kind == "country" && SyliAtlas.Trade.for_country(area.code),
+        trade_doc: SyliAtlas.Trade.document(),
         sections:
           sections(
             area,
@@ -125,7 +127,12 @@ defmodule SyliAtlasWeb.AreaController do
 
     [{"economie", gettext("Economy")}, {"finances", gettext("Public finances")}] ++
       if(area.kind == "country", do: [{"monnaie", pgettext("section", "Currency")}], else: []) ++
-      if(wb, do: [{"dette", gettext("Debt")}, {"flux", gettext("Financial inflows")}], else: []) ++
+      if(wb, do: [{"dette", gettext("Debt")}], else: []) ++
+      if(area.kind == "country" && SyliAtlas.Trade.for_country(area.code),
+        do: [{"commerce", gettext("Trade")}],
+        else: []
+      ) ++
+      if(wb, do: [{"flux", gettext("Financial inflows")}], else: []) ++
       if(wb, do: [{"emploi", gettext("Jobs")}], else: []) ++
       if(Enum.any?(~w(poverty gini electricity internet accounts), &latest[&1]),
         do: [{"conditions-de-vie", gettext("Living conditions")}],

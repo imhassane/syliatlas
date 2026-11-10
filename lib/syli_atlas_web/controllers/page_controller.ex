@@ -101,6 +101,31 @@ defmodule SyliAtlasWeb.PageController do
     )
   end
 
+  defp trade_sources do
+    case SyliAtlas.Trade.document()["source"] do
+      nil ->
+        []
+
+      s ->
+        [
+          %{
+            id: "baci",
+            name: s["name"],
+            url: s["url"],
+            what: gettext("Exports and imports of goods by product and partner"),
+            terms: gettext("Free reuse with attribution (Licence Ouverte Etalab 2.0)"),
+            terms_url: "https://www.etalab.gouv.fr/licence-ouverte-open-licence/",
+            updated: gettext("Every year, in January"),
+            online:
+              gettext("version %{version}, %{nomenclature}",
+                version: s["version"],
+                nomenclature: s["nomenclature"]
+              )
+          }
+        ]
+    end
+  end
+
   defp world_bank_sources do
     sources = SyliAtlas.WorldBank.document()["sources"]
 
@@ -159,6 +184,7 @@ defmodule SyliAtlasWeb.PageController do
       }
     ] ++
       world_bank_sources() ++
+      trade_sources() ++
       if(market,
         do: [
           %{
