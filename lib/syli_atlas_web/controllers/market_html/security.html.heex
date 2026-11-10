@@ -30,7 +30,9 @@
       </div>
     </div>
     <p class="lead" data-answer>{@answer}</p>
-    <p class="src">{attribution(@doc["sources"], @row["trade_date"], @locale)}</p>
+    <p class="src">
+      <.credit sources={@doc["sources"]} date={@row["trade_date"]} locale={@locale} />
+    </p>
     <p
       :if={security_flag(@row)}
       class={[

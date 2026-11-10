@@ -16,7 +16,7 @@ defmodule SyliAtlasWeb.MarketPagesTest do
     assert html |> LazyHTML.query(".ticker-list") |> Enum.count() == 2
     assert html |> LazyHTML.query(".ticker-list[aria-hidden=true]") |> Enum.count() == 1
     text = LazyHTML.text(html)
-    assert text =~ "Mansa Markets"
+    assert text =~ "Data by MansaAPI"
     assert text =~ "pas un conseil en investissement"
     # Missing, old and suspicious indices are shown as such.
     assert html |> LazyHTML.query("#exchange-egx") |> LazyHTML.text() =~ "indice non fourni"
@@ -132,18 +132,36 @@ defmodule SyliAtlasWeb.MarketPagesTest do
     assert LazyHTML.query(html, ~s(#header-nav a[href="/fr/bourses"])) |> Enum.count() == 1
   end
 
-  describe "when no licence allows public display and preview is off" do
+  test "the figures carry the credit the licence asks for, linked to the source", %{
+    conn: conn
+  } do
+    for path <- ["/fr/bourses", "/fr/bourses/brvm", "/fr/bourses/brvm/alpt", "/fr/bourses/etf"] do
+      html = doc(build_conn(), path)
+      links = LazyHTML.query(html, ~s([data-credit] a[href="https://mansaapi.com"]))
+      assert Enum.count(links) >= 1, path
+      assert LazyHTML.text(links) =~ "Data by MansaAPI"
+    end
+
+    country = doc(conn, "/fr/pays/cote-d-ivoire")
+
+    assert LazyHTML.query(country, ~s(#market [data-credit] a[href="https://mansaapi.com"]))
+           |> Enum.count() == 1
+  end
+
+  describe "when no active source may be shown and preview is off" do
     setup do
       Application.put_env(:syli_atlas, SyliAtlas.Market, preview: false)
       on_exit(fn -> Application.put_env(:syli_atlas, SyliAtlas.Market, preview: true) end)
     end
 
-    test "the pages, the menu link and the country block are hidden", %{conn: conn} do
-      assert_error_sent 404, fn -> get(conn, "/fr/bourses") end
-      home = doc(build_conn(), "/fr")
-      assert LazyHTML.query(home, ~s(#header-nav a[href="/fr/bourses"])) |> Enum.count() == 0
-      country = doc(build_conn(), "/fr/pays/cote-d-ivoire")
-      assert LazyHTML.query(country, "#market") |> Enum.count() == 0
+    test "the market section is not public" do
+      hidden = [%{status: "active", licence: %{display_public: false}}]
+      refute SyliAtlas.Market.public?(hidden)
+      assert SyliAtlas.Market.public?()
+    end
+
+    test "MansaAPI's licence alone makes the pages public", %{conn: conn} do
+      assert conn |> get("/fr/bourses") |> html_response(200)
     end
   end
 end

@@ -72,8 +72,8 @@ if config_env() == :prod do
     database: database_path,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5")
 
-  # Market pages: hidden until a source licence allows public display, or
-  # shown in preview with MARKET_PREVIEW=true.
+  # Market pages: shown when an active source's licence allows public
+  # display (MansaAPI's does); MARKET_PREVIEW=true forces them on otherwise.
   config :syli_atlas, SyliAtlas.Market, preview: System.get_env("MARKET_PREVIEW") == "true"
 
   unless System.get_env("R2_BUCKET") do

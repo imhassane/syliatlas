@@ -21,7 +21,7 @@ defmodule SyliAtlas.Market.Snapshots do
     Security
   }
 
-  @format 1
+  @format 2
   @history 260
 
   def format, do: @format
