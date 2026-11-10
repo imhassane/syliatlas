@@ -55,8 +55,14 @@ defmodule SyliAtlas.Release do
 
         # First start with a market source configured: import now rather
         # than wait for the evening run (the job waits in the database).
-        if SyliAtlas.Market.Sources.Mansa.configured?() and
-             SyliAtlas.Market.overview()["as_of"] == nil do
+        mansa? = SyliAtlas.Market.Sources.Mansa.configured?()
+
+        IO.puts(
+          "market: Mansa key #{if mansa?, do: "found", else: "MISSING (stock_exchange_api_key)"}"
+        )
+
+        if mansa? and SyliAtlas.Market.overview()["as_of"] == nil do
+          IO.puts("market: no close imported yet, first import queued")
           SyliAtlas.Workers.MarketImportWorker.new(%{}) |> SyliAtlas.Repo.insert!()
         end
       end)

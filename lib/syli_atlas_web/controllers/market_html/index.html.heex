@@ -1,5 +1,5 @@
 <Layouts.public locale={@locale} current={:markets} alternates={@alternates}>
-  <.ticker_band exchanges={@exchanges} locale={@locale} />
+  <.ticker_band :if={@imported} exchanges={@exchanges} locale={@locale} />
 
   <.section variant="alt">
     <nav aria-label={gettext("Breadcrumb")}>
@@ -18,7 +18,7 @@
       }
       title={gettext("African stock exchanges")}
     >
-      <:intro :if={@exchanges != []}>
+      <:intro :if={@imported}>
         {gettext(
           "Syli Atlas follows %{exchanges} exchanges and %{securities} listed securities. The gaps are huge: from %{max} securities on the %{max_name} to %{min} on the %{min_name}.",
           exchanges: @overview["totals"]["exchanges"],
@@ -43,7 +43,7 @@
   </.section>
 
   <.section id="exchanges">
-    <div :if={@exchanges == []} class="card pad stack gap-2" id="market-empty">
+    <div :if={!@imported} class="card pad stack gap-2" id="market-empty">
       <h2 class="h2">{gettext("Figures on their way")}</h2>
       <p class="muted">
         {gettext(
@@ -52,7 +52,7 @@
       </p>
     </div>
 
-    <div :if={@exchanges != []} class="card market-table" id="market-table">
+    <div :if={@imported} class="card market-table" id="market-table">
       <div class="market-toolbar">
         <div class="market-toolbar-title">
           <h2 class="h2">{gettext("All exchanges")}</h2>

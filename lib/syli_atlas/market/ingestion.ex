@@ -45,6 +45,21 @@ defmodule SyliAtlas.Market.Ingestion do
     end
   end
 
+  @doc "The source says today's quota is used up: no more calls today."
+  def exhaust!(source, day \\ Date.utc_today()) do
+    cap = Catalog.get!(source).daily_cap || 0
+
+    Repo.query!(
+      """
+      INSERT INTO market_api_usage (source, day, calls) VALUES (?1, ?2, ?3)
+      ON CONFLICT(source, day) DO UPDATE SET calls = max(calls, ?3)
+      """,
+      [source, Date.to_iso8601(day), cap]
+    )
+
+    :ok
+  end
+
   def calls(source, day \\ Date.utc_today()) do
     Repo.one(
       from u in "market_api_usage",
