@@ -85,6 +85,15 @@
     </script>
     <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
     </script>
+    <%!-- The LiveView client, for LiveView pages only (SyliAtlasWeb.LiveAssets). --%>
+    <script
+      :if={assigns[:live_js]}
+      defer
+      phx-track-static
+      type="text/javascript"
+      src={~p"/assets/js/live.js"}
+    >
+    </script>
   </head>
   <body>
     {@inner_content}
