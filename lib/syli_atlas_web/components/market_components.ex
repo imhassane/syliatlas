@@ -7,6 +7,7 @@ defmodule SyliAtlasWeb.MarketComponents do
   use Phoenix.Component
   use Gettext, backend: SyliAtlasWeb.Gettext
   import SyliAtlasWeb.Format, only: [number: 3]
+  alias SyliAtlas.Market.Catalog
   alias SyliAtlasWeb.Paths
 
   @nbsp " "
@@ -355,19 +356,42 @@ defmodule SyliAtlasWeb.MarketComponents do
   def source_kind("official"), do: gettext("the exchange's official list")
   def source_kind(_), do: gettext("other source")
 
-  @doc "« Data: Mansa Markets · close of 9 November 2026 »."
-  def attribution(sources, date, locale) do
-    names = sources |> Enum.filter(&(&1["rank"] == 1)) |> Enum.map_join(", ", & &1["name"])
+  attr :sources, :list, required: true
+  attr :date, :string, default: nil
+  attr :locale, :string, required: true
 
-    if date do
-      gettext("Data: %{sources} · close of %{date} · end of day, not live",
-        sources: names,
-        date: day(date, locale)
-      )
-    else
-      gettext("Data: %{sources} · end of day, not live", sources: names)
-    end
+  @doc """
+  « Data by MansaAPI · close of 9 November 2026 · end of day, not live »:
+  the credit each source's licence requires, verbatim and linked to the
+  source, then the date of the figures.
+  """
+  def credit(assigns) do
+    assigns = assign(assigns, :used, used_sources(assigns.sources))
+
+    ~H"""
+    <span class="credit" data-credit>
+      <%= for {s, i} <- Enum.with_index(@used) do %>
+        {if i > 0, do: ", "}<a href={Catalog.url(s["code"]) || s["url"]} rel="noopener">{Catalog.attribution(
+          s["code"]
+        )}</a>
+      <% end %>
+      · {when_text(@date, @locale)}
+    </span>
+    """
   end
+
+  @doc "The same credit as plain text, for the « cite this page » box."
+  def attribution(sources, date, locale) do
+    credits = sources |> used_sources() |> Enum.map_join(", ", &Catalog.attribution(&1["code"]))
+    credits <> " · " <> when_text(date, locale)
+  end
+
+  defp used_sources(sources), do: Enum.filter(sources, &(&1["rank"] == 1))
+
+  defp when_text(nil, _locale), do: gettext("end of day, not live")
+
+  defp when_text(date, locale),
+    do: gettext("close of %{date} · end of day, not live", date: day(date, locale))
 
   # Country page block ------------------------------------------------------------------
 
@@ -435,9 +459,8 @@ defmodule SyliAtlasWeb.MarketComponents do
             </div>
           </div>
           <p class="src">
-            {attribution(x["sources"] || [], x["index"]["date"], @locale)} · {gettext(
-              "information, not investment advice"
-            )}
+            <.credit sources={x["sources"] || []} date={x["index"]["date"]} locale={@locale} />
+            · {gettext("information, not investment advice")}
           </p>
         </div>
       </div>

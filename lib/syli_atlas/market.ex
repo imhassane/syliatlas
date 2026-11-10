@@ -4,18 +4,19 @@ defmodule SyliAtlas.Market do
   the documents built by `SyliAtlas.Market.Snapshots`; the pipeline that
   fills them is in `SyliAtlas.Market.Pipeline` and the Oban workers.
 
-  The pages are public only when the licence of the source they show
-  allows it, or while the market section is in preview (the `:preview`
-  option, set by `MARKET_PREVIEW=true` in production).
+  The pages are public when the licence of an active source allows it
+  (MansaAPI's does, with its credit), or while the market section is in
+  preview (the `:preview` option, `MARKET_PREVIEW=true` in production),
+  for a source whose licence does not.
   """
   import Ecto.Query
   alias SyliAtlas.Repo
   alias SyliAtlas.Market.{Catalog, EodPrice, Reference, Snapshots}
 
   @doc "May the market pages be shown to the public?"
-  def public? do
+  def public?(sources \\ Catalog.all()) do
     Keyword.get(config(), :preview, false) or
-      Enum.any?(Catalog.all(), &(&1.status == "active" and &1.licence.display_public))
+      Enum.any?(sources, &(&1.status == "active" and &1.licence.display_public))
   end
 
   def config, do: Application.get_env(:syli_atlas, __MODULE__, [])

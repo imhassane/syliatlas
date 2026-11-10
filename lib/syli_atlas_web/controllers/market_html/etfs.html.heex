@@ -22,7 +22,7 @@
         )}
       </:intro>
     </.section_head>
-    <p class="src">{attribution(@doc["sources"], @doc["date"], @locale)}</p>
+    <p class="src"><.credit sources={@doc["sources"]} date={@doc["date"]} locale={@locale} /></p>
   </.section>
 
   <.section id="etfs">

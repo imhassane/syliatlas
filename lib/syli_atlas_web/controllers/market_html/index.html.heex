@@ -30,7 +30,9 @@
         )}
       </:intro>
     </.section_head>
-    <p class="src">{attribution(@overview["sources"], @overview["as_of"], @locale)}</p>
+    <p class="src">
+      <.credit sources={@overview["sources"]} date={@overview["as_of"]} locale={@locale} />
+    </p>
     <div class="card pad market-note">
       <p class="small muted">
         {gettext(

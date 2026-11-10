@@ -22,7 +22,11 @@
     </div>
     <p class="lead" data-answer>{@answer}</p>
     <p class="src">
-      {attribution(@doc["sources"], @doc["index"]["date"] || @doc["session"]["date"], @locale)}
+      <.credit
+        sources={@doc["sources"]}
+        date={@doc["index"]["date"] || @doc["session"]["date"]}
+        locale={@locale}
+      />
     </p>
     <nav
       :if={@e["country_names"] != []}

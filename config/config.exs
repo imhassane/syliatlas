@@ -43,8 +43,8 @@ config :syli_atlas, Oban,
      ]}
   ]
 
-# Market pages stay hidden while no source licence allows public display,
-# unless in preview (dev and test; MARKET_PREVIEW=true in production).
+# Market pages are shown when an active source's licence allows public
+# display, or in preview (dev and test; MARKET_PREVIEW=true in production).
 config :syli_atlas, SyliAtlas.Market, preview: true
 
 # Configure the mailer

@@ -172,7 +172,7 @@ msgid "Checked every day"
 msgstr "Vérifié chaque jour"
 
 #: lib/syli_atlas_web/controllers/area_html/show.html.heex:166
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:167
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:221
 #, elixir-autogen, elixir-format
 msgid "Cite this page"
 msgstr "Citer cette page"
@@ -212,7 +212,7 @@ msgid "Countries"
 msgstr "Pays"
 
 #: lib/syli_atlas_web/controllers/area_html.ex:8
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:81
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:117
 #, elixir-autogen, elixir-format
 msgid "Country"
 msgstr "Pays"
@@ -480,7 +480,7 @@ msgid "Method"
 msgstr "Méthode"
 
 #: lib/syli_atlas_web/components/layouts.ex:95
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:164
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:218
 #: lib/syli_atlas_web/controllers/page_controller.ex:70
 #, elixir-autogen, elixir-format
 msgid "Method and sources"
@@ -632,7 +632,7 @@ msgid "Reuse"
 msgstr "Réutilisation"
 
 #: lib/syli_atlas_web/components/page_components.ex:114
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:90
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:92
 #: lib/syli_atlas_web/controllers/search_controller.ex:19
 #: lib/syli_atlas_web/controllers/search_html/index.html.heex:3
 #, elixir-autogen, elixir-format
@@ -1279,12 +1279,12 @@ msgid "Back online"
 msgstr "De nouveau en ligne"
 
 #: lib/syli_atlas_web/components/layouts.ex:230
-#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:40
-#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:54
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:127
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:140
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:113
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:145
+#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:41
+#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:59
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:169
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:188
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:119
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:174
 #, elixir-autogen, elixir-format
 msgid "Close"
 msgstr "Fermer"
@@ -1319,7 +1319,7 @@ msgstr "De nouveaux chiffres du FMI sont en ligne"
 msgid "Not now"
 msgstr "Pas maintenant"
 
-#: lib/syli_atlas_web/components/layouts/root.html.heex:78
+#: lib/syli_atlas_web/components/layouts/root.html.heex:100
 #, elixir-autogen, elixir-format
 msgid "Notifications"
 msgstr "Notifications"
@@ -1369,20 +1369,20 @@ msgstr "%{name} : un PIB de %{gdp} en %{to} (FMI), %{change} depuis %{from} en
 msgid "Economy no. %{rank} of %{of} in Africa by GDP in current dollars in %{year} (IMF)."
 msgstr "Économie n° %{rank} sur %{of} en Afrique par son PIB en dollars courants en %{year} (FMI)."
 
-#: lib/syli_atlas_web/components/market_components.ex:380
+#: lib/syli_atlas_web/components/market_components.ex:409
 #, elixir-autogen, elixir-format
 msgid "%{country} on the %{exchange}"
 msgstr "%{country} à la %{exchange}"
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:140
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:162
 #, elixir-autogen, elixir-format
 msgid "%{count} country"
 msgid_plural "%{count} countries"
 msgstr[0] "%{count} pays"
 msgstr[1] "%{count} pays"
 
-#: lib/syli_atlas_web/controllers/market_html.ex:64
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:58
+#: lib/syli_atlas_web/controllers/market_html.ex:68
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:60
 #, elixir-autogen, elixir-format
 msgid "%{count} exchange"
 msgid_plural "%{count} exchanges"
@@ -1394,47 +1394,47 @@ msgstr[1] "%{count} bourses"
 msgid "%{count} funds are listed in Africa in our data. On %{date}, they traded %{value} in all."
 msgstr "%{count} fonds sont cotés en Afrique dans nos données. Le %{date}, ils ont échangé %{value} au total."
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:84
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:105
 #, elixir-autogen, elixir-format
 msgid "%{count} listed securities"
 msgstr "%{count} titres cotés"
 
-#: lib/syli_atlas_web/controllers/market_html.ex:63
-#: lib/syli_atlas_web/controllers/market_html.ex:69
+#: lib/syli_atlas_web/controllers/market_html.ex:67
+#: lib/syli_atlas_web/controllers/market_html.ex:73
 #, elixir-autogen, elixir-format
 msgid "%{count} result for « %{q} »"
 msgid_plural "%{count} results for « %{q} »"
 msgstr[0] "%{count} résultat pour « %{q} »"
 msgstr[1] "%{count} résultats pour « %{q} »"
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:229
+#: lib/syli_atlas_web/controllers/market_controller.ex:235
 #, elixir-autogen, elixir-format
 msgid "%{name} (%{ticker}) closed at %{price} %{currency} on %{date} on the %{exchange} (%{change})."
 msgstr "%{name} (%{ticker}) a clôturé à %{price} %{currency} le %{date} à la %{exchange} (%{change})."
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:239
+#: lib/syli_atlas_web/controllers/market_controller.ex:246
 #, elixir-autogen, elixir-format
 msgid "%{name} (%{ticker}), listed on the %{exchange}."
 msgstr "%{name} (%{ticker}), cotée à la %{exchange}."
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:218
+#: lib/syli_atlas_web/controllers/market_controller.ex:224
 #, elixir-autogen, elixir-format
 msgid "%{name}: %{count} listed securities. Its index is not provided by our source."
 msgstr "%{name} : %{count} titres cotés. Son indice n'est pas fourni par notre source."
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:55
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:71
 #, elixir-autogen, elixir-format
 msgid "%{share} % on %{name}"
 msgstr "%{share} % sur %{name}"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:88
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:113
 #, elixir-autogen, elixir-format
 msgid "%{up} up, %{flat} unchanged, %{down} down, %{none} without trade"
 msgstr "%{up} en hausse, %{flat} stables, %{down} en baisse, %{none} sans échange"
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:44
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:17
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:105
+#: lib/syli_atlas_web/controllers/market_controller.ex:45
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:19
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:107
 #, elixir-autogen, elixir-format
 msgid "African stock exchanges"
 msgstr "Bourses africaines"
@@ -1444,27 +1444,27 @@ msgstr "Bourses africaines"
 msgid "All"
 msgstr "Toutes"
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:54
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:56
 #, elixir-autogen, elixir-format
 msgid "All exchanges"
 msgstr "Toutes les places"
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:187
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:227
 #, elixir-autogen, elixir-format
 msgid "An index at 250,000 points is not « higher » than one at 500: each has its own base and currency. Compare changes, not levels."
 msgstr "Un indice à 250 000 points n'est pas « plus haut » qu'un indice à 500 : chacun a sa base et sa monnaie. Comparez les variations, pas les niveaux."
 
-#: lib/syli_atlas_web/components/market_components.ex:335
+#: lib/syli_atlas_web/components/market_components.ex:343
 #, elixir-autogen, elixir-format
 msgid "Backup"
 msgstr "Secours"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:104
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:139
 #, elixir-autogen, elixir-format
 msgid "Biggest falls"
 msgstr "Plus fortes baisses"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:104
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:138
 #, elixir-autogen, elixir-format
 msgid "Biggest rises"
 msgstr "Plus fortes hausses"
@@ -1474,82 +1474,72 @@ msgstr "Plus fortes hausses"
 msgid "Central"
 msgstr "Centre"
 
-#: lib/syli_atlas_web/components/market_components.ex:127
+#: lib/syli_atlas_web/components/market_components.ex:128
 #, elixir-autogen, elixir-format
 msgid "Central Africa"
 msgstr "Afrique centrale"
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:167
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:200
 #, elixir-autogen, elixir-format
 msgid "Clear the search"
 msgstr "Effacer la recherche"
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:171
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:206
 #, elixir-autogen, elixir-format
 msgid "Click a heading to sort · ▲ up, ▼ down, ■ unchanged · « old »: no session for more than two business days · « to check »: daily change identical to the change since 1 January given by the source"
 msgstr "Cliquez un en-tête pour trier · ▲ hausse, ▼ baisse, ■ stable · « ancienne » : aucune séance depuis plus de deux jours ouvrés · « à vérifier » : variation du jour identique au cumul depuis le 1er janvier fourni par la source"
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:60
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:77
 #, elixir-autogen, elixir-format
 msgid "Closes in %{currency} · sessions received by Syli Atlas"
 msgstr "Clôtures en %{currency} · séances reçues par Syli Atlas"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:126
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:139
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:75
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:168
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:187
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:105
 #, elixir-autogen, elixir-format
 msgid "Code"
 msgstr "Code"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:125
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:167
 #, elixir-autogen, elixir-format
 msgid "Company"
 msgstr "Société"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:25
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:34
 #, elixir-autogen, elixir-format
 msgid "Countries served"
 msgstr "Pays desservis"
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:121
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:156
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:84
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:137
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:187
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:121
 #, elixir-autogen, elixir-format
 msgid "Currency"
 msgstr "Devise"
 
-#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:41
-#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:55
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:128
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:141
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:116
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:146
+#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:42
+#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:60
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:170
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:189
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:126
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:177
 #, elixir-autogen, elixir-format
 msgid "Daily change"
 msgstr "Variation du jour"
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:123
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:157
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:139
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:188
 #, elixir-autogen, elixir-format
 msgid "Data of"
 msgstr "Donnée du"
 
-#: lib/syli_atlas_web/components/market_components.ex:356
-#, elixir-autogen, elixir-format
-msgid "Data: %{sources} · close of %{date} · end of day, not live"
-msgstr "Données : %{sources} · clôture du %{date} · fin de journée, pas de cours en direct"
-
-#: lib/syli_atlas_web/components/market_components.ex:361
-#, elixir-autogen, elixir-format
-msgid "Data: %{sources} · end of day, not live"
-msgstr "Données : %{sources} · fin de journée, pas de cours en direct"
-
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:97
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:129
 #, elixir-autogen, elixir-format
 msgid "Down"
 msgstr "En baisse"
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:191
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:235
 #, elixir-autogen, elixir-format
 msgid "Each line gives its source and date. Missing or old data is flagged, never filled in silently."
 msgstr "Chaque ligne indique sa source et sa date. Une donnée manquante ou ancienne est signalée, jamais remplacée en silence."
@@ -1559,40 +1549,40 @@ msgstr "Chaque ligne indique sa source et sa date. Une donnée manquante ou anci
 msgid "East"
 msgstr "Est"
 
-#: lib/syli_atlas_web/components/market_components.ex:128
+#: lib/syli_atlas_web/components/market_components.ex:129
 #, elixir-autogen, elixir-format
 msgid "East Africa"
 msgstr "Afrique de l'Est"
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:182
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:217
 #, elixir-autogen, elixir-format
 msgid "End of day"
 msgstr "Fin de journée"
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:49
+#: lib/syli_atlas_web/controllers/market_controller.ex:50
 #, elixir-autogen, elixir-format
 msgid "Every African stock exchange followed by Syli Atlas: main index, daily change, number of listed securities, with the source and date of each figure."
 msgstr "Toutes les bourses africaines suivies par Syli Atlas : indice principal, variation du jour, nombre de titres cotés, avec la source et la date de chaque chiffre."
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:65
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:92
 #, elixir-autogen, elixir-format
 msgid "Every close is recorded from the first import on. Older history will come from an official or licensed source."
 msgstr "Chaque clôture est enregistrée depuis le premier import. L'historique plus ancien viendra d'une source officielle ou sous licence."
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:77
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:96
 #, elixir-autogen, elixir-format
 msgid "Every close is recorded from the first import on. The curve appears from the second session."
 msgstr "Chaque clôture est enregistrée depuis le premier import. La courbe apparaît dès la deuxième séance."
 
-#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:38
-#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:52
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:109
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:77
+#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:39
+#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:53
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:111
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:110
 #, elixir-autogen, elixir-format
 msgid "Exchange"
 msgstr "Bourse"
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:86
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:88
 #, elixir-autogen, elixir-format
 msgid "Exchange, country, currency…"
 msgstr "Bourse, pays, devise…"
@@ -1607,17 +1597,17 @@ msgstr "Fonds indiciel coté"
 msgid "Exchange-traded funds"
 msgstr "Fonds indiciels cotés"
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:157
+#: lib/syli_atlas_web/controllers/market_controller.ex:158
 #, elixir-autogen, elixir-format
 msgid "Exchange-traded funds listed in Africa: price, daily change, volume and issuer."
 msgstr "Les fonds indiciels cotés en Afrique : cours, variation du jour, volume et émetteur."
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:43
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:45
 #, elixir-autogen, elixir-format
 msgid "Figures on their way"
 msgstr "Chiffres en route"
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:93
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:95
 #, elixir-autogen, elixir-format
 msgid "Filter by region"
 msgstr "Filtrer par région"
@@ -1627,127 +1617,127 @@ msgstr "Filtrer par région"
 msgid "Financial markets · %{count} exchanges"
 msgstr "Marchés financiers · %{count} places"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:161
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:215
 #, elixir-autogen, elixir-format
 msgid "Flagged on this page:"
 msgstr "Signalé sur cette page :"
 
-#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:37
+#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:38
 #, elixir-autogen, elixir-format
 msgid "Fund"
 msgstr "Fonds"
 
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:14
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:192
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:239
 #, elixir-autogen, elixir-format
 msgid "Funds exposed to Africa"
 msgstr "ETF exposés à l'Afrique"
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:152
+#: lib/syli_atlas_web/controllers/market_controller.ex:153
 #, elixir-autogen, elixir-format
 msgid "Funds exposed to Africa (ETF)"
 msgstr "ETF exposés à l'Afrique"
 
-#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:34
+#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:35
 #, elixir-autogen, elixir-format
 msgid "Funds listed in Africa"
 msgstr "Fonds cotés en Afrique"
 
-#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:67
+#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:78
 #, elixir-autogen, elixir-format
 msgid "Funds listed in New York, London or Paris that invest in African companies will be added from their issuers' pages, the only source of their figures."
 msgstr "Les fonds cotés à New York, Londres ou Paris qui investissent dans des entreprises africaines seront ajoutés à partir des pages de leurs émetteurs, seule source de leurs chiffres."
 
-#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:65
+#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:76
 #, elixir-autogen, elixir-format
 msgid "Funds listed outside Africa"
 msgstr "Fonds cotés hors d'Afrique"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:75
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:63
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:94
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:90
 #, elixir-autogen, elixir-format
 msgid "History being built"
 msgstr "Historique en cours de constitution"
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:179
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:214
 #, elixir-autogen, elixir-format
 msgid "How to read these figures"
 msgstr "Comment lire ces chiffres"
 
-#: lib/syli_atlas_web/components/market_components.ex:196
+#: lib/syli_atlas_web/components/market_components.ex:199
 #, elixir-autogen, elixir-format
 msgid "Indices at the last close"
 msgstr "Indices à la dernière clôture"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:171
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:98
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:229
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:143
 #, elixir-autogen, elixir-format
 msgid "Information, not investment advice."
 msgstr "Information, pas un conseil en investissement."
 
-#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:69
+#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:83
 #, elixir-autogen, elixir-format
 msgid "Information, not investment advice. A fund « Africa » can be concentrated on a few countries: check its holdings with the issuer."
 msgstr "Information, pas un conseil en investissement. Un fonds « Afrique » peut être très concentré sur quelques pays : regardez sa composition chez l'émetteur."
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:34
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:36
 #, elixir-autogen, elixir-format
 msgid "Information, not investment advice. Each index is expressed in its local currency: only changes can be compared."
 msgstr "Information, pas un conseil en investissement. Chaque indice est exprimé dans sa monnaie locale : seules les variations se comparent."
 
-#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:39
-#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:53
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:85
+#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:40
+#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:58
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:126
 #, elixir-autogen, elixir-format
 msgid "Issuer"
 msgstr "Émetteur"
 
-#: lib/syli_atlas_web/components/market_components.ex:412
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:118
+#: lib/syli_atlas_web/components/market_components.ex:441
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:158
 #, elixir-autogen, elixir-format
 msgid "Listed securities"
 msgstr "Titres cotés"
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:186
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:225
 #, elixir-autogen, elixir-format
 msgid "Local currencies"
 msgstr "Monnaies locales"
 
-#: lib/syli_atlas_web/components/market_components.ex:402
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:33
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:64
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:111
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:144
+#: lib/syli_atlas_web/components/market_components.ex:431
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:45
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:83
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:117
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:171
 #, elixir-autogen, elixir-format
 msgid "Main index"
 msgstr "Indice principal"
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:53
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:67
 #, elixir-autogen, elixir-format
 msgid "Market capitalisation"
 msgstr "Capitalisation"
 
-#: lib/syli_atlas_web/components/market_components.ex:419
+#: lib/syli_atlas_web/components/market_components.ex:448
 #, elixir-autogen, elixir-format
 msgid "Most traded local companies"
 msgstr "Sociétés locales les plus échangées"
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:163
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:196
 #, elixir-autogen, elixir-format
 msgid "No exchange matches this search."
 msgstr "Aucune bourse ne correspond à cette recherche."
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:166
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:199
 #, elixir-autogen, elixir-format
 msgid "No exchange matches « %{q} »."
 msgstr "Aucune bourse ne correspond à « %{q} »."
 
-#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:29
+#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:30
 #, elixir-autogen, elixir-format
 msgid "No fund in our data yet: the first import has not run."
 msgstr "Aucun fonds dans nos données pour l'instant : le premier import n'a pas encore eu lieu."
 
-#: lib/syli_atlas_web/components/market_components.ex:149
+#: lib/syli_atlas_web/components/market_components.ex:150
 #, elixir-autogen, elixir-format
 msgid "No session received for more than two business days"
 msgstr "Aucune séance reçue depuis plus de deux jours ouvrés"
@@ -1757,34 +1747,34 @@ msgstr "Aucune séance reçue depuis plus de deux jours ouvrés"
 msgid "North"
 msgstr "Nord"
 
-#: lib/syli_atlas_web/components/market_components.ex:126
+#: lib/syli_atlas_web/components/market_components.ex:127
 #, elixir-autogen, elixir-format
 msgid "North Africa"
 msgstr "Afrique du Nord"
 
-#: lib/syli_atlas_web/components/market_components.ex:253
+#: lib/syli_atlas_web/components/market_components.ex:257
 #, elixir-autogen, elixir-format
 msgid "One stretch without data: the line is broken there."
 msgid_plural "%{count} stretches without data: the line is broken there."
 msgstr[0] "Une période sans données : la ligne y est interrompue."
 msgstr[1] "%{count} périodes sans données : la ligne y est interrompue."
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:65
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:84
 #, elixir-autogen, elixir-format
 msgid "Points · sessions received by Syli Atlas"
 msgstr "Points · séances reçues par Syli Atlas"
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:60
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:75
 #, elixir-autogen, elixir-format
 msgid "Price history"
 msgstr "Historique du cours"
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:93
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:137
 #, elixir-autogen, elixir-format
 msgid "Price, change and volume: %{source}. Value traded and share of trading: computed by Syli Atlas."
 msgstr "Cours, variation et volume : %{source}. Valeur échangée et part des échanges : calculées par Syli Atlas."
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:183
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:219
 #, elixir-autogen, elixir-format
 msgid "Prices are those of the last session, imported after each exchange closes. They are not live prices."
 msgstr "Les cours sont ceux de la dernière séance, importés après la clôture de chaque bourse. Ce ne sont pas des cours en direct."
@@ -1794,43 +1784,43 @@ msgstr "Les cours sont ceux de la dernière séance, importés après la clôtur
 msgid "Regional exchange · %{count} countries · %{region}"
 msgstr "Bourse régionale · %{count} pays · %{region}"
 
-#: lib/syli_atlas_web/components/market_components.ex:174
+#: lib/syli_atlas_web/components/market_components.ex:173
 #, elixir-autogen, elixir-format
 msgid "Same as the change since 1 January given by the source"
 msgstr "Identique au cumul depuis le 1er janvier fourni par la source"
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:69
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:71
 #, elixir-autogen, elixir-format
 msgid "Search an exchange, a country, an index or a currency"
 msgstr "Rechercher une bourse, un pays, un indice ou une devise"
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:119
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:155
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:131
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:186
 #, elixir-autogen, elixir-format
 msgid "Securities"
 msgstr "Titres"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:122
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:163
 #, elixir-autogen, elixir-format
 msgid "Securities listed on the %{exchange}"
 msgstr "Titres cotés à la %{exchange}"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:105
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:143
 #, elixir-autogen, elixir-format
 msgid "Securities traded that day"
 msgstr "Titres échangés ce jour-là"
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:72
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:101
 #, elixir-autogen, elixir-format
 msgid "Security"
 msgstr "Titre"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:38
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:50
 #, elixir-autogen, elixir-format
 msgid "Session"
 msgstr "Séance"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:83
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:104
 #, elixir-autogen, elixir-format
 msgid "Session of %{date}"
 msgstr "Séance du %{date}"
@@ -1840,33 +1830,33 @@ msgstr "Séance du %{date}"
 msgid "Share"
 msgstr "Action"
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:48
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:62
 #, elixir-autogen, elixir-format
 msgid "Share of the exchange's trading"
 msgstr "Part des échanges de la bourse"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:45
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:59
 #, elixir-autogen, elixir-format
 msgid "Since 1 January"
 msgstr "Depuis le 1er janvier"
 
-#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:62
+#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:72
 #, elixir-autogen, elixir-format
 msgid "Sorted by value traded · prices in the currency of the exchange"
 msgstr "Classés par valeur échangée · cours dans la monnaie de la bourse"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:149
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:201
 #, elixir-autogen, elixir-format
 msgid "Sorted by value traded · value = close × volume, computed by Syli Atlas"
 msgstr "Classés par valeur échangée · valeur = cours × volume, calculée par Syli Atlas"
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:125
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:158
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:145
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:191
 #, elixir-autogen, elixir-format
 msgid "Source"
 msgstr "Source"
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:190
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:233
 #, elixir-autogen, elixir-format
 msgid "Sources shown"
 msgstr "Sources affichées"
@@ -1876,12 +1866,12 @@ msgstr "Sources affichées"
 msgid "Southern"
 msgstr "Australe"
 
-#: lib/syli_atlas_web/components/market_components.ex:129
+#: lib/syli_atlas_web/components/market_components.ex:130
 #, elixir-autogen, elixir-format
 msgid "Southern Africa"
 msgstr "Afrique australe"
 
-#: lib/syli_atlas_web/components/market_components.ex:378
+#: lib/syli_atlas_web/components/market_components.ex:407
 #, elixir-autogen, elixir-format
 msgid "Stock exchange"
 msgstr "Bourse"
@@ -1892,8 +1882,8 @@ msgid "Stock exchange · %{region}"
 msgstr "Bourse · %{region}"
 
 #: lib/syli_atlas_web/components/layouts.ex:125
-#: lib/syli_atlas_web/controllers/market_controller.ex:82
-#: lib/syli_atlas_web/controllers/market_controller.ex:127
+#: lib/syli_atlas_web/controllers/market_controller.ex:83
+#: lib/syli_atlas_web/controllers/market_controller.ex:128
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:6
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:6
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:8
@@ -1902,71 +1892,71 @@ msgstr "Bourse · %{region}"
 msgid "Stock exchanges"
 msgstr "Bourses"
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:20
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:22
 #, elixir-autogen, elixir-format
 msgid "Syli Atlas follows %{exchanges} exchanges and %{securities} listed securities. The gaps are huge: from %{max} securities on the %{max_name} to %{min} on the %{min_name}."
 msgstr "Syli Atlas suit %{exchanges} bourses et %{securities} titres cotés. Les écarts sont immenses : de %{max} titres à la %{max_name} à %{min} à la %{min_name}."
 
-#: lib/syli_atlas_web/components/market_components.ex:395
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:99
+#: lib/syli_atlas_web/components/market_components.ex:424
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:144
 #, elixir-autogen, elixir-format
 msgid "The %{exchange} page"
 msgstr "La fiche de la %{exchange}"
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:210
+#: lib/syli_atlas_web/controllers/market_controller.ex:216
 #, elixir-autogen, elixir-format
 msgid "The %{index} closed at %{value} points on %{date} (%{change})."
 msgstr "Le %{index} a clôturé à %{value} points le %{date} (%{change})."
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:199
+#: lib/syli_atlas_web/controllers/market_controller.ex:205
 #, elixir-autogen, elixir-format
 msgid "The %{index} closed at %{value} points on %{date} (%{change}). Since 1 January: %{ytd}, according to %{source}."
 msgstr "Le %{index} a clôturé à %{value} points le %{date} (%{change}). Depuis le 1er janvier : %{ytd}, selon %{source}."
 
-#: lib/syli_atlas_web/components/market_components.ex:386
+#: lib/syli_atlas_web/components/market_components.ex:415
 #, elixir-autogen, elixir-format
 msgid "The country has no national exchange: its companies are listed on the %{exchange}, the regional exchange shared by %{count} countries."
 msgstr "Le pays n'a pas de bourse nationale : ses sociétés sont cotées à la %{exchange}, la bourse régionale commune à %{count} pays."
 
-#: lib/syli_atlas_web/controllers/market_html/index.html.heex:45
+#: lib/syli_atlas_web/controllers/market_html/index.html.heex:47
 #, elixir-autogen, elixir-format
 msgid "The first import of market closes has not run yet. It runs every weekday after the last African close."
 msgstr "Le premier import des clôtures n'a pas encore eu lieu. Il tourne chaque jour ouvré après la dernière clôture africaine."
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:50
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:66
 #, elixir-autogen, elixir-format
 msgid "Traded that day"
 msgstr "Échangé ce jour-là"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:96
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:128
 #, elixir-autogen, elixir-format
 msgid "Unchanged"
 msgstr "Stables"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:95
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:127
 #, elixir-autogen, elixir-format
 msgid "Up"
 msgstr "En hausse"
 
-#: lib/syli_atlas_web/components/market_components.ex:335
+#: lib/syli_atlas_web/components/market_components.ex:343
 #, elixir-autogen, elixir-format
 msgid "Used"
 msgstr "Utilisée"
 
-#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:43
-#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:57
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:130
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:143
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:43
+#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:44
+#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:64
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:172
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:193
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:55
 #, elixir-autogen, elixir-format
 msgid "Value traded"
 msgstr "Valeur échangée"
 
-#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:42
-#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:56
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:129
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:142
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:38
+#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:43
+#: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:63
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:171
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:192
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:48
 #, elixir-autogen, elixir-format
 msgid "Volume"
 msgstr "Volume"
@@ -1976,125 +1966,135 @@ msgstr "Volume"
 msgid "West"
 msgstr "Ouest"
 
-#: lib/syli_atlas_web/components/market_components.ex:125
+#: lib/syli_atlas_web/components/market_components.ex:126
 #, elixir-autogen, elixir-format
 msgid "West Africa"
 msgstr "Afrique de l'Ouest"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:158
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:91
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:212
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:135
 #, elixir-autogen, elixir-format
 msgid "Where these figures come from"
 msgstr "D'où viennent ces chiffres"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:98
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:130
 #, elixir-autogen, elixir-format
 msgid "Without trade"
 msgstr "Sans échange"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:47
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:63
 #, elixir-autogen, elixir-format
 msgid "as given by the source"
 msgstr "tel que fourni par la source"
 
-#: lib/syli_atlas_web/controllers/market_html.ex:87
+#: lib/syli_atlas_web/controllers/market_html.ex:92
 #, elixir-autogen, elixir-format
 msgid "daily change identical to the change since 1 January"
 msgstr "variation du jour identique au cumul depuis le 1er janvier"
 
-#: lib/syli_atlas_web/controllers/market_html.ex:101
+#: lib/syli_atlas_web/controllers/market_html.ex:106
 #, elixir-autogen, elixir-format
 msgid "government bonds"
 msgstr "obligations d'État"
 
-#: lib/syli_atlas_web/components/market_components.ex:144
+#: lib/syli_atlas_web/components/market_components.ex:145
 #, elixir-autogen, elixir-format
 msgid "index not provided"
 msgstr "indice non fourni"
 
-#: lib/syli_atlas_web/controllers/market_html.ex:81
+#: lib/syli_atlas_web/controllers/market_html.ex:86
 #, elixir-autogen, elixir-format
 msgid "index not provided by the source"
 msgstr "indice non fourni par la source"
 
-#: lib/syli_atlas_web/components/market_components.ex:431
+#: lib/syli_atlas_web/components/market_components.ex:460
 #, elixir-autogen, elixir-format
 msgid "information, not investment advice"
 msgstr "information, pas un conseil en investissement"
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:14
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:15
 #, elixir-autogen, elixir-format
 msgid "listed on the %{exchange}"
 msgstr "cotée à la %{exchange}"
 
-#: lib/syli_atlas_web/components/market_components.ex:347
+#: lib/syli_atlas_web/components/market_components.ex:355
 #, elixir-autogen, elixir-format
 msgid "market data aggregator"
 msgstr "agrégateur de données de marché"
 
-#: lib/syli_atlas_web/controllers/market_html.ex:84
+#: lib/syli_atlas_web/controllers/market_html.ex:89
 #, elixir-autogen, elixir-format
 msgid "no session received since %{date}"
 msgstr "aucune séance reçue depuis le %{date}"
 
-#: lib/syli_atlas_web/controllers/market_html.ex:76
+#: lib/syli_atlas_web/controllers/market_html.ex:80
 #, elixir-autogen, elixir-format
 msgid "no trade"
 msgstr "pas d'échange"
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:55
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:69
 #, elixir-autogen, elixir-format
 msgid "not provided by the current source"
 msgstr "non fournie par la source actuelle"
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:50
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:64
 #, elixir-autogen, elixir-format
 msgid "of the value traded that day"
 msgstr "de la valeur échangée ce jour-là"
 
-#: lib/syli_atlas_web/components/market_components.ex:151
-#: lib/syli_atlas_web/controllers/market_html.ex:75
+#: lib/syli_atlas_web/components/market_components.ex:152
+#: lib/syli_atlas_web/controllers/market_html.ex:79
 #, elixir-autogen, elixir-format
 msgid "old"
 msgstr "ancienne"
 
-#: lib/syli_atlas_web/controllers/market_html.ex:74
+#: lib/syli_atlas_web/controllers/market_html.ex:78
 #, elixir-autogen, elixir-format
 msgid "on hold, to check"
 msgstr "suspendu, à vérifier"
 
-#: lib/syli_atlas_web/components/market_components.ex:349
+#: lib/syli_atlas_web/components/market_components.ex:357
 #, elixir-autogen, elixir-format
 msgid "other source"
 msgstr "autre source"
 
-#: lib/syli_atlas_web/controllers/market_html.ex:100
+#: lib/syli_atlas_web/controllers/market_html.ex:105
 #, elixir-autogen, elixir-format
 msgid "physical gold"
 msgstr "or physique"
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:40
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:51
 #, elixir-autogen, elixir-format
 msgid "securities traded on %{date}"
 msgstr "titres échangés le %{date}"
 
-#: lib/syli_atlas_web/controllers/market_html.ex:102
+#: lib/syli_atlas_web/controllers/market_html.ex:107
 #, elixir-autogen, elixir-format
 msgid "sharia"
 msgstr "charia"
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:76
+#: lib/syli_atlas_web/controllers/market_controller.ex:77
 #, elixir-autogen, elixir-format
 msgid "stock exchange"
 msgstr "bourse"
 
-#: lib/syli_atlas_web/components/market_components.ex:348
+#: lib/syli_atlas_web/components/market_components.ex:356
 #, elixir-autogen, elixir-format
 msgid "the exchange's official list"
 msgstr "la cote officielle de la bourse"
 
-#: lib/syli_atlas_web/components/market_components.ex:176
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:41
+#: lib/syli_atlas_web/components/market_components.ex:175
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:55
 #, elixir-autogen, elixir-format
 msgid "to check"
 msgstr "à vérifier"
+
+#: lib/syli_atlas_web/components/market_components.ex:392
+#, elixir-autogen, elixir-format
+msgid "close of %{date} · end of day, not live"
+msgstr "clôture du %{date} · fin de journée, pas de cours en direct"
+
+#: lib/syli_atlas_web/components/market_components.ex:389
+#, elixir-autogen, elixir-format
+msgid "end of day, not live"
+msgstr "fin de journée, pas de cours en direct"
