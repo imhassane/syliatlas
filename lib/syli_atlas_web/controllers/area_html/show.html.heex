@@ -138,6 +138,13 @@
     </div>
   </.section>
 
+  <SyliAtlasWeb.MarketComponents.country_market
+    :if={@market != []}
+    exchanges={@market}
+    name={@name}
+    locale={@locale}
+  />
+
   <.section variant="alt">
     <div class="grid grid-2">
       <div class="stack gap-4">

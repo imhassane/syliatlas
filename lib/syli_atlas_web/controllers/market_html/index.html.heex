@@ -1,0 +1,243 @@
+<Layouts.public locale={@locale} current={:markets} alternates={@alternates}>
+  <.ticker_band exchanges={@exchanges} locale={@locale} />
+
+  <.section variant="alt">
+    <nav aria-label={gettext("Breadcrumb")}>
+      <ol class="crumbs">
+        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+        <li aria-current="page">{gettext("Stock exchanges")}</li>
+      </ol>
+    </nav>
+    <.section_head
+      level={1}
+      size="display"
+      eyebrow={
+        gettext("Financial markets · %{count} exchanges",
+          count: @overview["totals"]["exchanges"] || 0
+        )
+      }
+      title={gettext("African stock exchanges")}
+    >
+      <:intro :if={@exchanges != []}>
+        {gettext(
+          "Syli Atlas follows %{exchanges} exchanges and %{securities} listed securities. The gaps are huge: from %{max} securities on the %{max_name} to %{min} on the %{min_name}.",
+          exchanges: @overview["totals"]["exchanges"],
+          securities: integer(@overview["totals"]["securities"], @locale),
+          max: Enum.max_by(@exchanges, & &1["exchange"]["listed"])["exchange"]["listed"],
+          max_name: Enum.max_by(@exchanges, & &1["exchange"]["listed"])["exchange"]["short_name"],
+          min: Enum.min_by(@exchanges, & &1["exchange"]["listed"])["exchange"]["listed"],
+          min_name: Enum.min_by(@exchanges, & &1["exchange"]["listed"])["exchange"]["short_name"]
+        )}
+      </:intro>
+    </.section_head>
+    <p class="src">{attribution(@overview["sources"], @overview["as_of"], @locale)}</p>
+    <div class="card pad market-note">
+      <p class="small muted">
+        {gettext(
+          "Information, not investment advice. Each index is expressed in its local currency: only changes can be compared."
+        )}
+      </p>
+    </div>
+  </.section>
+
+  <.section id="exchanges">
+    <div :if={@exchanges == []} class="card pad stack gap-2" id="market-empty">
+      <h2 class="h2">{gettext("Figures on their way")}</h2>
+      <p class="muted">
+        {gettext(
+          "The first import of market closes has not run yet. It runs every weekday after the last African close."
+        )}
+      </p>
+    </div>
+
+    <div :if={@exchanges != []} class="card market-table" id="market-table">
+      <div class="market-toolbar">
+        <div class="market-toolbar-title">
+          <h2 class="h2">{gettext("All exchanges")}</h2>
+          <span
+            class="small muted"
+            id="market-count"
+            data-all={ngettext("%{count} exchange", "%{count} exchanges", length(@exchanges))}
+            data-one={count_template(1)}
+            data-many={count_template(2)}
+            aria-live="polite"
+          >
+            {count_text(@rows, @q, @locale)}
+          </span>
+        </div>
+        <form class="market-search" action={Paths.markets(@locale)} method="get" role="search">
+          <input :if={@region} type="hidden" name="region" value={@region} />
+          <label for="market-q" class="vh">
+            {gettext("Search an exchange, a country, an index or a currency")}
+          </label>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            aria-hidden="true"
+          ><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+          <input
+            id="market-q"
+            name="q"
+            type="search"
+            value={@q}
+            placeholder={gettext("Exchange, country, currency…")}
+            autocomplete="off"
+            data-market-search
+          />
+          <button type="submit" class="vh">{gettext("Search")}</button>
+        </form>
+      </div>
+      <nav class="market-tabs" aria-label={gettext("Filter by region")}>
+        <a
+          :for={r <- [nil | @regions]}
+          href={list_href(@locale, @kept, "region", r) <> "#exchanges"}
+          aria-current={@region == r && "true"}
+        >
+          {region_tab(r)}<span class="market-tab-count">{@counts[r]}</span>
+        </a>
+      </nav>
+
+      <div class="table-box">
+        <table class="table table-stack table-wide market-list" id="market-list">
+          <caption class="vh">{gettext("African stock exchanges")}</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="l" aria-sort={aria_sort("name", @sort, @dir)}>
+                <a href={sort_href(@locale, @kept, "name", @sort, @dir)}>{gettext("Exchange")} {arrow(
+                  "name",
+                  @sort,
+                  @dir
+                )}</a>
+              </th>
+              <th scope="col" class="l">{gettext("Main index")}</th>
+              <th scope="col" aria-sort={aria_sort("close", @sort, @dir)}>
+                <a href={sort_href(@locale, @kept, "close", @sort, @dir)}>{gettext("Close")} {arrow(
+                  "close",
+                  @sort,
+                  @dir
+                )}</a>
+              </th>
+              <th scope="col" aria-sort={aria_sort("change", @sort, @dir)}>
+                <a href={sort_href(@locale, @kept, "change", @sort, @dir)}>{gettext(
+                  "Daily change"
+                )} {arrow("change", @sort, @dir)}</a>
+              </th>
+              <th scope="col" aria-sort={aria_sort("listed", @sort, @dir)}>
+                <a href={sort_href(@locale, @kept, "listed", @sort, @dir)}>{gettext("Securities")} {arrow(
+                  "listed",
+                  @sort,
+                  @dir
+                )}</a>
+              </th>
+              <th scope="col" class="l">{gettext("Currency")}</th>
+              <th scope="col" class="l" aria-sort={aria_sort("date", @sort, @dir)}>
+                <a href={sort_href(@locale, @kept, "date", @sort, @dir)}>{gettext("Data of")} {arrow(
+                  "date",
+                  @sort,
+                  @dir
+                )}</a>
+              </th>
+              <th scope="col" class="l">{gettext("Source")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              :for={x <- @rows}
+              id={"exchange-#{x["exchange"]["code"]}"}
+              data-search={x["exchange"]["search"]}
+              data-region={x["exchange"]["region"]}
+            >
+              <th scope="row" class="l">
+                <a href={Paths.exchange(@locale, x["exchange"]["code"])}>{x["exchange"][
+                  "short_name"
+                ]}</a>
+                <span class="muted small">
+                  · {if length(x["exchange"]["countries"]) > 1,
+                    do:
+                      ngettext(
+                        "%{count} country",
+                        "%{count} countries",
+                        length(x["exchange"]["countries"])
+                      ),
+                    else:
+                      Enum.map_join(x["exchange"]["country_names"], ", ", & &1["name"][@locale])}
+                </span>
+              </th>
+              <td class="l muted" data-label={gettext("Main index")}>
+                {x["exchange"]["index_name"] || "—"}
+              </td>
+              <td class="num" data-label={gettext("Close")}>
+                {if x["index"]["value"], do: price(x["index"]["value"], @locale), else: "—"}
+              </td>
+              <td data-label={gettext("Daily change")}>
+                <span :if={is_nil(x["index"]["change_pct"])} class="muted">—</span>
+                <.change_cell
+                  :if={x["index"]["change_pct"]}
+                  value={x["index"]["change_pct"]}
+                  locale={@locale}
+                  suspect={x["index"]["flags"]["suspect"]}
+                />
+              </td>
+              <td class="num" data-label={gettext("Securities")}>{x["exchange"]["listed"]}</td>
+              <td class="l mono" data-label={gettext("Currency")}>{x["exchange"]["currency"]}</td>
+              <td class="l" data-label={gettext("Data of")}>
+                <.freshness index={x["index"]} locale={@locale} />
+              </td>
+              <td class="l muted" data-label={gettext("Source")}>{source_name(x)}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="pad market-none muted" id="market-none-live" hidden>
+          {gettext("No exchange matches this search.")}
+        </p>
+        <div :if={@rows == []} class="pad stack gap-2 market-none" id="market-none">
+          <p>{gettext("No exchange matches « %{q} ».", q: @q)}</p>
+          <a class="btn btn-secondary" href={list_href(@locale, @kept, "q", nil) <> "#exchanges"}>{gettext(
+            "Clear the search"
+          )}</a>
+        </div>
+      </div>
+      <p class="src market-legend">
+        {gettext(
+          "Click a heading to sort · ▲ up, ▼ down, ■ unchanged · « old »: no session for more than two business days · « to check »: daily change identical to the change since 1 January given by the source"
+        )}
+      </p>
+    </div>
+  </.section>
+
+  <.section variant="alt">
+    <h2 class="h1">{gettext("How to read these figures")}</h2>
+    <div class="grid grid-3">
+      <.card pad class="stack gap-2">
+        <p class="eyebrow">{gettext("End of day")}</p>
+        <p>
+          {gettext(
+            "Prices are those of the last session, imported after each exchange closes. They are not live prices."
+          )}
+        </p>
+      </.card>
+      <.card pad class="stack gap-2">
+        <p class="eyebrow">{gettext("Local currencies")}</p>
+        <p>
+          {gettext(
+            "An index at 250,000 points is not « higher » than one at 500: each has its own base and currency. Compare changes, not levels."
+          )}
+        </p>
+      </.card>
+      <.card pad class="stack gap-2 market-card-link">
+        <p class="eyebrow">{gettext("Sources shown")}</p>
+        <p>
+          {gettext(
+            "Each line gives its source and date. Missing or old data is flagged, never filled in silently."
+          )}
+        </p>
+        <a href={Paths.etfs(@locale)} class="market-more">{gettext("Funds exposed to Africa")} →</a>
+      </.card>
+    </div>
+  </.section>
+</Layouts.public>
