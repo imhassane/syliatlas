@@ -166,7 +166,7 @@
             <tr>
               <th scope="col" class="l">{gettext("Company")}</th>
               <th scope="col" class="l">{gettext("Code")}</th>
-              <th scope="col">{gettext("Close")} ({@e["currency"]})</th>
+              <th scope="col">{pgettext("price", "Close")} ({@e["currency"]})</th>
               <th scope="col">{gettext("Daily change")}</th>
               <th scope="col">{gettext("Volume")}</th>
               <th scope="col">{gettext("Value traded")}</th>
@@ -185,7 +185,9 @@
                 >{elem(security_flag(r), 1)}</span>
               </th>
               <td class="l mono small muted" data-label={gettext("Code")}>{r["ticker"]}</td>
-              <td class="num" data-label={gettext("Close")}>{price(r["close"], @locale)}</td>
+              <td class="num" data-label={pgettext("price", "Close")}>
+                {price(r["close"], @locale)}
+              </td>
               <td data-label={gettext("Daily change")}>
                 <b class={["num", tone(r["change_pct"])]}>{pct(r["change_pct"], @locale)}</b>
               </td>

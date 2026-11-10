@@ -1,48 +1,52 @@
 <Layouts.public locale={@locale} current={:markets} alternates={@alternates}>
   <.ticker_band :if={@imported} exchanges={@exchanges} locale={@locale} />
 
-  <.section variant="alt">
-    <nav aria-label={gettext("Breadcrumb")}>
-      <ol class="crumbs">
-        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
-        <li aria-current="page">{gettext("Stock exchanges")}</li>
-      </ol>
-    </nav>
-    <.section_head
-      level={1}
-      size="display"
-      eyebrow={
-        gettext("Financial markets · %{count} exchanges",
-          count: @overview["totals"]["exchanges"] || 0
-        )
-      }
-      title={gettext("African stock exchanges")}
-    >
-      <:intro :if={@imported}>
-        {gettext(
-          "Syli Atlas follows %{exchanges} exchanges and %{securities} listed securities. The gaps are huge: from %{max} securities on the %{max_name} to %{min} on the %{min_name}.",
-          exchanges: @overview["totals"]["exchanges"],
-          securities: integer(@overview["totals"]["securities"], @locale),
-          max: Enum.max_by(@exchanges, & &1["exchange"]["listed"])["exchange"]["listed"],
-          max_name: Enum.max_by(@exchanges, & &1["exchange"]["listed"])["exchange"]["short_name"],
-          min: Enum.min_by(@exchanges, & &1["exchange"]["listed"])["exchange"]["listed"],
-          min_name: Enum.min_by(@exchanges, & &1["exchange"]["listed"])["exchange"]["short_name"]
-        )}
-      </:intro>
-    </.section_head>
-    <p class="src">
-      <.credit sources={@overview["sources"]} date={@overview["as_of"]} locale={@locale} />
-    </p>
-    <div class="card pad market-note">
-      <p class="small muted">
-        {gettext(
-          "Information, not investment advice. Each index is expressed in its local currency: only changes can be compared."
-        )}
+  <section class="section-alt market-hero" id="market-hero">
+    <div class="wrap market-hero-wrap">
+      <nav aria-label={gettext("Breadcrumb")}>
+        <ol class="crumbs">
+          <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+          <li aria-current="page">{gettext("Stock exchanges")}</li>
+        </ol>
+      </nav>
+      <div class="market-hero-row">
+        <div class="market-hero-title">
+          <h1 class="market-h1">{gettext("African stock exchanges")}</h1>
+          <p :if={@imported} class="muted market-hero-lead">
+            {gettext(
+              "%{exchanges} exchanges, %{securities} listed securities. An index only compares with itself: look at changes, not levels.",
+              exchanges: @overview["totals"]["exchanges"],
+              securities: integer(@overview["totals"]["securities"], @locale)
+            )}
+          </p>
+        </div>
+        <dl :if={@imported} class="market-summary" id="market-summary">
+          <div>
+            <dt>{gettext("Session")}</dt>
+            <dd class="num">{day(@overview["as_of"], @locale)}</dd>
+          </div>
+          <div>
+            <dt>{gettext("Indices up")}</dt>
+            <dd class="num up" id="summary-up">▲ {@breadth.up}</dd>
+          </div>
+          <div>
+            <dt>{gettext("Indices down")}</dt>
+            <dd class="num down" id="summary-down">▼ {@breadth.down}</dd>
+          </div>
+          <div>
+            <dt>{gettext("Index missing")}</dt>
+            <dd class="num" id="summary-missing">{@breadth.missing}</dd>
+          </div>
+        </dl>
+      </div>
+      <p class="src">
+        <.credit sources={@overview["sources"]} locale={@locale} />
+        · {gettext("information, not investment advice")}
       </p>
     </div>
-  </.section>
+  </section>
 
-  <.section id="exchanges">
+  <.section id="exchanges" class="market-list">
     <div :if={!@imported} class="card pad stack gap-2" id="market-empty">
       <h2 class="h2">{gettext("Figures on their way")}</h2>
       <p class="muted">
@@ -118,7 +122,10 @@
               </th>
               <th scope="col" class="l">{gettext("Main index")}</th>
               <th scope="col" aria-sort={aria_sort("close", @sort, @dir)}>
-                <a href={sort_href(@locale, @kept, "close", @sort, @dir)}>{gettext("Close")} {arrow(
+                <a href={sort_href(@locale, @kept, "close", @sort, @dir)}>{pgettext(
+                  "price",
+                  "Close"
+                )} {arrow(
                   "close",
                   @sort,
                   @dir
@@ -173,7 +180,7 @@
               <td class="l muted" data-label={gettext("Main index")}>
                 {x["exchange"]["index_name"] || "—"}
               </td>
-              <td class="num" data-label={gettext("Close")}>
+              <td class="num" data-label={pgettext("price", "Close")}>
                 {if x["index"]["value"], do: price(x["index"]["value"], @locale), else: "—"}
               </td>
               <td data-label={gettext("Daily change")}>

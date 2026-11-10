@@ -56,6 +56,7 @@ defmodule SyliAtlasWeb.MarketController do
       overview: overview,
       exchanges: all,
       imported: overview["as_of"] != nil,
+      breadth: breadth(all),
       rows: rows,
       q: q,
       region: region,
@@ -250,5 +251,20 @@ defmodule SyliAtlasWeb.MarketController do
         exchange: e["short_name"]
       )
     end
+  end
+
+  # Indices up and down at their last session, and exchanges whose index
+  # the source does not give.
+  defp breadth(exchanges) do
+    changes =
+      for x <- exchanges,
+          x["index"]["value"] != nil,
+          do: SyliAtlasWeb.MarketComponents.to_f(x["index"]["change_pct"])
+
+    %{
+      up: Enum.count(changes, &(&1 && &1 > 0)),
+      down: Enum.count(changes, &(&1 && &1 < 0)),
+      missing: Enum.count(exchanges, &(&1["index"]["value"] == nil))
+    }
   end
 end

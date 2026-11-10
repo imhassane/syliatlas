@@ -16,6 +16,24 @@
 
 .market-note { max-width: 860px; }
 
+/* Header of the exchanges list: a short title on the left and the session
+   at a glance on the right, so the table shows without scrolling. */
+.market-hero { padding: 22px 0; border-top: 0; }
+.market-hero-wrap { display: flex; flex-direction: column; gap: 12px; }
+.market-hero-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 32px; align-items: end; }
+.market-hero-title { display: flex; flex-direction: column; gap: 8px; }
+.market-h1 { margin: 0; font-size: clamp(30px, 3.4vw, 40px); line-height: 1.05; font-weight: 400; letter-spacing: -.03em; }
+.market-hero-lead { margin: 0; font-size: 16px; max-width: 620px; }
+.market-summary { display: flex; gap: 28px; margin: 0; text-align: right; }
+.market-summary dt { font-size: 12px; color: var(--ink-subtle); white-space: nowrap; }
+.market-summary dd { margin: 2px 0 0; font-size: 20px; font-weight: 500; white-space: nowrap; }
+.market-hero .src { margin: 0; }
+@media (max-width: 760px) {
+  .market-hero-row { grid-template-columns: 1fr; gap: 16px; }
+  .market-summary { justify-content: space-between; gap: 12px; text-align: left; }
+  .market-summary dd { font-size: 17px; }
+}
+
 /* The table of exchanges: a toolbar (title and count on the left, search on
    the right), region tabs laid on the table, then the rows. */
 .market-table { overflow: hidden; }
@@ -77,3 +95,6 @@
   .market-legend, .market-table-foot { padding-left: 16px; padding-right: 16px; }
   .stats-2 { grid-template-columns: 1fr; }
 }
+
+/* The table follows the header closely. */
+.section.market-list { padding-top: 24px; }
