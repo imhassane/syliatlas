@@ -33,6 +33,8 @@ defmodule SyliAtlas.Release do
         SyliAtlas.Geo.seed_areas!()
         SyliAtlas.Sources.seed_sources!()
         SyliAtlas.Market.seed!()
+        # Bundled sovereign ratings: idempotent upsert, then the document.
+        SyliAtlas.Ratings.seed!()
 
         if SyliAtlas.Sources.published_edition("imf_weo") == nil do
           {:ok, _status, edition} = SyliAtlas.Imports.import_snapshot!()

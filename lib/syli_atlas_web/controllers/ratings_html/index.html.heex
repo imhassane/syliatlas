@@ -1,0 +1,198 @@
+<Layouts.public locale={@locale} current={:ratings} alternates={@alternates}>
+  <div
+    :if={@doc["recent"] != []}
+    class="ticker"
+    role="region"
+    aria-label={gettext("Latest rating decisions")}
+  >
+    <div class="ticker-track">
+      <ul :for={hidden <- [false, true]} class="ticker-list" aria-hidden={hidden && "true"}>
+        <li :for={r <- @doc["recent"]}>
+          <a
+            href={Paths.area(@locale, "country", @doc["countries"][r["code"]]["slug"][@locale]) <> "#notation"}
+            tabindex={hidden && "-1"}
+          >
+            <b>{@doc["countries"][r["code"]]["name"][@locale]}</b>
+            <span class="muted">{agency_name(r["agency"])} · {date_text(r["action_date"], @locale)}</span>
+            <span class={if(r["action_type"] == "upgrade", do: "up", else: "down")}>
+              {if(r["action_type"] == "upgrade", do: "▲", else: "▼")} {Scale.display(r["rating"])}
+            </span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <.section id="ratings-list" tight={:top} class="rt-page">
+    <nav aria-label={gettext("Breadcrumb")}>
+      <ol class="crumbs">
+        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+        <li aria-current="page">{gettext("Sovereign ratings")}</li>
+      </ol>
+    </nav>
+
+    <div class="card market-table" id="ratings-table">
+      <div class="market-toolbar">
+        <div class="market-toolbar-title">
+          <h1 class="market-h1 rt-h1">
+            {gettext("Sovereign ratings of African countries")}
+            <span class="small muted num">
+              {gettext("%{rated} rated · %{unrated} without a rating",
+                rated: @doc["rated"],
+                unrated: length(@unrated)
+              )}
+            </span>
+          </h1>
+          <p class="src">
+            {gettext(
+              "S&P, Moody's, Fitch · long-term foreign-currency ratings · each rating links to its source"
+            )}
+          </p>
+        </div>
+        <form class="market-search" action={Paths.ratings(@locale)} method="get" role="search">
+          <input :if={@verdict} type="hidden" name="verdict" value={@verdict} />
+          <label for="ratings-q" class="vh">{gettext("Search a country or a rating")}</label>
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            aria-hidden="true"
+          ><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+          <input
+            id="ratings-q"
+            name="q"
+            type="search"
+            value={@q}
+            placeholder={gettext("Country, rating (BB, Caa1…)")}
+            autocomplete="off"
+          />
+          <button type="submit" class="vh">{gettext("Search")}</button>
+        </form>
+      </div>
+      <nav class="market-tabs" aria-label={gettext("Filter by verdict")}>
+        <a
+          :for={t <- @tabs}
+          href={tab_href(@locale, t, @q) <> "#ratings-list"}
+          aria-current={@verdict == t && "true"}
+        >
+          <i :if={t not in [nil, "unrated"]} class={["rt-dot", band_class(t)]} aria-hidden="true"></i>
+          {tab_label(t)}<span class="market-tab-count">{@counts[t] || 0}</span>
+        </a>
+      </nav>
+
+      <div class="table-box">
+        <table class="table table-stack table-wide" id="ratings-rows">
+          <caption class="vh">{gettext("Sovereign ratings of African countries")}</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="l">#</th>
+              <th scope="col" class="l">{gettext("Country")}</th>
+              <th scope="col" class="l">S&amp;P</th>
+              <th scope="col" class="l">Moody's</th>
+              <th scope="col" class="l">Fitch</th>
+              <th scope="col" class="l">{gettext("Average")}</th>
+              <th scope="col" class="l">{gettext("Verdict")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={e <- @rows} id={"rating-#{e["code"]}"}>
+              <td class="l mono subtle" data-label="#">{e["rank"] || "—"}</td>
+              <th scope="row" class="l">
+                <a href={Paths.area(@locale, "country", e["slug"][@locale]) <> "#notation"}>{e[
+                  "name"
+                ][@locale]}</a>
+              </th>
+              <td :for={code <- ~w(sp moodys fitch)} class="l" data-label={agency_name(code)}>
+                <%= if a = agency(e, code) do %>
+                  <b class="num">{Scale.display(a["rating"])}</b><span
+                    :if={a["needs_check"]}
+                    title={gettext("To check")}
+                  >*</span>
+                  <span class={[
+                    "small",
+                    if(a["outlook"] == "positive", do: "up"),
+                    if(a["outlook"] == "negative", do: "down")
+                  ]}>
+                    <br />{outlook_label(a["outlook"])} · {date_text(a["action_date"], @locale)}
+                  </span>
+                <% else %>
+                  <span class="subtle">—</span>
+                <% end %>
+              </td>
+              <td class="l" data-label={gettext("Average")}>
+                <span :if={e["average"]} class="rt-bar">
+                  <span class="rt-bar-track">
+                    <span
+                      class={["rt-bar-fill", band_class(e["band"])]}
+                      style={"width: #{width(e["average"])}%"}
+                    ></span>
+                    <span class="rt-bar-line" style={"left: #{threshold()}%"}></span>
+                  </span>
+                  <b class="num">{e["label"]}</b>
+                </span>
+                <span :if={!e["average"]} class="subtle">—</span>
+              </td>
+              <td class="l" data-label={gettext("Verdict")}>
+                <.verdict_badge band={e["band"]}>{verdict(e["band"])}</.verdict_badge>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div :if={@rows == []} class="pad stack gap-2" id="ratings-none">
+          <p>{gettext("No country matches this search.")}</p>
+          <a class="btn btn-secondary" href={tab_href(@locale, @verdict, "")}>{gettext(
+            "Clear the search"
+          )}</a>
+        </div>
+      </div>
+      <p class="src market-legend">
+        {gettext(
+          "A rating is an opinion on credit risk, not investment advice. Average and verdict: Syli Atlas's conversion on a scale from 1 (default) to 22 (AAA); the line marks the investment grade threshold (BBB− / Baa3). * to check against the agency's release."
+        )}
+      </p>
+    </div>
+  </.section>
+
+  <.section variant="alt">
+    <div class="grid grid-2">
+      <div class="stack gap-4">
+        <h2 class="h2">{gettext("In short")}</h2>
+        <p class="answer" data-answer>{@answer}</p>
+        <h2 class="h2">{gettext("Questions")}</h2>
+        <.faq items={@faq} />
+      </div>
+      <div class="stack gap-4">
+        <.card pad class="stack gap-2" id="ratings-unrated">
+          <h2 class="h2">
+            {ngettext(
+              "%{count} country without any rating",
+              "%{count} countries without any rating",
+              length(@unrated)
+            )}
+          </h2>
+          <p>
+            <%= for {e, i} <- Enum.with_index(@unrated) do %>
+              <a href={Paths.area(@locale, "country", e["slug"][@locale])}>{e["name"][@locale]}</a>{if(
+                i < length(@unrated) - 1,
+                do: ", ",
+                else: "."
+              )}
+            <% end %>
+          </p>
+        </.card>
+        <.card pad class="stack gap-2">
+          <h2 class="h2">{gettext("The debate on African ratings")}</h2>
+          <p>
+            {gettext(
+              "The African Union finds that the three main agencies poorly reflect the continent's realities and launched AfCRA, a private agency based in Mauritius, on 7 October 2026. A 2024 Reuters investigation found no evidence of systematic bias in the region's sovereign ratings."
+            )}
+          </p>
+        </.card>
+      </div>
+    </div>
+  </.section>
+</Layouts.public>

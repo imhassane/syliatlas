@@ -45,7 +45,9 @@ defmodule SyliAtlasWeb.AreaController do
           |> Enum.sort_by(&(-(&1["value"] || -999)))
         end
 
-      faq = faq(name, data, from, to, locale)
+      ratings = if area.kind == "country", do: SyliAtlas.Ratings.document()
+      rating = SyliAtlas.Ratings.for_country(ratings, area.code)
+      faq = faq(name, data, from, to, locale) ++ rating_faq(name, rating, ratings)
       members = if(area.kind == "country", do: [], else: members(profile, from, to, locale))
       kept = Map.take(params, ~w(from to peers members))
 
@@ -84,9 +86,35 @@ defmodule SyliAtlasWeb.AreaController do
         members: Pagination.paginate(members, params["members"]),
         members_href: &Pagination.href(paths[locale], kept, "members", &1, "members"),
         members_max: bar_max(members),
-        market: market(area)
+        market: market(area),
+        rating: rating,
+        rated: (ratings && ratings["rated"]) || 0
       )
     end
+  end
+
+  defp rating_faq(_name, nil, _doc), do: []
+
+  defp rating_faq(name, %{"band" => nil}, _doc) do
+    [
+      {gettext("What is the credit rating of %{name}?", name: name),
+       gettext("%{name} is not rated by S&P, Moody's or Fitch.", name: name)}
+    ]
+  end
+
+  defp rating_faq(name, rating, doc) do
+    alias SyliAtlasWeb.RatingComponents, as: R
+
+    [
+      {gettext("What is the credit rating of %{name}?", name: name),
+       gettext("%{agencies}: %{verdict}, %{category}, %{gap}, %{rank}.",
+         agencies: R.agencies_text(rating),
+         verdict: String.downcase(R.verdict(rating["band"])),
+         category: String.downcase(R.category(rating["band"])),
+         gap: R.gap_text(rating),
+         rank: R.rank_text(rating, doc["rated"])
+       )}
+    ]
   end
 
   # The exchange(s) serving a country, when the market pages are public.

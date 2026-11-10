@@ -10,6 +10,7 @@
     </.filter_sheet>
     <p class="lead" data-answer>{@answer}</p>
     <.source_line edition={@profile["edition"]} locale={@locale} />
+    <RatingComponents.rating_pill :if={@rating} entry={@rating} rated={@rated} href="#notation" />
   </.section>
 
   <.section>
@@ -137,6 +138,14 @@
       <a class="btn btn-secondary" href={Paths.ranking(@locale)}>{gettext("African ranking")}</a>
     </div>
   </.section>
+
+  <RatingComponents.rating_section
+    :if={@rating}
+    entry={@rating}
+    name={@name}
+    rated={@rated}
+    locale={@locale}
+  />
 
   <SyliAtlasWeb.MarketComponents.country_market
     :if={@market != []}

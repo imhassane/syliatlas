@@ -29,7 +29,8 @@ defmodule SyliAtlasWeb.Build do
 
   defp data_tag,
     do:
-      {SyliAtlas.Profiles.data_version(), SyliAtlas.Market.data_version()}
+      {SyliAtlas.Profiles.data_version(), SyliAtlas.Market.data_version(),
+       SyliAtlas.Ratings.data_version()}
       |> :erlang.phash2()
       |> Integer.to_string(36)
 end

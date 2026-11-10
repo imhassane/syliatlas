@@ -11,7 +11,7 @@ defmodule SyliAtlasWeb.MapComponents do
 
   import SyliAtlasWeb.UI
   alias SyliAtlas.Geo.AfricaMap
-  alias SyliAtlasWeb.{Format, MapScale, Paths, Spark}
+  alias SyliAtlasWeb.{Format, MapScale, Paths, RatingComponents, Spark}
 
   attr :id, :string, required: true
   attr :countries, :list, required: true, doc: "entries of the map snapshot"
@@ -100,6 +100,9 @@ defmodule SyliAtlasWeb.MapComponents do
   attr :from, :integer, required: true
   attr :to, :integer, required: true
   attr :locale, :string, required: true
+
+  attr :rating, :map, default: nil, doc: "the country's entry of the ratings document"
+  attr :rated, :integer, default: 0
 
   @doc """
   The selected country. Each value carries `data-field` so the script can
@@ -231,6 +234,18 @@ defmodule SyliAtlasWeb.MapComponents do
             </dd>
           </div>
         </dl>
+        <a class="map-rating" href={Paths.ratings(@locale)} data-field="rating">
+          <span class="map-rating-top">
+            <span class="map-rating-title">{gettext("Sovereign rating")}</span>
+            <b class="num" data-field="rating-label">{rating_text(@rating).label}</b>
+            <span class={["rt-badge", rating_text(@rating).class]} data-field="rating-verdict">
+              {rating_text(@rating).verdict}
+            </span>
+          </span>
+          <span class="small muted" data-field="rating-detail">
+            {rating_text(@rating, @rated).detail}
+          </span>
+        </a>
       </div>
       <div class="map-panel-actions">
         <a
@@ -244,6 +259,34 @@ defmodule SyliAtlasWeb.MapComponents do
       </div>
     </aside>
     """
+  end
+
+  @doc "What the panel shows of a country's rating (also sent to the script)."
+  def rating_text(entry, rated \\ 0)
+
+  def rating_text(%{"band" => band} = entry, rated) when is_binary(band) do
+    %{
+      label: entry["label"],
+      class: RatingComponents.band_class(band),
+      verdict: RatingComponents.verdict(band) <> " · " <> RatingComponents.category(band),
+      detail:
+        Enum.join(
+          Enum.reject(
+            [RatingComponents.agencies_text(entry), RatingComponents.rank_text(entry, rated)],
+            &is_nil/1
+          ),
+          " · "
+        )
+    }
+  end
+
+  def rating_text(_entry, _rated) do
+    %{
+      label: "—",
+      class: "rt-none",
+      verdict: RatingComponents.verdict(nil),
+      detail: gettext("None of the three main agencies rates this country")
+    }
   end
 
   @doc "« Region · economy no. 7 of 53 », ranked by GDP in current dollars."
@@ -260,7 +303,9 @@ defmodule SyliAtlasWeb.MapComponents do
   def json_for_script(data), do: data |> Jason.encode!() |> String.replace("</", "<\\/")
 
   @doc "Everything the script needs to refill the panel and recolour the map."
-  def client_data(countries, from, to, locale) do
+  def client_data(countries, from, to, locale, ratings \\ nil) do
+    rated = (ratings && ratings["rated"]) || 0
+
     %{
       from: from,
       to: to,
@@ -294,6 +339,7 @@ defmodule SyliAtlasWeb.MapComponents do
                inflation: Format.value(c["inflation"], "inflation", locale),
                debt: Format.value(c["debt"], "public_debt_pct_gdp", locale)
              },
+             rating: rating_text(SyliAtlas.Ratings.for_country(ratings, c["code"]), rated),
              classes: Map.new(MapScale.keys(), &{&1, MapScale.class(&1, c[value_key(&1)])}),
              values: Map.new(MapScale.keys(), &{&1, MapScale.value_text(&1, c, locale)})
            }}
@@ -307,13 +353,14 @@ defmodule SyliAtlasWeb.MapComponents do
   attr :from, :integer, required: true
   attr :to, :integer, required: true
   attr :locale, :string, required: true
+  attr :ratings, :map, default: nil, doc: "the ratings document"
 
   @doc "The home section: indicator switch, map, legend and panel."
   def map_section(assigns) do
     ~H"""
     <div class="map-layout" data-map data-selected={@selected["code"]} data-indicator={@indicator}>
       <script type="application/json" id="map-data">
-        <%= Phoenix.HTML.raw(json_for_script(client_data(@countries, @from, @to, @locale))) %>
+        <%= Phoenix.HTML.raw(json_for_script(client_data(@countries, @from, @to, @locale, @ratings))) %>
       </script>
       <.card class="map-card">
         <div class="map-toolbar">
@@ -355,7 +402,15 @@ defmodule SyliAtlasWeb.MapComponents do
           )}
         </p>
       </.card>
-      <.map_panel country={@selected} indicator={@indicator} from={@from} to={@to} locale={@locale} />
+      <.map_panel
+        country={@selected}
+        indicator={@indicator}
+        from={@from}
+        to={@to}
+        locale={@locale}
+        rating={SyliAtlas.Ratings.for_country(@ratings, @selected["code"])}
+        rated={(@ratings && @ratings["rated"]) || 0}
+      />
     </div>
     """
   end

@@ -1,6 +1,8 @@
 defmodule SyliAtlasWeb.PageHTML do
   use SyliAtlasWeb, :html
 
+  alias SyliAtlasWeb.RatingComponents
+
   embed_templates "page_html/*"
 
   attr :africa, :map, required: true
