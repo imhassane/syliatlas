@@ -86,6 +86,20 @@ defmodule SyliAtlasWeb.PublicPagesTest do
     assert conn |> get("/fr") |> html_response(200) =~ "2026-11-10 06:00 UTC"
   end
 
+  test "public pages load the site script only, never the LiveView client", %{conn: conn} do
+    for path <- ["/fr", "/en/regions", "/fr/pays/cote-d-ivoire", "/fr/classement"] do
+      html = conn |> get(path) |> html_response(200)
+      assert html =~ "/assets/js/app.js"
+      refute html =~ "/assets/js/live.js", "#{path} loads the LiveView client"
+    end
+  end
+
+  test "LiveViews are marked to load the LiveView client" do
+    socket = %Phoenix.LiveView.Socket{}
+    assert {:cont, socket} = SyliAtlasWeb.LiveAssets.on_mount(:default, %{}, %{}, socket)
+    assert socket.assigns.live_js
+  end
+
   test "root redirects to a language", %{conn: conn} do
     assert redirected_to(get(conn, "/")) in ["/fr", "/en"]
   end

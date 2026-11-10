@@ -1,30 +1,11 @@
-// If you want to use Phoenix channels, run `mix help phx.gen.channel`
-// to get started and then uncomment the line below.
-// import "./user_socket.js"
+// Syli Atlas: the script of every page. It holds the site's own behaviour
+// (map, drawer, filter sheets, toasts, updates, install, motion) and nothing
+// heavy: the LiveView client lives in live.js, loaded only by LiveView pages
+// (see SyliAtlasWeb.LiveAssets), so public pages never download it.
 
-// You can include dependencies in two ways.
-//
-// The simplest option is to put them in assets/vendor and
-// import them using relative paths:
-//
-//     import "../vendor/some-package.js"
-//
-// Alternatively, you can `npm install some-package --prefix assets` and import
-// them using a path starting with the package name:
-//
-//     import "some-package"
-//
-// If you have dependencies that try to import CSS, esbuild will generate a separate `app.css` file.
-// To load it, simply add a second `<link>` to your `root.html.heex` file.
-
-// Include phoenix_html to handle method=PUT/DELETE in forms and buttons.
 import "../css/app.css"
+// phoenix_html handles links and buttons with data-method (sign-out, deletes).
 import "phoenix_html"
-// Establish Phoenix Socket and LiveView configuration.
-import {Socket} from "phoenix"
-import {LiveSocket} from "phoenix_live_view"
-import {hooks as colocatedHooks} from "phoenix-colocated/syli_atlas"
-import topbar from "../vendor/topbar"
 
 import {initDrawer} from "./ui/drawer"
 import {initSheets} from "./ui/sheet"
@@ -44,29 +25,6 @@ initUpdates()
 initInstall()
 initCountUp()
 initScrollReveal()
-
-// Public pages are cached and carry no session or CSRF token: LiveView only
-// connects on pages that have one (sign-in, discussions, admin).
-const csrfToken = document.querySelector("meta[name='csrf-token']")?.getAttribute("content")
-const liveSocket = new LiveSocket("/live", Socket, {
-  longPollFallbackMs: 2500,
-  params: {_csrf_token: csrfToken},
-  hooks: {...colocatedHooks},
-})
-
-// Show progress bar on live navigation and form submits
-topbar.config({barColors: {0: "#29d"}, shadowColor: "rgba(0, 0, 0, .3)"})
-window.addEventListener("phx:page-loading-start", _info => topbar.show(300))
-window.addEventListener("phx:page-loading-stop", _info => topbar.hide())
-
-// connect if there are any LiveViews on the page
-if (csrfToken) liveSocket.connect()
-
-// expose liveSocket on window for web console debug logs and latency simulation:
-// >> liveSocket.enableDebug()
-// >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
-// >> liveSocket.disableLatencySim()
-window.liveSocket = liveSocket
 
 // The lines below enable quality of life phoenix_live_reload
 // development features:

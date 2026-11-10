@@ -52,6 +52,9 @@ defmodule SyliAtlasWeb do
     quote do
       use Phoenix.LiveView
 
+      # Loads the LiveView client (live.js) in the root layout.
+      on_mount SyliAtlasWeb.LiveAssets
+
       unquote(html_helpers())
     end
   end
