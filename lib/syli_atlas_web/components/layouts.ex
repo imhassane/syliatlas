@@ -522,9 +522,9 @@ defmodule SyliAtlasWeb.Layouts do
               "One click is enough: without it, no recap goes out."
             )}
           </p>
-          <div class="row gap-2">
-            <button type="button" class="btn btn-primary" data-recap-close>{gettext("Close")}</button>
+          <div class="recap-dialog-actions">
             <button type="button" class="btn btn-quiet" data-recap-again>{gettext("Change address")}</button>
+            <button type="button" class="btn btn-primary" data-recap-close>{gettext("Close")}</button>
           </div>
           <p class="small muted">
             {gettext("Nothing received? Check your spam. The link is valid for 7 days.")}

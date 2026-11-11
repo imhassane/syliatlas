@@ -41,6 +41,8 @@
 .recap-dialog p { margin: 0; }
 .recap-dialog-icon { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 50%; background: var(--accent-bg); color: var(--accent-text); }
 .recap-dialog [hidden] { display: none !important; }
+/* Close and change address: on the right, the main action last. */
+.recap-dialog-actions { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
 
 @media (max-width: 39.99rem) {
   /* A sheet from the bottom on phones. */
