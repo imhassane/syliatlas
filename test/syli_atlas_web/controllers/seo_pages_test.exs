@@ -53,7 +53,7 @@ defmodule SyliAtlasWeb.SeoPagesTest do
     end
 
     test "the lead sentence starts with real growth, never a bare fall in dollars" do
-      lead = text(doc("/en/countries/senegal"), "[data-answer]")
+      lead = text(doc("/en/countries/senegal"), "[data-answer]") |> String.trim()
       assert lead =~ ~r/^Senegal: growth of /
       assert lead =~ "no. "
     end

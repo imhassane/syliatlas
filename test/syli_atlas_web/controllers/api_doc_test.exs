@@ -82,7 +82,7 @@ defmodule SyliAtlasWeb.ApiDocTest do
     assert home =~ ~s(href="/fr/api")
     refute home =~ ~s(href="/api/v1/areas")
 
-    sitemap = build_conn() |> get(~p"/sitemap.xml") |> response(200)
+    sitemap = sitemaps()
     assert sitemap =~ "/fr/api</loc>"
     assert sitemap =~ "/en/api"
   end
