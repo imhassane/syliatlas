@@ -54,6 +54,7 @@ defmodule SyliAtlasWeb.Router do
 
   pipeline :admin do
     plug SyliAtlasWeb.Plugs.AdminAuth
+    plug SyliAtlasWeb.Plugs.AdminShell
     plug :put_layout, false
     plug :admin_locale
   end

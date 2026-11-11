@@ -83,16 +83,11 @@ dd.rt-inv, dd.rt-spec, dd.rt-high, dd.rt-risk, dd.rt-def, b.rt-inv, b.rt-spec, b
 
 /* Admin: validation queue. */
 /* admin (maquette « Admin — Notations à valider ») */
-.adm-bar { border-bottom: 1px solid var(--border); background: var(--alt); }
-.adm-bar .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; min-height: 64px; }
-.adm-brand { font-size: 18px; font-weight: 600; color: var(--ink); text-decoration: none; }
-.adm-brand > span:first-child { font-weight: 400; color: var(--ink-muted); }
-.adm-brand .mono { font-size: 12px; font-weight: 400; }
-.adm { padding: 40px 0 64px; }
 .adm-head { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: flex-end; }
-.adm-intro { display: flex; flex-direction: column; gap: 10px; max-width: 760px; }
+.adm-intro { display: flex; flex-direction: column; gap: 10px; max-width: 720px; }
+.adm-intro .eyebrow, .adm-head .eyebrow { margin: 0; }
 .adm-intro p { margin: 0; font-size: 16px; line-height: 1.55; }
-.adm-title { margin: 0; font-size: 34px; font-weight: 400; letter-spacing: -0.02em; }
+.adm-title { margin: 0; font-size: 40px; line-height: 1.1; font-weight: 300; letter-spacing: -0.03em; }
 .adm-head-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .adm-big-sm { font-size: 28px !important; }
 .adm-flash { margin: 0; padding: 10px 14px; border-radius: 8px; }
@@ -130,7 +125,7 @@ dd.rt-inv, dd.rt-spec, dd.rt-high, dd.rt-risk, dd.rt-def, b.rt-inv, b.rt-spec, b
 .adm-form input, .adm-form select, .adm-field input { font: inherit; font-size: 14px; min-height: 40px; padding: 6px 10px; border: 1px solid var(--border-input); border-radius: 8px; background: var(--card); color: var(--ink); box-sizing: border-box; width: 100%; }
 .adm-wide { grid-column: 1 / -1; }
 .adm-actions { grid-column: 1 / -1; }
-@media (max-width: 47.99rem) { .adm-title { font-size: 28px; } .adm-row, .adm-card-head { padding: 18px 16px; } }
+@media (max-width: 47.99rem) { .adm-title { font-size: 30px; } .adm-row, .adm-card-head { padding: 18px 16px; } }
 
 /* Business climate block of a country profile. */
 .cl-row { display: flex; flex-direction: column; gap: 6px; }
@@ -138,3 +133,23 @@ dd.rt-inv, dd.rt-spec, dd.rt-high, dd.rt-risk, dd.rt-def, b.rt-inv, b.rt-spec, b
 .cl-track { flex: none; }
 .cl-above { background: var(--rt-inv); }
 .cl-below { background: var(--rt-high); }
+
+/* cadre admin (maquettes « Admin — … ») : compléments de .admin / .admin-side de base.css */
+.admin-logo { display: flex; align-items: center; gap: 10px; padding: 0 6px; text-decoration: none; }
+.admin-side a.admin-logo { min-height: 0; padding: 0 6px; border-radius: 0; }
+.admin-logo > span { font-size: 18px; font-weight: 600; letter-spacing: -0.02em; color: var(--ink); }
+.admin-logo > span span { font-weight: 400; color: var(--ink-muted); }
+.admin-nav { display: flex; flex-direction: column; gap: 20px; }
+.admin-nav > div { display: flex; flex-direction: column; gap: 2px; }
+.admin-side a:hover:not([aria-current]) { background: var(--alt); color: var(--ink); }
+.admin-cnt { margin-left: auto; min-width: 22px; padding: 1px 7px; border-radius: 999px; background: var(--accent-bg); color: var(--accent-text); font-size: 12px; font-weight: 600; text-align: center; font-variant-numeric: tabular-nums; }
+.admin-session { margin-top: auto; padding: 12px; border-radius: 8px; background: var(--alt); font-size: 13px; line-height: 1.5; display: flex; flex-direction: column; }
+.admin-session b { font-weight: 600; }
+.admin-main > div > .adm-toggle { display: none; }
+@media (max-width: 47.99rem) {
+  .admin-side { flex: 1 1 100%; max-width: none; padding: 14px 12px; gap: 12px; border-right: 0; border-bottom: 1px solid var(--border); }
+  .admin-nav { flex-direction: row; gap: 4px; overflow-x: auto; }
+  .admin-nav > div { flex-direction: row; gap: 2px; }
+  .admin-nav h2, .admin-session { display: none; }
+  .admin-main { padding: 24px 16px 48px; }
+}
