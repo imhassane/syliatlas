@@ -69,13 +69,35 @@ defmodule SyliAtlasWeb.ApiDocHTML do
   def code_block(assigns) do
     ~H"""
     <div class={["code-block", @class]} role="region" aria-label={@label} tabindex="0">
-      <ol class={["code-lines", !@numbers && "no-numbers"]}>
-        <li :for={line <- @lines}>
-          <span :for={{class, text} <- line} class={"tok-" <> class}>{text}</span>
-        </li>
-      </ol>
+      <ol class={["code-lines", !@numbers && "no-numbers"]}>{lines_html(@lines)}</ol>
     </div>
     """
+  end
+
+  @doc """
+  The `<li>` of each line, built here rather than in the template: lines
+  are shown with `white-space: pre`, so no space or line break may slip
+  between the tokens (the HEEx formatter would add some). Text is escaped.
+  """
+  def lines_html(lines) do
+    lines
+    |> Enum.map(fn line ->
+      [
+        "<li>",
+        Enum.map(line, fn {class, text} ->
+          [
+            ~s(<span class="tok-),
+            class,
+            ~s(">),
+            Phoenix.HTML.html_escape(text) |> Phoenix.HTML.safe_to_string(),
+            "</span>"
+          ]
+        end),
+        "</li>"
+      ]
+    end)
+    |> IO.iodata_to_binary()
+    |> Phoenix.HTML.raw()
   end
 
   attr :route, :map, required: true
