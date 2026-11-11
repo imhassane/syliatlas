@@ -98,6 +98,8 @@ defmodule SyliAtlasWeb.Router do
     get "/llms.txt", SitemapController, :llms
     get "/llms-full.txt", SitemapController, :llms_full
     get "/og/:version/*path", OgImageController, :show
+    # Content-Security-Policy violation reports (SyliAtlasWeb.CSP).
+    post "/csp-report", CspReportController, :create
   end
 
   scope "/", SyliAtlasWeb do

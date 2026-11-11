@@ -59,28 +59,9 @@
     <meta name="theme-color" content="#0b1a33" />
     <link rel="icon" href={~p"/images/icon.svg"} type="image/svg+xml" />
     <link rel="apple-touch-icon" href={~p"/images/apple-touch-icon.png"} />
-    <script>
-      (function () {
-        try {
-          var t = localStorage.getItem("theme");
-          if (!t) t = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-          document.documentElement.dataset.theme = t;
-        } catch (e) {}
-        document.documentElement.classList.add("js");
-        // Entrance animations play once per page and session. A page prepared in
-        // advance (speculation rules below) counts as seen only once shown.
-        var markSeen = function () {
-          try {
-            var seen = JSON.parse(sessionStorage.getItem("seen") || "[]");
-            if (seen.indexOf(location.pathname) >= 0) document.documentElement.classList.add("revisit");
-            else sessionStorage.setItem("seen", JSON.stringify(seen.concat(location.pathname).slice(-50)));
-          } catch (e) {}
-        };
-        if (document.prerendering) document.addEventListener("prerenderingchange", markSeen, {once: true});
-        else markSeen();
-        if (!navigator.onLine) document.documentElement.classList.add("is-offline");
-      })();
-    </script>
+    <%!-- Inline scripts live in lib/syli_atlas_web/csp/: the Content-Security-Policy
+         allows them by their hash (SyliAtlasWeb.CSP). --%>
+    {SyliAtlasWeb.CSP.script(:boot)}
     <%!-- Page arrival after a tab of a country profile or a table filter or sort
          (the old page wrote where things were when the link was clicked:
          assets/js/ui/transitions.js). The new page is shown at once and moves
@@ -91,79 +72,7 @@
          Only then does the first paint wait for the content it measures (a
          rel="expect" added here, while the head is parsed); every other page
          paints as soon as its first bytes arrive, and does not move. --%>
-    <script>
-      (function () {
-        var EASE = "cubic-bezier(.22, 1, .36, 1)";
-        var read = function () {
-          try {
-            var saved = JSON.parse(sessionStorage.getItem("arrival"));
-            if (saved && saved.to === location.href) { sessionStorage.removeItem("arrival"); return saved; }
-          } catch (x) {}
-          return null;
-        };
-        var early = read();
-        if (early) {
-          var expect = document.createElement("link");
-          expect.rel = "expect";
-          expect.href = early.kind === "tab" ? "#tab-panel" : "#vt-ready";
-          expect.setAttribute("blocking", "render");
-          document.head.appendChild(expect);
-        }
-        // The band keeps its place from page to page: its loop position follows
-        // the clock (assets/css/ticker.css, mod()).
-        document.documentElement.style.setProperty("--now", Date.now() / 1000 + "s");
-
-        var arrive = function () {
-          // A page prepared in advance read nothing while it was being prepared.
-          var saved = early || read();
-          early = null;
-          if (!saved) return;
-          var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
-          var band = document.getElementById("site-ticker");
-          var stickyTop = band ? band.offsetHeight : 0;
-          var move = function (el, from, ms) {
-            if (!still && el && el.animate) el.animate([{transform: from}, {transform: "none"}], {duration: ms || 320, easing: EASE});
-          };
-          // Same place as on the old page, also when the link carried an anchor
-          // (the anchor would scroll once more at the end of parsing).
-          var keep = function (y) {
-            if (location.hash) history.replaceState(history.state, "", location.pathname + location.search);
-            scrollTo({top: y, behavior: "instant"});
-            if (document.readyState === "loading")
-              document.addEventListener("DOMContentLoaded", function () { scrollTo({top: y, behavior: "instant"}); }, {once: true});
-          };
-
-          if (saved.kind === "tab") {
-            var bar = document.querySelector(".tab-bar"), panel = document.getElementById("tab-panel");
-            if (!bar || !panel) return;
-            keep(panel.getBoundingClientRect().top + scrollY - bar.offsetHeight - Math.max(saved.top, stickyTop));
-            // Near the top of a page whose hero is shorter, the bar cannot stay:
-            // it glides to its new place instead of jumping.
-            var gap = Math.max(saved.top, stickyTop) - bar.getBoundingClientRect().top;
-            if (Math.abs(gap) > 1) move(bar, "translateY(" + gap + "px)");
-            var ind = bar.querySelector(".tab-indicator");
-            if (ind && saved.ind) {
-              var r = ind.getBoundingClientRect();
-              move(ind, "translateX(" + (saved.ind.left - r.left) + "px) scaleX(" + saved.ind.width / r.width + ")");
-            }
-            move(panel, "translateX(" + 32 * saved.dir + "px)");
-          } else if (saved.kind === "reorder") {
-            var box = document.querySelector("[data-keep-place]");
-            if (!box) return;
-            keep(scrollY + box.getBoundingClientRect().top - Math.max(saved.top, stickyTop));
-            var top0 = box.getBoundingClientRect().top;
-            Array.prototype.forEach.call(document.querySelectorAll("[data-reorder] > [id]"), function (row) {
-              var was = saved.rows[row.id];
-              var now = row.getBoundingClientRect().top - top0;
-              if (was == null) move(row, "translateY(12px)");
-              else if (Math.abs(was - now) > 1) move(row, "translateY(" + (was - now) + "px)", 380);
-            });
-          }
-        };
-        if ("onpagereveal" in window) addEventListener("pagereveal", arrive);
-        else document.addEventListener("DOMContentLoaded", arrive);
-      })();
-    </script>
+    {SyliAtlasWeb.CSP.script(:arrival)}
     <%!-- Fonts are served by the site (assets/css/fonts.css): nothing blocks the
          first paint on another origin. Inter Tight sets the titles and text, so
          it starts first; the monospace eyebrows can wait. --%>
@@ -188,13 +97,7 @@
     <link rel="expect" href="#main" blocking="render" />
     <%!-- Prepare the next page on hover (prerender) so a click shows it at once.
          Only public pages: never the API, sign-in, the member space, discussions or admin. --%>
-    <script :if={assigns[:public]} type="speculationrules">
-      {"prerender": [{"where": {"and": [
-        {"href_matches": "/*"},
-        {"not": {"href_matches": ["/admin/*", "/admin", "/api/*", "/*/mon-espace*", "/*/my-space*", "/*/connexion*", "/*/sign-in*", "/unsubscribe/*", "/*/discussion*"]}},
-        {"not": {"selector_matches": "[data-method], [download], [rel~=nofollow], [target]"}}
-      ]}, "eagerness": "moderate"}]}
-    </script>
+    {if assigns[:public], do: SyliAtlasWeb.CSP.script(:speculation_rules)}
     <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
     </script>
     <%!-- The LiveView client, for LiveView pages only (SyliAtlasWeb.LiveAssets). --%>

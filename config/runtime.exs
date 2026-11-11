@@ -23,6 +23,19 @@ end
 config :syli_atlas, SyliAtlasWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT", "4000"))]
 
+# Content-Security-Policy of HTML pages (SyliAtlasWeb.CSP): "report-only" (default:
+# violations are reported to /csp-report, nothing is blocked), "enforce" (the
+# browser blocks them) or "off" (only Phoenix's base-uri/frame-ancestors).
+csp_mode =
+  case System.get_env("CSP_MODE", "report-only") do
+    "enforce" -> :enforce
+    "off" -> :off
+    "report-only" -> :report_only
+    other -> raise "CSP_MODE must be report-only, enforce or off, got: #{inspect(other)}"
+  end
+
+config :syli_atlas, SyliAtlasWeb.CSP, mode: csp_mode
+
 # Market data. The Mansa key is the Railway variable STOCK_EXCHANGE_API_KEY
 # (the lower-case spelling is accepted too: environment variable names are
 # case-sensitive). Without it, the market import cancels itself and the
