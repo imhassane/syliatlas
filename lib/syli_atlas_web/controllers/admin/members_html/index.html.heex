@@ -75,8 +75,8 @@
   </div>
 
   <section class="card adm-list">
-    <p :if={@users == []} class="adm-empty muted">Aucun compte.</p>
-    <div :if={@users != []} class="table-wrap">
+    <p :if={@users.total == 0} class="adm-empty muted">Aucun compte.</p>
+    <div :if={@users.total > 0} class="table-wrap">
       <table class="table adm-table" id="members">
         <thead>
           <tr>
@@ -89,7 +89,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr :for={u <- @users} id={"member-#{u.id}"}>
+          <tr :for={u <- @users.entries} id={"member-#{u.id}"}>
             <% act = Map.get(@activity, u.id, %{last: nil, open: 0, alerts: 0}) %>
             <% keys = Map.get(@passkey_counts, u.id, 0) %>
             <td class="l" dir="ltr">
@@ -167,6 +167,7 @@
         </tbody>
       </table>
     </div>
+    <.admin_pager page={@users} path={~p"/admin/membres"} params={@params} key="page" />
   </section>
   <p class="subtle small">
     Le dernier administrateur ne peut être ni rétrogradé ni désactivé. Désactiver un compte ferme aussi ses sessions.

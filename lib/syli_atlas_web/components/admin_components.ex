@@ -74,6 +74,29 @@ defmodule SyliAtlasWeb.AdminComponents do
     """
   end
 
+  attr :page, SyliAtlasWeb.Pagination, required: true
+  attr :path, :string, required: true, doc: "the page's path, without query"
+  attr :params, :map, default: %{}, doc: "the current query parameters, kept in the links"
+  attr :key, :string, default: "page", doc: "the parameter of this list's page"
+  attr :anchor, :string, default: nil
+  attr :label, :string, default: "Pages"
+
+  @doc "The site's pager (10 rows a page, `?page=`), in French, with « 11–20 sur 54 »."
+  def admin_pager(assigns) do
+    ~H"""
+    <div :if={@page.pages > 1} class="adm-pager">
+      <SyliAtlasWeb.UI.pagination
+        page={@page}
+        href={&SyliAtlasWeb.Pagination.href(@path, @params, @key, &1, @anchor)}
+        label={@label}
+        prev_label="Précédente"
+        next_label="Suivante"
+        summary={"#{@page.offset + 1}–#{@page.offset + length(@page.entries)} sur #{@page.total}"}
+      />
+    </div>
+    """
+  end
+
   attr :tabs, :list, required: true, doc: "[{key, label, href}]"
   attr :current, :string, required: true
   attr :label, :string, default: "Sections"

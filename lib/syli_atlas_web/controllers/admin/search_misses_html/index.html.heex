@@ -15,9 +15,9 @@
     </div>
   </header>
 
-  <p :if={@misses == []} class="muted" id="misses-none">Aucune recherche sans résultat.</p>
+  <p :if={@misses.total == 0} class="muted" id="misses-none">Aucune recherche sans résultat.</p>
 
-  <div :if={@misses != []} class="card">
+  <div :if={@misses.total > 0} class="card adm-list">
     <table class="table" id="misses">
       <thead>
         <tr>
@@ -25,7 +25,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr :for={m <- @misses}>
+        <tr :for={m <- @misses.entries}>
           <td>
             <a href={"/#{m.locale}/#{if m.locale == "en", do: "search", else: "recherche"}?q=#{URI.encode_www_form(m.query)}"}>{m.query}</a>
           </td>
@@ -35,5 +35,6 @@
         </tr>
       </tbody>
     </table>
+    <.admin_pager page={@misses} path={~p"/admin/recherches"} />
   </div>
 </.admin_shell>

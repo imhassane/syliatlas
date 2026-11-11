@@ -12,7 +12,12 @@ defmodule SyliAtlasWeb.Admin.EmailsController do
     render(conn, :index,
       page_title: "Admin · E-mails envoyés",
       filter: filter,
-      rows: Emails.list(Map.get(@filters, filter, :all)),
+      rows:
+        SyliAtlasWeb.Pagination.paginate(
+          Emails.list(Map.get(@filters, filter, :all), 1000),
+          params["page"]
+        ),
+      params: Map.take(params, ["filtre"]),
       stats: Emails.stats()
     )
   end

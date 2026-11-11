@@ -145,10 +145,10 @@
         </a>
       </nav>
     </div>
-    <p :if={@previous && @revisions == []} class="adm-empty muted">
+    <p :if={@previous && @revisions.total == 0} class="adm-empty muted">
       Aucun écart de cette taille.
     </p>
-    <div :if={@revisions != []} class="table-wrap">
+    <div :if={@revisions.total > 0} class="table-wrap">
       <table class="table adm-table">
         <thead>
           <tr>
@@ -161,7 +161,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr :for={r <- @revisions}>
+          <tr :for={r <- @revisions.entries}>
             <td class="l">{Map.get(@names, r.area, r.area)}</td>
             <td class="l">{indicator(r.indicator)}</td>
             <td>{r.year}</td>
@@ -172,5 +172,11 @@
         </tbody>
       </table>
     </div>
+    <.admin_pager
+      page={@revisions}
+      path={~p"/admin/mises-a-jour/editions/#{@edition.id}"}
+      params={@params}
+      key="page"
+    />
   </section>
 </.admin_shell>

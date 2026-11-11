@@ -19,7 +19,15 @@ defmodule SyliAtlasWeb.Admin.MembersController do
 
     render(conn, :index,
       page_title: "Admin · Membres",
-      users: Accounts.list_users([search: params["q"]] ++ Map.get(@filters, filter, [])),
+      users:
+        SyliAtlasWeb.Pagination.from_count(
+          Accounts.count_users([search: params["q"]] ++ Map.get(@filters, filter, [])),
+          params["page"],
+          &Accounts.list_users(
+            [search: params["q"], limit: &1, offset: &2] ++ Map.get(@filters, filter, [])
+          )
+        ),
+      params: Map.take(params, ["q", "filtre"]),
       passkey_counts: passkey_counts(),
       activity: Accounts.activity(),
       stats: Accounts.stats(),

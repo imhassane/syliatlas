@@ -59,18 +59,16 @@ defmodule SyliAtlas.Admin.Jobs do
     end
   end
 
-  @doc "Latest jobs, newest first. Filter: :all, :failed or :running."
-  def recent(filter \\ :all, limit \\ 30) do
-    query =
-      case filter do
-        :failed -> where(base(), [j], j.state in ["retryable", "discarded"])
-        :running -> where(base(), [j], j.state in ["executing", "available", "scheduled"])
-        _ -> base()
-      end
+  @doc "How many jobs match a filter."
+  def count(filter \\ :all), do: filter |> filtered() |> Repo.aggregate(:count)
 
-    query
+  @doc "Latest jobs, newest first. Filter: :all, :failed or :running."
+  def recent(filter \\ :all, limit \\ 30, offset \\ 0) do
+    filter
+    |> filtered()
     |> order_by([j], desc: j.id)
     |> limit(^limit)
+    |> offset(^offset)
     |> select([j], %{
       id: j.id,
       worker: j.worker,
@@ -86,6 +84,14 @@ defmodule SyliAtlas.Admin.Jobs do
       scheduled_at: j.scheduled_at
     })
     |> Repo.all()
+  end
+
+  defp filtered(filter) do
+    case filter do
+      :failed -> where(base(), [j], j.state in ["retryable", "discarded"])
+      :running -> where(base(), [j], j.state in ["executing", "available", "scheduled"])
+      _ -> base()
+    end
   end
 
   @doc "Jobs that failed (retried or given up) in the last `days` days."
