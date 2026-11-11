@@ -107,6 +107,7 @@ defmodule SyliAtlasWeb.AreaController do
 
     ctx = %{
       period_query: period_query,
+      rated: (ratings && ratings["rated"]) || 0,
       locale: locale,
       area: area,
       name: name,

@@ -19,6 +19,176 @@ defmodule SyliAtlasWeb.ProfileComponents do
   def tab_label(:society), do: gettext("Society")
   def tab_label(:markets), do: gettext("Markets and rating")
 
+  attr :ctx, :map, required: true, doc: "everything the profile knows (see AreaController)"
+  attr :region, :any, default: nil
+  attr :heading, :string, required: true
+  attr :tab_name, :string, default: nil
+  attr :path, :string, required: true
+
+  @doc """
+  Header of a country profile, the same on every tab: breadcrumb, flag, name,
+  region, communities and currency, follow and alert; then six key figures,
+  each opening its tab. The tab bar (with the period) follows, sticky.
+  """
+  def country_head(assigns) do
+    ctx = assigns.ctx
+    suffix = String.replace_prefix(assigns.heading, ctx.name, "") |> String.trim_leading(" · ")
+
+    assigns =
+      assign(assigns,
+        name: ctx.name,
+        area: ctx.area,
+        locale: ctx.locale,
+        suffix: if(suffix in ["", assigns.heading], do: nil, else: suffix),
+        kpis: head_kpis(ctx)
+      )
+
+    ~H"""
+    <div class="country-head">
+      <nav aria-label={gettext("Breadcrumb")}>
+        <ol class="crumbs">
+          <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+          <li :if={@region}>
+            <a href={Paths.area(@locale, @region)}>{SyliAtlas.Geo.Area.name(@region, @locale)}</a>
+          </li>
+          <%= if @ctx.tab != :overview do %>
+            <li><a href={Paths.area(@locale, @area)}>{@name}</a></li>
+            <li aria-current="page">{@tab_name}</li>
+          <% else %>
+            <li aria-current="page">{@name}</li>
+          <% end %>
+        </ol>
+      </nav>
+      <div class="country-id">
+        <SyliAtlasWeb.UI.flag code={@area.code} size="lg" />
+        <div class="country-id-text">
+          <h1 class="country-name">
+            {@name}<span :if={@suffix} class="country-name-tab"> · {@suffix}</span>
+          </h1>
+          <div class="country-chips">
+            <a :if={@region} class="pill pill-neutral no-dot" href={Paths.area(@locale, @region)}>
+              {SyliAtlas.Geo.Area.name(@region, @locale)}
+            </a>
+            <a
+              :for={c <- @ctx.communities}
+              class="pill pill-neutral no-dot"
+              href={Paths.community(@locale, c.slug[@locale])}
+            >
+              {c.short[@locale]}
+            </a>
+            <a
+              :if={@ctx.currency}
+              class="pill pill-neutral no-dot"
+              href={Paths.area_tab(@locale, @area, :finances) <> @ctx.period_query <> "#monnaie"}
+            >
+              {@ctx.currency.name} ({@ctx.currency.code})
+            </a>
+          </div>
+        </div>
+        <SyliAtlasWeb.AccountComponents.follow
+          kind="area"
+          ref={@area.code}
+          locale={@locale}
+          path={@path}
+          alert_area={@area.code}
+        />
+      </div>
+      <ul class="card country-kpis" id="country-kpis">
+        <li :for={k <- @kpis}>
+          <a href={k.href} id={"kpi-#{k.id}"}>
+            <span class="country-kpi-label">{k.label}</span>
+            <span class={["num country-kpi-value", k.tone]}>{k.value}</span>
+            <span class="country-kpi-sub">{k.sub}</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+    """
+  end
+
+  defp head_kpis(ctx) do
+    l = ctx.locale
+    series = ctx.profile["series"]
+    changes = ctx.data["period"]["changes"]
+    at = fn k -> PublicData.at(series[k], ctx.to) end
+
+    tab = fn t ->
+      Paths.area_tab(l, ctx.area, if(t in ctx.tabs, do: t, else: :overview)) <> ctx.period_query
+    end
+
+    since = gettext("since %{year}", year: ctx.from)
+    rating = ctx.rating
+
+    [
+      %{
+        id: "gdp",
+        label: gettext("GDP %{year}", year: ctx.to),
+        value: value(at.("gdp_usd_bn"), "gdp_usd_bn", l),
+        sub: change(changes["gdp_usd_bn"], "gdp_usd_bn", l) <> " " <> since,
+        tone: nil,
+        href: tab.(:economy)
+      },
+      %{
+        id: "growth",
+        label: gettext("Growth %{year}", year: ctx.to),
+        value: value(at.("real_gdp_growth"), "real_gdp_growth", l),
+        sub:
+          gettext("real GDP %{change} %{since}",
+            change: change(changes["real_gdp_index"], "real_gdp_index", l),
+            since: since
+          ),
+        tone: SyliAtlasWeb.Format.tone(at.("real_gdp_growth"), "real_gdp_growth"),
+        href: tab.(:economy)
+      },
+      %{
+        id: "gdp-per-capita",
+        label: gettext("GDP per capita"),
+        value: value(at.("gdp_per_capita_usd"), "gdp_per_capita_usd", l),
+        sub: to_string(ctx.to),
+        tone: nil,
+        href: tab.(:economy)
+      },
+      %{
+        id: "debt",
+        label: gettext("Public debt"),
+        value: value(at.("public_debt_pct_gdp"), "public_debt_pct_gdp", l),
+        sub: gettext("of GDP, %{year}", year: ctx.to),
+        tone: nil,
+        href: tab.(:finances)
+      },
+      %{
+        id: "population",
+        label: gettext("Population"),
+        value: value(at.("population_m"), "population_m", l),
+        sub: to_string(ctx.to),
+        tone: nil,
+        href: tab.(:society)
+      },
+      %{
+        id: "rating",
+        label: gettext("Rating"),
+        value: (rating && rating["label"]) || "—",
+        sub:
+          if(rating && rating["band"],
+            do:
+              Enum.join(
+                Enum.reject(
+                  [
+                    SyliAtlasWeb.RatingComponents.verdict(rating["band"]),
+                    SyliAtlasWeb.RatingComponents.rank_text(rating, ctx.rated)
+                  ],
+                  &is_nil/1
+                ),
+                " · "
+              ),
+            else: gettext("No agency rating")
+          ),
+        tone: rating && rating["band"] && "rt-ink-#{rating["band"]}",
+        href: tab.(:markets) <> "#notation"
+      }
+    ]
+  end
+
   attr :area, :map, required: true
   attr :tabs, :list, required: true
   attr :current, :atom, required: true
@@ -50,22 +220,6 @@ defmodule SyliAtlasWeb.ProfileComponents do
     ~H"""
     <section class="section" id="overview">
       <div class="wrap stack gap-4">
-        <div :if={@ctx.communities != []} class="row gap-2 community-pills">
-          <a
-            :for={c <- @ctx.communities}
-            class="pill pill-neutral no-dot"
-            href={Paths.community(@ctx.locale, c.slug[@ctx.locale])}
-          >
-            {c.short[@ctx.locale]}
-          </a>
-          <a
-            :if={@ctx.currency}
-            class="pill pill-neutral no-dot"
-            href={Paths.area_tab(@ctx.locale, @ctx.area, :finances) <> @ctx.period_query <> "#monnaie"}
-          >
-            {@ctx.currency.name} ({@ctx.currency.code})
-          </a>
-        </div>
         <div class="overview-grid">
           <a :for={c <- @cards} class="card overview-card" href={c.href} id={"card-#{c.id}"}>
             <p class="eyebrow">{c.title}</p>
