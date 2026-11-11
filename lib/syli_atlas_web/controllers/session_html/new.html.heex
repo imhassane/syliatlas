@@ -47,6 +47,8 @@
               id="login-email"
               value={@email}
               autocomplete="email webauthn"
+              aria-describedby={@error && "login-error"}
+              aria-invalid={@error && "true"}
               required
               disabled={!@mail?}
             />

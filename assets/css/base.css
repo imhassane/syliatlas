@@ -233,3 +233,10 @@ pre.code { margin: 0; padding: 18px; border-radius: 8px; background: #0f1b2d; co
   .search .btn { position: static; margin-top: 8px; width: 100%; }
 }
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+
+/* Chart data as a table (Charts.line_chart/1): folded under each chart. */
+.chart-data { margin-top: .5rem; font-size: .875rem; }
+.chart-data > summary { cursor: pointer; color: var(--ink-muted); width: fit-content; }
+.chart-data > summary:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; border-radius: 4px; }
+.chart-data .table-box { max-height: 24rem; overflow: auto; margin-top: .5rem; }
+.chart-data caption { text-align: left; font-weight: 600; padding-bottom: .25rem; }

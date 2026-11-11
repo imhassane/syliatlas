@@ -12,7 +12,10 @@
       </p>
       <p class="src">
         {gettext("Source: %{source}", source: a["source"])} ·
-        <a href={a["path"]}>{gettext("See the details")} →</a>
+        <a href={a["path"]}>
+          {gettext("See the details")}<span class="vh"> : {a["name"]}, {a["label"]}</span>
+          <span aria-hidden="true">→</span>
+        </a>
       </p>
     </.card>
 

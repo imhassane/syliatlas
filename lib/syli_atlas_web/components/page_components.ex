@@ -115,6 +115,7 @@ defmodule SyliAtlasWeb.PageComponents do
     <form
       class={["search", @compact && "search-compact"]}
       role="search"
+      aria-label={if @compact, do: gettext("Site search"), else: gettext("Search the data")}
       action={SyliAtlasWeb.Paths.search(@locale)}
       method="get"
       data-search={@locale}

@@ -19,6 +19,13 @@
   .market-summary { justify-content: space-between; gap: 12px; text-align: left; }
   .market-summary dd { font-size: 17px; }
 }
+/* 320px wide (zoom 400 %, RGAA 10.11): the figures wrap instead of
+   pushing the page sideways. */
+@media (max-width: 420px) {
+  .market-hero-row > * { min-width: 0; }
+  .market-summary { flex-wrap: wrap; justify-content: flex-start; column-gap: 20px; row-gap: 8px; }
+  .market-summary dt { white-space: normal; }
+}
 
 /* The table of exchanges: a toolbar (title and count on the left, search on
    the right), region tabs laid on the table, then the rows. */

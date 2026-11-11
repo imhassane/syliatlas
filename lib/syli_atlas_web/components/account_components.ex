@@ -53,7 +53,6 @@ defmodule SyliAtlasWeb.AccountComponents do
         data-favorite={@key}
         data-label-on={gettext("Followed")}
         data-label-off={gettext("Follow")}
-        aria-pressed="false"
       >
         <svg
           width="18"

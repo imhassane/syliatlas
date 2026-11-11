@@ -150,6 +150,7 @@ defmodule SyliAtlasWeb.Router do
 
     get "/", PageController, :home
     get "/methode", PageController, :method
+    get "/accessibilite", PageController, :accessibility
     get "/hors-ligne", PageController, :offline
     get "/classement", RankingController, :index
     get "/recherche", SearchController, :index
@@ -175,6 +176,7 @@ defmodule SyliAtlasWeb.Router do
 
     get "/", PageController, :home
     get "/method", PageController, :method
+    get "/accessibility", PageController, :accessibility
     get "/offline", PageController, :offline
     get "/ranking", RankingController, :index
     get "/search", SearchController, :index

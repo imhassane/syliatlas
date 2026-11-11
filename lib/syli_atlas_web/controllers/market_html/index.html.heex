@@ -70,7 +70,13 @@
               {count_text(@rows, @q, @locale)}
             </span>
           </div>
-          <form class="market-search" action={Paths.markets(@locale)} method="get" role="search">
+          <form
+            class="market-search"
+            action={Paths.markets(@locale)}
+            method="get"
+            role="search"
+            aria-label={gettext("Search the exchanges")}
+          >
             <input :if={@region} type="hidden" name="region" value={@region} />
             <label for="market-q" class="vh">
               {gettext("Search an exchange, a country, an index or a currency")}
