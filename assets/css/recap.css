@@ -24,8 +24,6 @@
 .recap-tabs[hidden] { display: none; }
 .recap-tab { min-height: 40px; padding: 0 16px; border: 0; border-radius: 999px; background: var(--card); color: var(--ink); font: inherit; font-size: 14px; box-shadow: inset 0 0 0 1px var(--border-strong); cursor: pointer; }
 .recap-tab[aria-pressed="true"] { background: var(--ink); color: var(--page); box-shadow: none; }
-.recap-chips.recap-chips-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
-.recap-chips-grid .recap-chip span { width: 100%; box-sizing: border-box; }
 .recap-region[hidden] { display: none; }
 
 .recap-rhythm { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 12px; margin: 0; padding: 0; border: 0; min-width: 0; }
@@ -44,8 +42,7 @@
 .recap-bar-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; margin-left: auto; }
 @media (max-width: 39.99rem) {
   .recap-hero { padding: 48px 0 28px; }
-  .recap-chips.recap-chips-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
-  .recap-bar { margin: 0 -20px; padding-left: 20px; padding-right: 20px; }
+    .recap-bar { margin: 0 -20px; padding-left: 20px; padding-right: 20px; }
   .recap-bar-actions, .recap-bar-actions .btn { width: 100%; }
 }
 
@@ -56,9 +53,9 @@
 .recap-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .recap-chip { position: relative; display: inline-flex; }
 .recap-chip input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-.recap-chip span { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 16px; border-radius: 999px; background: var(--card); color: var(--ink); font-size: 14px; box-shadow: inset 0 0 0 1px var(--border-strong); cursor: pointer; }
+.recap-chip > span { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 16px 0 12px; border-radius: 999px; background: var(--card); color: var(--ink); font-size: 14px; box-shadow: inset 0 0 0 1px var(--border-strong); cursor: pointer; }
 .recap-chip input:checked + span { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; box-shadow: inset 0 0 0 1px var(--accent); }
-.recap-chip input:checked + span::before { content: "✓"; }
+.recap-chip input:checked + span::after { content: "✓"; }
 .recap-chip input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
 .recap-add { max-width: 280px; }
 

@@ -29,7 +29,23 @@ export function initRecap() {
       input.name = "countries[]"
       input.value = code
       const span = document.createElement("span")
-      span.textContent = option.textContent
+      // The same flag as the server-drawn chips (UI.flag/1, sprite).
+      if (option.dataset.flag) {
+        const ns = "http://www.w3.org/2000/svg"
+        const flag = document.createElement("span")
+        flag.className = "flag flag-sm"
+        flag.setAttribute("aria-hidden", "true")
+        const svg = document.createElementNS(ns, "svg")
+        svg.setAttribute("class", "flag-svg")
+        svg.setAttribute("viewBox", "0 0 640 480")
+        svg.setAttribute("preserveAspectRatio", "xMidYMid slice")
+        const use = document.createElementNS(ns, "use")
+        use.setAttribute("href", option.dataset.flag)
+        svg.append(use)
+        flag.append(svg)
+        span.append(flag)
+      }
+      span.append(option.textContent.trim())
       label.append(input, span)
       chips.append(label)
     }
@@ -145,7 +161,7 @@ export function initRecapPage() {
   const update = () => {
     const picked = [...form.querySelectorAll("input[name='countries[]']:checked")]
     bar.querySelector("[data-recap-names]").textContent =
-      picked.length ? picked.map((i) => i.nextElementSibling.textContent).join(", ") : bar.dataset.none
+      picked.length ? picked.map((i) => i.nextElementSibling.textContent.trim()).join(", ") : bar.dataset.none
     bar.querySelector("[data-recap-count]").textContent = picked.length
     const frequency = form.querySelector("input[name=frequency]:checked")
     if (frequency) bar.querySelector("[data-recap-frequency]").textContent = frequency.dataset.label

@@ -15,7 +15,8 @@ defmodule SyliAtlasWeb.RecapHTML do
 
   @doc """
   Step « choose your countries » (canvas « Page 2 »): every country as a
-  checkbox styled as a chip, grouped by region. Without JavaScript the
+  checkbox styled as a chip with its flag, as wide as its name, grouped by
+  region. Without JavaScript the
   regions follow each other; with it (`initRecapPage`), tabs filter them.
   At most `max` are taken (checked server-side).
   """
@@ -48,7 +49,7 @@ defmodule SyliAtlasWeb.RecapHTML do
         <legend class="vh">{gettext("Countries")}</legend>
         <div :for={r <- @regions} class="recap-region" data-region={r.code}>
           <p class="eyebrow">{r.name}</p>
-          <div class="recap-chips recap-chips-grid">
+          <div class="recap-chips">
             <label :for={c <- r.countries} class="recap-chip">
               <input
                 type="checkbox"
@@ -56,7 +57,7 @@ defmodule SyliAtlasWeb.RecapHTML do
                 value={c.code}
                 checked={MapSet.member?(@picked, c.code)}
               />
-              <span>{c.name}</span>
+              <span><.flag code={c.code} size="sm" sprite />{c.name}</span>
             </label>
           </div>
         </div>

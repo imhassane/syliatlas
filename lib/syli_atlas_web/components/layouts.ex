@@ -502,14 +502,20 @@ defmodule SyliAtlasWeb.Layouts do
             <div class="recap-chips" data-recap-chips>
               <label :for={c <- @countries} class="recap-chip">
                 <input type="checkbox" name="countries[]" value={c.code} />
-                <span>{c.names[@locale]}</span>
+                <span><.flag code={c.code} size="sm" sprite />{c.names[@locale]}</span>
               </label>
             </div>
             <label class="field recap-add">
               <span class="vh">{gettext("Add a country")}</span>
               <select class="select" data-recap-add>
                 <option value="">{gettext("+ Another country")}</option>
-                <option :for={c <- @all_countries} value={c.code}>{c.names[@locale]}</option>
+                <option
+                  :for={c <- @all_countries}
+                  value={c.code}
+                  data-flag={SyliAtlasWeb.Flags.sprite_href(c.code)}
+                >
+                  {c.names[@locale]}
+                </option>
               </select>
             </label>
           </fieldset>
