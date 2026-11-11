@@ -160,7 +160,7 @@ defmodule SyliAtlasWeb.Api.Spec do
   end
 
   defp csv_op do
-    columns = Enum.join(["year", "status" | Catalog.indicator_keys()], ",")
+    columns = Enum.join(["year", "status" | Catalog.indicator_keys()], ", ")
 
     %{
       "operationId" => "getAreaCsv",

@@ -36,6 +36,12 @@
 .api-route-title { margin: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 19px; font-weight: 500; }
 .api-route-title .api-get { font-size: 12px; padding: 3px 8px; }
 .api-desc { margin: 0; color: var(--ink-muted); line-height: 1.6; }
+/* Long identifiers in the text (column lists, paths, URLs) wrap instead of
+   widening the page. Code blocks keep their lines and scroll in their box. */
+/* Flex and grid items may shrink below their content: wide tables and code
+   scroll inside their own box. */
+.api-route > *, .api-grid > *, .api-values > *, .api-section > * { min-width: 0; }
+.api-doc p, .api-doc dd, .api-doc summary, .api-fdesc, .api-param-values, .api-fvalues { overflow-wrap: anywhere; }
 .api-label { margin: 14px 0 0; font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-muted); }
 .api-row { margin: 0; padding: 12px 0; border-top: 1px solid var(--border); }
 .api-param { display: flex; flex-direction: column; gap: 4px; }
@@ -116,7 +122,7 @@
 
 /* Schemas: the fields of each answer, the shared objects, the closed lists. */
 .api-summary { margin: 0; font-weight: 500; }
-.api-fields { flex-basis: 100%; border: 1px solid var(--border); border-radius: 12px; background: var(--page); }
+.api-fields { flex-basis: 100%; min-width: 0; max-width: 100%; border: 1px solid var(--border); border-radius: 12px; background: var(--page); }
 .api-fields > summary { cursor: pointer; padding: 12px 16px; font-size: 14px; font-weight: 500; list-style-position: inside; }
 .api-fields[open] > summary { border-bottom: 1px solid var(--border); }
 .api-fields:target { outline: 2px solid var(--accent); outline-offset: 2px; }
@@ -139,6 +145,10 @@
 .api-values .api-kv dt { white-space: nowrap; }
 
 @media (max-width: 760px) {
+  /* Field tables: one block per field, the description under its name. */
+  .api-frow { grid-template-columns: minmax(0, 1fr) auto; min-width: 0; gap: 4px 12px; }
+  .api-frow.api-table-head { display: none; }
+  .api-frow > .api-fdesc { grid-column: 1 / -1; }
   .api-nav { position: static; flex-basis: 100%; }
   .api-hero { padding: 32px 0 28px; }
 }

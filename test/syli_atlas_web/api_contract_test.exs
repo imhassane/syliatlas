@@ -164,6 +164,31 @@ defmodule SyliAtlasWeb.ApiContractTest do
     assert data |> Enum.map(&elem(&1, 0)) |> Enum.take(6) == ~w(code kind region name slug pages)
   end
 
+  test "descriptions hold no unbreakable word that would widen the page" do
+    texts =
+      for {_name, schema} <- Spec.schemas(), text <- texts(schema), do: text
+
+    ops =
+      for {_path, %{"get" => op}} <- Spec.document()["paths"],
+          key <- ~w(description x-description-fr summary x-summary-fr),
+          op[key],
+          do: op[key]
+
+    long =
+      for text <- texts ++ ops, word <- String.split(text), String.length(word) > 40, do: word
+
+    assert long == [], "words too long to wrap: #{inspect(long)}"
+  end
+
+  defp texts(%{} = schema) do
+    own = for k <- ~w(description x-description-fr), is_binary(schema[k]), do: schema[k]
+    nested = for {_k, v} <- schema, is_map(v) or is_list(v), t <- texts(v), do: t
+    own ++ nested
+  end
+
+  defp texts(list) when is_list(list), do: Enum.flat_map(list, &texts/1)
+  defp texts(_), do: []
+
   test "the OpenAPI document is served", %{conn: conn} do
     doc = conn |> get("/api/v1/openapi.json") |> json_response(200)
     assert doc["openapi"] == "3.1.0"
