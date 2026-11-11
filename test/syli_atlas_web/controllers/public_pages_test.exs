@@ -87,7 +87,7 @@ defmodule SyliAtlasWeb.PublicPagesTest do
   end
 
   test "public pages load the site script only, never the LiveView client", %{conn: conn} do
-    for path <- ["/fr", "/en/regions", "/fr/pays/cote-d-ivoire", "/fr/classement"] do
+    for path <- ["/fr", "/en/regions", "/fr/pays/cote-d-ivoire", "/fr/classement/pib"] do
       html = conn |> get(path) |> html_response(200)
       assert html =~ "/assets/js/app.js"
       refute html =~ "/assets/js/live.js", "#{path} loads the LiveView client"
@@ -147,7 +147,7 @@ defmodule SyliAtlasWeb.PublicPagesTest do
   end
 
   test "foreign slug redirects to the canonical URL", %{conn: conn} do
-    assert redirected_to(get(conn, "/fr/regions/cote-d-ivoire")) == "/fr/pays/cote-d-ivoire"
+    assert redirected_to(get(conn, "/fr/regions/cote-d-ivoire"), 301) == "/fr/pays/cote-d-ivoire"
   end
 
   test "unknown country is a 404", %{conn: conn} do
@@ -169,7 +169,7 @@ defmodule SyliAtlasWeb.PublicPagesTest do
   end
 
   test "the ranking shows the value in the arrival year by default", %{conn: conn} do
-    doc = conn |> get("/fr/classement") |> html_response(200) |> LazyHTML.from_document()
+    doc = conn |> get("/fr/classement/pib") |> html_response(200) |> LazyHTML.from_document()
 
     assert doc
            |> LazyHTML.query(~s(select[name=mode] option[value=value][selected]))
@@ -199,14 +199,14 @@ defmodule SyliAtlasWeb.PublicPagesTest do
   end
 
   test "lists show 10 rows, then pages", %{conn: conn} do
-    html = conn |> get("/fr/classement") |> html_response(200)
+    html = conn |> get("/fr/classement/pib") |> html_response(200)
     doc = LazyHTML.from_document(html)
     assert doc |> LazyHTML.query("#ranking .rank-list li") |> Enum.count() == 10
     assert doc |> LazyHTML.query(~s(#ranking .pager a[rel="next"])) |> Enum.count() == 1
 
     last =
       build_conn()
-      |> get("/fr/classement?page=6")
+      |> get("/fr/classement/pib?page=6")
       |> html_response(200)
       |> LazyHTML.from_document()
 

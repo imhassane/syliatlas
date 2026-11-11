@@ -9,7 +9,7 @@ defmodule SyliAtlasWeb.EconomyComponents do
 
   import SyliAtlasWeb.UI
   import SyliAtlasWeb.PageComponents, only: [indicator_label: 1, chart_legend: 1]
-  import SyliAtlasWeb.Format, only: [value: 3, change: 3, tone: 2, number: 3]
+  import SyliAtlasWeb.Format, only: [value: 3, change: 3, tone: 2, number: 3, names: 1, names: 2]
   alias SyliAtlasWeb.{Charts, PublicData}
 
   attr :items, :list, required: true, doc: "{anchor, label} tuples"
@@ -132,7 +132,7 @@ defmodule SyliAtlasWeb.EconomyComponents do
             to={@to}
             locale={@locale}
             estimate_from={@profile["years"]["estimate_from"]}
-            label={gettext("Current account balance of %{name}, % of GDP", name: @name)}
+            label={gettext("Current account balance of %{name}, % of GDP", names(@name))}
             series={[
               %{
                 id: @profile["code"] <> "-current",
@@ -295,7 +295,7 @@ defmodule SyliAtlasWeb.EconomyComponents do
 
     case parts do
       [] ->
-        gettext("The IMF publishes no public finance figures for %{name}.", name: name)
+        gettext("The IMF publishes no public finance figures for %{name}.", names(name))
 
       parts ->
         gettext("%{name}: %{facts} (IMF).", name: name, facts: Enum.join(parts, ", "))
@@ -306,16 +306,14 @@ defmodule SyliAtlasWeb.EconomyComponents do
     do:
       gettext(
         "%{name} shares the %{currency} and its central bank, the BCEAO, with the seven other UEMOA countries: the policy rate and foreign exchange reserves are common. The franc is pegged to the euro.",
-        name: name,
-        currency: c.name
+        names(name, currency: c.name)
       )
 
   defp money_lead(%{zone: "cemac"} = c, name),
     do:
       gettext(
         "%{name} shares the %{currency} and its central bank, the BEAC, with the five other CEMAC countries: the policy rate and foreign exchange reserves are common. The franc is pegged to the euro.",
-        name: name,
-        currency: c.name
+        names(name, currency: c.name)
       )
 
   defp money_lead(%{zone: "cma", code: "ZAR"}, _name),
@@ -328,8 +326,7 @@ defmodule SyliAtlasWeb.EconomyComponents do
     do:
       gettext(
         "%{name} belongs to the Common Monetary Area: the %{currency} is at par with the South African rand, which also circulates in the country.",
-        name: name,
-        currency: c.name
+        names(name, currency: c.name)
       )
 
   defp money_lead(%{peg: %{anchor: anchor}} = c, _name),

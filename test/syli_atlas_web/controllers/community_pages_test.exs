@@ -40,7 +40,10 @@ defmodule SyliAtlasWeb.CommunityPagesTest do
     doc = doc("/fr/communautes/cedeao")
     assert doc |> LazyHTML.query("#members-table tbody tr") |> Enum.count() == 12
     refute LazyHTML.text(LazyHTML.query(doc, "#members-table")) =~ "Mali"
-    assert redirected_to(get(build_conn(), "/fr/communautes/ecowas")) == "/fr/communautes/cedeao"
+
+    assert redirected_to(get(build_conn(), "/fr/communautes/ecowas"), 301) ==
+             "/fr/communautes/cedeao"
+
     assert_error_sent 404, fn -> get(build_conn(), "/fr/communautes/atlantide") end
   end
 end

@@ -11,17 +11,17 @@ msgstr ""
 "Language: en\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/syli_atlas_web/controllers/area_controller.ex:416
+#: lib/syli_atlas_web/controllers/area_controller.ex:623
 #, elixir-autogen, elixir-format
 msgid "%{value} in %{year} at market exchange rates, %{ppp} in purchasing power parity (IMF)."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/area_controller.ex:423
+#: lib/syli_atlas_web/controllers/area_controller.ex:630
 #, elixir-autogen, elixir-format
 msgid "%{value} in %{year}, average annual change in consumer prices (IMF)."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/area_controller.ex:428
+#: lib/syli_atlas_web/controllers/area_controller.ex:635
 #, elixir-autogen, elixir-format
 msgid "%{value} of GDP in %{year}, gross debt of the general government (IMF)."
 msgstr ""
@@ -41,7 +41,7 @@ msgstr ""
 msgid "A job asks the sources every morning and publishes as soon as a new edition is out."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/area_html/questions.html.heex:10
+#: lib/syli_atlas_web/controllers/area_html/questions.html.heex:12
 #, elixir-autogen, elixir-format
 msgid "A question, a correction, a source?"
 msgstr ""
@@ -51,24 +51,19 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:25
+#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:26
 #, elixir-autogen, elixir-format
 msgid "Add a country or a region"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:29
+#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:30
 #, elixir-autogen, elixir-format
 msgid "Add…"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:301
+#: lib/syli_atlas_web/components/layouts.ex:305
 #, elixir-autogen, elixir-format
 msgid "African economies in verifiable figures. Free, open, in French and English."
-msgstr ""
-
-#: lib/syli_atlas_web/controllers/page_controller.ex:32
-#, elixir-autogen, elixir-format
-msgid "African economies, country by country"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/page_html/home.html.heex:7
@@ -76,25 +71,18 @@ msgstr ""
 msgid "African economies, country by country."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:6
-#, elixir-autogen, elixir-format
-msgid "African economies, ranked."
-msgstr ""
-
-#: lib/syli_atlas_web/components/profile_components.ex:747
-#: lib/syli_atlas_web/components/profile_components.ex:753
 #: lib/syli_atlas_web/controllers/area_html/economy.html.heex:128
 #, elixir-autogen, elixir-format
 msgid "African ranking"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/ranking_html.ex:10
-#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:39
+#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:40
 #, elixir-autogen, elixir-format
 msgid "All Africa"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ranking_controller.ex:45
+#: lib/syli_atlas_web/controllers/ranking_controller.ex:143
 #, elixir-autogen, elixir-format
 msgid "All African countries ranked by growth, income, inflation and debt, from IMF data."
 msgstr ""
@@ -121,14 +109,14 @@ msgstr ""
 msgid "Annual change in output volume."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:43
-#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:52
+#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:44
+#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:53
 #, elixir-autogen, elixir-format
 msgid "Apply"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:576
-#: lib/syli_atlas_web/components/layouts.ex:591
+#: lib/syli_atlas_web/components/layouts.ex:593
+#: lib/syli_atlas_web/components/layouts.ex:608
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr ""
@@ -148,6 +136,8 @@ msgstr ""
 #: lib/syli_atlas_web/controllers/debt_html/index.html.heex:3
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:3
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:4
+#: lib/syli_atlas_web/controllers/questions_html/index.html.heex:3
+#: lib/syli_atlas_web/controllers/questions_html/show.html.heex:3
 #: lib/syli_atlas_web/controllers/ratings_html/index.html.heex:3
 #: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:3
 #: lib/syli_atlas_web/controllers/regions_html/index.html.heex:5
@@ -160,7 +150,7 @@ msgstr ""
 msgid "Change"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:30
+#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:31
 #, elixir-autogen, elixir-format
 msgid "Change over the period"
 msgstr ""
@@ -170,28 +160,30 @@ msgstr ""
 msgid "Checked every day"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/area_html/questions.html.heex:19
+#: lib/syli_atlas_web/controllers/area_html/questions.html.heex:26
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:245
 #, elixir-autogen, elixir-format
 msgid "Cite this page"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:190
-#: lib/syli_atlas_web/components/layouts.ex:228
-#: lib/syli_atlas_web/components/layouts.ex:320
+#: lib/syli_atlas_web/components/layouts.ex:193
+#: lib/syli_atlas_web/components/layouts.ex:232
+#: lib/syli_atlas_web/components/layouts.ex:326
 #: lib/syli_atlas_web/components/map_components.ex:270
-#: lib/syli_atlas_web/controllers/compare_controller.ex:68
+#: lib/syli_atlas_web/controllers/compare_controller.ex:81
+#: lib/syli_atlas_web/controllers/compare_controller.ex:104
 #: lib/syli_atlas_web/controllers/compare_html/show.html.heex:5
 #, elixir-autogen, elixir-format
 msgid "Compare"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/compare_controller.ex:69
+#: lib/syli_atlas_web/controllers/compare_controller.ex:83
 #, elixir-autogen, elixir-format
 msgid "Compare %{names}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:709
+#: lib/syli_atlas_web/components/profile_components.ex:712
+#: lib/syli_atlas_web/components/profile_components.ex:736
 #: lib/syli_atlas_web/controllers/area_html/economy.html.heex:124
 #, elixir-autogen, elixir-format
 msgid "Compare %{name}"
@@ -202,14 +194,14 @@ msgstr ""
 msgid "Compare the five regions"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:289
+#: lib/syli_atlas_web/components/profile_components.ex:297
 #, elixir-autogen, elixir-format
 msgid "Continent"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:167
-#: lib/syli_atlas_web/components/layouts.ex:194
-#: lib/syli_atlas_web/components/layouts.ex:307
+#: lib/syli_atlas_web/components/layouts.ex:170
+#: lib/syli_atlas_web/components/layouts.ex:200
+#: lib/syli_atlas_web/components/layouts.ex:311
 #, elixir-autogen, elixir-format
 msgid "Countries"
 msgstr ""
@@ -217,7 +209,7 @@ msgstr ""
 #: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:50
 #: lib/syli_atlas_web/controllers/community_html/show.html.heex:70
 #: lib/syli_atlas_web/controllers/debt_html/index.html.heex:42
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:146
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:148
 #: lib/syli_atlas_web/controllers/ratings_html/index.html.heex:81
 #: lib/syli_atlas_web/search.ex:230
 #, elixir-autogen, elixir-format
@@ -229,7 +221,7 @@ msgstr ""
 msgid "Daily updates"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:323
+#: lib/syli_atlas_web/components/layouts.ex:339
 #, elixir-autogen, elixir-format
 msgid "Data"
 msgstr ""
@@ -237,16 +229,6 @@ msgstr ""
 #: lib/syli_atlas_web/controllers/area_html.ex:64
 #, elixir-autogen, elixir-format
 msgid "Data: IMF, %{label}."
-msgstr ""
-
-#: lib/syli_atlas_web/controllers/page_html/home.html.heex:154
-#, elixir-autogen, elixir-format
-msgid "Discussed openly"
-msgstr ""
-
-#: lib/syli_atlas_web/controllers/area_html/questions.html.heex:9
-#, elixir-autogen, elixir-format
-msgid "Discussion"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/area_html/economy.html.heex:89
@@ -257,11 +239,6 @@ msgstr ""
 #: lib/syli_atlas_web/controllers/page_html/home.html.heex:152
 #, elixir-autogen, elixir-format
 msgid "Download every profile as CSV or query the public API, free of charge."
-msgstr ""
-
-#: lib/syli_atlas_web/controllers/area_controller.ex:152
-#, elixir-autogen, elixir-format
-msgid "Economy of %{name}, 2015–2030"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/page_html/method.html.heex:119
@@ -284,16 +261,6 @@ msgstr ""
 msgid "Every profile can be downloaded as CSV. The JSON API is open: /api/v1/areas, /api/v1/compare, /api/v1/ranking. Please cite the IMF and Syli Atlas."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_html/home.html.heex:155
-#, elixir-autogen, elixir-format
-msgid "Every profile has a moderated discussion to ask a question or report an error."
-msgstr ""
-
-#: lib/syli_atlas_web/controllers/area_html/questions.html.heex:12
-#, elixir-autogen, elixir-format
-msgid "Every profile has a moderated discussion. Sign in by email to take part."
-msgstr ""
-
 #: lib/syli_atlas_web/controllers/page_html/home.html.heex:140
 #, elixir-autogen, elixir-format
 msgid "Figures you can check, quote and reuse."
@@ -305,19 +272,20 @@ msgstr ""
 msgid "Five regions, very different paths."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:305
+#: lib/syli_atlas_web/components/layouts.ex:309
 #, elixir-autogen, elixir-format
 msgid "Footer"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:302
-#: lib/syli_atlas_web/components/profile_components.ex:371
-#: lib/syli_atlas_web/components/profile_components.ex:508
+#: lib/syli_atlas_web/components/profile_components.ex:310
+#: lib/syli_atlas_web/components/profile_components.ex:379
+#: lib/syli_atlas_web/components/profile_components.ex:516
 #: lib/syli_atlas_web/controllers/community_html/index.html.heex:34
 #: lib/syli_atlas_web/controllers/community_html/show.html.heex:27
 #: lib/syli_atlas_web/controllers/community_html/show.html.heex:73
 #: lib/syli_atlas_web/controllers/page_html.ex:141
 #: lib/syli_atlas_web/controllers/regions_html/index.html.heex:267
+#: lib/syli_atlas_web/og_image/specs.ex:421
 #, elixir-autogen, elixir-format
 msgid "GDP %{year}"
 msgstr ""
@@ -328,8 +296,9 @@ msgid "GDP and population of regions and of Africa are sums of their countries."
 msgstr ""
 
 #: lib/syli_atlas_web/components/page_components.ex:16
-#: lib/syli_atlas_web/components/profile_components.ex:322
-#: lib/syli_atlas_web/components/profile_components.ex:391
+#: lib/syli_atlas_web/components/profile_components.ex:330
+#: lib/syli_atlas_web/components/profile_components.ex:399
+#: lib/syli_atlas_web/controllers/area_controller.ex:220
 #: lib/syli_atlas_web/controllers/regions_html.ex:15
 #: lib/syli_atlas_web/controllers/regions_html/index.html.heex:147
 #: lib/syli_atlas_web/map_scale.ex:23
@@ -348,6 +317,11 @@ msgid "GDP per capita, PPP"
 msgstr ""
 
 #: lib/syli_atlas_web/components/page_components.ex:15
+#: lib/syli_atlas_web/controllers/area_controller.ex:218
+#: lib/syli_atlas_web/controllers/questions_controller.ex:123
+#: lib/syli_atlas_web/controllers/questions_controller.ex:232
+#: lib/syli_atlas_web/controllers/questions_controller.ex:339
+#: lib/syli_atlas_web/og_image/specs.ex:273
 #, elixir-autogen, elixir-format
 msgid "GDP, current dollars"
 msgstr ""
@@ -372,7 +346,7 @@ msgstr ""
 msgid "Growth and inflation of a group are averages weighted by GDP in purchasing power parity."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/compare_controller.ex:75
+#: lib/syli_atlas_web/controllers/compare_controller.ex:90
 #, elixir-autogen, elixir-format
 msgid "Growth, income, inflation and debt side by side: %{names}."
 msgstr ""
@@ -392,7 +366,7 @@ msgstr ""
 msgid "How changes are computed"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/area_controller.ex:413
+#: lib/syli_atlas_web/controllers/area_controller.ex:618
 #, elixir-autogen, elixir-format
 msgid "How much has the economy of %{name} grown since %{from}?"
 msgstr ""
@@ -417,8 +391,8 @@ msgstr ""
 msgid "IMF, %{label} · regional totals computed by Syli Atlas (African Union regions)"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:108
-#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:76
+#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:109
+#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:77
 #: lib/syli_atlas_web/search.ex:271
 #, elixir-autogen, elixir-format
 msgid "IMF, World Economic Outlook"
@@ -431,15 +405,15 @@ msgstr ""
 
 #: lib/syli_atlas_web/components/world_bank_components.ex:376
 #: lib/syli_atlas_web/controllers/area_html/economy.html.heex:71
-#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:82
-#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:16
+#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:83
+#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:17
 #: lib/syli_atlas_web/controllers/regions_html/index.html.heex:48
 #, elixir-autogen, elixir-format
 msgid "Indicator"
 msgstr ""
 
 #: lib/syli_atlas_web/components/page_components.ex:18
-#: lib/syli_atlas_web/components/profile_components.ex:346
+#: lib/syli_atlas_web/components/profile_components.ex:354
 #: lib/syli_atlas_web/controllers/regions_html.ex:17
 #: lib/syli_atlas_web/controllers/regions_html/index.html.heex:161
 #: lib/syli_atlas_web/map_scale.ex:24
@@ -448,13 +422,13 @@ msgid "Inflation"
 msgstr ""
 
 #: lib/syli_atlas_web/components/layouts.ex:77
-#: lib/syli_atlas_web/components/layouts.ex:444
-#: lib/syli_atlas_web/components/page_components.ex:199
+#: lib/syli_atlas_web/components/layouts.ex:461
+#: lib/syli_atlas_web/components/page_components.ex:203
 #, elixir-autogen, elixir-format
 msgid "Install the app"
 msgstr ""
 
-#: lib/syli_atlas_web/components/page_components.ex:193
+#: lib/syli_atlas_web/components/page_components.ex:197
 #, elixir-autogen, elixir-format
 msgid "Install the app from your browser, no app store needed. Profiles stay readable offline."
 msgstr ""
@@ -485,11 +459,12 @@ msgstr ""
 msgid "Method"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:222
-#: lib/syli_atlas_web/components/layouts.ex:324
-#: lib/syli_atlas_web/components/layouts.ex:440
+#: lib/syli_atlas_web/components/layouts.ex:226
+#: lib/syli_atlas_web/components/layouts.ex:341
+#: lib/syli_atlas_web/components/layouts.ex:457
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:242
-#: lib/syli_atlas_web/controllers/page_controller.ex:92
+#: lib/syli_atlas_web/controllers/page_controller.ex:140
+#: lib/syli_atlas_web/controllers/page_controller.ex:143
 #, elixir-autogen, elixir-format
 msgid "Method and sources"
 msgstr ""
@@ -499,7 +474,7 @@ msgstr ""
 msgid "No data online yet. Run the seeds or wait for the first import."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:73
+#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:74
 #, elixir-autogen, elixir-format
 msgid "No data: %{names}"
 msgstr ""
@@ -519,25 +494,20 @@ msgstr ""
 msgid "Often viewed:"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:441
+#: lib/syli_atlas_web/components/layouts.ex:458
 #: lib/syli_atlas_web/controllers/page_html/home.html.heex:151
 #, elixir-autogen, elixir-format
 msgid "Open data"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/area_html/questions.html.heex:14
-#, elixir-autogen, elixir-format
-msgid "Open the discussion"
-msgstr ""
-
-#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:115
+#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:116
 #, elixir-autogen, elixir-format
 msgid "Pick at least two countries or regions above to compare them."
 msgstr ""
 
 #: lib/syli_atlas_web/components/page_components.ex:20
-#: lib/syli_atlas_web/components/profile_components.ex:338
-#: lib/syli_atlas_web/components/profile_components.ex:407
+#: lib/syli_atlas_web/components/profile_components.ex:346
+#: lib/syli_atlas_web/components/profile_components.ex:415
 #: lib/syli_atlas_web/controllers/community_html/index.html.heex:37
 #: lib/syli_atlas_web/controllers/page_html.ex:89
 #: lib/syli_atlas_web/controllers/regions_html/index.html.heex:140
@@ -551,19 +521,21 @@ msgstr ""
 msgid "Population %{year}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:328
+#: lib/syli_atlas_web/components/layouts.ex:345
+#: lib/syli_atlas_web/controllers/api_doc_controller.ex:47
 #, elixir-autogen, elixir-format
 msgid "Public API"
 msgstr ""
 
 #: lib/syli_atlas_web/components/page_components.ex:19
-#: lib/syli_atlas_web/components/profile_components.ex:330
-#: lib/syli_atlas_web/components/profile_components.ex:399
+#: lib/syli_atlas_web/components/profile_components.ex:338
+#: lib/syli_atlas_web/components/profile_components.ex:407
 #: lib/syli_atlas_web/controllers/community_html/index.html.heex:47
 #: lib/syli_atlas_web/controllers/community_html/show.html.heex:83
 #: lib/syli_atlas_web/controllers/regions_html.ex:18
 #: lib/syli_atlas_web/controllers/regions_html/index.html.heex:164
 #: lib/syli_atlas_web/map_scale.ex:25
+#: lib/syli_atlas_web/og_image/specs.ex:428
 #, elixir-autogen, elixir-format
 msgid "Public debt"
 msgstr ""
@@ -573,23 +545,26 @@ msgstr ""
 msgid "Public debt of a group is weighted by GDP in dollars."
 msgstr ""
 
+#: lib/syli_atlas_web/components/layouts.ex:336
 #: lib/syli_atlas_web/controllers/area_html/questions.html.heex:4
 #: lib/syli_atlas_web/controllers/area_html/show.html.heex:52
+#: lib/syli_atlas_web/controllers/questions_controller.ex:35
+#: lib/syli_atlas_web/controllers/questions_controller.ex:75
+#: lib/syli_atlas_web/controllers/questions_html/index.html.heex:6
+#: lib/syli_atlas_web/controllers/questions_html/index.html.heex:9
+#: lib/syli_atlas_web/controllers/questions_html/show.html.heex:6
 #: lib/syli_atlas_web/controllers/ratings_html/index.html.heex:153
 #: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:62
 #, elixir-autogen, elixir-format
 msgid "Questions"
 msgstr ""
 
+#: lib/syli_atlas_web/controllers/ranking_controller.ex:100
 #: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:5
 #: lib/syli_atlas_web/offline_pages.ex:26
+#: lib/syli_atlas_web/og_image/specs.ex:401
 #, elixir-autogen, elixir-format
 msgid "Ranking"
-msgstr ""
-
-#: lib/syli_atlas_web/controllers/ranking_controller.ex:40
-#, elixir-autogen, elixir-format
-msgid "Ranking of African economies"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/regions_html.ex:14
@@ -603,6 +578,8 @@ msgid "Real GDP (volume)"
 msgstr ""
 
 #: lib/syli_atlas_web/components/page_components.ex:14
+#: lib/syli_atlas_web/controllers/area_controller.ex:219
+#: lib/syli_atlas_web/controllers/questions_controller.ex:263
 #, elixir-autogen, elixir-format
 msgid "Real GDP growth"
 msgstr ""
@@ -623,21 +600,24 @@ msgid "Recent years are IMF estimates, and later years are projections. Charts s
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/page_html.ex:136
-#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:35
+#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:36
 #: lib/syli_atlas_web/controllers/regions_html/index.html.heex:121
+#: lib/syli_atlas_web/og_image/specs.ex:237
 #: lib/syli_atlas_web/search.ex:231
 #, elixir-autogen, elixir-format
 msgid "Region"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/page_html/home.html.heex:84
+#: lib/syli_atlas_web/controllers/regions_controller.ex:43
 #: lib/syli_atlas_web/controllers/regions_html/index.html.heex:8
 #: lib/syli_atlas_web/offline_pages.ex:25
+#: lib/syli_atlas_web/og_image/specs.ex:176
 #, elixir-autogen, elixir-format
 msgid "Regions"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:16
+#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:17
 #, elixir-autogen, elixir-format
 msgid "Remove %{name}"
 msgstr ""
@@ -673,7 +653,7 @@ msgstr ""
 msgid "Share of African GDP"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:25
+#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:26
 #, elixir-autogen, elixir-format
 msgid "Show"
 msgstr ""
@@ -683,15 +663,15 @@ msgstr ""
 msgid "Side by side, over the same period."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:478
+#: lib/syli_atlas_web/components/layouts.ex:495
 #: lib/syli_atlas_web/controllers/session_controller.ex:112
 #, elixir-autogen, elixir-format
 msgid "Sign in"
 msgstr ""
 
 #: lib/syli_atlas_web/components/page_components.ex:90
-#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:37
-#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:45
+#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:38
+#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:46
 #, elixir-autogen, elixir-format
 msgid "Since"
 msgstr ""
@@ -706,7 +686,7 @@ msgstr ""
 msgid "Skip to content"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:583
+#: lib/syli_atlas_web/components/layouts.ex:600
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr ""
@@ -714,6 +694,8 @@ msgstr ""
 #: lib/syli_atlas_web/components/economy_components.ex:146
 #: lib/syli_atlas_web/components/page_components.ex:167
 #: lib/syli_atlas_web/controllers/page_html/home.html.heex:37
+#: lib/syli_atlas_web/controllers/questions_controller.ex:394
+#: lib/syli_atlas_web/og_image/specs.ex:244
 #, elixir-autogen, elixir-format
 msgid "Source: IMF, %{label}"
 msgstr ""
@@ -728,12 +710,12 @@ msgstr ""
 msgid "Start with a question"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:365
+#: lib/syli_atlas_web/components/layouts.ex:382
 #, elixir-autogen, elixir-format
 msgid "Switch theme"
 msgstr ""
 
-#: lib/syli_atlas_web/components/page_components.ex:191
+#: lib/syli_atlas_web/components/page_components.ex:195
 #, elixir-autogen, elixir-format
 msgid "Syli Atlas on your phone"
 msgstr ""
@@ -764,8 +746,8 @@ msgid "Total GDP"
 msgstr ""
 
 #: lib/syli_atlas_web/components/page_components.ex:94
-#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:40
-#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:48
+#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:41
+#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:49
 #, elixir-autogen, elixir-format
 msgid "Until"
 msgstr ""
@@ -785,7 +767,7 @@ msgstr ""
 msgid "Value in %{to} and change since %{from}"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:29
+#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:30
 #, elixir-autogen, elixir-format
 msgid "Value in the arrival year"
 msgstr ""
@@ -795,7 +777,7 @@ msgstr ""
 msgid "Volume of output, excluding inflation and exchange rates. 2015 = 100."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:568
+#: lib/syli_atlas_web/components/layouts.ex:585
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr ""
@@ -805,27 +787,28 @@ msgstr ""
 msgid "Weakest"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/area_controller.ex:415
+#: lib/syli_atlas_web/controllers/area_controller.ex:622
 #, elixir-autogen, elixir-format
 msgid "What is the GDP per capita of %{name}?"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/area_controller.ex:422
+#: lib/syli_atlas_web/controllers/area_controller.ex:629
 #, elixir-autogen, elixir-format
 msgid "What is the inflation rate in %{name}?"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/area_controller.ex:427
+#: lib/syli_atlas_web/controllers/area_controller.ex:634
 #, elixir-autogen, elixir-format
 msgid "What is the public debt of %{name}?"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:97
+#: lib/syli_atlas_web/controllers/page_controller.ex:135
+#: lib/syli_atlas_web/og_image/specs.ex:202
 #, elixir-autogen, elixir-format
 msgid "Where Syli Atlas figures come from and how totals and changes are computed."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/area_controller.ex:439
+#: lib/syli_atlas_web/controllers/area_controller.ex:646
 #, elixir-autogen, elixir-format
 msgid "Where does %{name} rank in Africa?"
 msgstr ""
@@ -870,19 +853,9 @@ msgstr ""
 msgid "close"
 msgstr ""
 
-#: lib/syli_atlas_web/components/page_components.ex:167
-#, elixir-autogen, elixir-format
-msgid "copied on %{date}"
-msgstr ""
-
 #: lib/syli_atlas_web/controllers/page_html.ex:86
 #, elixir-autogen, elixir-format
 msgid "current dollars"
-msgstr ""
-
-#: lib/syli_atlas_web/controllers/area_controller.ex:136
-#, elixir-autogen, elixir-format
-msgid "economy %{from}–%{to}"
 msgstr ""
 
 #: lib/syli_atlas_web/components/charts.ex:77
@@ -903,8 +876,8 @@ msgid "projection"
 msgstr ""
 
 #: lib/syli_atlas_web/components/economy_components.ex:71
-#: lib/syli_atlas_web/components/profile_components.ex:297
-#: lib/syli_atlas_web/components/profile_components.ex:365
+#: lib/syli_atlas_web/components/profile_components.ex:305
+#: lib/syli_atlas_web/components/profile_components.ex:373
 #: lib/syli_atlas_web/controllers/area_html.ex:40
 #, elixir-autogen, elixir-format
 msgid "since %{year}"
@@ -915,28 +888,28 @@ msgstr ""
 msgid "weighted average"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:21
+#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:22
 #, elixir-autogen, elixir-format
 msgid "Choose"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:423
+#: lib/syli_atlas_web/components/layouts.ex:440
 #, elixir-autogen, elixir-format
 msgid "Close the menu"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:12
+#: lib/syli_atlas_web/controllers/ranking_html/index.html.heex:13
 #, elixir-autogen, elixir-format
 msgid "Filters"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:79
+#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:80
 #, elixir-autogen, elixir-format
 msgid "Indicators in %{year}"
 msgstr ""
 
 #: lib/syli_atlas_web/components/layouts.ex:91
-#: lib/syli_atlas_web/components/layouts.ex:414
+#: lib/syli_atlas_web/components/layouts.ex:431
 #, elixir-autogen, elixir-format
 msgid "Menu"
 msgstr ""
@@ -948,22 +921,22 @@ msgstr ""
 msgid "Period"
 msgstr ""
 
-#: lib/syli_atlas_web/components/page_components.ex:261
+#: lib/syli_atlas_web/components/page_components.ex:265
 #, elixir-autogen, elixir-format
 msgid "%{first}–%{last} of %{total}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/page_components.ex:259
+#: lib/syli_atlas_web/components/page_components.ex:263
 #, elixir-autogen, elixir-format
 msgid "Next"
 msgstr ""
 
-#: lib/syli_atlas_web/components/page_components.ex:257
+#: lib/syli_atlas_web/components/page_components.ex:261
 #, elixir-autogen, elixir-format
 msgid "Pages"
 msgstr ""
 
-#: lib/syli_atlas_web/components/page_components.ex:258
+#: lib/syli_atlas_web/components/page_components.ex:262
 #, elixir-autogen, elixir-format
 msgid "Previous"
 msgstr ""
@@ -1008,6 +981,7 @@ msgstr ""
 msgid "Five regions, side by side."
 msgstr ""
 
+#: lib/syli_atlas_web/controllers/area_controller.ex:214
 #: lib/syli_atlas_web/controllers/regions_html/index.html.heex:130
 #: lib/syli_atlas_web/map_scale.ex:22
 #, elixir-autogen, elixir-format
@@ -1097,7 +1071,7 @@ msgstr ""
 msgid "Next country in the ranking"
 msgstr ""
 
-#: lib/syli_atlas_web/components/economy_components.ex:383
+#: lib/syli_atlas_web/components/economy_components.ex:380
 #: lib/syli_atlas_web/components/map_components.ex:103
 #, elixir-autogen, elixir-format
 msgid "No data"
@@ -1109,6 +1083,7 @@ msgid "No separate IMF data"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/regions_controller.ex:35
+#: lib/syli_atlas_web/og_image/specs.ex:173
 #, elixir-autogen, elixir-format
 msgid "North, West, Central, East and Southern Africa side by side: growth, income, inflation and debt, from IMF data."
 msgstr ""
@@ -1175,11 +1150,6 @@ msgstr ""
 msgid "The map"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/regions_controller.ex:30
-#, elixir-autogen, elixir-format
-msgid "The regions of Africa compared"
-msgstr ""
-
 #: lib/syli_atlas_web/controllers/regions_html/index.html.heex:190
 #, elixir-autogen, elixir-format
 msgid "The weight of the large economies, and who moves fastest."
@@ -1231,14 +1201,14 @@ msgid "Africa's GDP in current dollars, 2015 to 2030"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/area_html/economy.html.heex:15
-#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:52
+#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:53
 #, elixir-autogen, elixir-format
 msgid "Billions of current dollars · dashed: estimates and projections"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/area_html/economy.html.heex:48
 #: lib/syli_atlas_web/controllers/area_html/economy.html.heex:99
-#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:60
+#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:61
 #: lib/syli_atlas_web/controllers/page_html/home.html.heex:72
 #: lib/syli_atlas_web/controllers/page_html/home.html.heex:86
 #: lib/syli_atlas_web/controllers/page_html/home.html.heex:100
@@ -1247,7 +1217,7 @@ msgstr ""
 msgid "GDP in current dollars, %{from} → %{to}"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:83
+#: lib/syli_atlas_web/controllers/compare_html/show.html.heex:84
 #: lib/syli_atlas_web/controllers/page_html.ex:101
 #: lib/syli_atlas_web/controllers/regions_html.ex:13
 #, elixir-autogen, elixir-format
@@ -1271,108 +1241,98 @@ msgstr ""
 msgid "World, in dollars since %{year}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:498
+#: lib/syli_atlas_web/components/layouts.ex:515
 #, elixir-autogen, elixir-format
 msgid "A new version of Syli Atlas is available"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:504
+#: lib/syli_atlas_web/components/layouts.ex:521
 #, elixir-autogen, elixir-format
 msgid "Back online"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:495
+#: lib/syli_atlas_web/components/layouts.ex:512
 #: lib/syli_atlas_web/controllers/account_html/security.html.heex:76
 #, elixir-autogen, elixir-format
 msgid "Close"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:508
+#: lib/syli_atlas_web/components/layouts.ex:525
 #, elixir-autogen, elixir-format
 msgid "In Safari, tap Share, then « Add to Home Screen »."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:509
+#: lib/syli_atlas_web/components/layouts.ex:526
 #, elixir-autogen, elixir-format
 msgid "Install"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:505
+#: lib/syli_atlas_web/components/layouts.ex:522
 #, elixir-autogen, elixir-format
 msgid "Install Syli Atlas"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:497
+#: lib/syli_atlas_web/components/layouts.ex:514
 #, elixir-autogen, elixir-format
 msgid "Later"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:500
+#: lib/syli_atlas_web/components/layouts.ex:517
 #, elixir-autogen, elixir-format
 msgid "New IMF figures are online"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:510
+#: lib/syli_atlas_web/components/layouts.ex:527
 #, elixir-autogen, elixir-format
 msgid "Not now"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts/root.html.heex:185
+#: lib/syli_atlas_web/components/layouts/root.html.heex:205
 #, elixir-autogen, elixir-format
 msgid "Notifications"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:507
+#: lib/syli_atlas_web/components/layouts.ex:524
 #, elixir-autogen, elixir-format
 msgid "One tap from your home screen, readable offline, no app store."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:503
+#: lib/syli_atlas_web/components/layouts.ex:520
 #, elixir-autogen, elixir-format
 msgid "Pages you have already opened stay readable."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:496
+#: lib/syli_atlas_web/components/layouts.ex:513
 #, elixir-autogen, elixir-format
 msgid "Refresh"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:499
+#: lib/syli_atlas_web/components/layouts.ex:516
 #, elixir-autogen, elixir-format
 msgid "Refresh to see it. Nothing you are reading will be lost."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:501
+#: lib/syli_atlas_web/components/layouts.ex:518
 #, elixir-autogen, elixir-format
 msgid "Refresh to see the latest edition."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:511
+#: lib/syli_atlas_web/components/layouts.ex:528
 #, elixir-autogen, elixir-format
 msgid "Syli Atlas is installed"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:502
+#: lib/syli_atlas_web/components/layouts.ex:519
 #, elixir-autogen, elixir-format
 msgid "You are offline"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/area_controller.ex:398
-#, elixir-autogen, elixir-format
-msgid "%{name}: GDP of %{gdp} in %{to} (IMF), %{change} since %{from} in current dollars. Growth in %{to}: %{growth}."
-msgstr ""
-
-#: lib/syli_atlas_web/controllers/area_controller.ex:440
+#: lib/syli_atlas_web/controllers/area_controller.ex:647
 #, elixir-autogen, elixir-format
 msgid "Economy no. %{rank} of %{of} in Africa by GDP in current dollars in %{year} (IMF)."
 msgstr ""
 
-#: lib/syli_atlas_web/components/market_components.ex:369
-#, elixir-autogen, elixir-format
-msgid "%{country} on the %{exchange}"
-msgstr ""
-
-#: lib/syli_atlas_web/components/profile_components.ex:272
+#: lib/syli_atlas_web/components/profile_components.ex:280
 #: lib/syli_atlas_web/controllers/community_html/show.html.heex:22
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:177
 #, elixir-autogen, elixir-format
@@ -1407,17 +1367,17 @@ msgid_plural "%{count} results for « %{q} »"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:237
+#: lib/syli_atlas_web/controllers/market_controller.ex:304
 #, elixir-autogen, elixir-format
 msgid "%{name} (%{ticker}) closed at %{price} %{currency} on %{date} on the %{exchange} (%{change})."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:248
+#: lib/syli_atlas_web/controllers/market_controller.ex:315
 #, elixir-autogen, elixir-format
 msgid "%{name} (%{ticker}), listed on the %{exchange}."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:226
+#: lib/syli_atlas_web/controllers/market_controller.ex:293
 #, elixir-autogen, elixir-format
 msgid "%{name}: %{count} listed securities. Its index is not provided by our source."
 msgstr ""
@@ -1432,8 +1392,8 @@ msgstr ""
 msgid "%{up} up, %{flat} unchanged, %{down} down, %{none} without trade"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:735
-#: lib/syli_atlas_web/controllers/market_controller.ex:45
+#: lib/syli_atlas_web/components/profile_components.ex:768
+#: lib/syli_atlas_web/controllers/market_controller.ex:61
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:12
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:119
 #, elixir-autogen, elixir-format
@@ -1446,7 +1406,8 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:314
+#: lib/syli_atlas_web/components/layouts.ex:320
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:266
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:61
 #, elixir-autogen, elixir-format
 msgid "All exchanges"
@@ -1493,14 +1454,14 @@ msgstr ""
 msgid "Click a heading to sort · ▲ up, ▼ down, ■ unchanged · « old »: no session for more than two business days · « to check »: daily change identical to the change since 1 January given by the source"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:105
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:107
 #, elixir-autogen, elixir-format
 msgid "Closes in %{currency} · sessions received by Syli Atlas"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:190
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:209
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:134
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:136
 #, elixir-autogen, elixir-format
 msgid "Code"
 msgstr ""
@@ -1513,7 +1474,7 @@ msgstr ""
 #: lib/syli_atlas_web/components/economy_components.ex:207
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:152
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:202
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:150
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:152
 #, elixir-autogen, elixir-format
 msgid "Currency"
 msgstr ""
@@ -1560,11 +1521,12 @@ msgid "End of day"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/market_controller.ex:50
+#: lib/syli_atlas_web/og_image/specs.ex:188
 #, elixir-autogen, elixir-format
 msgid "Every African stock exchange followed by Syli Atlas: main index, daily change, number of listed securities, with the source and date of each figure."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:120
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:122
 #, elixir-autogen, elixir-format
 msgid "Every close is recorded from the first import on. Older history will come from an official or licensed source."
 msgstr ""
@@ -1579,7 +1541,7 @@ msgstr ""
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:39
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:53
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:123
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:139
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:141
 #, elixir-autogen, elixir-format
 msgid "Exchange"
 msgstr ""
@@ -1599,7 +1561,7 @@ msgstr ""
 msgid "Exchange-traded funds"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:160
+#: lib/syli_atlas_web/controllers/market_controller.ex:201
 #, elixir-autogen, elixir-format
 msgid "Exchange-traded funds listed in Africa: price, daily change, volume and issuer."
 msgstr ""
@@ -1631,11 +1593,6 @@ msgstr ""
 msgid "Funds exposed to Africa"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:155
-#, elixir-autogen, elixir-format
-msgid "Funds exposed to Africa (ETF)"
-msgstr ""
-
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:35
 #, elixir-autogen, elixir-format
 msgid "Funds listed in Africa"
@@ -1652,7 +1609,7 @@ msgid "Funds listed outside Africa"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:116
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:118
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:120
 #, elixir-autogen, elixir-format
 msgid "History being built"
 msgstr ""
@@ -1663,7 +1620,7 @@ msgid "How to read these figures"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:253
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:172
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:174
 #, elixir-autogen, elixir-format
 msgid "Information, not investment advice."
 msgstr ""
@@ -1675,13 +1632,14 @@ msgstr ""
 
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:40
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:58
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:155
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:157
 #, elixir-autogen, elixir-format
 msgid "Issuer"
 msgstr ""
 
 #: lib/syli_atlas_web/components/market_components.ex:401
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:180
+#: lib/syli_atlas_web/og_image/specs.ex:520
 #, elixir-autogen, elixir-format
 msgid "Listed securities"
 msgstr ""
@@ -1700,7 +1658,7 @@ msgstr ""
 msgid "Main index"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:85
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:87
 #, elixir-autogen, elixir-format
 msgid "Market capitalisation"
 msgstr ""
@@ -1752,12 +1710,12 @@ msgstr[1] ""
 msgid "Points · sessions received by Syli Atlas"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:103
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:105
 #, elixir-autogen, elixir-format
 msgid "Price history"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:166
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:168
 #, elixir-autogen, elixir-format
 msgid "Price, change and volume: %{source}. Value traded and share of trading: computed by Syli Atlas."
 msgstr ""
@@ -1794,8 +1752,8 @@ msgid "Securities traded that day"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/account_html.ex:65
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:129
 #: lib/syli_atlas_web/controllers/market_html/security.html.heex:131
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:133
 #: lib/syli_atlas_web/search.ex:235
 #, elixir-autogen, elixir-format
 msgid "Security"
@@ -1803,7 +1761,7 @@ msgstr ""
 
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:55
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:23
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:62
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:64
 #, elixir-autogen, elixir-format
 msgid "Session"
 msgstr ""
@@ -1818,12 +1776,13 @@ msgstr ""
 msgid "Share"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:80
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:82
 #, elixir-autogen, elixir-format
 msgid "Share of the exchange's trading"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:66
+#: lib/syli_atlas_web/og_image/specs.ex:522
 #, elixir-autogen, elixir-format
 msgid "Since 1 January"
 msgstr ""
@@ -1838,7 +1797,7 @@ msgstr ""
 msgid "Sorted by value traded · value = close × volume, computed by Syli Atlas"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:379
+#: lib/syli_atlas_web/components/rating_components.ex:382
 #: lib/syli_atlas_web/components/world_bank_components.ex:384
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:160
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:206
@@ -1865,37 +1824,41 @@ msgstr ""
 
 #: lib/syli_atlas_web/components/market_components.ex:367
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:35
+#: lib/syli_atlas_web/og_image/specs.ex:506
 #: lib/syli_atlas_web/search.ex:234
 #, elixir-autogen, elixir-format
 msgid "Stock exchange"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:174
-#: lib/syli_atlas_web/components/layouts.ex:201
-#: lib/syli_atlas_web/components/layouts.ex:312
+#: lib/syli_atlas_web/components/layouts.ex:177
+#: lib/syli_atlas_web/components/layouts.ex:205
+#: lib/syli_atlas_web/components/layouts.ex:318
 #: lib/syli_atlas_web/components/ticker_components.ex:82
-#: lib/syli_atlas_web/controllers/market_controller.ex:85
-#: lib/syli_atlas_web/controllers/market_controller.ex:130
+#: lib/syli_atlas_web/controllers/market_controller.ex:58
+#: lib/syli_atlas_web/controllers/market_controller.ex:100
+#: lib/syli_atlas_web/controllers/market_controller.ex:170
+#: lib/syli_atlas_web/controllers/market_controller.ex:208
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:6
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:6
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:7
 #: lib/syli_atlas_web/controllers/market_html/security.html.heex:6
+#: lib/syli_atlas_web/og_image/specs.ex:192
 #, elixir-autogen, elixir-format
 msgid "Stock exchanges"
 msgstr ""
 
 #: lib/syli_atlas_web/components/market_components.ex:384
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:173
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:175
 #, elixir-autogen, elixir-format
 msgid "The %{exchange} page"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:218
+#: lib/syli_atlas_web/controllers/market_controller.ex:285
 #, elixir-autogen, elixir-format
 msgid "The %{index} closed at %{value} points on %{date} (%{change})."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:207
+#: lib/syli_atlas_web/controllers/market_controller.ex:274
 #, elixir-autogen, elixir-format
 msgid "The %{index} closed at %{value} points on %{date} (%{change}). Since 1 January: %{ytd}, according to %{source}."
 msgstr ""
@@ -1934,7 +1897,8 @@ msgstr ""
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:66
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:194
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:217
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:73
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:75
+#: lib/syli_atlas_web/og_image/specs.ex:490
 #, elixir-autogen, elixir-format
 msgid "Value traded"
 msgstr ""
@@ -1943,7 +1907,8 @@ msgstr ""
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:65
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:193
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:216
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:68
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:70
+#: lib/syli_atlas_web/og_image/specs.ex:488
 #, elixir-autogen, elixir-format
 msgid "Volume"
 msgstr ""
@@ -1959,7 +1924,7 @@ msgid "West Africa"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:236
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:164
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:166
 #, elixir-autogen, elixir-format
 msgid "Where these figures come from"
 msgstr ""
@@ -2020,12 +1985,12 @@ msgstr ""
 msgid "no trade"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:86
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:88
 #, elixir-autogen, elixir-format
 msgid "not provided by the current source"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:83
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:85
 #, elixir-autogen, elixir-format
 msgid "of the value traded that day"
 msgstr ""
@@ -2054,11 +2019,6 @@ msgstr ""
 #: lib/syli_atlas_web/controllers/market_html.ex:107
 #, elixir-autogen, elixir-format
 msgid "sharia"
-msgstr ""
-
-#: lib/syli_atlas_web/controllers/market_controller.ex:79
-#, elixir-autogen, elixir-format
-msgid "stock exchange"
 msgstr ""
 
 #: lib/syli_atlas_web/components/market_components.ex:310
@@ -2209,7 +2169,7 @@ msgctxt "price"
 msgid "Close"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:201
+#: lib/syli_atlas_web/components/rating_components.ex:202
 #, elixir-autogen, elixir-format
 msgid "%{agencies}: %{verdict}, %{category}, %{gap}, %{rank}."
 msgstr ""
@@ -2221,57 +2181,57 @@ msgid_plural "%{count} countries without any rating"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:133
+#: lib/syli_atlas_web/components/rating_components.ex:134
 #, elixir-autogen, elixir-format
 msgid "%{count} notch above the investment grade threshold"
 msgid_plural "%{count} notches above the investment grade threshold"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:123
+#: lib/syli_atlas_web/components/rating_components.ex:124
 #, elixir-autogen, elixir-format
 msgid "%{count} notch below investment grade"
 msgid_plural "%{count} notches below investment grade"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/syli_atlas_web/controllers/ratings_controller.ex:187
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:202
 #, elixir-autogen, elixir-format
 msgid "%{count} on average of the agencies: %{names}."
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:304
+#: lib/syli_atlas_web/components/rating_components.ex:309
 #, elixir-autogen, elixir-format
 msgid "%{name} is no. %{rank} of the %{of} African countries rated, %{tier}."
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:270
+#: lib/syli_atlas_web/components/rating_components.ex:271
 #, elixir-autogen, elixir-format
 msgid "%{name} is not rated"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:194
-#: lib/syli_atlas_web/controllers/ratings_controller.ex:112
+#: lib/syli_atlas_web/components/rating_components.ex:195
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:127
 #, elixir-autogen, elixir-format
 msgid "%{name} is not rated by S&P, Moody's or Fitch."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ratings_controller.ex:181
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:196
 #, elixir-autogen, elixir-format
 msgid "%{name}: %{agencies} (average %{rating} on the common scale)."
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:274
+#: lib/syli_atlas_web/components/rating_components.ex:275
 #, elixir-autogen, elixir-format
 msgid "%{name}: average rating %{rating} on a scale from default to AAA, %{gap}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:425
+#: lib/syli_atlas_web/components/rating_components.ex:428
 #, elixir-autogen, elixir-format
 msgid "%{rated} countries are rated. Only %{investment} are investment grade on average; most are « highly speculative » (B)."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ratings_controller.ex:155
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:170
 #, elixir-autogen, elixir-format
 msgid "%{rated} of the 54 African countries are rated by at least one of the three main agencies. Investment grade on average: %{investment}. Most rated countries are in the B category, « highly speculative ». In default or close to it: %{default}."
 msgstr ""
@@ -2281,44 +2241,44 @@ msgstr ""
 msgid "%{rated} rated · %{unrated} without a rating"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:172
+#: lib/syli_atlas_web/components/rating_components.ex:173
 #, elixir-autogen, elixir-format
 msgid "%{rating}: %{name} is investment grade"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:184
+#: lib/syli_atlas_web/components/rating_components.ex:185
 #, elixir-autogen, elixir-format
 msgid "%{rating}: a critical rating, default judged likely"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:175
+#: lib/syli_atlas_web/components/rating_components.ex:176
 #, elixir-autogen, elixir-format
 msgid "%{rating}: a fair rating, %{gap}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:181
+#: lib/syli_atlas_web/components/rating_components.ex:182
 #, elixir-autogen, elixir-format
 msgid "%{rating}: a very weak rating"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:178
+#: lib/syli_atlas_web/components/rating_components.ex:179
 #, elixir-autogen, elixir-format
 msgid "%{rating}: a weak rating, highly speculative"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:453
+#: lib/syli_atlas_web/components/rating_components.ex:456
 #, elixir-autogen, elixir-format
 msgid "+ %{count} country without a rating"
 msgid_plural "+ %{count} countries without a rating"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:74
+#: lib/syli_atlas_web/components/rating_components.ex:75
 #, elixir-autogen, elixir-format
 msgid "A default is under way or judged very likely: a debt restructuring with losses for creditors is expected."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ratings_controller.ex:192
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:207
 #, elixir-autogen, elixir-format
 msgid "A rating below BBB− (S&P, Fitch) or Baa3 (Moody's). The country remains solvent, but the agencies judge the risk higher: it borrows at a higher cost, and many pension funds cannot buy its debt."
 msgstr ""
@@ -2334,12 +2294,12 @@ msgstr ""
 msgid "Average"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:463
+#: lib/syli_atlas_web/components/rating_components.ex:466
 #, elixir-autogen, elixir-format
 msgid "Best rated"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:348
+#: lib/syli_atlas_web/components/rating_components.ex:351
 #, elixir-autogen, elixir-format
 msgid "Category"
 msgstr ""
@@ -2349,37 +2309,38 @@ msgstr ""
 msgid "Country, rating (BB, Caa1…)"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ratings_controller.ex:149
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:164
 #, elixir-autogen, elixir-format
 msgid "Credit ratings of African countries by S&P, Moody's and Fitch."
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:31
+#: lib/syli_atlas_web/components/rating_components.ex:32
 #, elixir-autogen, elixir-format
 msgid "Critical rating"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:260
+#: lib/syli_atlas_web/components/rating_components.ex:261
+#: lib/syli_atlas_web/og_image/specs.ex:375
 #, elixir-autogen, elixir-format
 msgid "Default"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:39
+#: lib/syli_atlas_web/components/rating_components.ex:40
 #, elixir-autogen, elixir-format
 msgid "Default or near default"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:237
+#: lib/syli_atlas_web/components/rating_components.ex:238
 #, elixir-autogen, elixir-format
 msgid "Details"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:28
+#: lib/syli_atlas_web/components/rating_components.ex:29
 #, elixir-autogen, elixir-format
 msgid "Fair rating"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:91
+#: lib/syli_atlas_web/components/rating_components.ex:92
 #, elixir-autogen, elixir-format
 msgid "Falling"
 msgstr ""
@@ -2389,22 +2350,22 @@ msgstr ""
 msgid "Filter by verdict"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:27
+#: lib/syli_atlas_web/components/rating_components.ex:28
 #, elixir-autogen, elixir-format
 msgid "Good rating"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:37
+#: lib/syli_atlas_web/components/rating_components.ex:38
 #, elixir-autogen, elixir-format
 msgid "Highly speculative (B)"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ratings_controller.ex:186
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:201
 #, elixir-autogen, elixir-format
 msgid "How many African countries are investment grade?"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:352
+#: lib/syli_atlas_web/components/rating_components.ex:355
 #, elixir-autogen, elixir-format
 msgid "In Africa"
 msgstr ""
@@ -2415,36 +2376,36 @@ msgstr ""
 msgid "In short"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:35
-#: lib/syli_atlas_web/components/rating_components.ex:264
+#: lib/syli_atlas_web/components/rating_components.ex:36
+#: lib/syli_atlas_web/components/rating_components.ex:265
 #, elixir-autogen, elixir-format
 msgid "Investment grade"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:479
+#: lib/syli_atlas_web/components/rating_components.ex:482
 #, elixir-autogen, elixir-format
 msgid "Latest changes"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ratings_controller.ex:208
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:223
 #, elixir-autogen, elixir-format
 msgid "Long-term foreign-currency ratings by S&P, Moody's and Fitch, latest decision of each agency."
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:500
+#: lib/syli_atlas_web/components/rating_components.ex:503
 #, elixir-autogen, elixir-format
 msgid "Long-term foreign-currency ratings · average on a common scale computed by Syli Atlas · sources: the agencies' releases · not investment advice"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:394
+#: lib/syli_atlas_web/components/rating_components.ex:397
 #, elixir-autogen, elixir-format
 msgid "Long-term foreign-currency ratings, from the agencies' releases · verdict and common scale: Syli Atlas's reading of the agencies' categories · a rating is an opinion on credit risk, not investment advice"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:430
-#: lib/syli_atlas_web/components/profile_components.ex:596
-#: lib/syli_atlas_web/components/rating_components.ex:26
-#: lib/syli_atlas_web/components/rating_components.ex:169
+#: lib/syli_atlas_web/components/profile_components.ex:438
+#: lib/syli_atlas_web/components/profile_components.ex:604
+#: lib/syli_atlas_web/components/rating_components.ex:27
+#: lib/syli_atlas_web/components/rating_components.ex:170
 #, elixir-autogen, elixir-format
 msgid "No agency rating"
 msgstr ""
@@ -2459,40 +2420,40 @@ msgstr ""
 msgid "None of the three main agencies rates this country"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:44
+#: lib/syli_atlas_web/components/rating_components.ex:45
 #, elixir-autogen, elixir-format
 msgid "None of the three main agencies rates this country. Not being rated is not a bad rating."
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:34
+#: lib/syli_atlas_web/components/rating_components.ex:35
 #: lib/syli_atlas_web/controllers/ratings_html.ex:10
 #, elixir-autogen, elixir-format
 msgid "Not rated"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:56
+#: lib/syli_atlas_web/components/rating_components.ex:57
 #, elixir-autogen, elixir-format
 msgid "Not yet investment grade, but at the top of the speculative grade: the country borrows on the markets, at a higher cost than an investment-grade one."
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:512
+#: lib/syli_atlas_web/components/rating_components.ex:515
 #, elixir-autogen, elixir-format
 msgid "Rated countries by category: %{parts}; %{unrated} without a rating"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:252
+#: lib/syli_atlas_web/components/layouts.ex:256
 #: lib/syli_atlas_web/components/ticker_components.ex:99
 #, elixir-autogen, elixir-format
 msgid "Ratings"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:332
-#: lib/syli_atlas_web/components/rating_components.ex:433
+#: lib/syli_atlas_web/components/rating_components.ex:335
+#: lib/syli_atlas_web/components/rating_components.ex:436
 #, elixir-autogen, elixir-format
 msgid "Ratings of the 54 countries"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:90
+#: lib/syli_atlas_web/components/rating_components.ex:91
 #, elixir-autogen, elixir-format
 msgid "Rising"
 msgstr ""
@@ -2507,27 +2468,29 @@ msgstr ""
 msgid "Search a country or a rating"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:473
+#: lib/syli_atlas_web/components/rating_components.ex:476
 #, elixir-autogen, elixir-format
 msgid "See the %{count} rated countries"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ratings_controller.ex:206
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:221
 #, elixir-autogen, elixir-format
 msgid "Sovereign credit ratings of African countries"
 msgstr ""
 
 #: lib/syli_atlas_web/components/map_components.ex:249
-#: lib/syli_atlas_web/components/rating_components.ex:229
-#: lib/syli_atlas_web/components/rating_components.ex:296
+#: lib/syli_atlas_web/components/rating_components.ex:230
+#: lib/syli_atlas_web/components/rating_components.ex:297
+#: lib/syli_atlas_web/og_image/specs.ex:370
 #, elixir-autogen, elixir-format
 msgid "Sovereign rating"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ratings_controller.ex:49
-#: lib/syli_atlas_web/controllers/ratings_controller.ex:96
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:50
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:97
 #: lib/syli_atlas_web/controllers/ratings_html/index.html.heex:6
 #: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:6
+#: lib/syli_atlas_web/og_image/specs.ex:155
 #, elixir-autogen, elixir-format
 msgid "Sovereign ratings"
 msgstr ""
@@ -2538,27 +2501,28 @@ msgstr ""
 msgid "Sovereign ratings of African countries"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ratings_controller.ex:43
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:44
+#: lib/syli_atlas_web/og_image/specs.ex:152
 #, elixir-autogen, elixir-format
 msgid "Sovereign ratings of the 54 African countries (S&P, Moody's, Fitch)"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:422
+#: lib/syli_atlas_web/components/rating_components.ex:425
 #, elixir-autogen, elixir-format
 msgid "Sovereign ratings · S&P, Moody's, Fitch"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:36
+#: lib/syli_atlas_web/components/rating_components.ex:37
 #, elixir-autogen, elixir-format
 msgid "Speculative (BB)"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:92
+#: lib/syli_atlas_web/components/rating_components.ex:93
 #, elixir-autogen, elixir-format
 msgid "Stable"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:38
+#: lib/syli_atlas_web/components/rating_components.ex:39
 #, elixir-autogen, elixir-format
 msgid "Substantial risk (CCC)"
 msgstr ""
@@ -2568,22 +2532,22 @@ msgstr ""
 msgid "The African Union finds that the three main agencies poorly reflect the continent's realities and launched AfCRA, a private agency based in Mauritius, on 7 October 2026. A 2024 Reuters investigation found no evidence of systematic bias in the region's sovereign ratings."
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:387
+#: lib/syli_atlas_web/components/rating_components.ex:390
 #, elixir-autogen, elixir-format
 msgid "The African agency, launched on 7 October 2026, has not published a rating yet."
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:50
+#: lib/syli_atlas_web/components/rating_components.ex:51
 #, elixir-autogen, elixir-format
 msgid "The agencies judge the risk of default low. The country can borrow from the large pension and insurance funds, at lower rates."
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:68
+#: lib/syli_atlas_web/components/rating_components.ex:69
 #, elixir-autogen, elixir-format
 msgid "The agencies see a real risk of default; access to international markets is very difficult."
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:62
+#: lib/syli_atlas_web/components/rating_components.ex:63
 #, elixir-autogen, elixir-format
 msgid "The country pays its debts, but a shock (commodity prices, a political crisis) could stop it. Borrowing is expensive."
 msgstr ""
@@ -2593,19 +2557,19 @@ msgstr ""
 msgid "The debate on African ratings"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ratings_controller.ex:196
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:211
 #, elixir-autogen, elixir-format
 msgid "They do not borrow on international markets or have not asked for a rating. Not being rated is not a bad rating."
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:371
+#: lib/syli_atlas_web/components/rating_components.ex:374
 #: lib/syli_atlas_web/controllers/ratings_html/index.html.heex:101
 #: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:45
 #, elixir-autogen, elixir-format
 msgid "To check"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:356
+#: lib/syli_atlas_web/components/rating_components.ex:359
 #, elixir-autogen, elixir-format
 msgid "Trend"
 msgstr ""
@@ -2616,149 +2580,150 @@ msgstr ""
 msgid "Verdict"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:30
+#: lib/syli_atlas_web/components/rating_components.ex:31
 #, elixir-autogen, elixir-format
 msgid "Very weak rating"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:29
+#: lib/syli_atlas_web/components/rating_components.ex:30
 #, elixir-autogen, elixir-format
 msgid "Weak rating"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ratings_controller.ex:191
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:206
 #, elixir-autogen, elixir-format
 msgid "What does « speculative grade » mean?"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:193
-#: lib/syli_atlas_web/components/rating_components.ex:200
+#: lib/syli_atlas_web/components/rating_components.ex:194
+#: lib/syli_atlas_web/components/rating_components.ex:201
 #, elixir-autogen, elixir-format
 msgid "What is the credit rating of %{name}?"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:423
+#: lib/syli_atlas_web/components/rating_components.ex:426
 #, elixir-autogen, elixir-format
 msgid "What the rating agencies think."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ratings_controller.ex:180
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:195
+#: lib/syli_atlas_web/topics.ex:193
 #, elixir-autogen, elixir-format
 msgid "Which African country has the best credit rating?"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ratings_controller.ex:195
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:210
 #, elixir-autogen, elixir-format
 msgid "Why do some countries have no rating?"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:103
+#: lib/syli_atlas_web/components/rating_components.ex:104
 #, elixir-autogen, elixir-format
 msgid "affirmed"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:113
+#: lib/syli_atlas_web/components/rating_components.ex:114
 #, elixir-autogen, elixir-format
 msgid "among the best rated in Africa"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:118
+#: lib/syli_atlas_web/components/rating_components.ex:119
 #, elixir-autogen, elixir-format
 msgid "among the lowest rated in Africa"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:100
+#: lib/syli_atlas_web/components/rating_components.ex:101
 #: lib/syli_atlas_web/components/ticker_components.ex:138
 #, elixir-autogen, elixir-format
 msgid "default"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:86
+#: lib/syli_atlas_web/components/rating_components.ex:87
 #, elixir-autogen, elixir-format
 msgid "developing outlook"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:99
+#: lib/syli_atlas_web/components/rating_components.ex:100
 #: lib/syli_atlas_web/components/ticker_components.ex:137
 #, elixir-autogen, elixir-format
 msgid "downgraded"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:116
+#: lib/syli_atlas_web/components/rating_components.ex:117
 #, elixir-autogen, elixir-format
 msgid "in the middle of the African ranking"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:84
+#: lib/syli_atlas_web/components/rating_components.ex:85
 #, elixir-autogen, elixir-format
 msgid "negative outlook"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:87
+#: lib/syli_atlas_web/components/rating_components.ex:88
 #, elixir-autogen, elixir-format
 msgid "no outlook"
 msgstr ""
 
-#: lib/syli_atlas_web/components/climate_components.ex:172
-#: lib/syli_atlas_web/components/rating_components.ex:353
+#: lib/syli_atlas_web/components/climate_components.ex:171
+#: lib/syli_atlas_web/components/rating_components.ex:356
 #, elixir-autogen, elixir-format
 msgid "no. %{rank} of %{of}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:107
+#: lib/syli_atlas_web/components/rating_components.ex:108
 #, elixir-autogen, elixir-format
 msgid "no. %{rank} of %{of} in Africa"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ratings_controller.ex:170
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:185
 #, elixir-autogen, elixir-format
 msgid "none"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:526
+#: lib/syli_atlas_web/components/rating_components.ex:529
 #, elixir-autogen, elixir-format
 msgid "not rated"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:102
+#: lib/syli_atlas_web/components/rating_components.ex:103
 #: lib/syli_atlas_web/components/ticker_components.ex:140
 #, elixir-autogen, elixir-format
 msgid "outlook lowered"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:101
+#: lib/syli_atlas_web/components/rating_components.ex:102
 #: lib/syli_atlas_web/components/ticker_components.ex:139
 #, elixir-autogen, elixir-format
 msgid "outlook raised"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:88
+#: lib/syli_atlas_web/components/rating_components.ex:89
 #, elixir-autogen, elixir-format
 msgid "outlook to check"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:83
+#: lib/syli_atlas_web/components/rating_components.ex:84
 #, elixir-autogen, elixir-format
 msgid "positive outlook"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:129
+#: lib/syli_atlas_web/components/rating_components.ex:130
 #, elixir-autogen, elixir-format
 msgid "right at the investment grade threshold"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:85
+#: lib/syli_atlas_web/components/rating_components.ex:86
 #, elixir-autogen, elixir-format
 msgid "stable outlook"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:98
+#: lib/syli_atlas_web/components/rating_components.ex:99
 #: lib/syli_atlas_web/components/ticker_components.ex:136
 #, elixir-autogen, elixir-format
 msgid "upgraded"
 msgstr ""
 
-#: lib/syli_atlas_web/components/climate_components.ex:180
+#: lib/syli_atlas_web/components/climate_components.ex:179
 #, elixir-autogen, elixir-format
 msgid "%{label}: %{score} out of 100, African median %{median}"
 msgstr ""
@@ -2768,7 +2733,7 @@ msgstr ""
 msgid "%{name} is not covered yet: B-READY adds countries edition after edition (%{count} African economies in the latest one)."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ratings_controller.ex:115
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:130
 #, elixir-autogen, elixir-format
 msgid "%{name}: %{agencies}. %{verdict}, %{category}, %{gap}."
 msgstr ""
@@ -2831,11 +2796,6 @@ msgstr ""
 msgid "Control of corruption"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/ratings_controller.ex:88
-#, elixir-autogen, elixir-format
-msgid "Credit rating of %{name}: S&P, Moody's, Fitch"
-msgstr ""
-
 #: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:27
 #: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:37
 #, elixir-autogen, elixir-format
@@ -2869,7 +2829,7 @@ msgstr ""
 msgid "History"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:323
+#: lib/syli_atlas_web/components/rating_components.ex:326
 #, elixir-autogen, elixir-format
 msgid "History of decisions"
 msgstr ""
@@ -2895,7 +2855,7 @@ msgstr ""
 msgid "Outlook"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:330
+#: lib/syli_atlas_web/components/rating_components.ex:333
 #, elixir-autogen, elixir-format
 msgid "Profile of %{name}"
 msgstr ""
@@ -2910,7 +2870,9 @@ msgstr ""
 msgid "Quality of public services and of the administration."
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:415
+#: lib/syli_atlas_web/components/profile_components.ex:423
+#: lib/syli_atlas_web/controllers/questions_controller.ex:284
+#: lib/syli_atlas_web/controllers/questions_controller.ex:306
 #: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:30
 #: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:42
 #, elixir-autogen, elixir-format
@@ -2932,7 +2894,7 @@ msgstr ""
 msgid "Rule of law"
 msgstr ""
 
-#: lib/syli_atlas_web/components/climate_components.ex:151
+#: lib/syli_atlas_web/components/climate_components.ex:150
 #, elixir-autogen, elixir-format
 msgid "Sources: World Bank, Worldwide Governance Indicators (CC BY 4.0) and Business Ready (CC BY 3.0 IGO) · the line marks the African median · ranks among the African countries covered"
 msgstr ""
@@ -2957,12 +2919,7 @@ msgstr ""
 msgid "average of the three pillars · no. %{rank} of the %{of} African economies covered"
 msgstr ""
 
-#: lib/syli_atlas_web/components/rating_components.ex:299
-#, elixir-autogen, elixir-format
-msgid "%{name}: %{headline}"
-msgstr ""
-
-#: lib/syli_atlas_web/components/economy_components.ex:329
+#: lib/syli_atlas_web/components/economy_components.ex:327
 #, elixir-autogen, elixir-format
 msgid "%{name} belongs to the Common Monetary Area: the %{currency} is at par with the South African rand, which also circulates in the country."
 msgstr ""
@@ -2972,7 +2929,7 @@ msgstr ""
 msgid "%{name} shares the %{currency} and its central bank, the BCEAO, with the seven other UEMOA countries: the policy rate and foreign exchange reserves are common. The franc is pegged to the euro."
 msgstr ""
 
-#: lib/syli_atlas_web/components/economy_components.ex:315
+#: lib/syli_atlas_web/components/economy_components.ex:314
 #, elixir-autogen, elixir-format
 msgid "%{name} shares the %{currency} and its central bank, the BEAC, with the five other CEMAC countries: the policy rate and foreign exchange reserves are common. The franc is pegged to the euro."
 msgstr ""
@@ -2992,12 +2949,12 @@ msgstr ""
 msgid "A fiscal surplus of %{value} of GDP"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:208
+#: lib/syli_atlas_web/controllers/page_controller.ex:262
 #, elixir-autogen, elixir-format
 msgid "April and October"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:219
+#: lib/syli_atlas_web/controllers/page_controller.ex:273
 #, elixir-autogen, elixir-format
 msgid "At each decision"
 msgstr ""
@@ -3007,12 +2964,12 @@ msgstr ""
 msgid "Balance of trade, income and transfers with the rest of the world, as a share of GDP."
 msgstr ""
 
-#: lib/syli_atlas_web/components/economy_components.ex:363
+#: lib/syli_atlas_web/components/economy_components.ex:360
 #, elixir-autogen, elixir-format
 msgid "CEMAC convergence criteria"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:259
+#: lib/syli_atlas_web/controllers/page_controller.ex:313
 #, elixir-autogen, elixir-format
 msgid "Currency codes and fixed parities (CFA francs, Comorian franc, escudo, dobra…)"
 msgstr ""
@@ -3048,7 +3005,7 @@ msgstr ""
 msgid "Every figure on the site names its source just below it. Syli Atlas is a non-commercial project: it uses each source within the terms below."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:247
+#: lib/syli_atlas_web/controllers/page_controller.ex:301
 #, elixir-autogen, elixir-format
 msgid "Every trading day"
 msgstr ""
@@ -3064,13 +3021,14 @@ msgid "First-rank criteria in %{year}"
 msgstr ""
 
 #: lib/syli_atlas_web/components/page_components.ex:21
-#: lib/syli_atlas_web/components/profile_components.ex:524
+#: lib/syli_atlas_web/components/profile_components.ex:532
+#: lib/syli_atlas_web/controllers/area_controller.ex:223
 #: lib/syli_atlas_web/controllers/community_html/show.html.heex:90
 #, elixir-autogen, elixir-format
 msgid "Fiscal balance"
 msgstr ""
 
-#: lib/syli_atlas_web/components/economy_components.ex:365
+#: lib/syli_atlas_web/components/economy_components.ex:362
 #, elixir-autogen, elixir-format
 msgid "Fiscal balance ≥ −3 % of GDP"
 msgstr ""
@@ -3085,32 +3043,32 @@ msgstr ""
 msgid "Fixed"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:206
+#: lib/syli_atlas_web/controllers/page_controller.ex:260
 #, elixir-autogen, elixir-format
 msgid "Free reuse with attribution, non-commercial use"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:203
+#: lib/syli_atlas_web/controllers/page_controller.ex:257
 #, elixir-autogen, elixir-format
 msgid "GDP, growth, inflation, public debt, fiscal balance, current account, unemployment, population"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:200
+#: lib/syli_atlas_web/controllers/page_controller.ex:254
 #, elixir-autogen, elixir-format
 msgid "IMF · World Economic Outlook"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:256
+#: lib/syli_atlas_web/controllers/page_controller.ex:310
 #, elixir-autogen, elixir-format
 msgid "ISO 4217 and central banks"
 msgstr ""
 
-#: lib/syli_atlas_web/components/economy_components.ex:370
+#: lib/syli_atlas_web/components/economy_components.ex:367
 #, elixir-autogen, elixir-format
 msgid "Inflation ≤ 3 %"
 msgstr ""
 
-#: lib/syli_atlas_web/components/economy_components.ex:381
+#: lib/syli_atlas_web/components/economy_components.ex:378
 #, elixir-autogen, elixir-format
 msgid "Met"
 msgstr ""
@@ -3120,12 +3078,12 @@ msgstr ""
 msgid "Negative: a deficit · dashed: estimates and projections"
 msgstr ""
 
-#: lib/syli_atlas_web/components/economy_components.ex:384
+#: lib/syli_atlas_web/components/economy_components.ex:381
 #, elixir-autogen, elixir-format
 msgid "Not computed"
 msgstr ""
 
-#: lib/syli_atlas_web/components/economy_components.ex:382
+#: lib/syli_atlas_web/components/economy_components.ex:379
 #, elixir-autogen, elixir-format
 msgid "Not met"
 msgstr ""
@@ -3140,12 +3098,12 @@ msgstr ""
 msgid "Online"
 msgstr ""
 
-#: lib/syli_atlas_web/components/economy_components.ex:371
+#: lib/syli_atlas_web/components/economy_components.ex:368
 #, elixir-autogen, elixir-format
 msgid "Public debt ≤ 70 % of GDP"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:262
+#: lib/syli_atlas_web/controllers/page_controller.ex:316
 #, elixir-autogen, elixir-format
 msgid "Public facts"
 msgstr ""
@@ -3160,7 +3118,7 @@ msgstr ""
 msgid "Public finances and external accounts"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:217
+#: lib/syli_atlas_web/controllers/page_controller.ex:271
 #, elixir-autogen, elixir-format
 msgid "Read from each agency's release, linked under every rating; never scraped"
 msgstr ""
@@ -3170,7 +3128,7 @@ msgstr ""
 msgid "Real GDP index, chained from the IMF growth rates."
 msgstr ""
 
-#: lib/syli_atlas_web/components/economy_components.ex:368
+#: lib/syli_atlas_web/components/economy_components.ex:365
 #, elixir-autogen, elixir-format
 msgid "Reference fiscal balance ≥ −1.5 % of GDP"
 msgstr ""
@@ -3180,7 +3138,7 @@ msgstr ""
 msgid "Revenue minus spending of the general government, as a share of GDP. Negative: a deficit."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:213
+#: lib/syli_atlas_web/controllers/page_controller.ex:267
 #, elixir-autogen, elixir-format
 msgid "S&P Global Ratings, Moody's, Fitch Ratings"
 msgstr ""
@@ -3196,7 +3154,7 @@ msgstr ""
 msgid "Share of the labour force without a job. The IMF covers few African countries."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:245
+#: lib/syli_atlas_web/controllers/page_controller.ex:299
 #, elixir-autogen, elixir-format
 msgid "Shown on Syli Atlas with the credit “Data by MansaAPI”; not redistributed"
 msgstr ""
@@ -3206,17 +3164,17 @@ msgstr ""
 msgid "Source: IMF, %{label} · general government net lending or borrowing · group values weighted by GDP in dollars (Syli Atlas)"
 msgstr ""
 
-#: lib/syli_atlas_web/components/economy_components.ex:360
+#: lib/syli_atlas_web/components/economy_components.ex:357
 #, elixir-autogen, elixir-format
 msgid "South African rand"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:215
+#: lib/syli_atlas_web/controllers/page_controller.ex:269
 #, elixir-autogen, elixir-format
 msgid "Sovereign credit ratings"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:243
+#: lib/syli_atlas_web/controllers/page_controller.ex:297
 #, elixir-autogen, elixir-format
 msgid "Stock exchange closes and indices, dollar exchange rates"
 msgstr ""
@@ -3236,12 +3194,12 @@ msgstr ""
 msgid "Terms"
 msgstr ""
 
-#: lib/syli_atlas_web/components/economy_components.ex:344
+#: lib/syli_atlas_web/components/economy_components.ex:341
 #, elixir-autogen, elixir-format
 msgid "The %{currency} has no fixed peg: its value against the dollar and the euro moves with the market and the central bank's policy."
 msgstr ""
 
-#: lib/syli_atlas_web/components/economy_components.ex:337
+#: lib/syli_atlas_web/components/economy_components.ex:334
 #, elixir-autogen, elixir-format
 msgid "The %{currency} is pegged to the %{anchor}."
 msgstr ""
@@ -3261,7 +3219,7 @@ msgstr ""
 msgid "The fiscal balance and the current account of a group are weighted by GDP in dollars. Groups have no unemployment rate: the IMF covers too few African countries."
 msgstr ""
 
-#: lib/syli_atlas_web/components/economy_components.ex:323
+#: lib/syli_atlas_web/components/economy_components.ex:321
 #, elixir-autogen, elixir-format
 msgid "The rand anchors the Common Monetary Area: the currencies of Lesotho, Namibia and Eswatini are at par with it."
 msgstr ""
@@ -3286,18 +3244,18 @@ msgstr ""
 msgid "UEMOA and CEMAC convergence criteria, checked against IMF figures. The IMF does not publish CEMAC's reference fiscal balance: that criterion is not computed."
 msgstr ""
 
-#: lib/syli_atlas_web/components/economy_components.ex:362
+#: lib/syli_atlas_web/components/economy_components.ex:359
 #, elixir-autogen, elixir-format
 msgid "UEMOA convergence criteria"
 msgstr ""
 
-#: lib/syli_atlas_web/components/economy_components.ex:359
+#: lib/syli_atlas_web/components/economy_components.ex:356
 #, elixir-autogen, elixir-format
 msgid "US dollar"
 msgstr ""
 
 #: lib/syli_atlas_web/components/page_components.ex:23
-#: lib/syli_atlas_web/components/profile_components.ex:614
+#: lib/syli_atlas_web/components/profile_components.ex:622
 #: lib/syli_atlas_web/components/world_bank_components.ex:267
 #, elixir-autogen, elixir-format
 msgid "Unemployment"
@@ -3318,7 +3276,7 @@ msgstr ""
 msgid "What each one provides, its terms and what is online"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:264
+#: lib/syli_atlas_web/controllers/page_controller.ex:318
 #, elixir-autogen, elixir-format
 msgid "When a parity changes"
 msgstr ""
@@ -3333,7 +3291,7 @@ msgstr ""
 msgid "dollar rate:"
 msgstr ""
 
-#: lib/syli_atlas_web/components/economy_components.ex:358
+#: lib/syli_atlas_web/components/economy_components.ex:355
 #, elixir-autogen, elixir-format
 msgid "euro"
 msgstr ""
@@ -3348,7 +3306,7 @@ msgstr ""
 msgid "in %{year}, the general government spent %{value} of GDP more than it collected"
 msgstr ""
 
-#: lib/syli_atlas_web/components/economy_components.ex:374
+#: lib/syli_atlas_web/components/economy_components.ex:371
 #, elixir-autogen, elixir-format
 msgid "no IMF figure"
 msgstr ""
@@ -3358,7 +3316,7 @@ msgstr ""
 msgid "no fixed peg"
 msgstr ""
 
-#: lib/syli_atlas_web/components/economy_components.ex:373
+#: lib/syli_atlas_web/components/economy_components.ex:370
 #, elixir-autogen, elixir-format
 msgid "not published by the IMF"
 msgstr ""
@@ -3421,7 +3379,7 @@ msgstr ""
 msgid "A debt owed first to other countries"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:611
+#: lib/syli_atlas_web/components/profile_components.ex:619
 #: lib/syli_atlas_web/components/world_bank_components.ex:353
 #, elixir-autogen, elixir-format
 msgid "Access to electricity"
@@ -3468,15 +3426,17 @@ msgstr ""
 msgid "China"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:244
+#: lib/syli_atlas_web/components/layouts.ex:248
 #: lib/syli_atlas_web/components/world_bank_components.ex:53
 #: lib/syli_atlas_web/controllers/debt_controller.ex:43
 #: lib/syli_atlas_web/controllers/debt_html/index.html.heex:6
+#: lib/syli_atlas_web/og_image/specs.ex:139
 #, elixir-autogen, elixir-format
 msgid "Debt"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:724
+#: lib/syli_atlas_web/components/profile_components.ex:755
+#: lib/syli_atlas_web/controllers/debt_controller.ex:50
 #: lib/syli_atlas_web/controllers/debt_html/index.html.heex:13
 #: lib/syli_atlas_web/controllers/debt_html/index.html.heex:39
 #, elixir-autogen, elixir-format
@@ -3509,7 +3469,7 @@ msgstr ""
 msgid "Each indicator is compared with the African median, with the year of the latest survey: some are run only every three to five years."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:185
+#: lib/syli_atlas_web/controllers/page_controller.ex:239
 #, elixir-autogen, elixir-format
 msgid "Every December"
 msgstr ""
@@ -3520,7 +3480,7 @@ msgstr ""
 msgid "External debt"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:170
+#: lib/syli_atlas_web/controllers/page_controller.ex:224
 #, elixir-autogen, elixir-format
 msgid "External debt by creditor, including China, and its service"
 msgstr ""
@@ -3545,12 +3505,12 @@ msgstr ""
 msgid "Foreign direct investment, net inflows"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:182
+#: lib/syli_atlas_web/controllers/page_controller.ex:236
 #, elixir-autogen, elixir-format
 msgid "Free reuse with attribution (CC BY 4.0)"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/debt_controller.ex:106
+#: lib/syli_atlas_web/controllers/debt_controller.ex:123
 #, elixir-autogen, elixir-format
 msgid "In %{year}, the median public debt of African countries is %{median} of GDP (IMF); %{above} of %{of} countries are above 70 %. China holds a median %{china} of their public external debt (World Bank)."
 msgstr ""
@@ -3580,7 +3540,7 @@ msgstr ""
 msgid "Investment, money sent home by the diaspora and aid: three inflows often mixed up, shown side by side."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:172
+#: lib/syli_atlas_web/controllers/page_controller.ex:226
 #, elixir-autogen, elixir-format
 msgid "Investment, remittances and aid inflows, value added and jobs by sector (ILO estimates), poverty, electricity, internet, accounts"
 msgstr ""
@@ -3626,7 +3586,7 @@ msgstr ""
 msgid "Other countries"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:529
+#: lib/syli_atlas_web/components/profile_components.ex:537
 #: lib/syli_atlas_web/controllers/debt_html/index.html.heex:49
 #: lib/syli_atlas_web/controllers/debt_html/index.html.heex:89
 #, elixir-autogen, elixir-format
@@ -3687,7 +3647,7 @@ msgstr ""
 msgid "Services"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:185
+#: lib/syli_atlas_web/controllers/page_controller.ex:239
 #, elixir-autogen, elixir-format
 msgid "Several times a year"
 msgstr ""
@@ -3868,12 +3828,12 @@ msgstr ""
 msgid "Diversified exports"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:155
+#: lib/syli_atlas_web/controllers/page_controller.ex:209
 #, elixir-autogen, elixir-format
 msgid "Every year, in January"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:152
+#: lib/syli_atlas_web/controllers/page_controller.ex:206
 #, elixir-autogen, elixir-format
 msgid "Exports and imports of goods by product and partner"
 msgstr ""
@@ -3903,7 +3863,7 @@ msgstr ""
 msgid "First export"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:153
+#: lib/syli_atlas_web/controllers/page_controller.ex:207
 #, elixir-autogen, elixir-format
 msgid "Free reuse with attribution (Licence Ouverte Etalab 2.0)"
 msgstr ""
@@ -3974,12 +3934,12 @@ msgstr ""
 msgid "trade surplus of %{v}"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:157
+#: lib/syli_atlas_web/controllers/page_controller.ex:211
 #, elixir-autogen, elixir-format
 msgid "version %{version}, %{nomenclature}"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:233
+#: lib/syli_atlas_web/controllers/page_controller.ex:287
 #, elixir-autogen, elixir-format
 msgid "Every quarter"
 msgstr ""
@@ -3994,7 +3954,7 @@ msgstr ""
 msgid "IMF and World Bank debt sustainability analysis"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:228
+#: lib/syli_atlas_web/controllers/page_controller.ex:282
 #, elixir-autogen, elixir-format
 msgid "IMF · Debt sustainability analyses of low-income countries"
 msgstr ""
@@ -4024,12 +3984,12 @@ msgstr ""
 msgid "Not assessed"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:231
+#: lib/syli_atlas_web/controllers/page_controller.ex:285
 #, elixir-autogen, elixir-format
 msgid "Public assessment, linked; not recomputed"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:527
+#: lib/syli_atlas_web/components/profile_components.ex:535
 #: lib/syli_atlas_web/components/world_bank_components.ex:99
 #, elixir-autogen, elixir-format
 msgid "Risk of debt distress"
@@ -4041,7 +4001,7 @@ msgstr ""
 msgid "Risk of debt distress (IMF)"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:230
+#: lib/syli_atlas_web/controllers/page_controller.ex:284
 #, elixir-autogen, elixir-format
 msgid "Risk of external debt distress, with the date of each analysis"
 msgstr ""
@@ -4066,27 +4026,27 @@ msgstr ""
 msgid "Risk of debt distress: IMF, list of debt sustainability analyses of low-income countries, as of %{date} · only countries eligible for the IMF's concessional lending are assessed"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/community_controller.ex:165
+#: lib/syli_atlas_web/controllers/community_controller.ex:186
 #, elixir-autogen, elixir-format
 msgid "%{name} (%{n} members): GDP of %{gdp} in %{year}, %{population} inhabitants, growth of %{growth} and public debt of %{debt} of GDP (IMF, Syli Atlas totals)."
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:696
+#: lib/syli_atlas_web/components/profile_components.ex:722
 #, elixir-autogen, elixir-format
 msgid "%{name}, elsewhere"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/area_controller.ex:292
+#: lib/syli_atlas_web/controllers/area_controller.ex:430
 #, elixir-autogen, elixir-format
 msgid "%{name}: %{facts} (World Bank)."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/area_controller.ex:289
+#: lib/syli_atlas_web/controllers/area_controller.ex:427
 #, elixir-autogen, elixir-format
 msgid "%{name}: jobs, inflows and living conditions (World Bank)."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/area_controller.ex:299
+#: lib/syli_atlas_web/controllers/area_controller.ex:437
 #, elixir-autogen, elixir-format
 msgid "%{name}: stock exchange and business climate."
 msgstr ""
@@ -4096,17 +4056,17 @@ msgstr ""
 msgid "%{n} countries"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:603
+#: lib/syli_atlas_web/components/profile_components.ex:611
 #, elixir-autogen, elixir-format
 msgid "%{n} listed"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/area_controller.ex:275
+#: lib/syli_atlas_web/controllers/area_controller.ex:413
 #, elixir-autogen, elixir-format
 msgid "%{v} live on less than $3.00 a day (%{year})"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/area_controller.ex:270
+#: lib/syli_atlas_web/controllers/area_controller.ex:408
 #, elixir-autogen, elixir-format
 msgid "%{v} of the population has electricity (%{year})"
 msgstr ""
@@ -4116,12 +4076,12 @@ msgstr ""
 msgid "A country, a theme, a security: « dette Sénégal »"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:613
+#: lib/syli_atlas_web/components/profile_components.ex:621
 #, elixir-autogen, elixir-format
 msgid "Adults with an account"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:309
+#: lib/syli_atlas_web/components/layouts.ex:313
 #, elixir-autogen, elixir-format
 msgid "All 54 countries"
 msgstr ""
@@ -4132,31 +4092,27 @@ msgstr ""
 msgid "Community"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:742
-#, elixir-autogen, elixir-format
-msgid "Compare countries"
-msgstr ""
-
 #: lib/syli_atlas_web/controllers/community_html/show.html.heex:93
 #, elixir-autogen, elixir-format
 msgid "Convergence criteria"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:319
-#: lib/syli_atlas_web/components/profile_components.ex:727
-#: lib/syli_atlas_web/components/profile_components.ex:741
-#: lib/syli_atlas_web/components/profile_components.ex:755
-#: lib/syli_atlas_web/components/profile_components.ex:790
-#: lib/syli_atlas_web/components/profile_components.ex:791
+#: lib/syli_atlas_web/components/layouts.ex:325
+#: lib/syli_atlas_web/components/profile_components.ex:775
+#: lib/syli_atlas_web/components/profile_components.ex:825
+#: lib/syli_atlas_web/components/profile_components.ex:826
 #: lib/syli_atlas_web/controllers/community_controller.ex:30
-#: lib/syli_atlas_web/controllers/community_controller.ex:87
+#: lib/syli_atlas_web/controllers/community_controller.ex:99
 #: lib/syli_atlas_web/controllers/community_html/index.html.heex:6
 #: lib/syli_atlas_web/controllers/community_html/show.html.heex:6
+#: lib/syli_atlas_web/controllers/questions_controller.ex:340
 #: lib/syli_atlas_web/controllers/regions_html/index.html.heex:236
+#: lib/syli_atlas_web/og_image/specs.ex:166
 #, elixir-autogen, elixir-format
 msgid "Economic communities"
 msgstr ""
 
+#: lib/syli_atlas_web/controllers/community_controller.ex:33
 #: lib/syli_atlas_web/controllers/community_html/index.html.heex:12
 #: lib/syli_atlas_web/controllers/community_html/index.html.heex:23
 #, elixir-autogen, elixir-format
@@ -4164,11 +4120,12 @@ msgid "Economic communities of Africa"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/community_controller.ex:24
+#: lib/syli_atlas_web/og_image/specs.ex:164
 #, elixir-autogen, elixir-format
 msgid "Economic communities of Africa: GDP, growth, debt"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:550
+#: lib/syli_atlas_web/components/profile_components.ex:558
 #, elixir-autogen, elixir-format
 msgid "Exports"
 msgstr ""
@@ -4179,58 +4136,59 @@ msgstr ""
 msgid "Finances and debt"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:551
+#: lib/syli_atlas_web/components/profile_components.ex:559
 #, elixir-autogen, elixir-format
 msgid "First client"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:642
-#: lib/syli_atlas_web/components/profile_components.ex:782
+#: lib/syli_atlas_web/components/profile_components.ex:650
+#: lib/syli_atlas_web/components/profile_components.ex:817
 #, elixir-autogen, elixir-format
 msgid "Further reading"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:310
-#: lib/syli_atlas_web/components/profile_components.ex:379
-#: lib/syli_atlas_web/components/profile_components.ex:506
+#: lib/syli_atlas_web/components/profile_components.ex:318
+#: lib/syli_atlas_web/components/profile_components.ex:387
+#: lib/syli_atlas_web/components/profile_components.ex:514
 #: lib/syli_atlas_web/controllers/community_html/show.html.heex:41
 #: lib/syli_atlas_web/controllers/regions_html/index.html.heex:271
+#: lib/syli_atlas_web/og_image/specs.ex:427
 #, elixir-autogen, elixir-format
 msgid "Growth %{year}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:336
+#: lib/syli_atlas_web/components/layouts.ex:353
 #, elixir-autogen, elixir-format
 msgid "IMF"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:337
-#: lib/syli_atlas_web/components/profile_components.ex:621
+#: lib/syli_atlas_web/components/layouts.ex:354
+#: lib/syli_atlas_web/components/profile_components.ex:629
 #, elixir-autogen, elixir-format
 msgid "IMF debt sustainability analyses"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:618
+#: lib/syli_atlas_web/components/profile_components.ex:626
 #, elixir-autogen, elixir-format
 msgid "IMF, %{label}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:683
+#: lib/syli_atlas_web/components/profile_components.ex:691
 #, elixir-autogen, elixir-format
 msgid "In %{community}"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/community_controller.ex:154
+#: lib/syli_atlas_web/controllers/community_controller.ex:175
 #, elixir-autogen, elixir-format
 msgid "In %{year}, %{largest} is the largest African economic community by GDP (%{gdp}), and %{fastest} the fastest-growing (%{growth}), according to IMF figures added up by Syli Atlas."
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:670
+#: lib/syli_atlas_web/components/profile_components.ex:678
 #, elixir-autogen, elixir-format
 msgid "In the region: %{region}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:343
+#: lib/syli_atlas_web/components/layouts.ex:360
 #, elixir-autogen, elixir-format
 msgid "Information, not investment advice. Figures are those of the sources; totals and rankings are Syli Atlas calculations."
 msgstr ""
@@ -4258,7 +4216,7 @@ msgstr ""
 msgid "Nothing matches “%{q}”."
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:693
+#: lib/syli_atlas_web/components/profile_components.ex:701
 #, elixir-autogen, elixir-format
 msgid "On this theme, in Africa"
 msgstr ""
@@ -4274,12 +4232,12 @@ msgstr ""
 msgid "Overview"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:612
+#: lib/syli_atlas_web/components/profile_components.ex:620
 #, elixir-autogen, elixir-format
 msgid "Poverty"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:725
+#: lib/syli_atlas_web/components/profile_components.ex:756
 #, elixir-autogen, elixir-format
 msgid "Public debt ranking"
 msgstr ""
@@ -4289,15 +4247,15 @@ msgstr ""
 msgid "Ranked by GDP in %{year}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:264
+#: lib/syli_atlas_web/components/layouts.ex:268
 #: lib/syli_atlas_web/controllers/community_html/index.html.heex:11
 #, elixir-autogen, elixir-format
 msgid "Regions and communities"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:748
-#: lib/syli_atlas_web/components/profile_components.ex:754
+#: lib/syli_atlas_web/components/profile_components.ex:790
 #: lib/syli_atlas_web/controllers/community_html/index.html.heex:16
+#: lib/syli_atlas_web/controllers/regions_controller.ex:46
 #, elixir-autogen, elixir-format
 msgid "Regions of Africa"
 msgstr ""
@@ -4312,18 +4270,18 @@ msgstr ""
 msgid "Search…"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:446
+#: lib/syli_atlas_web/components/profile_components.ex:454
 #, elixir-autogen, elixir-format
 msgid "Sections of this profile"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:481
+#: lib/syli_atlas_web/components/profile_components.ex:489
 #: lib/syli_atlas_web/controllers/search_html/index.html.heex:16
 #, elixir-autogen, elixir-format
 msgid "See the details"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:330
+#: lib/syli_atlas_web/components/layouts.ex:347
 #, elixir-autogen, elixir-format
 msgid "Site map"
 msgstr ""
@@ -4343,7 +4301,7 @@ msgstr ""
 msgid "Source: IMF, %{edition} · totals and criteria: Syli Atlas calculation · membership as of %{date}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:732
+#: lib/syli_atlas_web/components/profile_components.ex:763
 #, elixir-autogen, elixir-format
 msgid "Sovereign ratings of the 54 countries"
 msgstr ""
@@ -4353,12 +4311,12 @@ msgstr ""
 msgid "Syli Atlas calculation from IMF figures (%{edition}) · GDP and population: sums · growth: weighted by GDP in PPP · debt: weighted by GDP in dollars · membership as of %{date}: ECOWAS without Burkina Faso, Mali and Niger, members of the AES"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:340
+#: lib/syli_atlas_web/components/layouts.ex:357
 #, elixir-autogen, elixir-format
 msgid "Terms of each source"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:687
+#: lib/syli_atlas_web/components/profile_components.ex:695
 #, elixir-autogen, elixir-format
 msgid "The %{community} page"
 msgstr ""
@@ -4368,9 +4326,9 @@ msgstr ""
 msgid "Theme"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:181
-#: lib/syli_atlas_web/components/layouts.ex:204
-#: lib/syli_atlas_web/components/layouts.ex:317
+#: lib/syli_atlas_web/components/layouts.ex:184
+#: lib/syli_atlas_web/components/layouts.ex:208
+#: lib/syli_atlas_web/components/layouts.ex:323
 #, elixir-autogen, elixir-format
 msgid "Themes"
 msgstr ""
@@ -4380,13 +4338,13 @@ msgstr ""
 msgid "Try a country name (Côte d'Ivoire, Ivory Coast, CIV), a community (UEMOA, ECOWAS), or a theme: debt, inflation, ratings."
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:577
+#: lib/syli_atlas_web/components/profile_components.ex:585
 #, elixir-autogen, elixir-format
 msgid "World Bank"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:337
-#: lib/syli_atlas_web/components/profile_components.ex:619
+#: lib/syli_atlas_web/components/layouts.ex:354
+#: lib/syli_atlas_web/components/profile_components.ex:627
 #, elixir-autogen, elixir-format
 msgid "World Bank (CC BY 4.0)"
 msgstr ""
@@ -4396,23 +4354,23 @@ msgstr ""
 msgid "of GDP, weighted by GDP in dollars"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:544
+#: lib/syli_atlas_web/components/profile_components.ex:552
 #, elixir-autogen, elixir-format
 msgid "of exports: %{product}, %{year} (CEPII)"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:521
+#: lib/syli_atlas_web/components/profile_components.ex:529
 #, elixir-autogen, elixir-format
 msgid "public debt, % of GDP, %{year} (IMF)"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:339
-#: lib/syli_atlas_web/components/profile_components.ex:622
+#: lib/syli_atlas_web/components/layouts.ex:356
+#: lib/syli_atlas_web/components/profile_components.ex:630
 #, elixir-autogen, elixir-format
 msgid "rating agencies"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:504
+#: lib/syli_atlas_web/components/profile_components.ex:512
 #, elixir-autogen, elixir-format
 msgid "real GDP, %{from} → %{to} (IMF)"
 msgstr ""
@@ -4422,7 +4380,7 @@ msgstr ""
 msgid "sum of the members"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/area_controller.ex:280
+#: lib/syli_atlas_web/controllers/area_controller.ex:418
 #, elixir-autogen, elixir-format
 msgid "unemployment is %{v} (ILO, %{year})"
 msgstr ""
@@ -4437,40 +4395,40 @@ msgstr ""
 msgid "Growth %{year}: %{value}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:336
+#: lib/syli_atlas_web/components/layouts.ex:353
 #, elixir-autogen, elixir-format
 msgid "Sources:"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:784
-#: lib/syli_atlas_web/components/profile_components.ex:785
+#: lib/syli_atlas_web/components/profile_components.ex:819
+#: lib/syli_atlas_web/components/profile_components.ex:820
 #, elixir-autogen, elixir-format
 msgid "Other regions and groupings"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:703
+#: lib/syli_atlas_web/components/profile_components.ex:729
 #, elixir-autogen, elixir-format
 msgid "Rating history of %{name}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:259
+#: lib/syli_atlas_web/components/layouts.ex:263
 #, elixir-autogen, elixir-format
 msgid "%{n} rated"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:175
+#: lib/syli_atlas_web/components/layouts.ex:178
 #, elixir-autogen, elixir-format
 msgid "1 exchange"
 msgid_plural "%{count} exchanges"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/syli_atlas_web/components/layouts.ex:247
+#: lib/syli_atlas_web/components/layouts.ex:251
 #, elixir-autogen, elixir-format
 msgid "54 countries"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:266
+#: lib/syli_atlas_web/components/layouts.ex:270
 #, elixir-autogen, elixir-format
 msgid "AU regions, ECOWAS, AES, WAEMU, CEMAC, EAC, SADC"
 msgstr ""
@@ -4485,17 +4443,17 @@ msgstr ""
 msgid "Compare the communities"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:218
+#: lib/syli_atlas_web/components/layouts.ex:222
 #, elixir-autogen, elixir-format
 msgid "Each theme compares the 54 countries; a country profile has the same theme in a tab."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:246
+#: lib/syli_atlas_web/components/layouts.ex:250
 #, elixir-autogen, elixir-format
 msgid "Levels, creditors, risk of debt distress · 54 countries"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:256
+#: lib/syli_atlas_web/components/layouts.ex:260
 #, elixir-autogen, elixir-format
 msgid "S&P, Moody's, Fitch · %{n} countries rated"
 msgstr ""
@@ -4622,6 +4580,7 @@ msgid "Code received by email"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/account_html.ex:66
+#: lib/syli_atlas_web/og_image/specs.ex:449
 #, elixir-autogen, elixir-format
 msgid "Comparison"
 msgstr ""
@@ -4817,8 +4776,8 @@ msgstr ""
 msgid "Last used:"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:468
-#: lib/syli_atlas_web/components/layouts.ex:476
+#: lib/syli_atlas_web/components/layouts.ex:485
+#: lib/syli_atlas_web/components/layouts.ex:493
 #: lib/syli_atlas_web/controllers/account_html.ex:30
 #: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:4
 #: lib/syli_atlas_web/controllers/account_html/favorites.html.heex:4
@@ -5343,11 +5302,14 @@ msgid "Stock exchanges and sovereign ratings"
 msgstr ""
 
 #: lib/syli_atlas_web/components/ticker_components.ex:84
+#: lib/syli_atlas_web/og_image/specs.ex:485
 #, elixir-autogen, elixir-format, fuzzy
 msgid "close of %{date}"
 msgstr ""
 
 #: lib/syli_atlas_web/components/ticker_components.ex:125
+#: lib/syli_atlas_web/og_image/specs.ex:474
+#: lib/syli_atlas_web/og_image/specs.ex:506
 #, elixir-autogen, elixir-format, fuzzy
 msgid "end of day"
 msgstr ""
@@ -5362,27 +5324,27 @@ msgstr ""
 msgid "Back to top"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:126
+#: lib/syli_atlas_web/controllers/page_controller.ex:180
 #, elixir-autogen, elixir-format
 msgid "Accessibility"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/page_controller.ex:131
+#: lib/syli_atlas_web/controllers/page_controller.ex:185
 #, elixir-autogen, elixir-format
 msgid "Accessibility statement of Syli Atlas: compliance with the RGAA, known barriers and how to report one."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:601
+#: lib/syli_atlas_web/components/layouts.ex:618
 #, elixir-autogen, elixir-format
 msgid "Accessibility: fully compliant"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:603
+#: lib/syli_atlas_web/components/layouts.ex:620
 #, elixir-autogen, elixir-format
 msgid "Accessibility: not compliant"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:602
+#: lib/syli_atlas_web/components/layouts.ex:619
 #, elixir-autogen, elixir-format
 msgid "Accessibility: partially compliant"
 msgstr ""
@@ -5417,19 +5379,794 @@ msgstr ""
 msgid "The same figures as a table: ranking of the 54 countries"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:332
-#: lib/syli_atlas_web/components/profile_components.ex:401
+#: lib/syli_atlas_web/components/profile_components.ex:340
+#: lib/syli_atlas_web/components/profile_components.ex:409
 #, elixir-autogen, elixir-format, fuzzy
 msgid "of GDP, %{year}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:313
-#: lib/syli_atlas_web/components/profile_components.ex:382
+#: lib/syli_atlas_web/components/profile_components.ex:321
+#: lib/syli_atlas_web/components/profile_components.ex:390
 #, elixir-autogen, elixir-format
 msgid "real GDP %{change} %{since}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/profile_components.ex:290
+#: lib/syli_atlas_web/components/market_components.ex:369
+#, elixir-autogen, elixir-format
+msgid "%{name} on the %{exchange}"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/market_controller.ex:160
+#, elixir-autogen, elixir-format, fuzzy
+msgid "%{name} (%{ticker}): price on the %{exchange} and history"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/market_controller.ex:227
+#, elixir-autogen, elixir-format
+msgid "%{name}: %{index} index and prices of the %{count} listed securities"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/community_controller.ex:89
+#, elixir-autogen, elixir-format
+msgid "%{name}: GDP, growth and debt of the %{count} member countries (%{year})"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:291
+#, elixir-autogen, elixir-format
+msgid "%{name}: GDP, growth, debt and inflation %{year} (IMF)"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:319
+#, elixir-autogen, elixir-format
+msgid "%{name}: credit rating, stock exchange and business climate"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:295
+#, elixir-autogen, elixir-format
+msgid "%{name}: economy %{year}, GDP and growth (IMF)"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:568
+#, elixir-autogen, elixir-format
+msgid "%{name}: growth of %{growth} in %{to}, real GDP %{real} since %{from} (IMF). GDP of %{gdp}, no. %{rank} in Africa."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:580
+#, elixir-autogen, elixir-format
+msgid "%{name}: growth of %{growth} in %{to}, real GDP %{real} since %{from} (IMF). GDP of %{gdp}."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:316
+#, elixir-autogen, elixir-format
+msgid "%{name}: poverty, jobs and access to electricity"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/market_controller.ex:233
+#, elixir-autogen, elixir-format
+msgid "%{name}: prices of the %{count} listed securities"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/market_controller.ex:45
+#: lib/syli_atlas_web/og_image/specs.ex:186
+#, elixir-autogen, elixir-format
+msgid "African stock exchanges: indices, prices and latest session"
+msgstr ""
+
+#: lib/syli_atlas_web/components/rating_components.ex:301
+#, elixir-autogen, elixir-format
+msgid "Credit rating of %{name} · %{headline}"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:119
+#, elixir-autogen, elixir-format
+msgid "Credit rating of %{name}: %{agencies}"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/ratings_controller.ex:115
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Credit rating of %{name}: not rated by S&P, Moody's or Fitch"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/page_controller.ex:32
+#: lib/syli_atlas_web/og_image/specs.ex:210
+#, elixir-autogen, elixir-format
+msgid "Economic data of the 54 African countries: GDP, debt, inflation"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:310
+#, elixir-autogen, elixir-format
+msgid "Exports of %{name}: products and main buyers (%{year})"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/market_controller.ex:196
+#: lib/syli_atlas_web/og_image/specs.ex:185
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Funds exposed to Africa (ETF): prices and daily change"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:299
+#, elixir-autogen, elixir-format
+msgid "GDP of %{name} 2015–2030: growth and GDP per capita"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:444
+#, elixir-autogen, elixir-format
+msgid "GDP of %{name}: %{gdp} in %{to}, %{per_capita} per person (%{ppp} in purchasing power parity). Real growth of %{growth} in %{to} (IMF)."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:604
+#, elixir-autogen, elixir-format
+msgid "In current dollars: %{change} since %{from}, as the %{currency} fell."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:303
+#, elixir-autogen, elixir-format
+msgid "Public debt of %{name}: level, creditors and risk (%{year})"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/regions_controller.ex:30
+#: lib/syli_atlas_web/og_image/specs.ex:172
+#, elixir-autogen, elixir-format
+msgid "Regions of Africa compared: GDP, growth, inflation and debt"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/page_controller.ex:130
+#: lib/syli_atlas_web/og_image/specs.ex:201
+#, elixir-autogen, elixir-format
+msgid "Sources and method: IMF, World Bank, CEPII, rating agencies"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:222
+#: lib/syli_atlas_web/controllers/area_controller.ex:223
+#: lib/syli_atlas_web/controllers/area_controller.ex:224
+#, elixir-autogen, elixir-format, fuzzy
+msgid "% of GDP"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/debt_controller.ex:57
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Africa"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/debt_controller.ex:46
+#, elixir-autogen, elixir-format
+msgid "African countries ranked by public debt, % of GDP (%{year})"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:211
+#: lib/syli_atlas_web/seo.ex:64
+#, elixir-autogen, elixir-format, fuzzy
+msgid "African economies in verifiable figures: every figure names its public source."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:224
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Current account balance"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:199
+#, elixir-autogen, elixir-format
+msgid "Economy of %{name}: GDP, growth, debt, inflation 2015–2030"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:243
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Exports of %{name}: products and clients"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:245
+#, elixir-autogen, elixir-format
+msgid "Goods exported by %{name} in %{year}: share of each product chapter (HS) and of each client country. Source: %{source}, version %{version}."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:222
+#, elixir-autogen, elixir-format
+msgid "Gross public debt"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:221
+#, elixir-autogen, elixir-format
+msgid "Inflation, annual average"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:265
+#, elixir-autogen, elixir-format
+msgid "Living conditions in %{name}: poverty, jobs, electricity"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:201
+#, elixir-autogen, elixir-format
+msgid "Macroeconomic indicators of %{name} from 2015 to 2030: GDP in current dollars and in purchasing power parity, real growth, GDP per capita, inflation, public debt, fiscal balance, current account, population. Source: IMF, %{edition}. %{year} is an estimate, later years are projections."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/debt_controller.ex:52
+#, elixir-autogen, elixir-format
+msgid "Public debt in % of GDP (IMF), risk of debt distress (IMF and World Bank), external debt, share owed to China and to bondholders, debt service in % of exports (World Bank, International Debt Statistics), for each African country."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:267
+#, elixir-autogen, elixir-format
+msgid "Social indicators of %{name}: poverty, unemployment, access to electricity and the internet, remittances, foreign investment, value added and jobs by sector. Source: %{source}."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:218
+#, elixir-autogen, elixir-format
+msgid "billion USD"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:214
+#, elixir-autogen, elixir-format, fuzzy
+msgid "growth"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:214
+#, elixir-autogen, elixir-format, fuzzy
+msgid "inflation"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_controller.ex:214
+#, elixir-autogen, elixir-format, fuzzy
+msgid "public debt"
+msgstr ""
+
+#: lib/syli_atlas_web/components/profile_components.ex:706
+#: lib/syli_atlas_web/controllers/compare_controller.ex:128
+#: lib/syli_atlas_web/og_image/specs.ex:450
+#, elixir-autogen, elixir-format, fuzzy
+msgid "%{a} or %{b}?"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:417
+#, elixir-autogen, elixir-format
+msgid "%{name} · %{count} members"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:425
+#, elixir-autogen, elixir-format, fuzzy
+msgid "%{v} inhabitants"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:268
+#, elixir-autogen, elixir-format
+msgid "%{v} per person"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:122
+#, elixir-autogen, elixir-format, fuzzy
+msgid "African economies in verifiable figures"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:286
+#: lib/syli_atlas_web/controllers/questions_controller.ex:308
+#: lib/syli_atlas_web/og_image/specs.ex:156
+#, elixir-autogen, elixir-format
+msgid "Agencies: S&P, Moody's, Fitch"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:383
+#, elixir-autogen, elixir-format
+msgid "Agencies: S&P, Moody's, Fitch · as of %{date}"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:375
+#, elixir-autogen, elixir-format
+msgid "BBB− · investment grade"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:371
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Credit rating of %{name}"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:165
+#, elixir-autogen, elixir-format
+msgid "ECOWAS, AES, WAEMU, CEMAC, EAC, SADC: members and totals from IMF figures."
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:414
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Economic community"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:253
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Fiscal balance %{v}"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:286
+#, elixir-autogen, elixir-format, fuzzy
+msgid "GDP %{v}"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:266
+#, elixir-autogen, elixir-format, fuzzy
+msgid "GDP in %{year}, current dollars"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:341
+#: lib/syli_atlas_web/og_image/specs.ex:166
+#: lib/syli_atlas_web/og_image/specs.ex:430
+#, elixir-autogen, elixir-format
+msgid "IMF · Syli Atlas totals"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:477
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Listed on the %{exchange}"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:378
+#, elixir-autogen, elixir-format
+msgid "No. %{rank} of the %{of} African countries rated"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:373
+#, elixir-autogen, elixir-format
+msgid "Not rated by S&P, Moody's or Fitch"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:258
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Public debt, % of GDP"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:291
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Real GDP · index 100 in %{year}"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:393
+#: lib/syli_atlas_web/og_image/specs.ex:69
+#: lib/syli_atlas_web/og_image/specs.ex:176
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Source: IMF"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:404
+#, elixir-autogen, elixir-format
+msgid "Source: IMF · current dollars"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:141
+#, elixir-autogen, elixir-format
+msgid "Source: IMF · gross public debt, % of GDP"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:454
+#, elixir-autogen, elixir-format
+msgid "Source: IMF · real GDP %{from} → %{to}"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:402
+#, elixir-autogen, elixir-format
+msgid "The largest economies of Africa in %{year}"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:140
+#, elixir-autogen, elixir-format
+msgid "The most indebted African countries in %{year}"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:193
+#: lib/syli_atlas_web/og_image/specs.ex:494
+#: lib/syli_atlas_web/og_image/specs.ex:525
+#, elixir-autogen, elixir-format
+msgid "close, not live"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:516
+#, elixir-autogen, elixir-format, fuzzy
+msgid "listed securities"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:287
+#, elixir-autogen, elixir-format, fuzzy
+msgid "no. %{rank} in Africa"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:251
+#, elixir-autogen, elixir-format, fuzzy
+msgid "public debt, % of GDP, in %{year}"
+msgstr ""
+
+#: lib/syli_atlas_web/og_image/specs.ex:283
+#, elixir-autogen, elixir-format
+msgid "real GDP growth in %{year}"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/compare_controller.ex:132
+#, elixir-autogen, elixir-format
+msgid "%{a} or %{b}: GDP, growth and debt compared (%{year})"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:276
+#, elixir-autogen, elixir-format
+msgid "%{count} African countries are investment grade on average of S&P, Moody's and Fitch: %{list}. %{rated} of the 54 countries are rated."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/ranking_controller.ex:148
+#, elixir-autogen, elixir-format
+msgid "%{label}, %{year}: %{top}. The %{count} African countries ranked, from IMF data."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:298
+#, elixir-autogen, elixir-format
+msgid "%{name} has the best credit rating in Africa: %{agencies} (average %{rating})."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/compare_controller.ex:144
+#, elixir-autogen, elixir-format
+msgid "%{name}: real GDP %{change} since %{from}, GDP of %{gdp} in %{to}"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/compare_controller.ex:159
+#, elixir-autogen, elixir-format, fuzzy
+msgid "(IMF)."
+msgstr ""
+
+#: lib/syli_atlas_web/components/layouts.ex:340
+#: lib/syli_atlas_web/controllers/area_html/questions.html.heex:22
+#: lib/syli_atlas_web/controllers/page_controller.ex:107
+#, elixir-autogen, elixir-format
+msgid "About"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/page_controller.ex:92
+#, elixir-autogen, elixir-format
+msgid "About Syli Atlas: sources, updates, how to cite"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:125
+#, elixir-autogen, elixir-format, fuzzy
+msgid "All countries by GDP per capita"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/page_html/home.html.heex:158
+#, elixir-autogen, elixir-format, fuzzy
+msgid "All questions"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:285
+#: lib/syli_atlas_web/controllers/questions_controller.ex:307
+#, elixir-autogen, elixir-format, fuzzy
+msgid "All sovereign ratings"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:283
+#: lib/syli_atlas_web/controllers/questions_controller.ex:305
+#, elixir-autogen, elixir-format
+msgid "Best sovereign ratings in Africa"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:330
+#, elixir-autogen, elixir-format
+msgid "By GDP, %{name} (%{full}) is the largest economic community in Africa in %{year}: %{value} (IMF figures added up by Syli Atlas)."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:112
+#, elixir-autogen, elixir-format
+msgid "By GDP, %{name} is the largest economy in Africa in %{year} (%{value}, IMF). Per person, the richest country is %{per_name} (%{per_value} of GDP per capita)."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_html/questions.html.heex:11
+#, elixir-autogen, elixir-format
+msgid "Contact"
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:78
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Current account balance of African countries in %{year}, % of GDP"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_html/index.html.heex:11
+#, elixir-autogen, elixir-format
+msgid "Each answer is written from the latest figures of the IMF, the World Bank and the rating agencies, with its source."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:338
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Economic communities of Africa by GDP, %{year}"
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:63
+#, elixir-autogen, elixir-format
+msgid "Fastest-growing African economies in %{year} (IMF)"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:164
+#, elixir-autogen, elixir-format
+msgid "Fastest-growing African economies in %{year}: %{list} (real GDP growth, IMF)."
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:75
+#, elixir-autogen, elixir-format
+msgid "Fiscal balance of African countries in %{year}, % of GDP"
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:60
+#, elixir-autogen, elixir-format
+msgid "GDP per capita in purchasing power parity: African countries %{year}"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:189
+#, elixir-autogen, elixir-format
+msgid "Highest inflation in Africa in %{year}: %{list} (average annual change in prices, IMF)."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:257
+#, elixir-autogen, elixir-format
+msgid "In %{year}, %{name} is the fastest-growing region of Africa (%{value} real growth, IMF)."
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:66
+#, elixir-autogen, elixir-format
+msgid "Inflation in African countries in %{year}: the ranking"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:122
+#: lib/syli_atlas_web/controllers/questions_controller.ex:231
+#, elixir-autogen, elixir-format
+msgid "Largest economies in Africa, GDP %{year}"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:176
+#, elixir-autogen, elixir-format
+msgid "Most indebted African countries in %{year}: %{list} (gross public debt in % of GDP, IMF)."
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:69
+#, elixir-autogen, elixir-format
+msgid "Most indebted African countries in %{year}: public debt, % of GDP"
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:72
+#, elixir-autogen, elixir-format
+msgid "Most populous African countries in %{year}"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:202
+#, elixir-autogen, elixir-format
+msgid "Most populous African countries in %{year}: %{list} (IMF)."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_html/show.html.heex:20
+#, elixir-autogen, elixir-format
+msgid "Name"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_html/show.html.heex:32
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Other questions"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_html/show.html.heex:10
+#: lib/syli_atlas_web/og_image/specs.ex:78
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Question"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/page_html/home.html.heex:154
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Questions answered"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:19
+#, elixir-autogen, elixir-format
+msgid "Questions on African economies, answered with the figures"
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:53
+#, elixir-autogen, elixir-format
+msgid "Ranking of African countries by GDP in %{year} (IMF)"
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:83
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Ranking of African economies in %{year}"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:262
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Real GDP growth by region, %{year}"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:151
+#, elixir-autogen, elixir-format
+msgid "Richest African countries per person in %{year}: %{list} (GDP per capita in current dollars, IMF)."
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:56
+#, elixir-autogen, elixir-format
+msgid "Richest African countries per person: GDP per capita %{year}"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:265
+#, elixir-autogen, elixir-format
+msgid "Source: IMF · regional totals by Syli Atlas, weighted by GDP in PPP"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/page_controller.ex:100
+#, elixir-autogen, elixir-format
+msgid "Syli Atlas gathers the economic figures of the 54 African countries from the IMF, the World Bank, CEPII and the rating agencies. Free and non-commercial; every figure names its source."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:218
+#, elixir-autogen, elixir-format
+msgid "The GDP of Africa reached %{gdp} in %{year} (IMF), %{share} of world GDP. Real growth: %{growth}."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:234
+#, elixir-autogen, elixir-format
+msgid "The economy of Africa"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:138
+#, elixir-autogen, elixir-format
+msgid "The five largest economies in Africa in %{year}: %{list} (GDP in current dollars, IMF)."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:361
+#, elixir-autogen, elixir-format
+msgid "The full ranking of the 54 countries"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:264
+#, elixir-autogen, elixir-format
+msgid "The regions of Africa compared"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/page_html/home.html.heex:155
+#, elixir-autogen, elixir-format
+msgid "The richest, fastest-growing or most indebted countries: each common question has its page, answered from the figures."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/questions_controller.ex:28
+#, elixir-autogen, elixir-format
+msgid "The richest, fastest-growing, most indebted African countries, the GDP of Africa, credit ratings: each question answered from IMF, World Bank and rating agency figures."
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:81
+#, elixir-autogen, elixir-format
+msgid "Unemployment in African countries in %{year}"
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:177
+#, elixir-autogen, elixir-format
+msgid "What are the largest economies in Africa?"
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:186
+#, elixir-autogen, elixir-format, fuzzy
+msgid "What is the GDP of Africa?"
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:196
+#, elixir-autogen, elixir-format
+msgid "What is the largest economic community in Africa?"
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:185
+#, elixir-autogen, elixir-format
+msgid "What is the most populous country in Africa?"
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:176
+#, elixir-autogen, elixir-format
+msgid "What is the richest country in Africa?"
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:190
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Which African countries are investment grade?"
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:180
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Which African countries are most in debt?"
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:178
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Which African countries are richest per person?"
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:183
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Which African countries have the highest inflation?"
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:179
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Which African economies are growing fastest?"
+msgstr ""
+
+#: lib/syli_atlas_web/topics.ex:187
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Which region of Africa is growing fastest?"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_html/questions.html.heex:20
+#, elixir-autogen, elixir-format
+msgid "Who makes Syli Atlas, and how to reach us, is on the About page."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/area_html/questions.html.heex:15
+#, elixir-autogen, elixir-format
+msgid "Write to us with the address of the page and, if you can, the source."
+msgstr ""
+
+#: lib/syli_atlas_web/components/page_components.ex:167
+#, elixir-autogen, elixir-format, fuzzy
+msgid "updated on"
+msgstr ""
+
+#: lib/syli_atlas_web/components/profile_components.ex:774
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Current account ranking"
+msgstr ""
+
+#: lib/syli_atlas_web/components/profile_components.ex:757
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Fiscal balance ranking"
+msgstr ""
+
+#: lib/syli_atlas_web/components/profile_components.ex:782
+#, elixir-autogen, elixir-format, fuzzy
+msgid "GDP per capita in PPP ranking"
+msgstr ""
+
+#: lib/syli_atlas_web/components/profile_components.ex:788
+#, elixir-autogen, elixir-format, fuzzy
+msgid "GDP per capita ranking"
+msgstr ""
+
+#: lib/syli_atlas_web/components/profile_components.ex:787
+#, elixir-autogen, elixir-format, fuzzy
+msgid "GDP ranking"
+msgstr ""
+
+#: lib/syli_atlas_web/components/profile_components.ex:789
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Growth ranking"
+msgstr ""
+
+#: lib/syli_atlas_web/components/profile_components.ex:758
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Inflation ranking"
+msgstr ""
+
+#: lib/syli_atlas_web/components/profile_components.ex:716
+#, elixir-autogen, elixir-format
+msgid "Other comparisons"
+msgstr ""
+
+#: lib/syli_atlas_web/components/profile_components.ex:780
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Population ranking"
+msgstr ""
+
+#: lib/syli_atlas_web/components/layouts.ex:329
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Rankings"
+msgstr ""
+
+#: lib/syli_atlas_web/components/profile_components.ex:781
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Unemployment ranking"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:265
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Funds exposed to Africa (ETF)"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:259
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:260
+#, elixir-autogen, elixir-format
+msgid "Other exchanges of the region"
+msgstr ""
+
+#: lib/syli_atlas_web/components/profile_components.ex:298
 #, elixir-autogen, elixir-format
 msgid "African Union region"
 msgstr ""
@@ -5459,7 +6196,7 @@ msgstr ""
 msgid "change of the index"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/market_html/security.html.heex:69
-#, elixir-autogen, elixir-format
+#: lib/syli_atlas_web/controllers/market_html/security.html.heex:71
+#, elixir-autogen, elixir-format, fuzzy
 msgid "securities traded"
 msgstr ""

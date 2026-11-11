@@ -63,4 +63,7 @@ defmodule SyliAtlasWeb.AreaHTML do
     "Syli Atlas, « #{name} », #{url}. " <>
       gettext("Data: IMF, %{label}.", label: edition["label"])
   end
+
+  @doc "The editorial address (CONTACT_EMAIL), or nil."
+  def contact_email, do: Application.get_env(:syli_atlas, :site, [])[:contact_email]
 end

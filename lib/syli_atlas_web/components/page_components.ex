@@ -164,9 +164,13 @@ defmodule SyliAtlasWeb.PageComponents do
   def source_line(assigns) do
     ~H"""
     <p class="src">
-      {gettext("Source: IMF, %{label}", label: @edition["label"])} · {gettext("copied on %{date}",
-        date: String.slice(@edition["fetched_at"] || "", 0, 10)
-      )}
+      {gettext("Source: IMF, %{label}", label: @edition["label"])} · {gettext("updated on")}
+      <time datetime={String.slice(@edition["fetched_at"] || "", 0, 10)}>
+        {SyliAtlasWeb.RatingComponents.date_text(
+          String.slice(@edition["fetched_at"] || "", 0, 10),
+          @locale
+        )}
+      </time>
     </p>
     """
   end

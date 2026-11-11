@@ -23,7 +23,7 @@ defmodule SyliAtlasWeb.OfflinePages do
 
     main = [
       %{path: Paths.regions(locale), name: gettext("Regions"), kind: "page"},
-      %{path: Paths.ranking(locale), name: gettext("Ranking"), kind: "page"},
+      %{path: Paths.ranking_main(locale), name: gettext("Ranking"), kind: "page"},
       %{path: Paths.method(locale), name: gettext("Method"), kind: "page"}
     ]
 

@@ -3,10 +3,11 @@
     <.section_head
       level={1}
       eyebrow={gettext("Ranking")}
-      title={gettext("African economies, ranked.")}
+      title={@heading}
     >
       <:intro>{indicator_help(@indicator)}</:intro>
     </.section_head>
+    <p class="lead" data-answer id="ranking-answer">{@answer}</p>
     <.filter_sheet
       id="ranking-filters"
       title={gettext("Filters")}

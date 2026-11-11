@@ -413,7 +413,7 @@ defmodule SyliAtlasWeb.MapComponents do
           {gettext(
             "Islands are marked with a dot. Western Sahara has no separate IMF data. Source: IMF, World Economic Outlook."
           )}
-          <a href={Paths.ranking(@locale)}>{gettext(
+          <a href={Paths.ranking_main(@locale)}>{gettext(
             "The same figures as a table: ranking of the 54 countries"
           )}</a>
         </p>

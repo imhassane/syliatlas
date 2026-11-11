@@ -14,14 +14,34 @@
       href={href}
     />
     <meta :if={assigns[:seo][:noindex]} name="robots" content="noindex" />
+    <%!-- Shared links: title, description and an image drawn from the page's
+         own figures (SyliAtlasWeb.OgImageController), in the page's language. --%>
     <meta property="og:site_name" content="Syli Atlas" />
+    <meta property="og:type" content="website" />
+    <meta :if={assigns[:seo][:canonical]} property="og:url" content={@seo[:canonical]} />
+    <meta property="og:locale" content={if(assigns[:locale] == "en", do: "en_US", else: "fr_FR")} />
+    <meta
+      property="og:locale:alternate"
+      content={if(assigns[:locale] == "en", do: "fr_FR", else: "en_US")}
+    />
     <meta :if={assigns[:page_title]} property="og:title" content={@page_title} />
     <meta
       :if={assigns[:seo][:description]}
       property="og:description"
       content={@seo[:description]}
     />
-    <meta :if={assigns[:seo][:image]} property="og:image" content={@seo[:image]} />
+    <%= if assigns[:seo][:image] do %>
+      <meta property="og:image" content={@seo[:image]} />
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta
+        :if={assigns[:seo][:description]}
+        property="og:image:alt"
+        content={@seo[:description]}
+      />
+      <meta name="twitter:image" content={@seo[:image]} />
+    <% end %>
     <meta name="twitter:card" content="summary_large_image" />
     <script :for={ld <- assigns[:seo][:json_ld] || []} type="application/ld+json">
       <%= Phoenix.HTML.raw(Jason.encode!(ld, escape: :html_safe)) %>

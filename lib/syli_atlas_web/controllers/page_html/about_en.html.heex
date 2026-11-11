@@ -1,0 +1,58 @@
+<Layouts.public locale={@locale} current={:method} alternates={@alternates}>
+  <.section>
+    <div class="prose stack gap-4" id="about">
+      <nav aria-label="Breadcrumb">
+        <ol class="crumbs">
+          <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+          <li aria-current="page">About</li>
+        </ol>
+      </nav>
+      <p class="eyebrow">About</p>
+      <h1 class="h1">Syli Atlas, African economies in verifiable figures.</h1>
+      <p class="lead">
+        Syli Atlas gathers the economic figures of the 54 African countries: growth, GDP, debt, inflation, trade, living conditions, sovereign ratings and stock exchanges, in French and English. The site is free, non-commercial, and needs no account.
+      </p>
+
+      <h2 class="h2">Every figure names its source</h2>
+      <p>
+        Series come first from the IMF World Economic Outlook ({@edition_label}), then the World Bank, CEPII (BACI), the IMF and World Bank debt sustainability analyses, the rating agencies and, for stock exchanges, MansaAPI. The source, its edition and its date are written under each series; their terms of reuse are on the
+        <a href={Paths.method(@locale)}>Method and sources</a>
+        page.
+      </p>
+      <p>
+        Syli Atlas computes regional totals, ranks and changes over a period itself, and presents them as such. It never alters the sources' figures.
+      </p>
+
+      <h2 class="h2">Updates</h2>
+      <p>
+        Sources are checked every day. A new IMF edition is imported, checked, then published; stock exchanges are updated after each close (end-of-day prices, not live). Sovereign ratings are taken from the agencies' announcements.
+      </p>
+
+      <h2 class="h2" id="cite">Citing Syli Atlas</h2>
+      <p>Cite the original source and the page, with the date you read it:</p>
+      <p class="small mono cite">
+        Syli Atlas, from IMF, {@edition_label}, {SyliAtlasWeb.Seo.url("/en/countries/senegal")}, accessed {Calendar.strftime(
+          Date.utc_today(),
+          "%d %B %Y"
+        )}.
+      </p>
+      <p>
+        Every profile downloads as CSV and can be queried through the <a href={Paths.api(@locale)}>JSON API</a>. Stock prices stay on the site only: their source's licence does not allow redistributing them.
+      </p>
+
+      <h2 class="h2">Information, not advice</h2>
+      <p>
+        Syli Atlas informs; it gives no investment advice. Projections are the IMF's and change with each edition.
+      </p>
+
+      <h2 class="h2">Write to us</h2>
+      <p :if={@contact_email}>
+        An error, a source to add, a question: <a href={"mailto:" <> @contact_email}>{@contact_email}</a>.
+      </p>
+      <p :if={!@contact_email}>
+        An error or a source to add: the <a href={Paths.accessibility(@locale)}>Accessibility</a>
+        page also says how to reach us.
+      </p>
+    </div>
+  </.section>
+</Layouts.public>

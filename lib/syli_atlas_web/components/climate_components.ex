@@ -64,7 +64,7 @@ defmodule SyliAtlasWeb.ClimateComponents do
       end
 
     [
-      {gettext("Is %{name} business friendly?", name: name),
+      {gettext("Is %{name} business friendly?", names(name)),
        headline(entry["position"]["tier"], name) <>
          ". " <> position_text(entry["position"]) <> bready}
     ]
@@ -139,8 +139,7 @@ defmodule SyliAtlasWeb.ClimateComponents do
               <p class="muted" id="climate-bready-none">
                 {gettext(
                   "%{name} is not covered yet: B-READY adds countries edition after edition (%{count} African economies in the latest one).",
-                  name: @name,
-                  count: @doc["covered"]["bready"]
+                  names(@name, count: @doc["covered"]["bready"])
                 )}
               </p>
             <% end %>

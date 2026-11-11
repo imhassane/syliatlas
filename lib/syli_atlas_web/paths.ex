@@ -52,8 +52,13 @@ defmodule SyliAtlasWeb.Paths do
 
   def regions(locale), do: "/#{locale}/regions"
   def ranking(locale), do: "/#{locale}/#{segment(locale, :ranking)}"
+
+  @doc "The ranking's main page: GDP (SyliAtlasWeb.Topics.ranking_path/2)."
+  def ranking_main("en"), do: ranking("en") <> "/gdp"
+  def ranking_main(locale), do: ranking(locale) <> "/pib"
   def search(locale), do: "/#{locale}/#{segment(locale, :search)}"
   def method(locale), do: "/#{locale}/#{segment(locale, :method)}"
+  def about(locale), do: "/#{locale}/#{segment(locale, :about)}"
   def accessibility(locale), do: "/#{locale}/#{segment(locale, :accessibility)}"
   def offline(locale), do: "/#{locale}/#{segment(locale, :offline)}"
   @doc "The public API documentation: /fr/api, /en/api."
@@ -92,6 +97,8 @@ defmodule SyliAtlasWeb.Paths do
   def segment(_, :search), do: "recherche"
   def segment("en", :method), do: "method"
   def segment(_, :method), do: "methode"
+  def segment("en", :about), do: "about"
+  def segment(_, :about), do: "a-propos"
   def segment("en", :accessibility), do: "accessibility"
   def segment(_, :accessibility), do: "accessibilite"
   def segment("en", :offline), do: "offline"

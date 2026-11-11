@@ -93,7 +93,7 @@ defmodule SyliAtlasWeb.EconomySectionsTest do
   end
 
   test "the debt page is in the sitemap and the menu" do
-    xml = build_conn() |> get("/sitemap.xml") |> response(200)
+    xml = sitemaps()
     assert xml =~ "/fr/dette"
     assert has?(doc("/fr"), ~s(a[href="/fr/dette"]))
   end

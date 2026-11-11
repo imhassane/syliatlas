@@ -235,6 +235,13 @@ if config_env() == :prod do
   # display (MansaAPI's does); MARKET_PREVIEW=true forces them on otherwise.
   config :syli_atlas, SyliAtlas.Market, preview: System.get_env("MARKET_PREVIEW") == "true"
 
+  # Share images, drawn once per version and kept on the volume; the main
+  # ones are drawn again after each deploy.
+  config :syli_atlas, SyliAtlasWeb.OgImageController,
+    cache_dir: Path.join(Path.dirname(database_path), "og")
+
+  config :syli_atlas, og_warm_on_boot: true
+
   unless System.get_env("R2_BUCKET") do
     config :syli_atlas, SyliAtlas.Market.RawStore,
       adapter: SyliAtlas.Market.RawStore.Local,

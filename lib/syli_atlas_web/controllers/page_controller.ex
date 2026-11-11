@@ -29,7 +29,7 @@ defmodule SyliAtlasWeb.PageController do
             List.first(map_countries)
 
         render(conn, :home,
-          page_title: gettext("African economies, country by country"),
+          page_title: gettext("Economic data of the 54 African countries: GDP, debt, inflation"),
           seo:
             Seo.page(
               locale,
@@ -84,17 +84,71 @@ defmodule SyliAtlasWeb.PageController do
     )
   end
 
+  @doc "Who makes the site, where its figures come from, how to cite and reach it."
+  def about(conn, _params) do
+    locale = conn.assigns.locale
+    paths = %{"fr" => Paths.about("fr"), "en" => Paths.about("en")}
+    edition = Sources.published_edition("imf_weo")
+    title = gettext("About Syli Atlas: sources, updates, how to cite")
+
+    render(conn, if(locale == "en", do: :about_en, else: :about_fr),
+      page_title: title,
+      seo:
+        Seo.page(
+          locale,
+          paths,
+          gettext(
+            "Syli Atlas gathers the economic figures of the 54 African countries from the IMF, the World Bank, CEPII and the rating agencies. Free and non-commercial; every figure names its source."
+          ),
+          %{
+            json_ld: [
+              Seo.breadcrumbs([
+                {"Syli Atlas", Paths.home(locale)},
+                {gettext("About"), paths[locale]}
+              ]),
+              Seo.about_page(title, paths[locale], [
+                {"IMF, World Economic Outlook", "https://www.imf.org/en/Publications/WEO"},
+                {"World Bank, World Development Indicators",
+                 "https://datacatalog.worldbank.org/search/dataset/0037712"},
+                {"CEPII, BACI",
+                 "https://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=37"}
+              ])
+            ]
+          }
+        ),
+      alternates: Seo.alternates_for_header(paths),
+      edition_label: (edition && edition.label) || "World Economic Outlook",
+      contact_email: Application.get_env(:syli_atlas, :site, [])[:contact_email]
+    )
+  end
+
   def method(conn, _params) do
     locale = conn.assigns.locale
     paths = %{"fr" => Paths.method("fr"), "en" => Paths.method("en")}
 
     render(conn, :method,
-      page_title: gettext("Method and sources"),
+      page_title: gettext("Sources and method: IMF, World Bank, CEPII, rating agencies"),
       seo:
         Seo.page(
           locale,
           paths,
-          gettext("Where Syli Atlas figures come from and how totals and changes are computed.")
+          gettext("Where Syli Atlas figures come from and how totals and changes are computed."),
+          %{
+            json_ld: [
+              Seo.breadcrumbs([
+                {"Syli Atlas", Paths.home(locale)},
+                {gettext("Method and sources"), paths[locale]}
+              ]),
+              Seo.about_page(
+                gettext("Method and sources"),
+                paths[locale],
+                for(
+                  s <- data_sources(Sources.published_edition("imf_weo")),
+                  do: {s.name, s[:url]}
+                )
+              )
+            ]
+          }
         ),
       alternates: Seo.alternates_for_header(paths),
       edition: Sources.published_edition("imf_weo"),

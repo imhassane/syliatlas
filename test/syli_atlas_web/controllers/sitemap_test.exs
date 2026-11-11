@@ -7,7 +7,10 @@ defmodule SyliAtlasWeb.SitemapTest do
   end
 
   test "the sitemap lists countries and rating pages with their English twin", %{conn: conn} do
-    xml = conn |> get("/sitemap.xml") |> response(200)
+    index = conn |> get("/sitemap.xml") |> response(200)
+    assert index =~ "<sitemapindex"
+    assert index =~ "/sitemaps/countries.xml</loc><lastmod>"
+    xml = sitemaps()
     assert xml =~ "/fr/pays/cote-d-ivoire</loc>"
     assert xml =~ ~r{hreflang="en" href="http://[^"]+/en/countries/cote-d-ivoire"}
     assert xml =~ "/fr/notations/cote-d-ivoire</loc>"

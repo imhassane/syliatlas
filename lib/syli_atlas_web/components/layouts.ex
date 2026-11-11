@@ -163,7 +163,10 @@ defmodule SyliAtlasWeb.Layouts do
     ~H"""
     <nav id={@id} class={@class} aria-label={gettext("Main")}>
       <%= if @flat do %>
-        <a href={Paths.ranking(@locale)} aria-current={@current in [:ranking, :countries] && "page"}>
+        <a
+          href={SyliAtlasWeb.Topics.ranking_path(@locale, "gdp_usd_bn")}
+          aria-current={@current in [:ranking, :countries] && "page"}
+        >
           <span>{gettext("Countries")}</span><span class="drawer-meta">→</span>
         </a>
         <a
@@ -191,9 +194,10 @@ defmodule SyliAtlasWeb.Layouts do
           "Compare"
         )}</a>
       <% else %>
-        <a href={Paths.ranking(@locale)} aria-current={@current in [:ranking, :countries] && "page"}>{gettext(
-          "Countries"
-        )}</a>
+        <a
+          href={SyliAtlasWeb.Topics.ranking_path(@locale, "gdp_usd_bn")}
+          aria-current={@current in [:ranking, :countries] && "page"}
+        >{gettext("Countries")}</a>
         <a
           :if={SyliAtlas.Market.public?()}
           href={Paths.markets(@locale)}
@@ -306,7 +310,9 @@ defmodule SyliAtlasWeb.Layouts do
           <div class="stack gap-1">
             <b>{gettext("Countries")}</b>
             <a :for={c <- @countries} href={c.path[@locale]}>{c.names[@locale]}</a>
-            <a href={Paths.ranking(@locale)}>{gettext("All 54 countries")} →</a>
+            <a href={SyliAtlasWeb.Topics.ranking_path(@locale, "gdp_usd_bn")}>{gettext(
+              "All 54 countries"
+            )} →</a>
           </div>
           <div :if={@exchanges != []} class="stack gap-1">
             <b>{gettext("Stock exchanges")}</b>
@@ -319,8 +325,19 @@ defmodule SyliAtlasWeb.Layouts do
             <a href={Paths.communities(@locale)}>{gettext("Economic communities")}</a>
             <a href={Paths.compare(@locale, [])}>{gettext("Compare")}</a>
           </div>
+          <div class="stack gap-1" id="footer-rankings">
+            <b>{gettext("Rankings")}</b>
+            <a
+              :for={i <- SyliAtlasWeb.Topics.ranking_indicators()}
+              href={SyliAtlasWeb.Topics.ranking_path(@locale, i)}
+            >
+              {SyliAtlasWeb.PageComponents.indicator_label(i)}
+            </a>
+            <a href={SyliAtlasWeb.Topics.questions_path(@locale)}>{gettext("Questions")} →</a>
+          </div>
           <div class="stack gap-1">
             <b>{gettext("Data")}</b>
+            <a href={Paths.about(@locale)}>{gettext("About")}</a>
             <a href={Paths.method(@locale)}>{gettext("Method and sources")}</a>
             <a href={Paths.accessibility(@locale)} id="footer-accessibility">
               {accessibility_mention()}

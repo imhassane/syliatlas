@@ -10,6 +10,7 @@ defmodule SyliAtlas.Workers.AfterPublishWorker do
   def perform(%Oban.Job{args: %{"edition_id" => id}}) do
     SyliAtlas.Accounts.AlertEvents.edition_published(id)
     SyliAtlas.Profiles.Benchmark.run(200)
+    SyliAtlas.Workers.OgWarmWorker.enqueue()
     :ok
   end
 end

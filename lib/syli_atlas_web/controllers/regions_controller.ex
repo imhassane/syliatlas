@@ -27,7 +27,7 @@ defmodule SyliAtlasWeb.RegionsController do
 
     render(conn, :index,
       communities: SyliAtlasWeb.CommunityController.summaries(),
-      page_title: gettext("The regions of Africa compared"),
+      page_title: gettext("Regions of Africa compared: GDP, growth, inflation and debt"),
       seo:
         Seo.page(
           locale,
@@ -36,7 +36,17 @@ defmodule SyliAtlasWeb.RegionsController do
             "North, West, Central, East and Southern Africa side by side: growth, income, inflation and debt, from IMF data."
           ),
           %{
-            noindex: filtered?
+            noindex: filtered?,
+            json_ld: [
+              Seo.breadcrumbs([
+                {"Syli Atlas", Paths.home(locale)},
+                {gettext("Regions"), paths[locale]}
+              ]),
+              Seo.item_list(
+                gettext("Regions of Africa"),
+                for(r <- regions, do: {SyliAtlas.Geo.Area.name(r, locale), Paths.area(locale, r)})
+              )
+            ]
           }
         ),
       alternates: Seo.alternates_for_header(paths),

@@ -28,7 +28,8 @@ defmodule SyliAtlasWeb.AccessibilityTest do
   end
 
   test "the statement is in the sitemap", %{conn: conn} do
-    assert conn |> get("/sitemap.xml") |> response(200) =~ "/fr/accessibilite</loc>"
+    assert sitemaps() =~ "/fr/accessibilite</loc>"
+    _ = conn
   end
 
   test "the contact address shows only once it is set", %{conn: conn} do

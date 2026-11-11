@@ -151,8 +151,11 @@
       <.feature n="03" title={gettext("Open data")}>
         {gettext("Download every profile as CSV or query the public API, free of charge.")}
       </.feature>
-      <.feature n="04" title={gettext("Discussed openly")}>
-        {gettext("Every profile has a moderated discussion to ask a question or report an error.")}
+      <.feature n="04" title={gettext("Questions answered")}>
+        {gettext(
+          "The richest, fastest-growing or most indebted countries: each common question has its page, answered from the figures."
+        )}
+        <a href={SyliAtlasWeb.Topics.questions_path(@locale)}>{gettext("All questions")} →</a>
       </.feature>
     </div>
     <.install_card />

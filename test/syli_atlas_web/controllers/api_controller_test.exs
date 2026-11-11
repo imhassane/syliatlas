@@ -20,7 +20,7 @@ defmodule SyliAtlasWeb.ApiControllerTest do
 
   test "pages to save for offline reading, in the asked language", %{conn: conn} do
     %{"pages" => fr} = conn |> get(~p"/api/v1/offline-pages?locale=fr") |> json_response(200)
-    assert "/fr/regions" in fr and "/fr/classement" in fr
+    assert "/fr/regions" in fr and "/fr/classement/pib" in fr
     assert "/fr/pays/cote-d-ivoire" in fr and "/fr/regions/afrique" in fr
     assert Enum.count(fr, &String.starts_with?(&1, "/fr/pays/")) == 54
     assert fr == Enum.uniq(fr)

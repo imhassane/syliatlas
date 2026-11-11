@@ -5,6 +5,16 @@ defmodule SyliAtlasWeb.Format do
   @nbsp " "
   @thin " "
 
+  @doc """
+  Gettext bindings for a template naming a country or region: `%{name}` and,
+  for French grammar, `%{of_name}` (du Sénégal), `%{in_name}` (au Sénégal),
+  `%{the_name}`/`%{The_name}` (le Sénégal) and `%{e}` (noté, notée). See
+  `SyliAtlas.Geo.French`. Uses the current Gettext locale.
+  """
+  def names(name, extra \\ []) do
+    SyliAtlas.Geo.French.bindings(name, Gettext.get_locale(SyliAtlasWeb.Gettext)) ++ extra
+  end
+
   @doc "Formats a number with the locale's separators."
   def number(nil, _decimals, _locale), do: "n.d."
 

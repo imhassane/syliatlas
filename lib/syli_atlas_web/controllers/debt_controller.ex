@@ -41,7 +41,24 @@ defmodule SyliAtlasWeb.DebtController do
             Seo.breadcrumbs([
               {"Syli Atlas", Paths.home(locale)},
               {gettext("Debt"), paths[locale]}
-            ])
+            ]),
+            Seo.item_list(
+              gettext("African countries ranked by public debt, % of GDP (%{year})", year: @year),
+              for(r <- all, do: {r.name, Paths.area(locale, "country", r.slug)})
+            ),
+            Seo.dataset(
+              name: gettext("Debt of the 54 African countries"),
+              description:
+                gettext(
+                  "Public debt in % of GDP (IMF), risk of debt distress (IMF and World Bank), external debt, share owed to China and to bondholders, debt service in % of exports (World Bank, International Debt Statistics), for each African country."
+                ),
+              path: paths[locale],
+              locale: locale,
+              area: %{name: gettext("Africa")},
+              based_on:
+                {"IMF, World Economic Outlook; World Bank, International Debt Statistics", nil},
+              modified: wb && wb["as_of"]
+            )
           ]
         }),
       alternates: Seo.alternates_for_header(paths),

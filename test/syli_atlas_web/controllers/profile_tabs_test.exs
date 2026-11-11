@@ -37,7 +37,10 @@ defmodule SyliAtlasWeb.ProfileTabsTest do
              "http://localhost:4000/en/countries/cote-d-ivoire/trade"
            ]
 
-    assert doc |> LazyHTML.query("title") |> LazyHTML.text() =~ "Commerce"
+    # The title names what people search, with the article French needs.
+    assert doc |> LazyHTML.query("title") |> LazyHTML.text() =~
+             "Exportations de la Côte d'Ivoire\u202f: produits et premiers clients"
+
     assert doc |> LazyHTML.query(".crumbs") |> LazyHTML.text() =~ "Commerce"
     refute LazyHTML.text(LazyHTML.query(doc, ~s(script[type="application/ld+json"]))) =~ "FAQPage"
   end
@@ -45,7 +48,7 @@ defmodule SyliAtlasWeb.ProfileTabsTest do
   test "English tabs, French slugs redirected, unknown tab is a 404" do
     assert has?(doc("/en/countries/kenya/finances-and-debt"), "#finances")
     conn = build_conn() |> get("/en/countries/kenya/finances-et-dette")
-    assert redirected_to(conn) == "/en/countries/kenya/finances-and-debt"
+    assert redirected_to(conn, 301) == "/en/countries/kenya/finances-and-debt"
     assert_error_sent 404, fn -> get(build_conn(), "/fr/pays/kenya/nimporte") end
     assert get(build_conn(), "/fr/regions/afrique-de-l-ouest/commerce").status == 404
   end

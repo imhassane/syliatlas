@@ -28,7 +28,14 @@ defmodule SyliAtlasWeb.CommunityController do
             Seo.breadcrumbs([
               {"Syli Atlas", Paths.home(locale)},
               {gettext("Economic communities"), paths[locale]}
-            ])
+            ]),
+            Seo.item_list(
+              gettext("Economic communities of Africa"),
+              for(
+                c <- Communities.all(),
+                do: {c.name[locale], Paths.community(locale, c.slug[locale])}
+              )
+            )
           ]
         }),
       alternates: Seo.alternates_for_header(paths),
@@ -52,7 +59,7 @@ defmodule SyliAtlasWeb.CommunityController do
     }
 
     if conn.request_path != paths[locale] do
-      redirect(conn, to: paths[locale])
+      conn |> put_status(301) |> redirect(to: paths[locale])
     else
       s = summary(community, locale)
       name = community.short[locale]
@@ -78,7 +85,12 @@ defmodule SyliAtlasWeb.CommunityController do
       answer = community_answer(community, s, locale)
 
       render(conn, :show,
-        page_title: "#{name} · " <> community.name[locale],
+        page_title:
+          gettext("%{name}: GDP, growth and debt of the %{count} member countries (%{year})",
+            name: name,
+            count: length(s.members),
+            year: @year
+          ),
         seo:
           Seo.page(locale, paths, answer, %{
             json_ld: [
@@ -86,7 +98,13 @@ defmodule SyliAtlasWeb.CommunityController do
                 {"Syli Atlas", Paths.home(locale)},
                 {gettext("Economic communities"), Paths.communities(locale)},
                 {name, paths[locale]}
-              ])
+              ]),
+              Seo.community(
+                community.name[locale],
+                name,
+                paths[locale],
+                for(m <- members, do: {m.name, Paths.area(locale, "country", m.slug)})
+              )
             ]
           }),
         alternates: Seo.alternates_for_header(paths),
@@ -104,6 +122,9 @@ defmodule SyliAtlasWeb.CommunityController do
 
   @doc "The six communities with their totals for #{@year} (cached; regions page)."
   def summaries, do: Enum.map(Communities.all(), &summary(&1, nil))
+
+  @doc "The totals of one community (share images)."
+  def summary_for(community), do: summary(community, nil)
 
   # Totals change only with the IMF data: computed once per data version,
   # kept in memory (the six communities together take ~10 ms to add up).
