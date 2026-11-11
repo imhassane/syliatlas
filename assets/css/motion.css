@@ -37,52 +37,12 @@ a.card:hover, .qcard:hover { transform: translateY(-2px); box-shadow: var(--shad
 .btn { transition: transform .15s var(--ease); }
 .btn:active { transform: scale(.97); }
 
-/* Between pages: the browser's own transitions (cross-document view
-   transitions). The header and its band stay put (moved only if they were
-   hidden), the old page is replaced at once and the new one rises 14 px:
-   no fade on text. The country name travels into the title.
-   Two kinds of move are named by the page script (root layout and
-   assets/js/ui/transitions.js), which also marks the elements involved:
-   - tab-forward / tab-back (a tab of a country profile): the page does not
-     move, the underline slides to the new tab, the content comes in from
-     the side of the tab;
-   - reorder (a filter or sort of a table): each row slides to its place,
-     new rows rise, rows that leave are gone at once. */
-@media (prefers-reduced-motion: no-preference) {
-  @view-transition { navigation: auto; }
-  .site-top { view-transition-name: site-top; }
-}
-.area-title { view-transition-name: area-title; }
-
-@keyframes vt-rise { from { transform: translateY(14px); } }
-@keyframes vt-from-right { from { transform: translateX(40px); } }
-@keyframes vt-from-left { from { transform: translateX(-40px); } }
-
-::view-transition-group(*) { animation-duration: .36s; animation-timing-function: var(--ease); }
-::view-transition-old(root) { animation: none; }
-::view-transition-new(root) { animation: vt-rise .36s var(--ease) both; }
-::view-transition-old(site-top), ::view-transition-new(site-top) { animation: none; }
-
-html:active-view-transition-type(tab-forward, tab-back, reorder)::view-transition-new(root) { animation: none; }
-/* Only the new tab bar shows (its labels change weight): no doubled text. */
-::view-transition-old(profile-tabs) { animation: none; opacity: 0; }
-::view-transition-new(profile-tabs) { animation: none; }
-::view-transition-group(tab-panel) { animation: none; }
-::view-transition-old(tab-panel) { animation: none; opacity: 0; }
-::view-transition-new(tab-panel) { animation: vt-from-right .36s var(--ease) both; }
-html:active-view-transition-type(tab-back)::view-transition-new(tab-panel) { animation-name: vt-from-left; }
-/* A row is shown as its new self only, flying from its old place: column
-   widths change with the rows shown, so a crossfade would double the text. */
-html:active-view-transition-type(reorder)::view-transition-old(*) { animation: none; opacity: 0; }
-html:active-view-transition-type(reorder)::view-transition-new(*) { animation: none; }
-html:active-view-transition-type(reorder)::view-transition-new(*):only-child { animation: vt-rise .36s var(--ease) both; }
-
-html.revisit .reveal .cty, html.revisit .draw, html.revisit .bar-fill, html.revisit .spark-dot, html.revisit .chart .end-dot { animation: none; }
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { animation: none !important; transition: none !important; }
-  @view-transition { navigation: none; }
-}
+/* Between pages: no browser view transition (it would freeze the scrolling
+   band in a still image). The new page moves itself, live, before its first
+   paint (root layout, « page arrival »): the content rises 14 px; a tab of a
+   profile keeps the tab bar in place, slides its underline and brings the
+   content in from the tab's side; a table filter or sort slides each row
+   from its old place. */
 
 /* Long pages: blocks rise into place as they scroll into view. Native
    scroll-driven animations where supported (entry range only, so nothing
@@ -114,18 +74,34 @@ html.revisit .reveal .cty, html.revisit .draw, html.revisit .bar-fill, html.revi
   .reveal-arrive { transition: transform .6s var(--ease); transition-delay: calc(var(--i, 0) * 70ms); }
 }
 
-/* Header and band: stuck to the top, hidden while reading down, back as soon
-   as the reader scrolls up (assets/js/ui/header.js); a shadow once the page
-   has moved under them. A thin bar shows how far the page is read. */
-.site-top { position: sticky; top: 0; z-index: 30; background: var(--page); transition: transform .32s var(--ease), box-shadow .2s var(--ease); }
-.site-top.is-scrolled { box-shadow: 0 10px 28px -20px rgba(11, 26, 51, .45); }
-.site-top.is-hidden:not(:focus-within) { transform: translateY(-100%); box-shadow: none; }
+/* While reading, the band stays at the top and the filters of the page stay
+   under it (tab bar of a profile, toolbar and tabs of a table); the header
+   scrolls away. header.js sets --sticky-top (the band's height) and
+   --filters-h, and marks what is stuck (a shadow). A thin bar shows how far
+   the page is read. */
+:root { --sticky-top: 0px; --filters-h: 0px; }
+.site-ticker { position: sticky; top: 0; z-index: 30; transition: box-shadow .2s var(--ease); }
+[data-sticky-filters] { position: sticky; top: var(--sticky-top); z-index: 20; transition: box-shadow .2s var(--ease); }
+.site-ticker.is-stuck, [data-sticky-filters].is-stuck { box-shadow: 0 10px 24px -20px rgba(11, 26, 51, .5); }
+.section[id], [id].section, main [id] { scroll-margin-top: calc(var(--sticky-top) + var(--filters-h) + 16px); }
 .read-progress { position: fixed; top: 0; left: 0; right: 0; z-index: 31; height: 2px; transform: scaleX(0); transform-origin: left; background: linear-gradient(90deg, var(--accent), #ff6b3d); pointer-events: none; }
 @keyframes read-progress { to { transform: none; } }
 @media (prefers-reduced-motion: no-preference) {
   @supports (animation-timeline: scroll()) {
     .read-progress { animation: read-progress linear both; animation-timeline: scroll(root); }
   }
+}
+
+/* The tab bar of a profile, under the hero. */
+.tab-bar { background: var(--page); }
+.tab-bar .tab-nav { margin-top: 0; }
+
+/* Tables: the toolbar (title, search) and the tabs stick together inside the
+   card; on a phone only the tabs, to keep the screen for the rows. */
+.market-filters { background: var(--card); border-radius: inherit; }
+@media (max-width: 48rem) {
+  .market-filters { display: contents; }
+  .market-filters .market-tabs { position: sticky; top: var(--sticky-top); z-index: 20; background: var(--card); }
 }
 
 /* Back to top: shown far down a page (header.js). */
@@ -141,10 +117,10 @@ html.is-far .to-top { transform: none; }
 .nav-pill.is-on { opacity: 1; }
 
 /* Tabs of a country profile: the underline is its own element so that it can
-   slide from tab to tab between pages. */
+   slide from the old tab when the new page arrives. */
 .tab-nav a { position: relative; transition: color .2s var(--ease); }
 .tab-nav a[aria-current="page"] { border-bottom-color: transparent; }
-.tab-indicator { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; border-radius: 2px; background: var(--accent); }
+.tab-indicator { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; border-radius: 2px; background: var(--accent); transform-origin: left; }
 
 /* Themes menu and phone drawer: the panel unfolds, its entries follow. */
 @keyframes menu-in { from { transform: translateY(-6px) scale(.98); } }

@@ -1,28 +1,47 @@
-// Page transitions, old page side. The new page side runs in the root layout
-// (it must act before the first paint), which defines window.SyliVT; the
-// look is in motion.css. Before the browser takes its snapshot, this names
-// the kind of move and marks the elements that travel (tab bar, underline,
-// tab content, table rows), and remembers where the tab bar or the table
-// sat on screen so the new page puts it at the same place.
+// Page arrival, old page side: when a tab of a country profile or a filter
+// or sort link of a table is clicked, write where things sit on screen so
+// the new page can start from there (root layout, « page arrival »): the tab
+// bar and its underline, or the table and each of its rows. No browser view
+// transition: it would freeze the scrolling band in a still image.
+const KEY = "arrival"
+
 export function initTransitions() {
-  addEventListener("pageswap", e => {
-    const VT = window.SyliVT
-    const to = e.activation?.entry?.url
-    if (!VT || !to) return
-    const url = new URL(to)
-    if (url.origin !== location.origin) return
-    const kind = VT.kind(location.pathname, url.pathname, document)
-    if (!kind) return
-    VT.save(kind, document, url.href)
-    if (e.viewTransition) {
-      e.viewTransition.types.add(kind)
-      VT.mark(kind, document)
+  document.addEventListener("click", e => {
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+    const a = e.target.closest("a[href]")
+    if (!a || a.origin !== location.origin || a.target) return
+
+    const tabs = a.closest("#profile-tabs")
+    if (tabs) {
+      const links = [...tabs.querySelectorAll("a")]
+      const from = links.findIndex(l => l.matches("[aria-current]"))
+      const to = links.indexOf(a)
+      if (from === to) return
+      const bar = tabs.closest(".tab-bar") || tabs
+      const ind = tabs.querySelector(".tab-indicator")?.getBoundingClientRect()
+      return save({
+        kind: "tab",
+        to: a.href,
+        top: bar.getBoundingClientRect().top,
+        dir: to > from ? 1 : -1,
+        ind: ind && {left: ind.left, width: ind.width}
+      })
     }
-  })
-  // Back from the cache: the marks of the last move must not stay.
-  addEventListener("pageshow", e => { if (e.persisted) window.SyliVT?.clear(document) })
+
+    const box = a.closest("[data-keep-place]")
+    if (box && a.pathname === location.pathname) {
+      const top = box.getBoundingClientRect().top
+      const rows = {}
+      box.querySelectorAll("[data-reorder] > [id]").forEach(r => { rows[r.id] = r.getBoundingClientRect().top - top })
+      save({kind: "reorder", to: a.href, top, rows})
+    }
+  }, true)
 
   centerCurrentTab()
+}
+
+function save(state) {
+  try { sessionStorage.setItem(KEY, JSON.stringify(state)) } catch (_) {}
 }
 
 // On a phone the tab bar scrolls: show the current tab in its middle.

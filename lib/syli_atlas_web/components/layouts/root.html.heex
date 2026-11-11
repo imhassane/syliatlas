@@ -54,66 +54,80 @@
         if (!navigator.onLine) document.documentElement.classList.add("is-offline");
       })();
     </script>
-    <%!-- Page transitions (assets/css/motion.css). Most moves need nothing: the
-         page rises under a header that stays put. Two get more, here because
-         the new page must be ready before its first paint:
-         - a tab of a country profile: the tab bar stays where the reader left
-           it, its underline slides, the content comes in from the tab's side;
-         - a filter or sort of a table on the same page: each row slides to its
-           new place.
-         The old page marks the same elements (assets/js/ui/transitions.js). --%>
+    <%!-- Page arrival. The browser does no transition between pages (it would
+         freeze the band in a still image): the new page is shown at once and
+         moves itself, live, before its first paint.
+         - Most pages: the content rises 14 px.
+         - A tab of a country profile: the tab bar stays where the reader left
+           it (or stuck under the band), its underline slides from the old tab,
+           the content comes in from the tab's side.
+         - A filter or sort of a table: the table stays in place, each row
+           slides from its old position, new rows rise.
+         The old page writes where things were when its link was clicked
+         (assets/js/ui/transitions.js). Nothing moves with reduced motion. --%>
     <script>
       (function () {
-        var KEY = "vt-place";
-        var all = function (doc, sel) { return Array.prototype.slice.call(doc.querySelectorAll(sel)); };
-        var VT = (window.SyliVT = {
-          kind: function (fromPath, toPath, doc) {
-            var tabs = doc.getElementById("profile-tabs");
-            if (tabs) {
-              var paths = all(tabs, "a").map(function (a) { return a.pathname; });
-              var i = paths.indexOf(fromPath), j = paths.indexOf(toPath);
-              if (i >= 0 && j >= 0 && i !== j) return j > i ? "tab-forward" : "tab-back";
-            }
-            if (fromPath === toPath && doc.querySelector("[data-reorder]")) return "reorder";
-            return null;
-          },
-          place: function (kind, doc) {
-            return doc.querySelector(kind === "reorder" ? "[data-keep-place]" : "#profile-tabs");
-          },
-          mark: function (kind, doc) {
-            if (kind === "reorder") {
-              all(doc, "[data-reorder] > [id]").forEach(function (el) { el.style.viewTransitionName = "row-" + el.id; });
-            } else {
-              [["#profile-tabs", "profile-tabs"], [".tab-panel", "tab-panel"], [".tab-indicator", "tab-indicator"]].forEach(function (p) {
-                var el = doc.querySelector(p[0]);
-                if (el) el.style.viewTransitionName = p[1];
-              });
-            }
-          },
-          clear: function (doc) {
-            all(doc, "[style*='view-transition-name']").forEach(function (el) { el.style.viewTransitionName = ""; });
-          },
-          save: function (kind, doc, to) {
-            var el = VT.place(kind, doc);
-            try { if (el) sessionStorage.setItem(KEY, JSON.stringify({top: el.getBoundingClientRect().top, to: to})); } catch (e) {}
-          }
-        });
-        addEventListener("pagereveal", function (e) {
-          var from = window.navigation && navigation.activation && navigation.activation.from;
-          if (!from || !from.url) return;
-          var kind = VT.kind(new URL(from.url).pathname, location.pathname, document);
-          if (!kind) return;
+        var EASE = "cubic-bezier(.22, 1, .36, 1)";
+        var arrive = function () {
           var saved = null;
-          try { saved = JSON.parse(sessionStorage.getItem(KEY)); sessionStorage.removeItem(KEY); } catch (x) {}
-          var el = VT.place(kind, document);
-          if (saved && el && saved.to === location.href)
-            scrollTo({top: scrollY + el.getBoundingClientRect().top - saved.top, behavior: "instant"});
-          if (e.viewTransition) {
-            e.viewTransition.types.add(kind);
-            VT.mark(kind, document);
-            e.viewTransition.finished.finally(function () { VT.clear(document); });
+          try { saved = JSON.parse(sessionStorage.getItem("arrival")); sessionStorage.removeItem("arrival"); } catch (x) {}
+          if (saved && saved.to !== location.href) saved = null;
+          var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+          var stickyTop = document.getElementById("site-ticker") ? document.getElementById("site-ticker").offsetHeight : 0;
+          var move = function (el, from, ms) {
+            if (!still && el && el.animate) el.animate([{transform: from}, {transform: "none"}], {duration: ms || 360, easing: EASE});
+          };
+
+          // Same place as on the old page, also when the link carried an anchor
+          // (the anchor would scroll once more at the end of parsing).
+          var keep = function (y) {
+            if (location.hash) history.replaceState(history.state, "", location.pathname + location.search);
+            scrollTo({top: y, behavior: "instant"});
+            if (document.readyState === "loading")
+              document.addEventListener("DOMContentLoaded", function () { scrollTo({top: y, behavior: "instant"}); }, {once: true});
+          };
+
+          if (saved && saved.kind === "tab") {
+            var bar = document.querySelector(".tab-bar"), panel = document.querySelector(".tab-panel");
+            if (bar && panel) {
+              var natural = panel.getBoundingClientRect().top + scrollY - bar.offsetHeight;
+              keep(natural - Math.max(saved.top, stickyTop));
+              // Near the top of a page whose hero is shorter, the bar cannot stay:
+              // it glides to its new place instead of jumping.
+              var gap = Math.max(saved.top, stickyTop) - bar.getBoundingClientRect().top;
+              if (Math.abs(gap) > 1) move(bar, "translateY(" + gap + "px)");
+              var ind = bar.querySelector(".tab-indicator");
+              if (ind && saved.ind) {
+                var r = ind.getBoundingClientRect();
+                move(ind, "translateX(" + (saved.ind.left - r.left) + "px) scaleX(" + saved.ind.width / r.width + ")");
+              }
+              move(panel, "translateX(" + 40 * saved.dir + "px)");
+              return;
+            }
           }
-        });
+
+          if (saved && saved.kind === "reorder") {
+            var box = document.querySelector("[data-keep-place]");
+            if (box) {
+              keep(scrollY + box.getBoundingClientRect().top - Math.max(saved.top, stickyTop));
+              var top0 = box.getBoundingClientRect().top;
+              Array.prototype.forEach.call(document.querySelectorAll("[data-reorder] > [id]"), function (row) {
+                var was = saved.rows[row.id];
+                var now = row.getBoundingClientRect().top - top0;
+                if (was == null) move(row, "translateY(14px)");
+                else if (Math.abs(was - now) > 1) move(row, "translateY(" + (was - now) + "px)", 420);
+              });
+              return;
+            }
+          }
+
+          var nav = performance.getEntriesByType("navigation")[0];
+          var fromSite = false;
+          try { fromSite = new URL(document.referrer).origin === location.origin; } catch (x) {}
+          if (fromSite && (!nav || nav.type === "navigate")) move(document.getElementById("main"), "translateY(14px)");
+        };
+        if ("onpagereveal" in window) addEventListener("pagereveal", arrive);
+        else document.addEventListener("DOMContentLoaded", arrive);
       })();
     </script>
     <%!-- Fonts are served by the site (assets/css/fonts.css): nothing blocks the
@@ -135,8 +149,8 @@
       crossorigin
     />
     <link phx-track-static rel="stylesheet" href={~p"/assets/js/app.css"} />
-    <%!-- Cross-document view transitions: wait for the content (the end of <main>,
-         so the tab bar and the tables are there) before the first paint. --%>
+    <%!-- Wait for the content (the end of <main>, so the tab bar and the tables
+         are there) before the first paint: the page arrival above needs them. --%>
     <link rel="expect" href="#vt-ready" blocking="render" />
     <%!-- Prepare the next page on hover (prerender) so a click shows it at once.
          Only public pages: never the API, sign-in, the member space, discussions or admin. --%>

@@ -8,57 +8,63 @@
     </nav>
 
     <div class="card market-table" id="ratings-table" data-keep-place>
-      <div class="market-toolbar">
-        <div class="market-toolbar-title">
-          <h1 class="market-h1 rt-h1">
-            {gettext("Sovereign ratings of African countries")}
-            <span class="small muted num">
-              {gettext("%{rated} rated · %{unrated} without a rating",
-                rated: @doc["rated"],
-                unrated: length(@unrated)
+      <div class="market-filters" data-sticky-filters>
+        <div class="market-toolbar">
+          <div class="market-toolbar-title">
+            <h1 class="market-h1 rt-h1">
+              {gettext("Sovereign ratings of African countries")}
+              <span class="small muted num">
+                {gettext("%{rated} rated · %{unrated} without a rating",
+                  rated: @doc["rated"],
+                  unrated: length(@unrated)
+                )}
+              </span>
+            </h1>
+            <p class="src">
+              {gettext(
+                "S&P, Moody's, Fitch · long-term foreign-currency ratings · each rating links to its source"
               )}
-            </span>
-          </h1>
-          <p class="src">
-            {gettext(
-              "S&P, Moody's, Fitch · long-term foreign-currency ratings · each rating links to its source"
-            )}
-          </p>
+            </p>
+          </div>
+          <form class="market-search" action={Paths.ratings(@locale)} method="get" role="search">
+            <input :if={@verdict} type="hidden" name="verdict" value={@verdict} />
+            <label for="ratings-q" class="vh">{gettext("Search a country or a rating")}</label>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              aria-hidden="true"
+            ><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+            <input
+              id="ratings-q"
+              name="q"
+              type="search"
+              value={@q}
+              placeholder={gettext("Country, rating (BB, Caa1…)")}
+              autocomplete="off"
+            />
+            <button type="submit" class="vh">{gettext("Search")}</button>
+          </form>
         </div>
-        <form class="market-search" action={Paths.ratings(@locale)} method="get" role="search">
-          <input :if={@verdict} type="hidden" name="verdict" value={@verdict} />
-          <label for="ratings-q" class="vh">{gettext("Search a country or a rating")}</label>
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            aria-hidden="true"
-          ><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
-          <input
-            id="ratings-q"
-            name="q"
-            type="search"
-            value={@q}
-            placeholder={gettext("Country, rating (BB, Caa1…)")}
-            autocomplete="off"
-          />
-          <button type="submit" class="vh">{gettext("Search")}</button>
-        </form>
+        <nav class="market-tabs" aria-label={gettext("Filter by verdict")}>
+          <a
+            :for={t <- @tabs}
+            href={tab_href(@locale, t, @q) <> "#ratings-list"}
+            aria-current={@verdict == t && "true"}
+          >
+            <i
+              :if={t not in [nil, "unrated"]}
+              class={["rt-dot", band_class(t)]}
+              aria-hidden="true"
+            ></i>
+            {tab_label(t)}<span class="market-tab-count">{@counts[t] || 0}</span>
+          </a>
+        </nav>
       </div>
-      <nav class="market-tabs" aria-label={gettext("Filter by verdict")}>
-        <a
-          :for={t <- @tabs}
-          href={tab_href(@locale, t, @q) <> "#ratings-list"}
-          aria-current={@verdict == t && "true"}
-        >
-          <i :if={t not in [nil, "unrated"]} class={["rt-dot", band_class(t)]} aria-hidden="true"></i>
-          {tab_label(t)}<span class="market-tab-count">{@counts[t] || 0}</span>
-        </a>
-      </nav>
 
       <div class="table-box">
         <table class="table table-stack table-wide" id="ratings-rows">
