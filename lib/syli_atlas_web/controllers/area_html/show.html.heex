@@ -51,7 +51,13 @@
        along the page. --%>
   <div :if={@area.kind == "country"} class="tab-bar" data-sticky-filters>
     <div class="wrap">
-      <ProfileComponents.tab_nav area={@area} tabs={@tabs} current={@tab} locale={@locale} />
+      <ProfileComponents.tab_nav
+        area={@area}
+        tabs={@tabs}
+        current={@tab}
+        locale={@locale}
+        query={@ctx.period_query}
+      />
     </div>
   </div>
 
