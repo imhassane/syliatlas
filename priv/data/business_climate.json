@@ -1,0 +1,626 @@
+{
+ "_comment": "Business climate indicators. WGI: World Bank Worldwide Governance Indicators, governance score 0-100 (2025 revision), CC BY 4.0, via api.worldbank.org (source 3). B-READY: World Bank Business Ready 2025 report, Table A1.1 pillar scores 0-100, CC BY 3.0 IGO; the overall score is the mean of the three pillars, as reported by the World Bank's press coverage.",
+ "as_of": "2026-11-10",
+ "sources": {
+  "wgi": {
+   "name": "Worldwide Governance Indicators",
+   "year": 2025,
+   "url": "https://www.worldbank.org/en/publication/worldwide-governance-indicators",
+   "licence": "CC BY 4.0"
+  },
+  "bready": {
+   "name": "Business Ready 2025",
+   "year": 2025,
+   "url": "https://www.worldbank.org/en/businessready",
+   "licence": "CC BY 3.0 IGO"
+  }
+ },
+ "countries": {
+  "DZA": {
+   "wgi": {
+    "regulatory_quality": 41.9,
+    "rule_of_law": 47.9,
+    "government_effectiveness": 48.4,
+    "control_of_corruption": 37.3
+   }
+  },
+  "AGO": {
+   "wgi": {
+    "regulatory_quality": 42.7,
+    "rule_of_law": 40.1,
+    "government_effectiveness": 37.8,
+    "control_of_corruption": 34.3
+   },
+   "bready": {
+    "regulatory_framework": 63.88,
+    "public_services": 37.48,
+    "operational_efficiency": 45.85,
+    "overall": 49.07
+   }
+  },
+  "BEN": {
+   "wgi": {
+    "regulatory_quality": 50.4,
+    "rule_of_law": 51.1,
+    "government_effectiveness": 48.9,
+    "control_of_corruption": 43.8
+   },
+   "bready": {
+    "regulatory_framework": 68.55,
+    "public_services": 57.87,
+    "operational_efficiency": 54.22,
+    "overall": 60.21
+   }
+  },
+  "BWA": {
+   "wgi": {
+    "regulatory_quality": 61.6,
+    "rule_of_law": 63.3,
+    "government_effectiveness": 61.2,
+    "control_of_corruption": 59.9
+   },
+   "bready": {
+    "regulatory_framework": 64.38,
+    "public_services": 45.37,
+    "operational_efficiency": 60.37,
+    "overall": 56.71
+   }
+  },
+  "BFA": {
+   "wgi": {
+    "regulatory_quality": 44.6,
+    "rule_of_law": 43.5,
+    "government_effectiveness": 36.2,
+    "control_of_corruption": 43.5
+   },
+   "bready": {
+    "regulatory_framework": 63.23,
+    "public_services": 40.86,
+    "operational_efficiency": 49.98,
+    "overall": 51.36
+   }
+  },
+  "BDI": {
+   "wgi": {
+    "regulatory_quality": 40.6,
+    "rule_of_law": 35.0,
+    "government_effectiveness": 26.7,
+    "control_of_corruption": 17.0
+   }
+  },
+  "CPV": {
+   "wgi": {
+    "regulatory_quality": 55.6,
+    "rule_of_law": 66.1,
+    "government_effectiveness": 62.8,
+    "control_of_corruption": 66.3
+   },
+   "bready": {
+    "regulatory_framework": 63.71,
+    "public_services": 34.54,
+    "operational_efficiency": 56.55,
+    "overall": 51.6
+   }
+  },
+  "CMR": {
+   "wgi": {
+    "regulatory_quality": 41.9,
+    "rule_of_law": 39.0,
+    "government_effectiveness": 36.1,
+    "control_of_corruption": 23.7
+   },
+   "bready": {
+    "regulatory_framework": 58.75,
+    "public_services": 36.3,
+    "operational_efficiency": 56.63,
+    "overall": 50.56
+   }
+  },
+  "CAF": {
+   "wgi": {
+    "regulatory_quality": 33.0,
+    "rule_of_law": 30.7,
+    "government_effectiveness": 19.3,
+    "control_of_corruption": 21.3
+   },
+   "bready": {
+    "regulatory_framework": 52.78,
+    "public_services": 22.21,
+    "operational_efficiency": 35.48,
+    "overall": 36.82
+   }
+  },
+  "TCD": {
+   "wgi": {
+    "regulatory_quality": 36.5,
+    "rule_of_law": 35.4,
+    "government_effectiveness": 30.8,
+    "control_of_corruption": 21.0
+   },
+   "bready": {
+    "regulatory_framework": 51.78,
+    "public_services": 23.4,
+    "operational_efficiency": 40.22,
+    "overall": 38.47
+   }
+  },
+  "COM": {
+   "wgi": {
+    "regulatory_quality": 35.8,
+    "rule_of_law": 42.9,
+    "government_effectiveness": 28.9,
+    "control_of_corruption": 30.3
+   }
+  },
+  "COD": {
+   "wgi": {
+    "regulatory_quality": 32.9,
+    "rule_of_law": 31.2,
+    "government_effectiveness": 18.1,
+    "control_of_corruption": 18.0
+   },
+   "bready": {
+    "regulatory_framework": 63.61,
+    "public_services": 26.56,
+    "operational_efficiency": 46.97,
+    "overall": 45.71
+   }
+  },
+  "COG": {
+   "wgi": {
+    "regulatory_quality": 34.9,
+    "rule_of_law": 38.1,
+    "government_effectiveness": 28.4,
+    "control_of_corruption": 19.3
+   },
+   "bready": {
+    "regulatory_framework": 52.21,
+    "public_services": 24.9,
+    "operational_efficiency": 45.03,
+    "overall": 40.71
+   }
+  },
+  "CIV": {
+   "wgi": {
+    "regulatory_quality": 52.6,
+    "rule_of_law": 50.0,
+    "government_effectiveness": 47.1,
+    "control_of_corruption": 42.5
+   },
+   "bready": {
+    "regulatory_framework": 68.46,
+    "public_services": 46.94,
+    "operational_efficiency": 47.9,
+    "overall": 54.43
+   }
+  },
+  "DJI": {
+   "wgi": {
+    "regulatory_quality": 40.5,
+    "rule_of_law": 41.8,
+    "government_effectiveness": 41.5,
+    "control_of_corruption": 29.3
+   }
+  },
+  "EGY": {
+   "wgi": {
+    "regulatory_quality": 47.6,
+    "rule_of_law": 47.3,
+    "government_effectiveness": 50.2,
+    "control_of_corruption": 33.9
+   }
+  },
+  "GNQ": {
+   "wgi": {
+    "regulatory_quality": 30.8,
+    "rule_of_law": 33.2,
+    "government_effectiveness": 27.3,
+    "control_of_corruption": 18.2
+   },
+   "bready": {
+    "regulatory_framework": 44.93,
+    "public_services": 16.84,
+    "operational_efficiency": 44.01,
+    "overall": 35.26
+   }
+  },
+  "ERI": {
+   "wgi": {
+    "regulatory_quality": 19.2,
+    "rule_of_law": 29.5,
+    "government_effectiveness": 21.1,
+    "control_of_corruption": 15.6
+   }
+  },
+  "SWZ": {
+   "wgi": {
+    "regulatory_quality": 43.9,
+    "rule_of_law": 45.8,
+    "government_effectiveness": 35.2,
+    "control_of_corruption": 31.9
+   },
+   "bready": {
+    "regulatory_framework": 59.7,
+    "public_services": 41.12,
+    "operational_efficiency": 60.79,
+    "overall": 53.87
+   }
+  },
+  "ETH": {
+   "wgi": {
+    "regulatory_quality": 42.9,
+    "rule_of_law": 43.2,
+    "government_effectiveness": 39.7,
+    "control_of_corruption": 40.5
+   }
+  },
+  "GAB": {
+   "wgi": {
+    "regulatory_quality": 42.9,
+    "rule_of_law": 41.8,
+    "government_effectiveness": 41.1,
+    "control_of_corruption": 32.4
+   }
+  },
+  "GMB": {
+   "wgi": {
+    "regulatory_quality": 44.4,
+    "rule_of_law": 52.1,
+    "government_effectiveness": 43.5,
+    "control_of_corruption": 37.7
+   },
+   "bready": {
+    "regulatory_framework": 53.97,
+    "public_services": 27.22,
+    "operational_efficiency": 45.79,
+    "overall": 42.33
+   }
+  },
+  "GHA": {
+   "wgi": {
+    "regulatory_quality": 52.3,
+    "rule_of_law": 58.6,
+    "government_effectiveness": 55.1,
+    "control_of_corruption": 45.8
+   },
+   "bready": {
+    "regulatory_framework": 68.88,
+    "public_services": 49.99,
+    "operational_efficiency": 51.73,
+    "overall": 56.87
+   }
+  },
+  "GIN": {
+   "wgi": {
+    "regulatory_quality": 39.1,
+    "rule_of_law": 38.7,
+    "government_effectiveness": 33.9,
+    "control_of_corruption": 26.6
+   }
+  },
+  "GNB": {
+   "wgi": {
+    "regulatory_quality": 34.3,
+    "rule_of_law": 37.7,
+    "government_effectiveness": 22.2,
+    "control_of_corruption": 19.8
+   }
+  },
+  "KEN": {
+   "wgi": {
+    "regulatory_quality": 49.1,
+    "rule_of_law": 50.8,
+    "government_effectiveness": 50.5,
+    "control_of_corruption": 30.8
+   }
+  },
+  "LSO": {
+   "wgi": {
+    "regulatory_quality": 47.1,
+    "rule_of_law": 51.0,
+    "government_effectiveness": 39.2,
+    "control_of_corruption": 42.5
+   },
+   "bready": {
+    "regulatory_framework": 55.58,
+    "public_services": 39.27,
+    "operational_efficiency": 54.19,
+    "overall": 49.68
+   }
+  },
+  "LBR": {
+   "wgi": {
+    "regulatory_quality": 40.6,
+    "rule_of_law": 44.6,
+    "government_effectiveness": 28.4,
+    "control_of_corruption": 28.6
+   }
+  },
+  "LBY": {
+   "wgi": {
+    "regulatory_quality": 26.9,
+    "rule_of_law": 31.5,
+    "government_effectiveness": 21.9,
+    "control_of_corruption": 17.2
+   }
+  },
+  "MDG": {
+   "wgi": {
+    "regulatory_quality": 41.2,
+    "rule_of_law": 43.1,
+    "government_effectiveness": 34.5,
+    "control_of_corruption": 27.1
+   },
+   "bready": {
+    "regulatory_framework": 60.37,
+    "public_services": 33.4,
+    "operational_efficiency": 49.95,
+    "overall": 47.91
+   }
+  },
+  "MWI": {
+   "wgi": {
+    "regulatory_quality": 45.4,
+    "rule_of_law": 56.4,
+    "government_effectiveness": 40.0,
+    "control_of_corruption": 34.7
+   }
+  },
+  "MLI": {
+   "wgi": {
+    "regulatory_quality": 41.6,
+    "rule_of_law": 39.1,
+    "government_effectiveness": 24.3,
+    "control_of_corruption": 29.1
+   },
+   "bready": {
+    "regulatory_framework": 65.99,
+    "public_services": 35.4,
+    "operational_efficiency": 47.51,
+    "overall": 49.63
+   }
+  },
+  "MRT": {
+   "wgi": {
+    "regulatory_quality": 43.1,
+    "rule_of_law": 45.3,
+    "government_effectiveness": 36.9,
+    "control_of_corruption": 29.0
+   }
+  },
+  "MUS": {
+   "wgi": {
+    "regulatory_quality": 71.5,
+    "rule_of_law": 69.8,
+    "government_effectiveness": 69.9,
+    "control_of_corruption": 56.0
+   },
+   "bready": {
+    "regulatory_framework": 64.69,
+    "public_services": 59.48,
+    "operational_efficiency": 65.44,
+    "overall": 63.2
+   }
+  },
+  "MAR": {
+   "wgi": {
+    "regulatory_quality": 55.2,
+    "rule_of_law": 53.0,
+    "government_effectiveness": 56.0,
+    "control_of_corruption": 37.9
+   },
+   "bready": {
+    "regulatory_framework": 70.06,
+    "public_services": 64.55,
+    "operational_efficiency": 55.71,
+    "overall": 63.44
+   }
+  },
+  "MOZ": {
+   "wgi": {
+    "regulatory_quality": 42.4,
+    "rule_of_law": 39.2,
+    "government_effectiveness": 35.8,
+    "control_of_corruption": 25.9
+   }
+  },
+  "NAM": {
+   "wgi": {
+    "regulatory_quality": 56.7,
+    "rule_of_law": 64.8,
+    "government_effectiveness": 54.4,
+    "control_of_corruption": 51.0
+   },
+   "bready": {
+    "regulatory_framework": 64.21,
+    "public_services": 44.57,
+    "operational_efficiency": 48.9,
+    "overall": 52.56
+   }
+  },
+  "NER": {
+   "wgi": {
+    "regulatory_quality": 42.3,
+    "rule_of_law": 40.1,
+    "government_effectiveness": 34.6,
+    "control_of_corruption": 33.2
+   }
+  },
+  "NGA": {
+   "wgi": {
+    "regulatory_quality": 44.4,
+    "rule_of_law": 43.0,
+    "government_effectiveness": 33.6,
+    "control_of_corruption": 26.5
+   }
+  },
+  "RWA": {
+   "wgi": {
+    "regulatory_quality": 59.9,
+    "rule_of_law": 60.2,
+    "government_effectiveness": 59.7,
+    "control_of_corruption": 60.9
+   },
+   "bready": {
+    "regulatory_framework": 72.54,
+    "public_services": 59.81,
+    "operational_efficiency": 71.47,
+    "overall": 67.94
+   }
+  },
+  "STP": {
+   "wgi": {
+    "regulatory_quality": 39.3,
+    "rule_of_law": 51.2,
+    "government_effectiveness": 36.7,
+    "control_of_corruption": 50.6
+   }
+  },
+  "SEN": {
+   "wgi": {
+    "regulatory_quality": 51.0,
+    "rule_of_law": 55.5,
+    "government_effectiveness": 57.5,
+    "control_of_corruption": 51.1
+   },
+   "bready": {
+    "regulatory_framework": 67.42,
+    "public_services": 44.0,
+    "operational_efficiency": 56.74,
+    "overall": 56.05
+   }
+  },
+  "SYC": {
+   "wgi": {
+    "regulatory_quality": 60.9,
+    "rule_of_law": 68.2,
+    "government_effectiveness": 68.0,
+    "control_of_corruption": 72.8
+   },
+   "bready": {
+    "regulatory_framework": 58.73,
+    "public_services": 39.09,
+    "operational_efficiency": 57.35,
+    "overall": 51.72
+   }
+  },
+  "SLE": {
+   "wgi": {
+    "regulatory_quality": 36.5,
+    "rule_of_law": 44.7,
+    "government_effectiveness": 33.3,
+    "control_of_corruption": 32.2
+   },
+   "bready": {
+    "regulatory_framework": 56.96,
+    "public_services": 30.0,
+    "operational_efficiency": 45.61,
+    "overall": 44.19
+   }
+  },
+  "SOM": {
+   "wgi": {
+    "regulatory_quality": 26.1,
+    "rule_of_law": 22.9,
+    "government_effectiveness": 13.3,
+    "control_of_corruption": 13.9
+   }
+  },
+  "ZAF": {
+   "wgi": {
+    "regulatory_quality": 54.3,
+    "rule_of_law": 59.3,
+    "government_effectiveness": 51.9,
+    "control_of_corruption": 45.4
+   }
+  },
+  "SSD": {
+   "wgi": {
+    "regulatory_quality": 22.5,
+    "rule_of_law": 25.3,
+    "government_effectiveness": 6.3,
+    "control_of_corruption": 5.8
+   },
+   "bready": {
+    "regulatory_framework": 36.04,
+    "public_services": 15.51,
+    "operational_efficiency": 45.36,
+    "overall": 32.3
+   }
+  },
+  "SDN": {
+   "wgi": {
+    "regulatory_quality": 25.5,
+    "rule_of_law": 28.0,
+    "government_effectiveness": 12.4,
+    "control_of_corruption": 16.3
+   }
+  },
+  "TZA": {
+   "wgi": {
+    "regulatory_quality": 47.0,
+    "rule_of_law": 49.2,
+    "government_effectiveness": 47.1,
+    "control_of_corruption": 41.3
+   },
+   "bready": {
+    "regulatory_framework": 61.92,
+    "public_services": 57.87,
+    "operational_efficiency": 55.25,
+    "overall": 58.35
+   }
+  },
+  "TGO": {
+   "wgi": {
+    "regulatory_quality": 47.3,
+    "rule_of_law": 48.3,
+    "government_effectiveness": 35.2,
+    "control_of_corruption": 33.8
+   },
+   "bready": {
+    "regulatory_framework": 66.26,
+    "public_services": 60.92,
+    "operational_efficiency": 57.38,
+    "overall": 61.52
+   }
+  },
+  "TUN": {
+   "wgi": {
+    "regulatory_quality": 46.5,
+    "rule_of_law": 52.2,
+    "government_effectiveness": 46.5,
+    "control_of_corruption": 43.9
+   },
+   "bready": {
+    "regulatory_framework": 62.56,
+    "public_services": 43.02,
+    "operational_efficiency": 52.46,
+    "overall": 52.68
+   }
+  },
+  "UGA": {
+   "wgi": {
+    "regulatory_quality": 45.3,
+    "rule_of_law": 47.6,
+    "government_effectiveness": 46.0,
+    "control_of_corruption": 25.8
+   }
+  },
+  "ZMB": {
+   "wgi": {
+    "regulatory_quality": 47.7,
+    "rule_of_law": 50.5,
+    "government_effectiveness": 44.4,
+    "control_of_corruption": 38.9
+   }
+  },
+  "ZWE": {
+   "wgi": {
+    "regulatory_quality": 33.5,
+    "rule_of_law": 38.6,
+    "government_effectiveness": 34.2,
+    "control_of_corruption": 22.0
+   }
+  }
+ }
+}

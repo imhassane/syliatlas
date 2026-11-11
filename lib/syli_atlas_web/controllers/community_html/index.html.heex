@@ -1,0 +1,60 @@
+<Layouts.public locale={@locale} current={:themes} alternates={@alternates}>
+  <.section>
+    <nav aria-label={gettext("Breadcrumb")}>
+      <ol class="crumbs">
+        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+        <li aria-current="page">{gettext("Economic communities")}</li>
+      </ol>
+    </nav>
+    <.section_head
+      level={1}
+      eyebrow={gettext("Regions and communities")}
+      title={gettext("Economic communities of Africa")}
+    >
+      <:intro>{@answer}</:intro>
+      <:actions>
+        <a class="btn btn-secondary" href={Paths.regions(@locale)}>{gettext("Regions of Africa")} →</a>
+      </:actions>
+    </.section_head>
+
+    <.card id="communities">
+      <.data_table
+        id="communities-table"
+        caption={gettext("Economic communities of Africa")}
+        rows={@rows}
+        wide
+      >
+        <:head :let={r} label={gettext("Community")}>
+          <a href={Paths.community(@locale, r.community.slug[@locale])}><b>{r.community.short[
+            @locale
+          ]}</b></a>
+          <span class="small subtle">{r.community.name[@locale]}</span>
+        </:head>
+        <:col :let={r} label={gettext("Members")}>{length(r.community.members)}</:col>
+        <:col :let={r} label={gettext("GDP %{year}", year: @year)}>
+          {value(r.gdp, "gdp_usd_bn", @locale)}
+        </:col>
+        <:col :let={r} label={gettext("Population")}>
+          {value(r.population, "population_m", @locale)}
+        </:col>
+        <:col :let={r} label={gettext("Growth")}>
+          <span class={tone(r.growth, "real_gdp_growth")}>{value(
+            r.growth,
+            "real_gdp_growth",
+            @locale
+          )}</span>
+        </:col>
+        <:col :let={r} label={gettext("Public debt")}>
+          {value(r.debt, "public_debt_pct_gdp", @locale)}
+        </:col>
+      </.data_table>
+      <.card_foot>
+        {gettext(
+          "Syli Atlas calculation from IMF figures (%{edition}) · GDP and population: sums · growth: weighted by GDP in PPP · debt: weighted by GDP in dollars · membership as of %{date}: ECOWAS without Burkina Faso, Mali and Niger, members of the AES",
+          edition: @edition,
+          date: SyliAtlas.Economy.Communities.as_of()
+        )}
+      </.card_foot>
+    </.card>
+  </.section>
+</Layouts.public>

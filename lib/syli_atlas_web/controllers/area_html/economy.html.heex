@@ -1,0 +1,129 @@
+<.section id="economie">
+  <.area_kpis
+    kpis={@kpis}
+    data={@data}
+    profile={@profile}
+    from={@from}
+    to={@to}
+    locale={@locale}
+  />
+
+  <.card pad>
+    <.card_head
+      title={indicator_label("gdp_usd_bn")}
+      subtitle={gettext("Billions of current dollars · dashed: estimates and projections")}
+    />
+    <% series = [
+      %{
+        id: @profile["code"],
+        name: @name,
+        color: "--c1",
+        values: @profile["series"]["gdp_usd_bn"],
+        strong: true
+      }
+    ] %>
+    <Charts.line_chart
+      id="area-chart"
+      indicator="gdp_usd_bn"
+      from={@from}
+      to={@to}
+      locale={@locale}
+      estimate_from={@profile["years"]["estimate_from"]}
+      label={@answer}
+      series={series}
+    />
+  </.card>
+
+  <div class="grid grid-2">
+    <.card id="peers">
+      <div class="pad">
+        <.card_head
+          title={
+            if(@area.kind == "country",
+              do: gettext("In its region"),
+              else: gettext("The five regions")
+            )
+          }
+          subtitle={gettext("GDP in current dollars, %{from} → %{to}", from: @from, to: @to)}
+        />
+      </div>
+      <.rank_list
+        items={rank_items(@peers.entries, "gdp_usd_bn", @locale, @from, @to, bar_max: @peers_max)}
+        start={@peers.offset}
+        current={@area.code}
+      />
+      <.list_pager page={@peers} href={@peers_href} />
+    </.card>
+
+    <.card>
+      <div class="pad">
+        <.card_head
+          title={gettext("All indicators")}
+          subtitle={gettext("Value in %{to} and change since %{from}", from: @from, to: @to)}
+        />
+      </div>
+      <.data_table
+        id="indicators"
+        caption={gettext("All indicators")}
+        rows={SyliAtlas.Sources.Indicators.keys()}
+      >
+        <:head :let={k} label={gettext("Indicator")}>
+          <span title={indicator_help(k)}>{indicator_label(k)}</span>
+        </:head>
+        <:col :let={k} label={to_string(@from)}>
+          {value(PublicData.at(@profile["series"][k], @from), k, @locale)}
+        </:col>
+        <:col :let={k} label={to_string(@to)}>
+          {value(PublicData.at(@profile["series"][k], @to), k, @locale)}
+        </:col>
+        <:col :let={k} label={gettext("Change")}>
+          <b class={tone(@data["period"]["changes"][k], k)}>{change(
+            @data["period"]["changes"][k],
+            k,
+            @locale
+          )}</b>
+        </:col>
+      </.data_table>
+      <.card_foot>
+        <a href={"/api/v1/areas/#{@area.code}/csv"} download>{gettext("Download CSV")}</a>
+        · <a href={"/api/v1/areas/#{@area.code}"}>JSON</a>
+      </.card_foot>
+    </.card>
+  </div>
+
+  <.card :if={@members.total > 0} id="members">
+    <div class="pad">
+      <.card_head
+        title={gettext("Member countries")}
+        subtitle={gettext("GDP in current dollars, %{from} → %{to}", from: @from, to: @to)}
+      />
+    </div>
+    <.rank_list
+      items={
+        rank_items(@members.entries, "gdp_usd_bn", @locale, @from, @to, bar_max: @members_max)
+      }
+      start={@members.offset}
+      bars
+    />
+    <.list_pager page={@members} href={@members_href} />
+    <.card_foot :if={@profile["missing"] not in [nil, []]}>
+      {gettext("Not included for lack of data: %{codes}",
+        codes:
+          @profile["missing"]
+          |> List.wrap()
+          |> Enum.map_join(", ", fn
+            %{"indicator" => k} -> indicator_label(k)
+            other -> to_string(other)
+          end)
+      )}
+    </.card_foot>
+  </.card>
+
+  <div class="row gap-2">
+    <a class="btn btn-primary" href={Paths.compare(@locale, [@profile["slug"][@locale]])}>{gettext(
+      "Compare %{name}",
+      name: @name
+    )} →</a>
+    <a class="btn btn-secondary" href={Paths.ranking(@locale)}>{gettext("African ranking")}</a>
+  </div>
+</.section>

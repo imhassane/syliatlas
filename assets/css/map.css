@@ -1,0 +1,110 @@
+/* The map of Africa (MapComponents) and its country panel. */
+
+.map-layout { display: flex; flex-wrap: wrap; gap: 24px; align-items: stretch; }
+.map-card { flex: 999 1 600px; min-width: 0; padding: 24px; display: flex; flex-direction: column; gap: 18px; }
+.map-toolbar { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; }
+.map-goto { display: flex; gap: 8px; align-items: center; }
+.map-goto .select { min-width: 220px; }
+
+/* Indicator switch: links (work without JavaScript), styled like .seg buttons. */
+.seg a { display: inline-flex; align-items: center; min-height: 38px; padding: 0 16px; border-radius: 999px; color: var(--ink-muted); font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; }
+.seg a[aria-current="true"] { background: var(--ink); color: var(--page); }
+
+.map { display: block; width: 100%; height: auto; overflow: visible; }
+.map path, .map .isle { stroke: var(--map-edge); stroke-width: .8; stroke-linejoin: round; }
+.map .cty { cursor: pointer; outline: none; }
+.map .cty path, .map .cty .isle { transition: fill .45s var(--ease), stroke-width .2s var(--ease); }
+.map .cty:hover path, .map .cty:focus-visible path, .map .cty:focus-visible .isle { stroke: var(--map-sel); stroke-width: 1.6; }
+.map .cty.is-sel path, .map .cty.is-sel .isle { stroke: var(--map-sel); stroke-width: 2.2; }
+.map .isle { stroke-width: 1.2; }
+
+/* Colour classes (MapScale). */
+.q-none, .q-none path, .q-none .isle { fill: var(--nodata); }
+.q-neg path, .q-neg .isle, i.q-neg { fill: var(--neg); background: var(--neg); }
+.q-seq-0 path, .q-seq-0 .isle, i.q-seq-0 { fill: var(--seq-0); background: var(--seq-0); }
+.q-seq-1 path, .q-seq-1 .isle, i.q-seq-1 { fill: var(--seq-1); background: var(--seq-1); }
+.q-seq-2 path, .q-seq-2 .isle, i.q-seq-2 { fill: var(--seq-2); background: var(--seq-2); }
+.q-seq-3 path, .q-seq-3 .isle, i.q-seq-3 { fill: var(--seq-3); background: var(--seq-3); }
+.q-seq-4 path, .q-seq-4 .isle, i.q-seq-4 { fill: var(--seq-4); background: var(--seq-4); }
+.q-seq-5 path, .q-seq-5 .isle, i.q-seq-5 { fill: var(--seq-5); background: var(--seq-5); }
+.q-bad-0 path, .q-bad-0 .isle, i.q-bad-0 { fill: var(--bad-0); background: var(--bad-0); }
+.q-bad-1 path, .q-bad-1 .isle, i.q-bad-1 { fill: var(--bad-1); background: var(--bad-1); }
+.q-bad-2 path, .q-bad-2 .isle, i.q-bad-2 { fill: var(--bad-2); background: var(--bad-2); }
+.q-bad-3 path, .q-bad-3 .isle, i.q-bad-3 { fill: var(--bad-3); background: var(--bad-3); }
+.q-bad-4 path, .q-bad-4 .isle, i.q-bad-4 { fill: var(--bad-4); background: var(--bad-4); }
+.q-bad-5 path, .q-bad-5 .isle, i.q-bad-5 { fill: var(--bad-5); background: var(--bad-5); }
+i.q-none { background: var(--nodata); }
+/* Regions map. */
+.rf-north_africa path, .rf-north_africa .isle, i.rf-north_africa { fill: var(--r-north_africa); background: var(--r-north_africa); }
+.rf-west_africa path, .rf-west_africa .isle, i.rf-west_africa { fill: var(--r-west_africa); background: var(--r-west_africa); }
+.rf-central_africa path, .rf-central_africa .isle, i.rf-central_africa { fill: var(--r-central_africa); background: var(--r-central_africa); }
+.rf-east_africa path, .rf-east_africa .isle, i.rf-east_africa { fill: var(--r-east_africa); background: var(--r-east_africa); }
+.rf-southern_africa path, .rf-southern_africa .isle, i.rf-southern_africa { fill: var(--r-southern_africa); background: var(--r-southern_africa); }
+
+.map-card .legend, .regions-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 0; padding: 0; list-style: none; font-size: 13px; color: var(--ink-muted); }
+.map-card .legend li { display: inline-flex; align-items: center; gap: 8px; }
+.map-card .legend i { width: 14px; height: 10px; border-radius: 2px; box-shadow: inset 0 0 0 1px rgba(11, 26, 51, .08); }
+
+/* Panel: beside the map from 40rem; a bottom sheet on phones (.sheet). */
+.map-panel { flex: 1 1 340px; min-width: 0; max-width: 440px; padding: 28px; display: flex; flex-direction: column; gap: 20px; }
+.map-panel-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.map-panel-top .pill { white-space: normal; }
+.map-steps { display: flex; gap: 2px; flex: none; }
+.map-panel-body { display: flex; flex-direction: column; gap: 18px; }
+.map-panel-name { margin: 0; font-size: 36px; line-height: 1.08; font-weight: 300; letter-spacing: -.025em; view-transition-name: area-title; }
+.map-panel-change { font-size: 52px; }
+.map-panel-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: auto; }
+.spark { display: block; width: 100%; height: 64px; overflow: visible; }
+.spark-base { stroke: var(--border-strong); stroke-dasharray: 2 3; }
+.spark-past, .spark-future { fill: none; stroke: var(--c1); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.spark-future { stroke-dasharray: 5 4; }
+.spark-dot { fill: var(--c1); }
+.kv { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; margin: 0; background: var(--border); border-radius: 8px; overflow: hidden; }
+.kv > div { background: var(--card); padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+.kv dt { font-family: var(--mono); font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--ink-subtle); }
+.kv dd { margin: 0; font-size: 22px; letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+
+@media (min-width: 40rem) {
+  .map-panel[popover] { padding: 28px; display: flex; background: var(--card); box-shadow: var(--shadow-card); border-radius: 8px; }
+}
+@media (max-width: 39.99rem) {
+  /* .map-panel sets display; a closed popover must stay hidden. */
+  .map-panel[popover]:not(:popover-open) { display: none; }
+  .map-card { padding: 16px; }
+  .map-toolbar .seg { flex-wrap: nowrap; overflow-x: auto; max-width: 100%; scrollbar-width: none; }
+  .map-toolbar .seg a { flex: none; }
+  .map-goto, .map-goto .select { width: 100%; }
+  .map-panel[popover] { max-width: 100%; gap: 16px; }
+  .map-panel-name { font-size: 28px; }
+  .map-panel-change { font-size: 40px; }
+  .map-panel-top .pill { font-size: 11px; }
+}
+
+/* With and without JavaScript. */
+.js-only { display: none !important; }
+html.js .js-only { display: flex !important; }
+html.js .no-js-only { display: none !important; }
+
+/* Regions page */
+.regions-hero { display: flex; flex-wrap: wrap; gap: 40px; align-items: center; }
+.regions-hero > .grow { flex: 1 1 480px; }
+.regions-map { flex: 1 1 360px; min-width: 0; max-width: 500px; }
+.region-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.region-chips a { color: var(--ink); background: var(--card); box-shadow: inset 0 0 0 1px var(--border-input); }
+.region-chips a[aria-current="true"] { background: var(--ink); color: var(--page); box-shadow: none; }
+.regions-grid { align-items: stretch; }
+.row-dot { display: inline-flex; align-items: center; gap: 10px; }
+.row-dot i { width: 10px; height: 10px; border-radius: 50%; background: var(--dot); flex: none; }
+.grid-carry { grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); }
+.carry-card { padding: 22px; display: flex; flex-direction: column; gap: 14px; text-decoration: none; color: var(--ink); }
+.carry-name { font-weight: 500; font-size: 17px; }
+.carry-eyebrow { font-size: 11px; color: var(--ink-subtle); }
+.carry-row { display: flex; justify-content: space-between; gap: 8px; font-size: 14px; }
+.carry-row b { font-weight: 500; }
+.carry-bar { width: 100%; }
+.carry-foot { display: flex; flex-direction: column; gap: 4px; border-top: 1px solid var(--border-faint); padding-top: 12px; }
+.legend li { list-style: none; }
+.map-panel-changes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0; }
+.map-panel-changes dt { font-size: 13px; color: var(--ink-muted); }
+.map-panel-changes dd { margin: 2px 0 0; font-size: 20px; font-variant-numeric: tabular-nums; }
+.map-panel-changes.single { grid-template-columns: 1fr; }

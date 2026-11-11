@@ -1,0 +1,134 @@
+<Layouts.public locale={@locale} current={:method} alternates={@alternates}>
+  <.section>
+    <div class="prose stack gap-4">
+      <p class="eyebrow">{gettext("Method")}</p>
+      <h1 class="h1">{gettext("Where the figures come from.")}</h1>
+      <p class="lead">
+        {gettext(
+          "Syli Atlas relies first on the IMF World Economic Outlook, published in April and October. Other sources only fill gaps and are always labelled."
+        )}
+      </p>
+
+      <p>
+        {gettext(
+          "Every figure on the site names its source just below it. Syli Atlas is a non-commercial project: it uses each source within the terms below."
+        )}
+      </p>
+    </div>
+  </.section>
+
+  <.section tight={:top}>
+    <div class="stack gap-3" id="data-sources">
+      <h2 class="h2">{gettext("Sources")}</h2>
+      <p class="muted">{gettext("What each one provides, its terms and what is online")}</p>
+      <div class="grid grid-2">
+        <.card
+          :for={s <- @data_sources}
+          pad
+          class="stack gap-2 source-card"
+          id={"source-" <> s.id}
+        >
+          <h3 class="h2">
+            <a :if={s.url} href={s.url} rel="noopener">{s.name}</a>
+            <span :if={!s.url}>{s.name}</span>
+          </h3>
+          <p>{s.what}</p>
+          <dl class="source-facts">
+            <div>
+              <dt>{gettext("Terms")}</dt>
+              <dd>
+                <a :if={s.terms_url} href={s.terms_url} rel="noopener">{s.terms}</a>
+                <span :if={!s.terms_url}>{s.terms}</span>
+              </dd>
+            </div>
+            <div>
+              <dt>{gettext("Updated")}</dt>
+              <dd>{s.updated}</dd>
+            </div>
+            <div :if={s.online}>
+              <dt>{gettext("Online")}</dt>
+              <dd>{s.online}</dd>
+            </div>
+          </dl>
+        </.card>
+      </div>
+    </div>
+  </.section>
+
+  <.section tight={:top}>
+    <div class="prose stack gap-4">
+      <h2 class="h2">{gettext("What Syli Atlas computes")}</h2>
+      <p>
+        {gettext(
+          "These figures are calculations, not data from a source. The page says so where they appear, and names the series they come from."
+        )}
+      </p>
+      <ul>
+        <li>{gettext("Real GDP index, chained from the IMF growth rates.")}</li>
+        <li>{gettext("Totals and averages of the regions and of Africa.")}</li>
+        <li>
+          {gettext(
+            "UEMOA and CEMAC convergence criteria, checked against IMF figures. The IMF does not publish CEMAC's reference fiscal balance: that criterion is not computed."
+          )}
+        </li>
+        <li>
+          {gettext("The common rating scale (AAA = 22, default = 1) and the rating verdicts.")}
+        </li>
+      </ul>
+
+      <h2 class="h2">{gettext("Daily updates")}</h2>
+      <p>
+        {gettext(
+          "Every morning a job asks the IMF whether a new edition is out. When one is, the figures are imported, checked, published, and every profile is recomputed. Pages stay in your browser for one day and remain readable offline."
+        )}
+      </p>
+
+      <h2 class="h2">{gettext("How totals are computed")}</h2>
+      <ul>
+        <li>
+          {gettext("GDP and population of regions and of Africa are sums of their countries.")}
+        </li>
+        <li>
+          {gettext("GDP per capita of a group is its total GDP divided by its population.")}
+        </li>
+        <li>
+          {gettext(
+            "Growth and inflation of a group are averages weighted by GDP in purchasing power parity."
+          )}
+        </li>
+        <li>{gettext("Public debt of a group is weighted by GDP in dollars.")}</li>
+        <li>
+          {gettext(
+            "The fiscal balance and the current account of a group are weighted by GDP in dollars. Groups have no unemployment rate: the IMF covers too few African countries."
+          )}
+        </li>
+        <li>
+          {gettext(
+            "A country missing a value for a year is left out of the group for that year, and the page says so."
+          )}
+        </li>
+      </ul>
+
+      <h2 class="h2">{gettext("How changes are computed")}</h2>
+      <p>
+        {gettext(
+          "Real GDP is an index chained from the IMF growth rates, so it measures output volume without inflation or exchange rate effects. Levels change in percent; rates (growth, inflation, debt) change in percentage points."
+        )}
+      </p>
+
+      <h2 class="h2">{gettext("Estimates and projections")}</h2>
+      <p>
+        {gettext(
+          "Recent years are IMF estimates, and later years are projections. Charts show them dashed. They are revised at every edition."
+        )}
+      </p>
+
+      <h2 class="h2">{gettext("Reuse")}</h2>
+      <p>
+        {gettext(
+          "Every profile can be downloaded as CSV. The JSON API is open: /api/v1/areas, /api/v1/compare, /api/v1/ranking. Please cite the IMF and Syli Atlas."
+        )}
+      </p>
+    </div>
+  </.section>
+</Layouts.public>

@@ -1,0 +1,181 @@
+/* Data: ranked lists, bars, tables that stack, charts on small screens. */
+
+/* Ranked list (UI.rank_list/1) */
+.rank-list { list-style: none; margin: 0; padding: 0 0 8px; container-type: inline-size; }
+.rank-list li { display: grid; grid-template-columns: 28px 1fr auto; align-items: center; gap: 12px; min-height: 48px; padding: 6px 24px; border-top: 1px solid var(--border-faint); font-size: 15px; }
+.rank-list li a { color: var(--ink); text-decoration: none; font-weight: 500; min-width: 0; overflow-wrap: anywhere; }
+.rank-list li a:hover { color: var(--accent-text); }
+.rank-list li.is-current { background: var(--accent-bg); }
+.rank-list b { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.rank-list.rank-bars li { grid-template-columns: 28px minmax(110px, 1fr) minmax(60px, 2fr) 88px; }
+.rank-list.rank-bars .bar-track { width: 100%; }
+@container (width < 30rem) {
+  .rank-list li { padding: 6px 16px; gap: 10px; }
+  .rank-list.rank-bars li { grid-template-columns: 24px 1fr auto; }
+  .rank-list.rank-bars .bar-track { grid-column: 2 / -1; grid-row: 2; height: 4px; margin-bottom: 4px; }
+}
+.bar-fill.neg { background: var(--signal); }
+.bar-cell { display: inline-flex; align-items: center; justify-content: flex-end; gap: 12px; }
+.bar-cell b, .table-stack td b { white-space: nowrap; }
+
+/* Tables (UI.data_table/1): sticky header row and first column when wide,
+   one card per row when narrow — never a sideways scroll on a phone. */
+.table-box { container-type: inline-size; overflow-x: auto; }
+.table-stack th[scope="row"] { font-family: var(--sans); font-size: 15px; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--ink); text-align: left; white-space: normal; height: 54px; border-bottom: 1px solid var(--border-faint); }
+.table-stack th[scope="row"] .small { display: block; font-weight: 400; }
+.table-stack tbody tr:last-child th { border-bottom: 0; }
+.table-stack tr.is-current th, .table-stack tr.is-current td { background: var(--accent-bg); }
+.table-stack thead th:first-child, .table-stack th[scope="row"] { padding-left: 24px; }
+.table-stack thead th:last-child, .table-stack td:last-child { padding-right: 24px; }
+
+@container (width < 34rem) {
+  .table-stack, .table-stack tbody, .table-stack tr, .table-stack th, .table-stack td { display: block; }
+  .table-stack thead { display: none; }
+  .table-stack tr { padding: 14px 20px; border-top: 1px solid var(--border-faint); }
+  .table-stack tbody tr:first-child { border-top: 0; }
+  .table-stack th[scope="row"], .table-stack thead th:first-child { height: auto; padding: 0 0 6px; border: 0; }
+  .table-stack td { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; height: auto; padding: 5px 0; border: 0; white-space: normal; text-align: right; }
+  .table-stack td:last-child { padding-right: 0; }
+  .table-stack td::before { content: attr(data-label); flex: 1 1 auto; min-width: 0; text-align: left; color: var(--ink-muted); font-size: 14px; }
+  .table-stack td.hide-sm { display: none; }
+  .table-stack .bar-cell .bar-track { width: 72px; }
+}
+
+/* Tables with many columns stack sooner. */
+@container (width < 60rem) {
+  .table-wide, .table-wide tbody, .table-wide tr, .table-wide th, .table-wide td { display: block; }
+  .table-wide thead { display: none; }
+  .table-wide tr { padding: 14px 20px; border-top: 1px solid var(--border-faint); }
+  .table-wide tbody tr:first-child { border-top: 0; }
+  .table-wide th[scope="row"], .table-wide thead th:first-child { height: auto; padding: 0 0 6px; border: 0; }
+  .table-wide td { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; height: auto; padding: 5px 0; border: 0; white-space: normal; text-align: right; }
+  .table-wide td:last-child { padding-right: 0; }
+  .table-wide td::before { content: attr(data-label); flex: 1 1 auto; min-width: 0; text-align: left; color: var(--ink-muted); font-size: 14px; }
+  .table-wide td.hide-sm { display: none; }
+  .table-wide .bar-cell .bar-track { width: 72px; }
+}
+
+/* Charts: drawn twice (Charts.line_chart/1), wide with end labels and
+   narrow for phones, whose legend sits under the chart. */
+.chart .ref-line, .chart .grid-line { vector-effect: non-scaling-stroke; }
+.chart-narrow, .legend { display: none; }
+.chart-narrow text { font-size: 12px; }
+@media (max-width: 39.99rem) {
+  .chart-wide { display: none; }
+  .chart-narrow { display: block; }
+  .legend { display: flex; }
+}
+
+/* Pagination (UI.pagination/1): 10 rows per page. */
+.pager { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px; padding: 12px 16px 16px 24px; border-top: 1px solid var(--border-faint); }
+.pager-summary { font-family: var(--mono); font-size: 12px; color: var(--ink-subtle); font-variant-numeric: tabular-nums; }
+.pager ol { display: flex; align-items: center; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.pager a, .pager-gap { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 40px; min-height: 40px; padding: 0 12px; border-radius: 999px; color: var(--ink); font-size: 14px; font-weight: 500; text-decoration: none; font-variant-numeric: tabular-nums; }
+.pager a:hover { background: var(--muted); }
+.pager a[aria-current="page"] { background: var(--ink); color: var(--page); }
+.pager-gap { min-width: 24px; padding: 0; color: var(--ink-subtle); }
+@media (pointer: coarse) { .pager a { min-width: 44px; min-height: 44px; } }
+@media (max-width: 39.99rem) {
+  .pager { justify-content: center; padding: 12px; }
+  .pager-summary { width: 100%; text-align: center; }
+  .pager-step-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+
+/* Long pages: sections always below the first screen are laid out and painted
+   only when they come near it (content-visibility). The size is an estimate
+   until they have rendered once, then remembered (auto), so the scrollbar
+   does not jump. Never on what the first screen shows: that would delay it.
+   `defer-phone` sections are below the first screen on phones only. */
+.defer { content-visibility: auto; contain-intrinsic-size: auto none auto var(--defer-h, 800px); }
+@media (max-width: 47.99rem) {
+  .defer-phone { content-visibility: auto; contain-intrinsic-size: auto none auto var(--defer-h, 800px); }
+}
+/* Measured content heights of the regions page (padding excluded, as
+   contain-intrinsic-size counts the content box only): phones first. */
+.defer-chart { --defer-h: 1060px; }
+.defer-table { --defer-h: 2490px; }
+.defer-carry { --defer-h: 2160px; }
+@media (min-width: 48rem) {
+  .defer-table { --defer-h: 2450px; }
+  .defer-carry { --defer-h: 1100px; }
+}
+@media (min-width: 64rem) {
+  .defer-table { --defer-h: 610px; }
+}
+@media (min-width: 80rem) {
+  .defer-carry { --defer-h: 1020px; }
+}
+
+/* Country profile: the section menu, kept at the top while scrolling, and
+   the convergence criteria (SyliAtlasWeb.EconomyComponents). */
+.section-nav { position: sticky; top: 0; z-index: 20; background: var(--page); border-bottom: 1px solid var(--border); }
+.section-nav-inner { display: flex; gap: 8px; padding-top: 10px; padding-bottom: 10px; overflow-x: auto; scrollbar-width: none; }
+.section-nav-inner::-webkit-scrollbar { display: none; }
+.section-nav a { flex: none; display: inline-flex; align-items: center; min-height: 40px; padding: 0 16px; border-radius: 999px; background: var(--muted); color: var(--ink); font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; }
+.section-nav a:hover { background: var(--accent-bg); color: var(--accent-text); }
+.section[id] { scroll-margin-top: 64px; }
+.criteria { list-style: none; margin: 0; padding: 0; }
+.criteria li { display: flex; gap: 12px; align-items: center; justify-content: space-between; min-height: 64px; border-top: 1px solid var(--border-faint); }
+.criteria-text { display: flex; flex-direction: column; gap: 2px; }
+.criteria-text b { font-weight: 600; }
+@media (min-width: 60rem) { .stats.stats-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 59.99rem) { .stats.stats-3 > div:last-child:nth-child(odd) { grid-column: 1 / -1; } }
+
+/* Method page: one card per source. */
+.source-card p { margin: 0; }
+.source-facts { display: grid; gap: 10px; margin: 4px 0 0; }
+.source-facts dt { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-subtle); }
+.source-facts dd { margin: 2px 0 0; font-size: 15px; }
+
+/* Stacked shares: creditors of the debt, sectors (SyliAtlasWeb.WorldBankComponents). */
+.stacked-bar { display: flex; gap: 2px; height: 22px; border-radius: 4px; overflow: hidden; background: var(--muted); }
+.stacked-bar-lg { height: 28px; }
+.stacked-bar > span { display: block; min-width: 2px; }
+.creditor-rows { display: flex; flex-direction: column; gap: 12px; }
+.creditor-row { display: grid; grid-template-columns: 48px 1fr; gap: 14px; align-items: center; }
+.creditor-shares { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 12px; margin: 0; }
+.creditor-shares dt { font-size: 12px; color: var(--ink-subtle); }
+.creditor-shares dd { margin: 2px 0 0; font-size: 22px; font-weight: 500; }
+.share-legend { display: flex !important; flex-wrap: wrap; gap: 6px 18px; margin: 0; }
+
+/* Trade: share lists (SyliAtlasWeb.TradeComponents). */
+.share-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.share-list li { display: grid; grid-template-columns: minmax(120px, 1.2fr) 1fr 64px; gap: 12px; align-items: center; min-height: 36px; font-size: 14px; }
+.share-list b { text-align: right; }
+.share-track { height: 10px; border-radius: 999px; background: var(--muted); overflow: hidden; }
+.share-track > span { display: block; height: 100%; border-radius: 999px; background: var(--c1); }
+.share-track-alt > span { background: var(--c3); }
+
+/* IMF risk of debt distress: a four-step scale and table pills. */
+.risk-low { --risk-bg: var(--success-bg); --risk-ink: var(--success-ink); }
+.risk-moderate { --risk-bg: var(--rt-high-bg); --risk-ink: var(--rt-high-ink); }
+.risk-high { --risk-bg: var(--rt-risk-bg); --risk-ink: var(--rt-risk-ink); }
+.risk-distress { --risk-bg: var(--rt-def-bg); --risk-ink: var(--rt-def-ink); }
+.risk-scale { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+.risk-step { display: flex; align-items: center; justify-content: center; min-height: 40px; padding: 4px 8px; border-radius: 6px; font-size: 13px; text-align: center; background: var(--muted); color: var(--ink-subtle); }
+.risk-step.risk-current { background: var(--risk-bg); color: var(--risk-ink); font-weight: 600; box-shadow: inset 0 0 0 2px var(--risk-ink); }
+.risk-pill { background: var(--risk-bg); color: var(--risk-ink); }
+
+/* Country profile: one URL per tab (SyliAtlasWeb.ProfileComponents). */
+.tab-nav { display: flex; gap: 4px; margin-top: 20px; border-bottom: 1px solid var(--border); overflow-x: auto; scrollbar-width: none; }
+.tab-nav::-webkit-scrollbar { display: none; }
+.tab-nav a { flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; margin-bottom: -1px; border-bottom: 2px solid transparent; color: var(--ink-muted); font-size: 15px; font-weight: 500; text-decoration: none; white-space: nowrap; }
+.tab-nav a:hover { color: var(--ink); }
+.tab-nav a[aria-current="page"] { color: var(--accent-text); border-bottom-color: var(--accent); font-weight: 600; }
+.area-title-tab { font-size: clamp(28px, 5vw, 40px); }
+.community-pills .pill { font-size: 13px; padding: 5px 12px; text-decoration: none; }
+.community-pills .pill:hover { background: var(--accent-bg); color: var(--accent-text); }
+.overview-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr)); }
+.overview-card { display: flex; flex-direction: column; gap: 8px; padding: 20px; color: var(--ink); text-decoration: none; transition: border-color .15s; }
+.overview-card:hover { border-color: var(--accent); }
+.overview-card p { margin: 0; }
+.overview-facts { display: grid; gap: 8px; margin: 8px 0 0; padding-top: 12px; border-top: 1px solid var(--border-faint); }
+.overview-facts > div { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; }
+.overview-facts dt { color: var(--ink-muted); }
+.overview-facts dd { margin: 0; font-weight: 600; text-align: right; }
+.overview-more { margin-top: auto; padding-top: 8px; color: var(--accent-text); font-size: 14px; font-weight: 600; }
+.related-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); }
+.related-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.related-list a { display: flex; align-items: center; min-height: 40px; border-top: 1px solid var(--border-faint); color: var(--ink); text-decoration: none; font-size: 15px; }
+.related-list li:first-child a { border-top: 0; }
+.related-list a:hover { color: var(--accent-text); }

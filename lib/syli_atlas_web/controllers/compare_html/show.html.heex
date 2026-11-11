@@ -1,0 +1,118 @@
+<Layouts.public locale={@locale} current={:compare} alternates={@alternates}>
+  <.section tight={:bottom}>
+    <.section_head
+      level={1}
+      eyebrow={gettext("Compare")}
+      title={gettext("Side by side, over the same period.")}
+    />
+    <div class="row gap-2">
+      <.series_chip
+        :for={s <- @series}
+        name={s.name}
+        color={s.color}
+        remove_href={
+          Paths.compare(@locale, without(@slugs, SyliAtlas.Geo.Area.slug(s.area, @locale)))
+        }
+        remove_label={gettext("Remove %{name}", name: s.name)}
+      />
+    </div>
+    <.filter_sheet
+      id="compare-filters"
+      title={gettext("Choose")}
+      summary={"#{length(@series)} · #{@from} → #{@to}"}
+    >
+      <form class="filters" action={Paths.compare(@locale, @slugs)} method="get">
+        <.field :if={!@full?} label={gettext("Add a country or a region")}>
+          <.select
+            name="add"
+            options={[
+              {"", gettext("Add…")}
+              | Enum.map(
+                  @choices,
+                  &{SyliAtlas.Geo.Area.slug(&1, @locale), SyliAtlas.Geo.Area.name(&1, @locale)}
+                )
+            ]}
+          />
+        </.field>
+        <.field label={gettext("Since")}>
+          <.select name="from" options={Enum.map(2015..2029, &{&1, &1})} selected={@from} />
+        </.field>
+        <.field label={gettext("Until")}>
+          <.select name="to" options={Enum.map(2016..2030, &{&1, &1})} selected={@to} />
+        </.field>
+        <button type="submit" class="btn btn-primary">{gettext("Apply")}</button>
+      </form>
+    </.filter_sheet>
+  </.section>
+
+  <.section :if={@series != []} tight={:top}>
+    <.card pad>
+      <.card_head
+        title={indicator_label("gdp_usd_bn")}
+        subtitle={gettext("Billions of current dollars · dashed: estimates and projections")}
+      />
+      <Charts.line_chart
+        id="compare-chart"
+        indicator="gdp_usd_bn"
+        from={@from}
+        to={@to}
+        locale={@locale}
+        label={gettext("GDP in current dollars, %{from} → %{to}", from: @from, to: @to)}
+        series={
+          Enum.map(
+            @series,
+            &%{
+              id: &1.id,
+              name: &1.name,
+              color: &1.color,
+              values: &1.item["series"]["gdp_usd_bn"]
+            }
+          )
+        }
+      />
+      <.chart_legend series={@series} />
+    </.card>
+
+    <.card>
+      <.data_table
+        id="compare-table"
+        caption={gettext("Indicators in %{year}", year: @to)}
+        rows={["gdp_change" | SyliAtlas.Sources.Indicators.keys()]}
+      >
+        <:head :let={k} label={gettext("Indicator") <> " · #{@to}"}>
+          <span :if={k == "gdp_change"}>{gettext("GDP in dollars")}</span>
+          <span :if={k != "gdp_change"} title={indicator_help(k)}>{indicator_label(k)}</span>
+          <span :if={k == "gdp_change"} class="small muted">{@from} → {@to}</span>
+        </:head>
+        <:col :let={k} :for={s <- @series} label={s.name}>
+          <%= cond do %>
+            <% k == "gdp_change" -> %>
+              <b class={tone(s.item["gdp_change_pct"], "gdp_usd_bn")}>{change(
+                s.item["gdp_change_pct"],
+                "gdp_usd_bn",
+                @locale
+              )}</b>
+            <% k == "real_gdp_index" -> %>
+              <b class={tone(s.item["real_gdp_change_pct"], k)}>{change(
+                s.item["real_gdp_change_pct"],
+                k,
+                @locale
+              )}</b>
+            <% true -> %>
+              {value(PublicData.at(s.item["series"][k], @to), k, @locale)}
+          <% end %>
+        </:col>
+      </.data_table>
+    </.card>
+    <p class="src">
+      {gettext("IMF, World Economic Outlook")} ·
+      <a href={"/api/v1/compare?codes=#{Enum.map_join(@series, ",", & &1.id)}&from=#{@from}&to=#{@to}"}>JSON</a>
+    </p>
+  </.section>
+
+  <.section :if={@series == []} tight={:top}>
+    <p class="muted">
+      {gettext("Pick at least two countries or regions above to compare them.")}
+    </p>
+  </.section>
+</Layouts.public>

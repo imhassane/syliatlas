@@ -1,6 +1,8 @@
 defmodule SyliAtlasWeb.Router do
   use SyliAtlasWeb, :router
 
+  import SyliAtlasWeb.Auth, only: [fetch_current_user: 2, require_user: 2, put_account_locale: 2]
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -11,19 +13,219 @@ defmodule SyliAtlasWeb.Router do
   end
 
   pipeline :api do
-    plug :accepts, ["json"]
+    plug :accepts, ["json", "csv"]
+  end
+
+  pipeline :public_cache do
+    plug SyliAtlasWeb.Plugs.PublicCache
+  end
+
+  # Public pages: no session or CSRF token, so they can be cached.
+  pipeline :public do
+    plug :accepts, ["html"]
+    plug :put_root_layout, html: {SyliAtlasWeb.Layouts, :root}
+    plug :put_secure_browser_headers
+  end
+
+  # Sign-in and the member's space: the session, the signed-in account.
+  pipeline :account do
+    plug :fetch_current_user
+    plug :put_account_locale
+  end
+
+  # Actions of the space and the passkey ceremonies: forms and JSON.
+  pipeline :account_actions do
+    plug :accepts, ["html", "json"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+    plug :fetch_current_user
+    plug :put_account_locale
+  end
+
+  # Unsubscribe links of emails: the signed token is the proof, so mail
+  # clients' one-click POST (RFC 8058) works without a session or CSRF token.
+  pipeline :unsubscribe do
+    plug :accepts, ["html"]
+    plug :put_root_layout, html: {SyliAtlasWeb.Layouts, :root}
+    plug :put_secure_browser_headers
+  end
+
+  pipeline :admin do
+    plug SyliAtlasWeb.Plugs.AdminAuth
+    plug :put_layout, false
+    plug :admin_locale
+  end
+
+  defp admin_locale(conn, _opts) do
+    Gettext.put_locale(SyliAtlasWeb.Gettext, "fr")
+    assign(conn, :locale, "fr")
+  end
+
+  pipeline :fr do
+    plug SyliAtlasWeb.Plugs.Locale, "fr"
+  end
+
+  pipeline :en do
+    plug SyliAtlasWeb.Plugs.Locale, "en"
   end
 
   scope "/", SyliAtlasWeb do
-    pipe_through :browser
-
-    get "/", PageController, :home
+    get "/health", HealthController, :show
+    get "/sitemap.xml", SitemapController, :sitemap
+    get "/robots.txt", SitemapController, :robots
+    get "/llms.txt", SitemapController, :llms
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", SyliAtlasWeb do
-  #   pipe_through :api
-  # end
+  scope "/", SyliAtlasWeb do
+    pipe_through :public
+    get "/", PageController, :root
+  end
+
+  scope "/fr", SyliAtlasWeb do
+    pipe_through [:browser, :fr, :account]
+
+    get "/connexion", SessionController, :new
+    post "/connexion", SessionController, :create
+    get "/connexion/code", SessionController, :code
+    post "/connexion/code", SessionController, :verify
+    get "/connexion/cle", SessionController, :admin_key
+
+    pipe_through :require_user
+    get "/mon-espace", AccountController, :favorites
+    get "/mon-espace/alertes", AccountController, :alerts
+    get "/mon-espace/securite", AccountController, :security
+  end
+
+  scope "/en", SyliAtlasWeb do
+    pipe_through [:browser, :en, :account]
+
+    get "/sign-in", SessionController, :new
+    post "/sign-in", SessionController, :create
+    get "/sign-in/code", SessionController, :code
+    post "/sign-in/code", SessionController, :verify
+    get "/sign-in/passkey", SessionController, :admin_key
+
+    pipe_through :require_user
+    get "/my-space", AccountController, :favorites
+    get "/my-space/alerts", AccountController, :alerts
+    get "/my-space/security", AccountController, :security
+  end
+
+  scope "/unsubscribe", SyliAtlasWeb do
+    pipe_through :unsubscribe
+
+    get "/:token", UnsubscribeController, :show
+    post "/:token", UnsubscribeController, :create
+  end
+
+  scope "/account", SyliAtlasWeb do
+    pipe_through :account_actions
+
+    get "/me", AccountController, :me
+    post "/passkey/options", PasskeyController, :sign_in_options
+    post "/passkey", PasskeyController, :sign_in
+    post "/passkeys/options", PasskeyController, :registration_options
+    post "/passkeys", PasskeyController, :register
+    post "/admin-proof/options", PasskeyController, :admin_options
+    post "/admin-proof", PasskeyController, :admin_confirm
+
+    pipe_through :require_user
+    delete "/session", SessionController, :delete
+    post "/favorites", AccountController, :toggle_favorite
+    post "/alerts", AccountController, :create_alert
+    put "/alerts/:id", AccountController, :update_alert
+    delete "/alerts/:id", AccountController, :delete_alert
+    delete "/passkeys/:id", AccountController, :delete_passkey
+    delete "/sessions/:id", AccountController, :delete_session
+    delete "/sessions", AccountController, :delete_other_sessions
+    put "/preferences", AccountController, :update_preferences
+    delete "/", AccountController, :delete_account
+  end
+
+  scope "/fr", SyliAtlasWeb do
+    pipe_through [:public, :fr, :public_cache]
+
+    get "/", PageController, :home
+    get "/methode", PageController, :method
+    get "/hors-ligne", PageController, :offline
+    get "/classement", RankingController, :index
+    get "/recherche", SearchController, :index
+    get "/pays/:slug", AreaController, :show
+    get "/pays/:slug/:tab", AreaController, :show
+    get "/regions", RegionsController, :index
+    get "/regions/:slug", AreaController, :show
+    get "/comparer", CompareController, :show
+    get "/comparer/*slugs", CompareController, :show
+    get "/notations", RatingsController, :index
+    get "/dette", DebtController, :index
+    get "/communautes", CommunityController, :index
+    get "/communautes/:slug", CommunityController, :show
+    get "/notations/:slug", RatingsController, :show
+    get "/bourses", MarketController, :index
+    get "/bourses/etf", MarketController, :etfs
+    get "/bourses/:exchange", MarketController, :exchange
+    get "/bourses/:exchange/:ticker", MarketController, :security
+  end
+
+  scope "/en", SyliAtlasWeb do
+    pipe_through [:public, :en, :public_cache]
+
+    get "/", PageController, :home
+    get "/method", PageController, :method
+    get "/offline", PageController, :offline
+    get "/ranking", RankingController, :index
+    get "/search", SearchController, :index
+    get "/countries/:slug", AreaController, :show
+    get "/countries/:slug/:tab", AreaController, :show
+    get "/regions", RegionsController, :index
+    get "/regions/:slug", AreaController, :show
+    get "/compare", CompareController, :show
+    get "/compare/*slugs", CompareController, :show
+    get "/credit-ratings", RatingsController, :index
+    get "/debt", DebtController, :index
+    get "/economic-communities", CommunityController, :index
+    get "/economic-communities/:slug", CommunityController, :show
+    get "/credit-ratings/:slug", RatingsController, :show
+    get "/stock-exchanges", MarketController, :index
+    get "/stock-exchanges/etf", MarketController, :etfs
+    get "/stock-exchanges/:exchange", MarketController, :exchange
+    get "/stock-exchanges/:exchange/:ticker", MarketController, :security
+  end
+
+  # Validation of the ratings (and, later, other data entered by hand).
+  scope "/admin", SyliAtlasWeb.Admin do
+    pipe_through [:browser, :admin]
+
+    get "/", RatingsController, :root
+    get "/notations", RatingsController, :index
+    post "/notations", RatingsController, :create
+    post "/notations/veille", RatingsController, :watch
+    post "/notations/:id/approuver", RatingsController, :approve
+    post "/notations/:id/rejeter", RatingsController, :reject
+    post "/notations/verifier/:id", RatingsController, :check
+    get "/recherches", SearchMissesController, :index
+    get "/membres", MembersController, :index
+    post "/membres/:id/role", MembersController, :role
+    post "/membres/:id/actif", MembersController, :active
+  end
+
+  scope "/api/v1", SyliAtlasWeb.Api do
+    pipe_through :api
+
+    get "/version", ApiController, :version
+
+    pipe_through :public_cache
+    get "/areas", ApiController, :areas
+    get "/areas/:code", ApiController, :area
+    get "/areas/:code/csv", ApiController, :csv
+    get "/compare", ApiController, :compare
+    get "/ranking", ApiController, :ranking
+    get "/search", ApiController, :search
+    get "/offline-pack", ApiController, :offline_pack
+    get "/offline-pages", ApiController, :offline_pages
+  end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:syli_atlas, :dev_routes) do

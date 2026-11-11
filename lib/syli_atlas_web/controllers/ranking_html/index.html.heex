@@ -1,0 +1,79 @@
+<Layouts.public locale={@locale} current={:ranking} alternates={@alternates}>
+  <.section tight={:bottom}>
+    <.section_head
+      level={1}
+      eyebrow={gettext("Ranking")}
+      title={gettext("African economies, ranked.")}
+    >
+      <:intro>{indicator_help(@indicator)}</:intro>
+    </.section_head>
+    <.filter_sheet
+      id="ranking-filters"
+      title={gettext("Filters")}
+      summary={filters_summary(assigns)}
+    >
+      <form class="filters" action={Paths.ranking(@locale)} method="get" data-period>
+        <.field label={gettext("Indicator")}>
+          <.select
+            name="indicator"
+            options={
+              Enum.map(SyliAtlas.Sources.Indicators.published_keys(), &{&1, indicator_label(&1)})
+            }
+            selected={@indicator}
+          />
+        </.field>
+        <.field label={gettext("Show")}>
+          <.select
+            name="mode"
+            options={[
+              {"change", gettext("Change over the period")},
+              {"value", gettext("Value in the arrival year")}
+            ]}
+            selected={@mode}
+          />
+        </.field>
+        <.field label={gettext("Region")}>
+          <.select
+            name="region"
+            options={[
+              {"", gettext("All Africa")}
+              | Enum.map(@regions, &{&1.code, SyliAtlas.Geo.Area.name(&1, @locale)})
+            ]}
+            selected={@region && @region.code}
+          />
+        </.field>
+        <.field label={gettext("Since")}>
+          <.select name="from" options={Enum.map(2015..2029, &{&1, &1})} selected={@from} />
+        </.field>
+        <.field label={gettext("Until")}>
+          <.select name="to" options={Enum.map(2016..2030, &{&1, &1})} selected={@to} />
+        </.field>
+        <input type="hidden" name="order" value={@order} />
+        <button type="submit" class="btn btn-primary">{gettext("Apply")}</button>
+      </form>
+    </.filter_sheet>
+  </.section>
+
+  <.section tight={:top}>
+    <.card id="ranking">
+      <.rank_list
+        items={
+          rank_items(@page.entries, @indicator, @locale, @from, @to,
+            mode: @mode,
+            bar_max: @bar_max
+          )
+        }
+        start={@page.offset}
+        bars
+      />
+      <.list_pager page={@page} href={@page_href} />
+    </.card>
+    <p :if={@missing != []} class="src">
+      {gettext("No data: %{names}", names: Enum.map_join(@missing, ", ", & &1["name"]))}
+    </p>
+    <p class="src">
+      {gettext("IMF, World Economic Outlook")} ·
+      <a href={"/api/v1/ranking?indicator=#{@indicator}&from=#{@from}&to=#{@to}&mode=#{@mode}"}>JSON</a>
+    </p>
+  </.section>
+</Layouts.public>

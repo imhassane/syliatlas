@@ -1,0 +1,14 @@
+/* Syli Atlas stylesheet, bundled by esbuild in this order:
+   the self-hosted fonts, base (tokens, type, base components), then the frame and its reflow,
+   overlays (drawer, sheets), data (lists, tables, charts), the map, motion
+   the stock exchange pages, the sovereign ratings, then sign-in and the member space. */
+@import "./fonts.css";
+@import "./base.css";
+@import "./layout.css";
+@import "./overlays.css";
+@import "./data.css";
+@import "./map.css";
+@import "./motion.css";
+@import "./market.css";
+@import "./ratings.css";
+@import "./account.css";

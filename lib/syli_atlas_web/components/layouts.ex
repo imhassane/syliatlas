@@ -11,60 +11,485 @@ defmodule SyliAtlasWeb.Layouts do
   # and other static content.
   embed_templates "layouts/*"
 
+  alias SyliAtlasWeb.Paths
+
   @doc """
-  Renders your app layout.
-
-  This function is typically invoked from every template,
-  and it often contains your application menu, sidebar,
-  or similar.
-
-  ## Examples
-
-      <Layouts.app flash={@flash}>
-        <h1>Content</h1>
-      </Layouts.app>
-
+  Public site layout: header, offline banner, content, footer. Public pages
+  carry no session, so they can be cached by the CDN and the service worker.
   """
-  attr :flash, :map, required: true, doc: "the map of flash messages"
+  attr :locale, :string, required: true
+  attr :current, :atom, default: nil
+  attr :alternates, :list, default: []
 
-  attr :current_scope, :map,
+  attr :current_user, :any,
     default: nil,
-    doc: "the current [scope](https://phoenix.hexdocs.pm/scopes.html)"
+    doc: "set on account pages; public pages ask /account/me"
 
+  slot :inner_block, required: true
+
+  def public(assigns) do
+    assigns =
+      assign(
+        assigns,
+        :other_lang,
+        Enum.find(assigns.alternates, fn {l, _} -> l in ["fr", "en"] and l != assigns.locale end)
+      )
+
+    ~H"""
+    <a class="skip" href="#main">{gettext("Skip to content")}</a>
+    <div class="offline-banner" role="status">
+      {gettext("You are offline. Figures shown are the ones saved on this device.")}
+    </div>
+    <header class="site-header">
+      <div class="wrap">
+        <a class="brand" href={Paths.home(@locale)} aria-label="Syli Atlas">
+          <.logo size={28} />
+          <b>syli <span>atlas</span></b>
+        </a>
+        <.main_nav locale={@locale} current={@current} id="header-nav" class="nav nav-desktop" />
+        <div :if={@current != :search} class="header-search hide-mobile">
+          <SyliAtlasWeb.PageComponents.search_form locale={@locale} id="header-q" compact />
+        </div>
+        <div class="header-actions">
+          <a
+            :if={@current != :search}
+            class="icon-btn show-mobile"
+            href={Paths.search(@locale)}
+            aria-label={gettext("Search")}
+          >
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              aria-hidden="true"
+            ><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+          </a>
+          <button type="button" class="btn btn-quiet hide-mobile" data-install>{gettext(
+            "Install the app"
+          )}</button>
+          <.lang_link :if={@other_lang} lang={@other_lang} class="btn btn-quiet hide-mobile" />
+          <.theme_button />
+          <.account_link user={@current_user} locale={@locale} class="btn btn-secondary hide-mobile" />
+          <button
+            type="button"
+            id="drawer-open"
+            class="icon-btn show-mobile"
+            aria-label={gettext("Menu")}
+            aria-expanded="false"
+            aria-controls="nav-drawer"
+          >
+            <svg
+              width="22"
+              height="22"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              aria-hidden="true"
+            ><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+          </button>
+        </div>
+      </div>
+    </header>
+    <.nav_drawer
+      locale={@locale}
+      current={@current}
+      other_lang={@other_lang}
+      current_user={@current_user}
+    />
+    <main id="main">
+      {render_slot(@inner_block)}
+    </main>
+    <.site_footer locale={@locale} other_lang={@other_lang} />
+    """
+  end
+
+  attr :locale, :string, required: true
+  attr :current, :atom, default: nil
+  attr :id, :string, required: true
+  attr :class, :string, default: "nav"
+  attr :flat, :boolean, default: false, doc: "the phone drawer: every link, no menu"
+
+  # Four entries, the exchanges among them while their data may be shown.
+  # The themes open a <details> panel (no JavaScript, keyboard-friendly):
+  # one line per theme with what it holds and how many countries, then the
+  # method. A theme appears once its Africa-wide page exists.
+  defp main_nav(assigns) do
+    assigns =
+      assign(assigns,
+        themes: themes(assigns.locale),
+        exchanges: length(SyliAtlasWeb.Search.Index.meta().exchanges)
+      )
+
+    ~H"""
+    <nav id={@id} class={@class} aria-label={gettext("Main")}>
+      <%= if @flat do %>
+        <a href={Paths.ranking(@locale)} aria-current={@current in [:ranking, :countries] && "page"}>
+          <span>{gettext("Countries")}</span><span class="drawer-meta">→</span>
+        </a>
+        <a
+          :if={SyliAtlas.Market.public?()}
+          href={Paths.markets(@locale)}
+          aria-current={@current == :markets && "page"}
+        >
+          <span>{gettext("Stock exchanges")}</span>
+          <span :if={@exchanges > 0} class="drawer-meta">{ngettext(
+            "1 exchange",
+            "%{count} exchanges",
+            @exchanges
+          )}</span>
+        </a>
+        <p class="drawer-group">{gettext("Themes")}</p>
+        <a
+          :for={t <- @themes}
+          href={t.href}
+          aria-current={@current in t.current && "page"}
+          class="drawer-sub"
+        >
+          <span>{t.label}</span><span :if={t.short} class="drawer-meta">{t.short}</span>
+        </a>
+        <a href={Paths.compare(@locale, [])} aria-current={@current == :compare && "page"}>{gettext(
+          "Compare"
+        )}</a>
+      <% else %>
+        <a href={Paths.ranking(@locale)} aria-current={@current in [:ranking, :countries] && "page"}>{gettext(
+          "Countries"
+        )}</a>
+        <a
+          :if={SyliAtlas.Market.public?()}
+          href={Paths.markets(@locale)}
+          aria-current={@current == :markets && "page"}
+        >{gettext("Stock exchanges")}</a>
+        <details class="nav-menu" data-nav-menu>
+          <summary aria-current={@current in [:debt, :ratings, :regions, :themes, :method] && "true"}>
+            {gettext("Themes")}
+          </summary>
+          <div class="nav-menu-pop nav-mega">
+            <a
+              :for={t <- @themes}
+              href={t.href}
+              aria-current={@current in t.current && "page"}
+              class="nav-mega-item"
+            >
+              <b>{t.label}</b>
+              <span>{t.description}</span>
+            </a>
+            <div class="nav-mega-foot">
+              <p>
+                {gettext(
+                  "Each theme compares the 54 countries; a country profile has the same theme in a tab."
+                )}
+              </p>
+              <a href={Paths.method(@locale)} aria-current={@current == :method && "page"}>{gettext(
+                "Method and sources"
+              )} →</a>
+            </div>
+          </div>
+        </details>
+        <a href={Paths.compare(@locale, [])} aria-current={@current == :compare && "page"}>{gettext(
+          "Compare"
+        )}</a>
+      <% end %>
+    </nav>
+    """
+  end
+
+  # The themes of the menu, with live counts (both from memory: no query).
+  defp themes(locale) do
+    rated = (SyliAtlas.Ratings.document() || %{})["rated"]
+
+    [
+      %{
+        key: :debt,
+        current: [:debt],
+        label: gettext("Debt"),
+        href: Paths.debt(locale),
+        description: gettext("Levels, creditors, risk of debt distress · 54 countries"),
+        short: gettext("54 countries")
+      },
+      %{
+        key: :ratings,
+        current: [:ratings],
+        label: gettext("Ratings"),
+        href: Paths.ratings(locale),
+        description:
+          if(rated,
+            do: gettext("S&P, Moody's, Fitch · %{n} countries rated", n: rated),
+            else: "S&P, Moody's, Fitch"
+          ),
+        short: rated && gettext("%{n} rated", n: rated)
+      },
+      %{
+        key: :regions,
+        current: [:regions, :themes],
+        label: gettext("Regions and communities"),
+        href: Paths.regions(locale),
+        description: gettext("AU regions, ECOWAS, AES, WAEMU, CEMAC, EAC, SADC"),
+        short: nil
+      }
+    ]
+  end
+
+  attr :locale, :string, required: true
+  attr :other_lang, :any, default: nil
+
+  @top_countries ~w(NGA ZAF EGY DZA ETH MAR KEN CIV)
+
+  @doc """
+  Footer: the largest economies, the exchanges, the themes, the data and the
+  project, then one line that credits every source with its edition.
+  """
+  def site_footer(assigns) do
+    # From the in-memory search index: no query per page.
+    areas =
+      for %{type: :country} = e <- SyliAtlasWeb.Search.Index.get(), into: %{}, do: {e.code, e}
+
+    meta = SyliAtlasWeb.Search.Index.meta()
+
+    assigns =
+      assigns
+      |> assign(:countries, @top_countries |> Enum.map(&areas[&1]) |> Enum.reject(&is_nil/1))
+      |> assign(:exchanges, meta.exchanges)
+      |> assign(:themes, themes(assigns.locale))
+      |> assign(:edition, meta.edition)
+
+    ~H"""
+    <footer class="site-footer">
+      <div class="wrap footer-grid">
+        <div class="stack gap-1 footer-about">
+          <a class="brand" href={Paths.home(@locale)}><b>syli <span>atlas</span></b></a>
+          <p class="muted small">
+            {gettext("African economies in verifiable figures. Free, open, in French and English.")}
+          </p>
+          <.lang_link :if={@other_lang} lang={@other_lang} class="btn btn-quiet" />
+        </div>
+        <nav aria-label={gettext("Footer")} class="footer-nav">
+          <div class="stack gap-1">
+            <b>{gettext("Countries")}</b>
+            <a :for={c <- @countries} href={c.path[@locale]}>{c.names[@locale]}</a>
+            <a href={Paths.ranking(@locale)}>{gettext("All 54 countries")} →</a>
+          </div>
+          <div :if={@exchanges != []} class="stack gap-1">
+            <b>{gettext("Stock exchanges")}</b>
+            <a :for={e <- Enum.take(@exchanges, 7)} href={e.path[@locale]}>{e.short_name}</a>
+            <a href={Paths.markets(@locale)}>{gettext("All exchanges")} →</a>
+          </div>
+          <div class="stack gap-1">
+            <b>{gettext("Themes")}</b>
+            <a :for={t <- @themes} href={t.href}>{t.label}</a>
+            <a href={Paths.communities(@locale)}>{gettext("Economic communities")}</a>
+            <a href={Paths.compare(@locale, [])}>{gettext("Compare")}</a>
+          </div>
+          <div class="stack gap-1">
+            <b>{gettext("Data")}</b>
+            <a href={Paths.method(@locale)}>{gettext("Method and sources")}</a>
+            <a href="/api/v1/areas">{gettext("Public API")}</a>
+            <a href="/llms.txt">llms.txt</a>
+            <a href="/sitemap.xml">{gettext("Site map")}</a>
+          </div>
+        </nav>
+      </div>
+      <div class="wrap footer-credits">
+        <p class="small muted">
+          {gettext("Sources:")} {gettext("IMF")}<span :if={@edition}> ({@edition})</span>
+          · {gettext("World Bank (CC BY 4.0)")} · CEPII, BACI · {gettext(
+            "IMF debt sustainability analyses"
+          )} · {gettext("rating agencies")}<span :if={@exchanges != []}> · Data by MansaAPI</span>.
+          <a href={Paths.method(@locale)}>{gettext("Terms of each source")}</a>
+        </p>
+        <p class="small muted">
+          {gettext(
+            "Information, not investment advice. Figures are those of the sources; totals and rankings are Syli Atlas calculations."
+          )}
+        </p>
+      </div>
+    </footer>
+    """
+  end
+
+  attr :lang, :any, required: true
+  attr :class, :string, default: nil
+
+  defp lang_link(assigns) do
+    ~H"""
+    <a class={@class} href={elem(@lang, 1)} hreflang={elem(@lang, 0)} lang={elem(@lang, 0)}>
+      {if elem(@lang, 0) == "en", do: "English", else: "Français"}
+    </a>
+    """
+  end
+
+  defp theme_button(assigns) do
+    ~H"""
+    <button type="button" class="icon-btn" data-theme-toggle aria-label={gettext("Switch theme")}>
+      <svg
+        class="theme-moon"
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      ><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg>
+      <svg
+        class="theme-sun"
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        aria-hidden="true"
+      ><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4">
+      </path></svg>
+    </button>
+    """
+  end
+
+  attr :locale, :string, required: true
+  attr :current, :atom, default: nil
+  attr :other_lang, :any, default: nil
+  attr :current_user, :any, default: nil
+
+  @doc """
+  Phone navigation: a drawer from the right edge, swiped closed with the
+  finger. A `popover="manual"` holding a horizontal scroll-snap container
+  (open and closed stops), so the browser drives the gesture; see
+  `assets/js/drawer.js`.
+  """
+  def nav_drawer(assigns) do
+    ~H"""
+    <div class="drawer" id="nav-drawer" popover="manual">
+      <div class="drawer-scroller">
+        <div
+          class="drawer-sheet"
+          tabindex="-1"
+          role="dialog"
+          aria-modal="true"
+          aria-label={gettext("Menu")}
+        >
+          <div class="drawer-head">
+            <a class="brand" href={Paths.home(@locale)} aria-label="Syli Atlas"><.logo size={28} /><b>syli
+            <span>atlas</span></b></a>
+            <button
+              type="button"
+              class="icon-btn"
+              data-drawer-close
+              aria-label={gettext("Close the menu")}
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                aria-hidden="true"
+              ><path d="M6 6l12 12M18 6L6 18"></path></svg>
+            </button>
+          </div>
+          <SyliAtlasWeb.PageComponents.search_form locale={@locale} id="drawer-q" compact />
+          <.main_nav locale={@locale} current={@current} id="drawer-nav" class="drawer-nav" flat />
+          <p class="drawer-links small">
+            <a href={Paths.method(@locale)}>{gettext("Method and sources")}</a>
+            · <a href="/api/v1/areas">{gettext("Open data")}</a>
+          </p>
+          <div class="drawer-foot stack gap-2">
+            <button type="button" class="btn btn-secondary" data-install>{gettext("Install the app")}</button>
+            <.lang_link :if={@other_lang} lang={@other_lang} class="btn btn-secondary" />
+            <.account_link user={@current_user} locale={@locale} class="btn btn-primary" />
+          </div>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  attr :user, :any, required: true
+  attr :locale, :string, required: true
+  attr :class, :string, required: true
+
+  # "Sign in", or "My space" once signed in. Public pages are cached without
+  # a session: assets/js/ui/account.js turns the link into "My space" there.
+  defp account_link(assigns) do
+    ~H"""
+    <a
+      :if={@user}
+      class={@class}
+      href={Paths.account(@user.locale)}
+      data-account-link
+    >
+      {gettext("My space")}
+    </a>
+    <a
+      :if={!@user}
+      class={@class}
+      href={Paths.login(@locale)}
+      data-account-link
+      data-space-href={Paths.account(@locale)}
+      data-space-label={gettext("My space")}
+    >
+      {gettext("Sign in")}
+    </a>
+    """
+  end
+
+  @doc "Texts of the notifications drawn by assets/js (toasts), in the page's language."
+  def ui_strings do
+    %{
+      close: gettext("Close"),
+      refresh: gettext("Refresh"),
+      later: gettext("Later"),
+      update_message: gettext("A new version of Syli Atlas is available"),
+      update_description: gettext("Refresh to see it. Nothing you are reading will be lost."),
+      data_message: gettext("New IMF figures are online"),
+      data_description: gettext("Refresh to see the latest edition."),
+      offline_message: gettext("You are offline"),
+      offline_description: gettext("Pages you have already opened stay readable."),
+      online_message: gettext("Back online"),
+      install_message: gettext("Install Syli Atlas"),
+      install_description:
+        gettext("One tap from your home screen, readable offline, no app store."),
+      install_ios: gettext("In Safari, tap Share, then « Add to Home Screen »."),
+      install: gettext("Install"),
+      not_now: gettext("Not now"),
+      installed_message: gettext("Syli Atlas is installed")
+    }
+  end
+
+  attr :size, :integer, default: 28
+
+  def logo(assigns) do
+    ~H"""
+    <svg width={@size} height={@size} viewBox="0 0 28 28" aria-hidden="true">
+      <rect width="13" height="13" rx="3" fill="var(--ink)" />
+      <rect x="15" width="13" height="13" rx="3" fill="#4b3bff" />
+      <rect y="15" width="13" height="13" rx="3" fill="#4b3bff" />
+      <rect x="15" y="15" width="13" height="13" rx="3" fill="#ff6b3d" />
+    </svg>
+    """
+  end
+
+  @doc "Layout for LiveViews outside the admin (sign-in, discussions)."
+  attr :flash, :map, required: true
+  attr :locale, :string, default: "fr"
+  attr :current_scope, :map, default: nil
   slot :inner_block, required: true
 
   def app(assigns) do
     ~H"""
-    <header class="navbar px-4 sm:px-6 lg:px-8">
-      <div class="flex-1">
-        <a href="/" class="flex-1 flex w-fit items-center gap-2">
-          <img src={~p"/images/logo.svg"} width="36" />
-          <span class="text-sm font-semibold">v{Application.spec(:phoenix, :vsn)}</span>
-        </a>
-      </div>
-      <div class="flex-none">
-        <ul class="flex px-1 space-x-4 items-center">
-          <li>
-            <a href="https://phoenixframework.org/" class="btn btn-ghost">Website</a>
-          </li>
-          <li>
-            <a href="https://github.com/phoenixframework/phoenix" class="btn btn-ghost">GitHub</a>
-          </li>
-          <li>
-            <a href="https://phoenix.hexdocs.pm/overview.html" class="btn btn-primary">
-              Get Started <span aria-hidden="true">&rarr;</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </header>
-
-    <main class="px-4 py-20 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl space-y-4">
-        {render_slot(@inner_block)}
-      </div>
-    </main>
-
+    <.public locale={@locale}>
+      {render_slot(@inner_block)}
+    </.public>
     <.flash_group flash={@flash} />
     """
   end

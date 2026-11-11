@@ -23,6 +23,147 @@ end
 config :syli_atlas, SyliAtlasWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT", "4000"))]
 
+# Market data. The Mansa key is the Railway variable STOCK_EXCHANGE_API_KEY
+# (the lower-case spelling is accepted too: environment variable names are
+# case-sensitive). Without it, the market import cancels itself and the
+# pages show "figures on their way".
+if config_env() != :test do
+  config :syli_atlas, SyliAtlas.Market.Sources.Mansa,
+    api_key:
+      Enum.find_value(
+        ["STOCK_EXCHANGE_API_KEY", "stock_exchange_api_key"],
+        &(System.get_env(&1)
+          |> then(fn v -> if v in [nil, ""], do: nil, else: String.trim(v) end))
+      )
+end
+
+# Ratings watch: the AI extraction uses the Railway variable ANTHROPIC_API_KEY.
+# Without it, the watch still collects the news but proposes nothing.
+# (The administration needs an administrator account: the email code, then
+# a passkey. ADMIN_USER and ADMIN_PASSWORD are no longer read.)
+if config_env() != :test do
+  config :syli_atlas, SyliAtlas.Ratings.Extractor,
+    api_key:
+      (case System.get_env("ANTHROPIC_API_KEY") do
+         v when v in [nil, ""] -> nil
+         v -> String.trim(v)
+       end)
+end
+
+# Emails (sign-in codes, alerts, digests). MAILER_ADAPTER chooses, else
+# the variables present do:
+#
+#   resend   RESEND_API_KEY                   production (Resend's HTTP API, SyliAtlas.Mailer.Resend)
+#   smtp     SMTP_HOST, SMTP_PORT (1025)      Mailpit on Railway, or a local one
+#            SMTP_USERNAME, SMTP_PASSWORD     only if the server asks (Mailpit: no)
+#            SMTP_TLS never | if_available | always (default never: Mailpit
+#            talks plain SMTP on the private network)
+#   local    nothing                          /dev/mailbox, development only
+#
+# A release with none of them sends nothing: sign-in says it is not open
+# yet (never a code written to the logs). MAIL_FROM: "Syli Atlas
+# <bonjour@…>", an address of a domain verified at Resend in production.
+# FIRST_ADMIN_EMAIL, when set, is the only address that can become the
+# first administrator.
+if config_env() != :test do
+  env = fn name -> System.get_env(name) |> then(&if(&1 in [nil, ""], do: nil, else: &1)) end
+
+  adapter =
+    cond do
+      adapter = env.("MAILER_ADAPTER") -> adapter
+      env.("RESEND_API_KEY") -> "resend"
+      env.("SMTP_HOST") -> "smtp"
+      config_env() == :dev -> "local"
+      true -> "none"
+    end
+
+  mailer =
+    case adapter do
+      "resend" ->
+        # Our adapter (SyliAtlas.Mailer.Resend): Resend's HTTP API with Req,
+        # headers as Resend expects them, idempotency keys.
+        [
+          adapter: SyliAtlas.Mailer.Resend,
+          api_key: env.("RESEND_API_KEY") || raise("MAILER_ADAPTER=resend needs RESEND_API_KEY")
+        ]
+
+      "smtp" ->
+        tls =
+          case env.("SMTP_TLS") || "never" do
+            "never" -> :never
+            "if_available" -> :if_available
+            "always" -> :always
+            other -> raise "SMTP_TLS=#{other}: expected never, if_available or always"
+          end
+
+        credentials =
+          case {env.("SMTP_USERNAME"), env.("SMTP_PASSWORD")} do
+            {nil, _} -> [auth: :never]
+            {user, password} -> [auth: :always, username: user, password: password || ""]
+          end
+
+        [
+          adapter: Swoosh.Adapters.SMTP,
+          relay: env.("SMTP_HOST") || "localhost",
+          port: String.to_integer(env.("SMTP_PORT") || "1025"),
+          ssl: false,
+          tls: tls,
+          retries: 1,
+          no_mx_lookups: true
+        ] ++ credentials
+
+      "local" ->
+        if config_env() == :prod,
+          do:
+            raise(
+              "MAILER_ADAPTER=local keeps emails in memory, unreadable in a release: use smtp (Mailpit) or resend"
+            )
+
+        [adapter: Swoosh.Adapters.Local]
+
+      "none" ->
+        nil
+
+      other ->
+        raise "unknown MAILER_ADAPTER #{inspect(other)}, expected resend, smtp or local"
+    end
+
+  if mailer, do: config(:syli_atlas, SyliAtlas.Mailer, mailer)
+  config :syli_atlas, :mail_enabled, mailer != nil
+
+  # What the boot log and the admin show: the service, never a secret.
+  service = if adapter == "smtp", do: "smtp #{mailer[:relay]}:#{mailer[:port]}", else: adapter
+  config :syli_atlas, :mail_adapter, service
+
+  case System.get_env("MAIL_FROM") do
+    nil ->
+      :ok
+
+    from ->
+      case Regex.run(~r/^\s*(.*?)\s*<([^>]+)>\s*$/, from) do
+        [_, name, address] -> config :syli_atlas, :mail_from, {name, address}
+        nil -> config :syli_atlas, :mail_from, {"Syli Atlas", String.trim(from)}
+      end
+  end
+
+  case System.get_env("FIRST_ADMIN_EMAIL") do
+    v when v in [nil, ""] -> :ok
+    v -> config :syli_atlas, :first_admin_email, v |> String.trim() |> String.downcase()
+  end
+end
+
+# Raw payloads go to Cloudflare R2 when its four variables are set, else to
+# the disk next to the database (a Railway volume).
+if r2_bucket = System.get_env("R2_BUCKET") do
+  config :syli_atlas, SyliAtlas.Market.RawStore.R2,
+    account_id: System.fetch_env!("R2_ACCOUNT_ID"),
+    access_key_id: System.fetch_env!("R2_ACCESS_KEY_ID"),
+    secret_access_key: System.fetch_env!("R2_SECRET_ACCESS_KEY"),
+    bucket: r2_bucket
+
+  config :syli_atlas, SyliAtlas.Market.RawStore, adapter: SyliAtlas.Market.RawStore.R2
+end
+
 if config_env() == :dev do
   # Reload browser tabs when matching files change.
   config :syli_atlas, SyliAtlasWeb.Endpoint,
@@ -52,6 +193,16 @@ if config_env() == :prod do
     database: database_path,
     pool_size: String.to_integer(System.get_env("POOL_SIZE") || "5")
 
+  # Market pages: shown when an active source's licence allows public
+  # display (MansaAPI's does); MARKET_PREVIEW=true forces them on otherwise.
+  config :syli_atlas, SyliAtlas.Market, preview: System.get_env("MARKET_PREVIEW") == "true"
+
+  unless System.get_env("R2_BUCKET") do
+    config :syli_atlas, SyliAtlas.Market.RawStore,
+      adapter: SyliAtlas.Market.RawStore.Local,
+      root: Path.join(Path.dirname(database_path), "raw")
+  end
+
   # The secret key base is used to sign/encrypt cookies and other secrets.
   # A default value is used in config/dev.exs and config/test.exs but you
   # want to use a different value for prod and you most likely don't want
@@ -66,6 +217,11 @@ if config_env() == :prod do
 
   host = System.get_env("PHX_HOST") || "example.com"
 
+  # Passkeys belong to the site's host: changing PHX_HOST makes existing ones unusable.
+  config :syli_atlas, SyliAtlas.Accounts.Passkeys,
+    origin: "https://" <> host,
+    rp_id: host
+
   config :syli_atlas, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 
   config :syli_atlas, SyliAtlasWeb.Endpoint,
@@ -75,7 +231,9 @@ if config_env() == :prod do
       # Set it to  {0, 0, 0, 0, 0, 0, 0, 1} for local network only access.
       # See the documentation on https://bandit.hexdocs.pm/Bandit.html#t:options/0
       # for details about using IPv6 vs IPv4 and loopback vs public addresses.
-      ip: {0, 0, 0, 0, 0, 0, 0, 0}
+      # PHX_IPV4=true binds IPv4 only, for hosts without IPv6.
+      ip:
+        if(System.get_env("PHX_IPV4") == "true", do: {0, 0, 0, 0}, else: {0, 0, 0, 0, 0, 0, 0, 0})
     ],
     secret_key_base: secret_key_base
 

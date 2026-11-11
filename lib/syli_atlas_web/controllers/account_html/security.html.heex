@@ -1,0 +1,151 @@
+<Layouts.public locale={@locale} current={:account} current_user={@current_user}>
+  <.space locale={@locale} user={@current_user} tab={@tab} flash={@flash}>
+    <header class="stack gap-1">
+      <p class="eyebrow">{gettext("My space")}</p>
+      <h1 class="h1">{pgettext("account", "Security")}</h1>
+    </header>
+
+    <p :if={@current_user.role == "admin"} class="card pad small" id="admin-notice">
+      <b>{gettext("Administrator account.")}</b>
+      {gettext(
+        "The administration asks for the email code, then a passkey. Keep at least two passkeys: the last one cannot be removed."
+      )}
+    </p>
+
+    <section class="card" id="passkeys">
+      <div class="pad row between">
+        <div>
+          <h2 class="h2">{gettext("Passkeys")}</h2>
+          <p class="small muted">
+            {gettext("Sign in with your device's fingerprint, face or PIN.")}
+          </p>
+        </div>
+      </div>
+      <ul class="alert-list">
+        <li :for={p <- @passkeys} id={"passkey-#{p.id}"}>
+          <div class="grow stack">
+            <b>{p.name}</b>
+            <span class="small muted">
+              {gettext("Last used:")} {when_label(p.last_used_at, @locale)}
+            </span>
+          </div>
+          <.form
+            for={%{}}
+            action={~p"/account/passkeys/#{p.id}"}
+            method="delete"
+            id={"passkey-delete-#{p.id}"}
+          >
+            <button class="btn btn-quiet btn-sm" type="submit">{gettext("Remove")}</button>
+          </.form>
+        </li>
+      </ul>
+      <div class="pad stack gap-2" id="passkey-add">
+        <label class="field">
+          <span class="eyebrow">{gettext("Name of the new passkey")}</span>
+          <input class="input" type="text" id="passkey-name" maxlength="60" />
+        </label>
+        <.passkey_button id="passkey-register" action="register" name="passkey-name">
+          {gettext("Add a passkey")}
+        </.passkey_button>
+        <p class="small muted passkey-unsupported" hidden>
+          {gettext("This browser cannot use passkeys.")}
+        </p>
+      </div>
+    </section>
+
+    <section class="card" id="sessions">
+      <div class="pad">
+        <h2 class="h2">{gettext("Open sessions")}</h2>
+      </div>
+      <ul class="alert-list">
+        <li :for={s <- @sessions} id={"session-#{s.id}"}>
+          <div class="grow stack">
+            <b>
+              {device(s)}
+              <span :if={s.id == @current_session.id} class="pill pill-ok">{gettext("this device")}</span>
+            </b>
+            <span class="small muted">{proofs(s)} · {when_label(s.inserted_at, @locale)}</span>
+          </div>
+          <.form
+            :if={s.id != @current_session.id}
+            for={%{}}
+            action={~p"/account/sessions/#{s.id}"}
+            method="delete"
+            id={"session-delete-#{s.id}"}
+          >
+            <button class="btn btn-quiet btn-sm" type="submit">{gettext("Close")}</button>
+          </.form>
+        </li>
+      </ul>
+      <.form
+        for={%{}}
+        action={~p"/account/sessions"}
+        method="delete"
+        class="pad"
+        id="sessions-close"
+      >
+        <button class="btn btn-secondary" type="submit">{gettext("Close every other session")}</button>
+      </.form>
+    </section>
+
+    <section class="card pad stack gap-3" id="emails">
+      <h2 class="h2">{gettext("Emails")}</h2>
+      <.form
+        for={%{}}
+        action={~p"/account/preferences"}
+        method="put"
+        id="preferences"
+        class="stack gap-3"
+      >
+        <fieldset class="stack gap-1">
+          <legend class="eyebrow">{gettext("Digest of favourites")}</legend>
+          <label :for={{v, l} <- digests()} class="choice">
+            <input
+              type="radio"
+              name="preferences[digest]"
+              value={v}
+              checked={@current_user.digest == v}
+            />
+            {l}
+          </label>
+        </fieldset>
+        <input type="hidden" name="preferences[security_emails]" value="false" />
+        <label class="choice">
+          <input
+            type="checkbox"
+            name="preferences[security_emails]"
+            value="true"
+            checked={@current_user.security_emails}
+          />
+          {gettext("Email me when a passkey is added or an admin session opens")}
+        </label>
+        <label class="field">
+          <span class="eyebrow">{gettext("Language of emails and of my space")}</span>
+          <select class="select" name="preferences[locale]">
+            <option value="fr" selected={@current_user.locale == "fr"}>Français</option>
+            <option value="en" selected={@current_user.locale == "en"}>English</option>
+          </select>
+        </label>
+        <button class="btn btn-primary" type="submit">{gettext("Save")}</button>
+      </.form>
+    </section>
+
+    <section class="card pad row between gap-2" id="delete-account">
+      <div>
+        <h2 class="h2">{gettext("Delete my account")}</h2>
+        <p class="small muted">
+          {gettext("Favourites, alerts, passkeys and sessions are erased.")}
+        </p>
+      </div>
+      <.form for={%{}} action={~p"/account"} method="delete" id="account-delete">
+        <button
+          class="btn btn-secondary"
+          type="submit"
+          data-confirm={gettext("Delete your account for good?")}
+        >
+          {gettext("Delete")}
+        </button>
+      </.form>
+    </section>
+  </.space>
+</Layouts.public>

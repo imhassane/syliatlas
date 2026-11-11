@@ -1,0 +1,160 @@
+<Layouts.public locale={@locale} current={:markets} alternates={@alternates}>
+  <.section variant="alt">
+    <nav aria-label={gettext("Breadcrumb")}>
+      <ol class="crumbs">
+        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+        <li><a href={Paths.markets(@locale)}>{gettext("Stock exchanges")}</a></li>
+        <li><a href={Paths.exchange(@locale, @e["code"])}>{@e["short_name"]}</a></li>
+        <li aria-current="page">{@row["name"]}</li>
+      </ol>
+    </nav>
+    <div class="stack gap-3">
+      <p class="eyebrow">
+        {if @row["kind"] == "etf", do: gettext("Exchange-traded fund"), else: gettext("Share")}
+        <span :if={@country}> · {@country["name"][@locale]}</span>
+        · {gettext("listed on the %{exchange}", exchange: @e["short_name"])}
+      </p>
+      <div class="row gap-3 market-title">
+        <h1 class="display area-title">{@row["name"]}</h1>
+        <span class="mono muted">{@row["ticker"]}</span>
+      </div>
+      <div :if={@row["close"]} class="market-price">
+        <span class="num market-price-value">{price(@row["close"], @locale)} {@row["currency"]}</span>
+        <b class={["num", tone(@row["change_pct"])]}>{pct(@row["change_pct"], @locale)}</b>
+        <span
+          :if={usd(SyliAtlas.Market.to_usd(to_f(@row["close"]), @row["currency"], @fx), @locale)}
+          class="muted num"
+        >
+          {usd(SyliAtlas.Market.to_usd(to_f(@row["close"]), @row["currency"], @fx), @locale)}
+        </span>
+      </div>
+    </div>
+    <SyliAtlasWeb.AccountComponents.follow
+      kind="security"
+      ref={@e["code"] <> "/" <> @row["ticker"]}
+      locale={@locale}
+      path={SyliAtlasWeb.Paths.security(@locale, @e["code"], @row["ticker"])}
+      alert_market={{@e["code"], @row["ticker"]}}
+    />
+    <p class="lead" data-answer>{@answer}</p>
+    <p class="src">
+      <.credit sources={@doc["sources"]} date={@row["trade_date"]} locale={@locale} />
+    </p>
+    <p
+      :if={security_flag(@row)}
+      class={[
+        "pill no-dot",
+        if(elem(security_flag(@row), 0) == :warn, do: "pill-warn", else: "pill-neutral")
+      ]}
+    >
+      {elem(security_flag(@row), 1)}
+    </p>
+  </.section>
+
+  <.section>
+    <dl class="stats">
+      <div>
+        <dt>{gettext("Volume")}</dt>
+        <dd class="big">{integer(@row["volume"], @locale)}</dd>
+        <dd class="small muted">
+          {gettext("securities traded on %{date}", date: day(@row["trade_date"], @locale))}
+        </dd>
+      </div>
+      <div>
+        <dt>{gettext("Value traded")}</dt>
+        <dd class="big">{amount(@row["value"], @row["currency"], @locale)}</dd>
+        <dd class="small muted">
+          {usd(SyliAtlas.Market.to_usd(@row["value"], @row["currency"], @fx), @locale)}
+        </dd>
+      </div>
+      <div>
+        <dt>{gettext("Share of the exchange's trading")}</dt>
+        <dd class="big">{if @share, do: number(@share, 0, @locale) <> " %", else: "—"}</dd>
+        <dd class="small muted">{gettext("of the value traded that day")}</dd>
+      </div>
+      <div>
+        <dt>{gettext("Market capitalisation")}</dt>
+        <dd class="big muted">—</dd>
+        <dd class="small muted">{gettext("not provided by the current source")}</dd>
+      </div>
+    </dl>
+
+    <.card pad>
+      <.card_head
+        title={gettext("Price history")}
+        subtitle={
+          gettext("Closes in %{currency} · sessions received by Syli Atlas",
+            currency: @row["currency"]
+          )
+        }
+      />
+      <.index_chart
+        :if={length(@history) >= 2}
+        id="price-chart"
+        history={@history}
+        label={@answer}
+        locale={@locale}
+      />
+      <div :if={length(@history) < 2} class="market-empty-chart" id="price-chart-empty">
+        <p class="h3">{gettext("History being built")}</p>
+        <p class="muted small">
+          {gettext(
+            "Every close is recorded from the first import on. Older history will come from an official or licensed source."
+          )}
+        </p>
+      </div>
+    </.card>
+
+    <div class="grid grid-2">
+      <.card>
+        <div class="pad"><.card_head title={gettext("Security")} /></div>
+        <table class="table">
+          <tbody>
+            <tr>
+              <th scope="row" class="l">{gettext("Code")}</th><td class="mono">
+                {@row["ticker"]}
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="l">{gettext("Exchange")}</th>
+              <td>
+                <a href={Paths.exchange(@locale, @e["code"])}>{@e["short_name"]}</a>
+                <span :if={@e["mic"]} class="mono small muted">{@e["mic"]}</span>
+              </td>
+            </tr>
+            <tr :if={@country}>
+              <th scope="row" class="l">{gettext("Country")}</th>
+              <td><a href={country_href(@country, @locale)}>{@country["name"][@locale]}</a></td>
+            </tr>
+            <tr>
+              <th scope="row" class="l">{gettext("Currency")}</th><td class="mono">
+                {@row["currency"]}
+              </td>
+            </tr>
+            <tr :if={@row["issuer"]}>
+              <th scope="row" class="l">{gettext("Issuer")}</th><td>{@row["issuer"]}</td>
+            </tr>
+            <tr :if={@row["isin"]}>
+              <th scope="row" class="l">ISIN</th><td class="mono">{@row["isin"]}</td>
+            </tr>
+          </tbody>
+        </table>
+      </.card>
+      <.card pad class="stack gap-3">
+        <p class="eyebrow">{gettext("Where these figures come from")}</p>
+        <p>
+          {gettext(
+            "Price, change and volume: %{source}. Value traded and share of trading: computed by Syli Atlas.",
+            source: SyliAtlas.Market.Catalog.name(@row["source"] || "mansa")
+          )}
+        </p>
+        <.market_sources sources={@doc["sources"]} locale={@locale} />
+        <p class="small muted">{gettext("Information, not investment advice.")}</p>
+        <a class="market-more" href={Paths.exchange(@locale, @e["code"])}>{gettext(
+          "The %{exchange} page",
+          exchange: @e["short_name"]
+        )} →</a>
+      </.card>
+    </div>
+  </.section>
+</Layouts.public>

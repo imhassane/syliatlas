@@ -1,11 +1,8 @@
-# Script for populating the database. You can run it as:
+# Seeds reference data and imports the bundled IMF snapshot.
 #
 #     mix run priv/repo/seeds.exs
-#
-# Inside the script, you can read and write to any of your
-# repositories directly:
-#
-#     SyliAtlas.Repo.insert!(%SyliAtlas.SomeSchema{})
-#
-# We recommend using the bang functions (`insert!`, `update!`
-# and so on) as they will fail if something goes wrong.
+SyliAtlas.Geo.seed_areas!()
+SyliAtlas.Sources.seed_sources!()
+SyliAtlas.Ratings.seed!()
+{:ok, _status, edition} = SyliAtlas.Imports.import_snapshot!()
+IO.puts("IMF edition #{edition.code} online")

@@ -1,0 +1,100 @@
+<Layouts.public locale={@locale} current={nil} alternates={@alternates}>
+  <%!-- Shown by the service worker under the asked address when that page is
+       not saved on the device. assets/js/ui/offline_page.js fills in the asked
+       page, the saved pages (read from the cache) and the last connection. --%>
+  <.section variant="alt" id="offline-page" data-offline-page>
+    <div class="grid grid-2 offline-grid">
+      <div class="stack gap-4 offline-intro">
+        <p class="eyebrow">{gettext("Offline · page not saved yet")}</p>
+        <h1 class="display">{gettext("This page is not on this device yet.")}</h1>
+        <p class="lead">
+          <span data-offline-asked>{gettext("It will show as soon as the connection is back.")}</span>
+          {gettext(
+            "Meanwhile, the map of the 54 countries and the pages listed here stay readable."
+          )}
+        </p>
+        <div class="row gap-2 offline-actions">
+          <a class="btn btn-primary" href={Paths.home(@locale)}>{gettext("Open the map")} →</a>
+          <button type="button" class="btn btn-secondary" data-offline-retry>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            ><path d="M20 11a8 8 0 1 0-2.3 5.7"></path><path d="M20 5v6h-6"></path></svg> {gettext(
+              "Try again"
+            )}
+          </button>
+        </div>
+        <p class="mono subtle offline-last" data-offline-last hidden>
+          {gettext("Last connection:")} <time data-offline-last-time></time>
+        </p>
+      </div>
+
+      <div class="card offline-saved">
+        <div class="offline-saved-head stack gap-1">
+          <p class="eyebrow">{gettext("On this device")}</p>
+          <h2 class="h2">{gettext("Pages readable offline")}</h2>
+        </div>
+        <ul class="offline-list" data-offline-list>
+          <li>
+            <a href={Paths.home(@locale)}>
+              <svg
+                class="offline-check"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              ><path d="M5 12l5 5 9-10"></path></svg>
+              <span>{gettext("Home · the map of the 54 countries")}</span>
+              <span class="subtle" aria-hidden="true">→</span>
+            </a>
+          </li>
+        </ul>
+        <p class="offline-more muted" data-offline-more hidden></p>
+        <div class="offline-progress" data-offline-progress hidden>
+          <div class="offline-progress-line">
+            <span class="muted">{gettext("Country pages saved")}</span>
+            <b class="num" data-offline-count></b>
+          </div>
+          <div
+            class="offline-bar"
+            role="progressbar"
+            aria-label={gettext("Country pages saved")}
+            aria-valuemin="0"
+            aria-valuemax={Enum.count(@entries, &(&1.kind == "country"))}
+            data-offline-bar
+          >
+            <i></i>
+          </div>
+          <p class="subtle">
+            {gettext("The others save themselves when the connection is back.")}
+          </p>
+        </div>
+      </div>
+    </div>
+  </.section>
+  <script type="application/json" id="offline-pages">
+    <%= raw(SyliAtlasWeb.MapComponents.json_for_script(%{
+      home: Paths.home(@locale),
+      pages: @entries,
+      strings: %{
+        asked: gettext("The %{page} page will show as soon as the connection is back.", page: "%{page}"),
+        asked_area: gettext("The %{page} profile will show as soon as the connection is back.", page: "%{page}"),
+        more: gettext("and %{count} more country pages", count: "%{count}"),
+        more_one: gettext("and 1 more country page"),
+        count: gettext("%{saved} of %{total}", saved: "%{saved}", total: "%{total}")
+      }
+    })) %>
+  </script>
+</Layouts.public>

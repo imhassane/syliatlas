@@ -71,3 +71,8 @@ config :phoenix_live_view,
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
+
+# Raw market payloads, kept under tmp/ in development.
+config :syli_atlas, SyliAtlas.Market.RawStore,
+  adapter: SyliAtlas.Market.RawStore.Local,
+  root: Path.expand("../tmp/raw", __DIR__)

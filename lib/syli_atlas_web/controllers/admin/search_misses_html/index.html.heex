@@ -1,0 +1,37 @@
+<main id="main" class="adm">
+  <div class="wrap stack gap-4">
+    <header class="adm-head">
+      <div>
+        <p class="eyebrow">Admin Syli Atlas</p>
+        <h1 class="h1">Recherches sans résultat</h1>
+        <p class="small muted">
+          Requêtes normalisées (sans accents, en minuscules), comptées. Aucune donnée sur le lecteur.
+          Un nom tapé souvent mérite un alias dans <code>SyliAtlasWeb.Search.Index</code>.
+        </p>
+      </div>
+      <a class="btn btn-secondary" href={~p"/admin/notations"}>Notations</a>
+    </header>
+
+    <p :if={@misses == []} class="muted" id="misses-none">Aucune recherche sans résultat.</p>
+
+    <div :if={@misses != []} class="card">
+      <table class="table" id="misses">
+        <thead>
+          <tr>
+            <th>Requête</th><th>Langue</th><th>Fois</th><th>Dernière</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={m <- @misses}>
+            <td>
+              <a href={"/#{m.locale}/#{if m.locale == "en", do: "search", else: "recherche"}?q=#{URI.encode_www_form(m.query)}"}>{m.query}</a>
+            </td>
+            <td>{m.locale}</td>
+            <td class="num">{m.count}</td>
+            <td class="small muted">{Calendar.strftime(m.last_seen_at, "%d/%m/%Y %H:%M")} UTC</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>

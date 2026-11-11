@@ -20,6 +20,10 @@ config :syli_atlas, SyliAtlasWeb.Endpoint,
 # In test we don't send emails
 config :syli_atlas, SyliAtlas.Mailer, adapter: Swoosh.Adapters.Test
 
+config :syli_atlas, SyliAtlas.Accounts.Passkeys,
+  origin: "https://syliatlas.test",
+  rp_id: "syliatlas.test"
+
 # Disable swoosh api client as it is only required for production adapters
 config :swoosh, :api_client, false
 
@@ -36,3 +40,25 @@ config :phoenix_live_view,
 # Sort query params output of verified routes for robust url comparisons
 config :phoenix,
   sort_verified_routes_query_params: true
+
+# Run Oban jobs inline during tests, without cron or queues.
+config :syli_atlas, Oban, testing: :manual
+
+# Market data: raw payloads on disk, the Mansa API stubbed (Req.Test).
+config :syli_atlas, SyliAtlas.Market.RawStore,
+  adapter: SyliAtlas.Market.RawStore.Local,
+  root: Path.expand("../tmp/test_raw", __DIR__)
+
+config :syli_atlas, SyliAtlas.Market.Sources.Mansa,
+  api_key: "test-key",
+  req_options: [plug: {Req.Test, SyliAtlas.Market.Sources.Mansa}, retry: false]
+
+# Admin credentials and the ratings watch, stubbed (Req.Test).
+
+config :syli_atlas, SyliAtlas.Ratings.Extractor,
+  api_key: "test-key",
+  req_options: [plug: {Req.Test, SyliAtlas.Ratings.Extractor}, retry: false]
+
+config :syli_atlas, SyliAtlas.Ratings.Watch,
+  feeds: [{"test", "https://feeds.test/ratings.xml"}],
+  req_options: [plug: {Req.Test, SyliAtlas.Ratings.Watch}, retry: false]

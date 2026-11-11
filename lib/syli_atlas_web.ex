@@ -17,7 +17,7 @@ defmodule SyliAtlasWeb do
   those modules here.
   """
 
-  def static_paths, do: ~w(assets fonts images favicon.ico robots.txt)
+  def static_paths, do: ~w(assets fonts images favicon.ico sw.js manifest.webmanifest)
 
   def router do
     quote do
@@ -51,6 +51,9 @@ defmodule SyliAtlasWeb do
   def live_view do
     quote do
       use Phoenix.LiveView
+
+      # Loads the LiveView client (live.js) in the root layout.
+      on_mount SyliAtlasWeb.LiveAssets
 
       unquote(html_helpers())
     end
@@ -86,10 +89,14 @@ defmodule SyliAtlasWeb do
       import Phoenix.HTML
       # Core UI components
       import SyliAtlasWeb.CoreComponents
+      import SyliAtlasWeb.UI
+      import SyliAtlasWeb.PageComponents
+      import SyliAtlasWeb.MapComponents
+      import SyliAtlasWeb.Format
 
       # Common modules used in templates
       alias Phoenix.LiveView.JS
-      alias SyliAtlasWeb.Layouts
+      alias SyliAtlasWeb.{Layouts, Paths, PublicData}
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())
