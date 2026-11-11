@@ -53,6 +53,13 @@ config :syli_atlas, SyliAtlas.Market.Sources.Mansa,
   api_key: "test-key",
   req_options: [plug: {Req.Test, SyliAtlas.Market.Sources.Mansa}, retry: false]
 
+# Tests call the API far more than 60 times a minute from one address;
+# the limiter's own tests lower the limit for themselves.
+config :syli_atlas, SyliAtlasWeb.Plugs.ApiRateLimit, public: 100_000, internal: 100_000
+
+# Cloudflare purge, stubbed (Req.Test); zone and token set by the tests that need them.
+config :syli_atlas, SyliAtlas.Cdn, req_options: [plug: {Req.Test, SyliAtlas.Cdn}, retry: false]
+
 # Admin credentials and the ratings watch, stubbed (Req.Test).
 
 config :syli_atlas, SyliAtlas.Ratings.Extractor,

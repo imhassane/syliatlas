@@ -61,6 +61,7 @@ defmodule SyliAtlasWeb.SitemapController do
 
     ## Data
 
+    - [Public API documentation](#{Seo.url(Paths.api("en"))}): routes, parameters, examples, limits, server time
     - [Public JSON API, list of areas](#{Seo.url("/api/v1/areas")})
     - [Search API](#{Seo.url("/api/v1/search?q=debt+senegal&locale=en")})
     - [Sitemap](#{Seo.url("/sitemap.xml")})
@@ -107,7 +108,7 @@ defmodule SyliAtlasWeb.SitemapController do
     as_of = ratings && ratings["as_of"]
 
     static =
-      for fun <- [:home, :ranking, :regions, :method, :accessibility, :debt, :communities] do
+      for fun <- [:home, :ranking, :regions, :method, :accessibility, :debt, :communities, :api] do
         {both(&apply(Paths, fun, [&1])), nil}
       end
 
