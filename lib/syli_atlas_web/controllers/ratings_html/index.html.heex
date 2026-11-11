@@ -7,7 +7,7 @@
       </ol>
     </nav>
 
-    <div class="card market-table" id="ratings-table">
+    <div class="card market-table" id="ratings-table" data-keep-place>
       <div class="market-toolbar">
         <div class="market-toolbar-title">
           <h1 class="market-h1 rt-h1">
@@ -74,7 +74,7 @@
               <th scope="col" class="l">{gettext("Verdict")}</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody data-reorder>
             <tr :for={e <- @rows} id={"rating-#{e["code"]}"}>
               <td class="l mono subtle" data-label="#">{e["rank"] || "—"}</td>
               <th scope="row" class="l">

@@ -3,7 +3,7 @@
    written twice and the track moves by half its width, so the loop is
    seamless. Paused on hover, on keyboard focus and by its button; still
    (and scrollable by hand) when the reader asked for less motion. */
-.site-ticker { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: stretch; border-bottom: 1px solid var(--border); background: var(--alt); }
+.site-ticker { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: stretch; border-bottom: 1px solid var(--border); background: var(--alt); }
 .site-ticker-pause { display: inline-flex; align-items: center; justify-content: center; width: 48px; min-height: 44px; padding: 0; border: 0; border-right: 1px solid var(--border); background: transparent; color: var(--ink-muted); cursor: pointer; }
 .site-ticker-pause[hidden] { display: none; }
 .site-ticker-pause:hover { color: var(--ink); }
@@ -11,7 +11,7 @@
 .site-ticker-pause .i-play, .site-ticker.is-paused .site-ticker-pause .i-pause { display: none; }
 .site-ticker.is-paused .site-ticker-pause .i-play { display: block; }
 .site-ticker-view { grid-column: 2; overflow: hidden; }
-.site-ticker-track { display: flex; width: max-content; animation: site-ticker var(--ticker-duration, 90s) linear infinite; }
+.site-ticker-track { display: flex; width: max-content; animation: site-ticker var(--ticker-duration, 90s) linear var(--ticker-delay, 0s) infinite; }
 .site-ticker-view:hover .site-ticker-track,
 .site-ticker-view:focus-within .site-ticker-track,
 .site-ticker.is-paused .site-ticker-track { animation-play-state: paused; }

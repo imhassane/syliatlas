@@ -34,6 +34,7 @@ defmodule SyliAtlasWeb.ProfileComponents do
         id={"tab-#{t}"}
       >
         {tab_label(t)}
+        <span :if={t == @current} class="tab-indicator" aria-hidden="true"></span>
       </a>
     </nav>
     """
