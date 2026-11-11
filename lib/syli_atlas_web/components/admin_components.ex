@@ -10,7 +10,7 @@ defmodule SyliAtlasWeb.AdminComponents do
     router: SyliAtlasWeb.Router,
     statics: SyliAtlasWeb.static_paths()
 
-  attr :current, :atom, required: true, doc: ":ratings, :members or :searches"
+  attr :current, :atom, required: true, doc: "the menu entry of the page"
   attr :counts, :map, default: %{}
   attr :until, :any, default: nil, doc: "when the admin session closes (DateTime)"
   attr :key, :string, default: nil, doc: "name of the passkey used"
@@ -19,8 +19,17 @@ defmodule SyliAtlasWeb.AdminComponents do
   def admin_shell(assigns) do
     assigns =
       assign(assigns, :sections, [
-        {"Données", [{:ratings, "Notations", ~p"/admin/notations", :ratings}]},
-        {"Communauté", [{:members, "Membres", ~p"/admin/membres", :members}]},
+        {"Données",
+         [
+           {:updates, "Mises à jour", ~p"/admin/mises-a-jour", :updates},
+           {:ratings, "Notations", ~p"/admin/notations", :ratings},
+           {:market, "Données de marché", ~p"/admin/marches", :market}
+         ]},
+        {"Communauté",
+         [
+           {:members, "Membres", ~p"/admin/membres", :members},
+           {:emails, "E-mails envoyés", ~p"/admin/emails", :emails}
+         ]},
         {"Site", [{:searches, "Recherches", ~p"/admin/recherches", :searches}]}
       ])
 
@@ -65,7 +74,81 @@ defmodule SyliAtlasWeb.AdminComponents do
     """
   end
 
+  attr :tabs, :list, required: true, doc: "[{key, label, href}]"
+  attr :current, :string, required: true
+  attr :label, :string, default: "Sections"
+
+  @doc "Tabs as links, in a pill bar (the mockups' tablist)."
+  def admin_tabs(assigns) do
+    ~H"""
+    <nav class="adm-tabs" aria-label={@label}>
+      <a
+        :for={{key, label, href} <- @tabs}
+        href={href}
+        aria-current={if(key == @current, do: "page")}
+        id={"tab-#{key}"}
+      >
+        {label}
+      </a>
+    </nav>
+    """
+  end
+
   attr :name, :atom, required: true
+
+  defp nav_icon(%{name: :updates} = assigns) do
+    ~H"""
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.7"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M20 12a8 8 0 1 1-2.3-5.7" /><path d="M20 4v5h-5" />
+    </svg>
+    """
+  end
+
+  defp nav_icon(%{name: :market} = assigns) do
+    ~H"""
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.7"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M4 19V5" /><path d="M4 19h16" /><path d="M7 15l3-4 3 2 4-6" />
+    </svg>
+    """
+  end
+
+  defp nav_icon(%{name: :emails} = assigns) do
+    ~H"""
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.7"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" />
+    </svg>
+    """
+  end
 
   defp nav_icon(%{name: :ratings} = assigns) do
     ~H"""
@@ -80,7 +163,7 @@ defmodule SyliAtlasWeb.AdminComponents do
       stroke-linejoin="round"
       aria-hidden="true"
     >
-      <path d="M4 19V5" /><path d="M4 19h16" /><path d="M8 15l4-4 3 3 5-6" />
+      <path d="M12 3l2.6 5.6 6 .7-4.5 4.1 1.2 6L12 16.4 6.7 19.4l1.2-6L3.4 9.3l6-.7z" />
     </svg>
     """
   end

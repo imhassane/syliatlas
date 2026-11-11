@@ -117,6 +117,20 @@ defmodule SyliAtlas.Imports do
     end
   end
 
+  @doc """
+  Puts an earlier edition back online (its values are kept): the one
+  online becomes « superseded » and every document is rebuilt.
+  """
+  def restore!(%Sources.Edition{status: status} = edition)
+      when status in ["superseded", "published"] do
+    count = publish!(edition)
+    edition = Sources.get_edition!(edition.id)
+    SyliAtlas.Events.broadcast_edition_published(edition)
+    {:ok, edition, count}
+  end
+
+  def restore!(_edition), do: {:error, :not_restorable}
+
   defp publish!(edition) do
     Repo.transaction(fn ->
       import Ecto.Query

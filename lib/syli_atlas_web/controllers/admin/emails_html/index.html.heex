@@ -1,0 +1,99 @@
+<.admin_shell current={:emails} counts={@admin_counts} until={@admin_until} key={@admin_key}>
+  <header class="adm-head">
+    <div class="adm-intro">
+      <p class="eyebrow">Communauté</p>
+      <h1 class="adm-title">E-mails envoyés</h1>
+      <p class="muted">
+        Alertes et récaps des membres : ce qui est parti, ce qui attend le récap, ce qui a échoué. Les codes de connexion ne sont jamais gardés et n'apparaissent pas ici.
+      </p>
+    </div>
+  </header>
+
+  <dl class="stats" id="emails-stats">
+    <div>
+      <dt>Envoyés · 7 jours</dt>
+      <dd class="big num adm-big-sm">{int(@stats.sent)}</dd>
+      <dd class="small muted">alertes et récaps</dd>
+    </div>
+    <div>
+      <dt>Gardés pour le récap</dt>
+      <dd class="big num adm-big-sm">{int(@stats.waiting)}</dd>
+      <dd class="small muted">partiront au prochain récap</dd>
+    </div>
+    <div>
+      <dt>Échecs · 7 jours</dt>
+      <dd class="big num adm-big-sm">{@stats.failures}</dd>
+      <dd class={["small", if(@stats.failures > 0, do: "down", else: "muted")]}>
+        nouvel essai automatique, 8 au plus
+      </dd>
+    </div>
+    <div>
+      <dt>Service d'envoi</dt>
+      <dd class="big adm-big-sm">{service_label(@stats.service)}</dd>
+      <dd class="small muted">réglé par les variables du serveur</dd>
+    </div>
+  </dl>
+
+  <nav class="seg" aria-label="Filtre" id="emails-filter">
+    <a
+      :for={
+        {key, label} <- [
+          {"tous", "Tous"},
+          {"envoyes", "Envoyés"},
+          {"echecs", "Échecs"},
+          {"recap", "Récap"}
+        ]
+      }
+      href={if key == "tous", do: ~p"/admin/emails", else: ~p"/admin/emails?filtre=#{key}"}
+      aria-current={if(key == @filter, do: "page")}
+    >
+      {label}
+    </a>
+  </nav>
+
+  <section class="card adm-list" id="emails">
+    <p :if={@rows == []} class="adm-empty muted">Aucun e-mail.</p>
+    <div :if={@rows != []} class="table-wrap">
+      <table class="table adm-table">
+        <thead>
+          <tr>
+            <th class="l">Destinataire</th>
+            <th class="l">Type</th>
+            <th class="l">Sujet</th>
+            <th>Créé</th>
+            <th>Envoyé</th>
+            <th class="l">État</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={r <- @rows} id={"email-#{r.id}"}>
+            <td class="l" dir="ltr">{r.email}</td>
+            <td class="l">{kind_label(r.kind)}</td>
+            <td class="l muted adm-wrap">
+              {about(r)}
+              <div :if={r.error} class="small adm-bad">{r.error}</div>
+            </td>
+            <td class="subtle">{when_(r.at)}</td>
+            <td class="subtle">{when_(r.sent_at)}</td>
+            <td class="l">
+              <% {label, cls} = status(r.status) %>
+              <div class="adm-inline">
+                <span class={["pill", cls]}>{label}</span>
+                <.form
+                  :if={r.status == :failed && r.job_id}
+                  for={%{}}
+                  action={
+                    ~p"/admin/mises-a-jour/taches/#{r.job_id}/relancer?retour=/admin/emails"
+                  }
+                  method="post"
+                >
+                  <button class="btn btn-quiet btn-sm" type="submit">Relancer</button>
+                </.form>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</.admin_shell>

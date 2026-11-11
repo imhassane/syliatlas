@@ -8,6 +8,7 @@ defmodule SyliAtlasWeb.Plugs.AdminShell do
   import Ecto.Query
 
   alias SyliAtlas.Accounts.{Passkey, Session}
+  alias SyliAtlas.Market.QualityIssue
   alias SyliAtlas.Ratings.{Rating, Review}
   alias SyliAtlas.Repo
 
@@ -22,7 +23,10 @@ defmodule SyliAtlasWeb.Plugs.AdminShell do
     |> assign(:admin_counts, %{
       ratings:
         Review.count_pending() +
-          Repo.aggregate(from(r in Rating, where: r.needs_check == true), :count)
+          Repo.aggregate(from(r in Rating, where: r.needs_check == true), :count),
+      updates: SyliAtlas.Admin.Jobs.failures(7),
+      market: Repo.aggregate(from(q in QualityIssue, where: q.status == "open"), :count),
+      emails: SyliAtlas.Admin.Emails.failures(7)
     })
     |> assign(:admin_until, session && Session.admin_until(session))
     |> assign(:admin_key, passkey_name(session))
