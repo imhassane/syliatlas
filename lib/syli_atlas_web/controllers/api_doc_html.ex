@@ -3,16 +3,20 @@ defmodule SyliAtlasWeb.ApiDocHTML do
 
   embed_templates "api_doc_html/*"
 
-  @doc "French or English text, picked by the page's locale."
+  @doc "French or English text, picked by the page's locale; other languages from SyliAtlasWeb.ApiDocI18n."
   def tr("fr", fr, _en), do: fr
-  def tr(_, _fr, en), do: en
+  def tr("en", _fr, en), do: en
+  def tr(locale, _fr, en), do: SyliAtlasWeb.ApiDocI18n.translate(en, locale)
 
   @doc "Microseconds as milliseconds, one decimal, in the page's language: 1,2 ms."
   def ms(nil, _locale), do: "—"
 
   def ms(us, locale) do
     text = :erlang.float_to_binary(us / 1000, decimals: 1)
-    if locale == "fr", do: String.replace(text, ".", ",") <> " ms", else: text <> " ms"
+
+    if SyliAtlasWeb.Format.decimal_sep(locale) == ",",
+      do: String.replace(text, ".", ",") <> " ms",
+      else: text <> " ms"
   end
 
   @errors %{
@@ -36,7 +40,7 @@ defmodule SyliAtlasWeb.ApiDocHTML do
 
   def unit_label(code, locale) do
     Enum.find_value(SyliAtlasWeb.Api.Catalog.units(), code, fn u ->
-      u.code == code && if(locale == "fr", do: u.label.fr, else: u.label.en)
+      u.code == code && tr(locale, u.label.fr, u.label.en)
     end)
   end
 

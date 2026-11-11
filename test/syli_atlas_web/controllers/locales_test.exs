@@ -100,6 +100,12 @@ defmodule SyliAtlasWeb.LocalesTest do
       assert "/pt/paises/senegal" in menu and "/fr/pays/senegal" in menu
     end
 
+    test "the API page is translated" do
+      assert text(doc("/es/api"), "main") =~ "Límites y caché"
+      assert text(doc("/zh/api"), "main") =~ "共用结构"
+      assert text(doc("/ar/api"), "main") =~ "المعاملات"
+    end
+
     test "numbers follow the language" do
       assert SyliAtlasWeb.Format.number(1234.5, 1, "es") == "1.234,5"
 

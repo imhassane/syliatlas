@@ -110,10 +110,12 @@ defmodule SyliAtlasWeb.ApiDoc do
   # From the OpenAPI description ----------------------------------------
 
   defp pick(map, key, "fr"), do: map["x-" <> key <> "-fr"] || map[key]
-  defp pick(map, key, _), do: map[key]
+  defp pick(map, key, "en"), do: map[key]
+  defp pick(map, key, locale), do: SyliAtlasWeb.ApiDocI18n.translate(map[key], locale)
 
   defp label(%{fr: fr}, "fr"), do: fr
-  defp label(%{en: en}, _), do: en
+  defp label(%{en: en}, "en"), do: en
+  defp label(%{en: en}, locale), do: SyliAtlasWeb.ApiDocI18n.translate(en, locale)
 
   defp response_description(op, locale) do
     schema = resolve(op["responses"]["200"]["content"]["application/json"]["schema"])
