@@ -81,9 +81,10 @@
         Si vous n'arrivez pas à accéder à un contenu ou à un service, contactez-nous : nous vous orienterons vers une alternative accessible ou vous transmettrons le contenu sous une autre forme.
       </p>
       <p :if={@contact_email}>
-        Écrivez à <!--email_off-->
+        Précisez la page concernée et le problème rencontré. Adresse :
+        <!--email_off-->
         <a href={"mailto:" <> @contact_email}>{@contact_email}</a>
-        <!--/email_off-->, en précisant la page concernée et le problème rencontré.
+        <!--/email_off-->
       </p>
 
       <h2 class="h2">Voies de recours</h2>

@@ -74,9 +74,10 @@
         If you cannot access a piece of content or a service, contact us: we will point you to an accessible alternative or send you the content in another form.
       </p>
       <p :if={@contact_email}>
-        Write to <!--email_off-->
+        Name the page and the problem you met. Address:
+        <!--email_off-->
         <a href={"mailto:" <> @contact_email}>{@contact_email}</a>
-        <!--/email_off-->, naming the page and the problem you met.
+        <!--/email_off-->
       </p>
 
       <h2 class="h2">Remedies</h2>
