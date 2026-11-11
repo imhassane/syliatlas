@@ -11,9 +11,11 @@ defmodule SyliAtlas.Market.Ingestion do
   @doc """
   Reserves one call on today's quota of a source, then runs `fun`.
   Returns `{:error, :quota_exhausted}` without calling once the cap is reached.
+  With the development stand-in (`SyliAtlas.Market.fake?/0`) nothing leaves
+  the server, so no quota is counted.
   """
   def call(source, fun) when is_function(fun, 0) do
-    case reserve(source) do
+    case if(SyliAtlas.Market.fake?(), do: :ok, else: reserve(source)) do
       :ok -> fun.()
       {:error, _} = error -> error
     end

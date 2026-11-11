@@ -369,7 +369,11 @@ defmodule SyliAtlasWeb.MarketComponents do
     assigns = assign(assigns, :used, used_sources(assigns.sources))
 
     ~H"""
-    <span class="credit" data-credit>
+    <span :if={SyliAtlas.Market.fake?()} class="credit" data-credit>
+      <b>{gettext("Fictitious figures (development), not MansaAPI's")}</b>
+      · {when_text(@date, @locale)}
+    </span>
+    <span :if={!SyliAtlas.Market.fake?()} class="credit" data-credit>
       <%= for {s, i} <- Enum.with_index(@used) do %>
         {if i > 0, do: ", "}<a href={Catalog.url(s["code"]) || s["url"]} rel="noopener">{Catalog.attribution(
           s["code"]
