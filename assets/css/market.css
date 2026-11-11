@@ -1,19 +1,5 @@
 /* Stock exchange pages (MarketController, MarketComponents). */
 
-/* Scrolling band of indices: the list is written twice and the track moves
-   by half its width, so the loop is seamless. Still for reduced motion. */
-.ticker { overflow: hidden; border-bottom: 1px solid var(--border); background: var(--alt); }
-.ticker-track { display: flex; width: max-content; animation: ticker 70s linear infinite; }
-.ticker:hover .ticker-track, .ticker:focus-within .ticker-track { animation-play-state: paused; }
-.ticker-list { display: flex; gap: 32px; margin: 0; padding: 10px 16px 10px 32px; list-style: none; }
-.ticker-list a { display: inline-flex; align-items: baseline; gap: 8px; color: var(--ink); text-decoration: none; font-family: var(--mono); font-size: 13px; white-space: nowrap; }
-.ticker-list a b { font-weight: 600; }
-@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-@media (prefers-reduced-motion: reduce) {
-  .ticker-track { animation: none; }
-  .ticker { overflow-x: auto; }
-}
-
 .market-note { max-width: 860px; }
 
 /* Header of the exchanges list: a short title on the left and the session

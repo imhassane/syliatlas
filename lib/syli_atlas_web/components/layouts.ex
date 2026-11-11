@@ -21,6 +21,10 @@ defmodule SyliAtlasWeb.Layouts do
   attr :current, :atom, default: nil
   attr :alternates, :list, default: []
 
+  attr :ticker, :boolean,
+    default: true,
+    doc: "the band of indices and ratings under the header (off on account pages)"
+
   attr :current_user, :any,
     default: nil,
     doc: "set on account pages; public pages ask /account/me"
@@ -96,6 +100,7 @@ defmodule SyliAtlasWeb.Layouts do
         </div>
       </div>
     </header>
+    <SyliAtlasWeb.TickerComponents.site_ticker :if={@ticker} locale={@locale} />
     <.nav_drawer
       locale={@locale}
       current={@current}
