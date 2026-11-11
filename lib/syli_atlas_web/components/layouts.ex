@@ -325,7 +325,7 @@ defmodule SyliAtlasWeb.Layouts do
             <a href={Paths.accessibility(@locale)} id="footer-accessibility">
               {accessibility_mention()}
             </a>
-            <a href="/api/v1/areas">{gettext("Public API")}</a>
+            <a href={Paths.api(@locale)}>{gettext("Public API")}</a>
             <a href="/llms.txt">llms.txt</a>
             <a href="/sitemap.xml">{gettext("Site map")}</a>
           </div>
@@ -438,7 +438,7 @@ defmodule SyliAtlasWeb.Layouts do
           <.main_nav locale={@locale} current={@current} id="drawer-nav" class="drawer-nav" flat />
           <p class="drawer-links small">
             <a href={Paths.method(@locale)}>{gettext("Method and sources")}</a>
-            · <a href="/api/v1/areas">{gettext("Open data")}</a>
+            · <a href={Paths.api(@locale)}>{gettext("Open data")}</a>
           </p>
           <div class="drawer-foot stack gap-2">
             <button type="button" class="btn btn-secondary" data-install>{gettext("Install the app")}</button>

@@ -8,7 +8,43 @@ defmodule SyliAtlasWeb.Api.ApiController do
   alias SyliAtlas.{Geo, Profiles, Sources}
   alias SyliAtlas.Profiles.Queries
   alias SyliAtlas.Sources.Indicators
-  alias SyliAtlasWeb.Api.Params
+  alias SyliAtlasWeb.Api.{Errors, Params}
+  alias SyliAtlasWeb.Paths
+
+  @doc "The table of contents: routes, documentation, data edition."
+  def index(conn, _params) do
+    base = SyliAtlasWeb.Endpoint.url()
+    edition = Sources.published_edition("imf_weo")
+
+    conn
+    |> put_resp_header("access-control-allow-origin", "*")
+    |> json(%{
+      name: "Syli Atlas API",
+      version: "v1",
+      docs: %{fr: base <> Paths.api("fr"), en: base <> Paths.api("en")},
+      routes: %{
+        areas: "/api/v1/areas",
+        area: "/api/v1/areas/{code}?from=&to=",
+        csv: "/api/v1/areas/{code}/csv",
+        compare: "/api/v1/compare?codes=&from=&to=",
+        ranking: "/api/v1/ranking?indicator=&mode=&region=&from=&to=&locale="
+      },
+      data: %{
+        source: "IMF World Economic Outlook",
+        edition: edition && edition.code,
+        label: edition && edition.label
+      },
+      licence: "Each figure keeps the licence of its source: cite it as the documentation says.",
+      limits: %{requests_per_minute: rate_limit(), cache_seconds: 3600}
+    })
+  end
+
+  @doc "Any other address under /api/v1."
+  def not_found(conn, _params),
+    do: error(conn, 404, "not_found", "No such route: see the documentation")
+
+  defp rate_limit,
+    do: Application.get_env(:syli_atlas, SyliAtlasWeb.Plugs.ApiRateLimit, [])[:public] || 60
 
   def areas(conn, _params) do
     areas =
@@ -30,8 +66,8 @@ defmodule SyliAtlasWeb.Api.ApiController do
          json when is_binary(json) <- Queries.area_profile(code, from, to) do
       raw(conn, json)
     else
-      nil -> error(conn, 404, "unknown area")
-      {:error, message} -> error(conn, 400, message)
+      nil -> error(conn, 404, "unknown_area", "Unknown area: #{code}")
+      {:error, message} -> error(conn, 400, "invalid_period", message)
     end
   end
 
@@ -40,8 +76,8 @@ defmodule SyliAtlasWeb.Api.ApiController do
          {:ok, from, to} <- Params.period(params) do
       raw(conn, Queries.compare(codes, from, to))
     else
-      [] -> error(conn, 400, "codes is required, e.g. codes=CIV,GHA")
-      {:error, message} -> error(conn, 400, message)
+      [] -> error(conn, 400, "codes_required", "codes is required, e.g. codes=CIV,GHA")
+      {:error, message} -> error(conn, 400, "invalid_period", message)
     end
   end
 
@@ -50,7 +86,7 @@ defmodule SyliAtlasWeb.Api.ApiController do
     region = if params["region"] in Geo.regions(), do: params["region"]
     mode = if params["mode"] == "value", do: "value", else: "change"
 
-    with true <- Indicators.valid?(indicator) || {:error, "unknown indicator"},
+    with true <- Indicators.valid?(indicator) || {:unknown_indicator, indicator},
          {:ok, from, to} <- Params.period(params) do
       raw(
         conn,
@@ -61,7 +97,11 @@ defmodule SyliAtlasWeb.Api.ApiController do
         )
       )
     else
-      {:error, message} -> error(conn, 400, message)
+      {:unknown_indicator, name} ->
+        error(conn, 400, "unknown_indicator", "Unknown indicator: #{name}")
+
+      {:error, message} ->
+        error(conn, 400, "invalid_period", message)
     end
   end
 
@@ -107,7 +147,7 @@ defmodule SyliAtlasWeb.Api.ApiController do
   def csv(conn, %{"code" => code}) do
     case Queries.area_profile(code, 2020, 2025) do
       nil ->
-        error(conn, 404, "unknown area")
+        error(conn, 404, "unknown_area", "Unknown area: #{code}")
 
       json ->
         %{"profile" => profile} = Jason.decode!(json)
@@ -152,7 +192,5 @@ defmodule SyliAtlasWeb.Api.ApiController do
     |> send_resp(200, json || "null")
   end
 
-  defp error(conn, status, message) do
-    conn |> put_status(status) |> json(%{error: message})
-  end
+  defp error(conn, status, code, message), do: Errors.send(conn, status, code, message)
 end

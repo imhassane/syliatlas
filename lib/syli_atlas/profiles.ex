@@ -50,6 +50,8 @@ defmodule SyliAtlas.Profiles do
     end)
 
     refresh_data_version()
+    # New figures: Cloudflare must stop serving the old API answers.
+    SyliAtlas.Cdn.purge_api_later()
     map_size(docs)
   end
 

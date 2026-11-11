@@ -15,6 +15,8 @@ defmodule SyliAtlas.Application do
       {DNSCluster, query: Application.get_env(:syli_atlas, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: SyliAtlas.PubSub},
       SyliAtlas.Profiles.QueryStats,
+      SyliAtlas.ApiTimings,
+      {SyliAtlasWeb.RateLimit, [clean_period: :timer.minutes(5)]},
       {Oban, Application.fetch_env!(:syli_atlas, Oban)},
       # Start a worker by calling: SyliAtlas.Worker.start_link(arg)
       # {SyliAtlas.Worker, arg},

@@ -56,6 +56,8 @@ defmodule SyliAtlasWeb.Paths do
   def method(locale), do: "/#{locale}/#{segment(locale, :method)}"
   def accessibility(locale), do: "/#{locale}/#{segment(locale, :accessibility)}"
   def offline(locale), do: "/#{locale}/#{segment(locale, :offline)}"
+  @doc "The public API documentation: /fr/api, /en/api."
+  def api(locale), do: "/#{locale}/api"
   def discussion(locale, area), do: area(locale, area) <> "/discussion"
   def login(locale), do: "/#{locale}/#{segment(locale, :login)}"
   def login_code(locale), do: login(locale) <> "/code"
