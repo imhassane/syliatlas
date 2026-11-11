@@ -135,7 +135,7 @@ defmodule SyliAtlasWeb.MarketController do
     }
 
     if conn.request_path != paths[locale] do
-      redirect(conn, to: paths[locale])
+      conn |> put_status(301) |> redirect(to: paths[locale])
     else
       history = Market.security_history(row["id"])
       fx = Market.fx()

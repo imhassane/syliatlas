@@ -14,14 +14,14 @@ defmodule SyliAtlasWeb.SiteStructureTest do
   test "the menu: Countries, Exchanges, Themes, Compare, and a search field" do
     doc = doc("/fr/pays/senegal")
     top = hrefs(doc, "#header-nav > a")
-    assert top == ["/fr/classement", "/fr/bourses", "/fr/comparer/"]
+    assert top == ["/fr/classement/pib", "/fr/bourses", "/fr/comparer/"]
     themes = hrefs(doc, "#header-nav details .nav-mega-item")
     assert themes == ["/fr/dette", "/fr/notations", "/fr/regions"]
     panel = doc |> LazyHTML.query("#header-nav details") |> LazyHTML.text()
     assert panel =~ "54 pays" and panel =~ "CEDEAO"
     assert hrefs(doc, "#header-nav .nav-mega-foot a") == ["/fr/methode"]
 
-    assert hrefs(doc, ~s(#header-nav a[aria-current="page"])) == ["/fr/classement"]
+    assert hrefs(doc, ~s(#header-nav a[aria-current="page"])) == ["/fr/classement/pib"]
     assert LazyHTML.query(doc, "#header-q[data-search-input]") |> Enum.count() == 1
     # The drawer holds every link, flat.
     assert "/fr/regions" in hrefs(doc, "#drawer-nav a")
@@ -46,7 +46,7 @@ defmodule SyliAtlasWeb.SiteStructureTest do
   end
 
   test "the sitemap lists each tab with data and the communities" do
-    xml = build_conn() |> get("/sitemap.xml") |> response(200)
+    xml = sitemaps()
     assert xml =~ "/fr/pays/cote-d-ivoire/finances-et-dette</loc>"
     assert xml =~ ~s(hreflang="en" href="http://localhost:4000/en/countries/cote-d-ivoire/trade")
     assert xml =~ "/fr/communautes/cedeao</loc>"

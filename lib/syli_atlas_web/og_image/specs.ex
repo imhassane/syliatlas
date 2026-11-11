@@ -54,6 +54,33 @@ defmodule SyliAtlasWeb.OgImage.Specs do
     ranking_spec("gdp_usd_bn", to, locale)
   end
 
+  defp spec(SyliAtlasWeb.RankingController, :topic, %{"topic" => slug}, locale) do
+    {_from, to} = SyliAtlas.Profiles.Builder.default_period()
+
+    case SyliAtlasWeb.Topics.ranking_indicator(slug) do
+      nil ->
+        nil
+
+      indicator ->
+        indicator
+        |> ranking_spec(to, locale)
+        |> Map.merge(%{
+          title: SyliAtlasWeb.Topics.ranking_title(indicator, to),
+          source: gettext("Source: IMF")
+        })
+    end
+  end
+
+  defp spec(SyliAtlasWeb.QuestionsController, :show, %{"slug" => slug}, locale) do
+    with id when is_binary(id) <- SyliAtlasWeb.Topics.question(slug),
+         %{} = a <- SyliAtlasWeb.QuestionsController.answer(id, locale) do
+      text_spec(SyliAtlasWeb.Topics.question_text(id), a.text, %{
+        eyebrow: gettext("Question"),
+        source: a.source
+      })
+    end
+  end
+
   defp spec(SyliAtlasWeb.CommunityController, :show, %{"slug" => slug}, locale) do
     community = Enum.find(SyliAtlas.Economy.Communities.all(), &(&1.slug[locale] == slug))
     community && community_spec(community, locale)

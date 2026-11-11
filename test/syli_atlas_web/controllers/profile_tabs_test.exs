@@ -48,7 +48,7 @@ defmodule SyliAtlasWeb.ProfileTabsTest do
   test "English tabs, French slugs redirected, unknown tab is a 404" do
     assert has?(doc("/en/countries/kenya/finances-and-debt"), "#finances")
     conn = build_conn() |> get("/en/countries/kenya/finances-et-dette")
-    assert redirected_to(conn) == "/en/countries/kenya/finances-and-debt"
+    assert redirected_to(conn, 301) == "/en/countries/kenya/finances-and-debt"
     assert_error_sent 404, fn -> get(build_conn(), "/fr/pays/kenya/nimporte") end
     assert get(build_conn(), "/fr/regions/afrique-de-l-ouest/commerce").status == 404
   end

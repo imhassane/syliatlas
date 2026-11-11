@@ -63,7 +63,7 @@ defmodule SyliAtlasWeb.OgImageTest do
     assert figure =~ "%"
     assert %{layout: :figure} = Specs.for_path("/fr/pays/senegal/finances-et-dette")
     assert %{layout: :rating, figure: "CC"} = Specs.for_path("/fr/notations/senegal")
-    assert %{layout: :bars, rows: [{_, _, _} | _]} = Specs.for_path("/fr/classement")
+    assert %{layout: :bars, rows: [{_, _, _} | _]} = Specs.for_path("/fr/classement/pib")
     assert %{layout: :bars} = Specs.for_path("/en/debt")
     assert %{layout: :totals, title: "CEDEAO"} = Specs.for_path("/fr/communautes/cedeao")
 
@@ -97,7 +97,7 @@ defmodule SyliAtlasWeb.OgImageTest do
     File.write!(Path.join([dir, "older", "x.png"]), "old")
 
     paths = SyliAtlas.Workers.OgWarmWorker.paths()
-    assert "/fr/pays/senegal" in paths and "/en/ranking" in paths
+    assert "/fr/pays/senegal" in paths and "/en/ranking/gdp" in paths
 
     :ok = OgImageController.prune()
     refute File.exists?(Path.join(dir, "older"))

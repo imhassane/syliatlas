@@ -1,0 +1,37 @@
+<Layouts.public locale={@locale} current={:themes} alternates={@alternates}>
+  <.section>
+    <nav aria-label={gettext("Breadcrumb")}>
+      <ol class="crumbs">
+        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+        <li><a href={SyliAtlasWeb.Topics.questions_path(@locale)}>{gettext("Questions")}</a></li>
+        <li aria-current="page">{@heading}</li>
+      </ol>
+    </nav>
+    <.section_head level={1} eyebrow={gettext("Question")} title={@heading} />
+    <p class="lead" data-answer id="answer">{@answer.text}</p>
+    <p class="src">{@answer.source}</p>
+
+    <.card id="answer-table">
+      <.data_table
+        id="answer-rows"
+        caption={@answer.table_title}
+        rows={Enum.with_index(@answer.rows, 1)}
+      >
+        <:head :let={{r, i}} label={gettext("Name")}>
+          <span class="subtle">{i}.</span> <a href={r.path}>{r.name}</a>
+        </:head>
+        <:col :let={{r, _i}} label={@answer.value_label}>{r.value}</:col>
+      </.data_table>
+      <.card_foot>
+        <a href={elem(@answer.more, 1)} id="answer-more">{elem(@answer.more, 0)} →</a>
+      </.card_foot>
+    </.card>
+  </.section>
+
+  <.section tight={:top} id="other-questions">
+    <h2 class="h2">{gettext("Other questions")}</h2>
+    <ul class="stack gap-1">
+      <li :for={{q, href} <- @others}><a href={href}>{q}</a></li>
+    </ul>
+  </.section>
+</Layouts.public>

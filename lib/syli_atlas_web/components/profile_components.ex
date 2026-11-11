@@ -446,6 +446,24 @@ defmodule SyliAtlasWeb.ProfileComponents do
 
     theme = %{title: gettext("On this theme, in Africa"), links: theme_links(tab, ctx)}
 
+    pairs =
+      for [a, b] = pair <- SyliAtlasWeb.Topics.pairs(), ctx.area.code in pair do
+        {other, _} = ctx.slugs[if(a == ctx.area.code, do: b, else: a)] || {nil, nil}
+        {gettext("%{a} or %{b}?", a: ctx.name, b: other), SyliAtlasWeb.Topics.pair_path(l, pair)}
+      end
+
+    compare_group =
+      pairs != [] &&
+        %{
+          title: gettext("Compare %{name}", name: ctx.name),
+          links:
+            pairs ++
+              [
+                {gettext("Other comparisons"),
+                 Paths.compare(l, [SyliAtlas.Geo.Area.slug(ctx.area, l)])}
+              ]
+        }
+
     others = %{
       title: gettext("%{name}, elsewhere", name: ctx.name),
       links:
@@ -459,31 +477,38 @@ defmodule SyliAtlasWeb.ProfileComponents do
             ],
             else: []
           ) ++
-          [
-            {gettext("Compare %{name}", name: ctx.name),
-             Paths.compare(l, [ctx.area |> SyliAtlas.Geo.Area.slug(l)])}
-          ]
+          if(pairs == [],
+            do: [
+              {gettext("Compare %{name}", name: ctx.name),
+               Paths.compare(l, [ctx.area |> SyliAtlas.Geo.Area.slug(l)])}
+            ],
+            else: []
+          )
     }
 
-    ([region_group | community_groups] ++ [theme, others])
+    ([region_group | community_groups] ++ [compare_group, theme, others])
     |> Enum.filter(& &1)
   end
 
+  # Each tab points to the rankings of its theme (SyliAtlasWeb.Topics).
   defp theme_links(tab, ctx) do
     l = ctx.locale
+    rank = fn indicator, label -> {label, SyliAtlasWeb.Topics.ranking_path(l, indicator)} end
 
     case tab do
       :finances ->
         [
           {gettext("Debt of the 54 African countries"), Paths.debt(l)},
-          {gettext("Public debt ranking"),
-           Paths.ranking(l) <> "?indicator=public_debt_pct_gdp&mode=value"},
-          {gettext("Economic communities"), Paths.communities(l)}
+          rank.("public_debt_pct_gdp", gettext("Public debt ranking")),
+          rank.("fiscal_balance_pct_gdp", gettext("Fiscal balance ranking")),
+          rank.("inflation", gettext("Inflation ranking"))
         ]
 
       :markets ->
         [
-          {gettext("Sovereign ratings of the 54 countries"), Paths.ratings(l)}
+          {gettext("Sovereign ratings of the 54 countries"), Paths.ratings(l)},
+          {SyliAtlasWeb.Topics.question_text("best_rating"),
+           SyliAtlasWeb.Topics.question_path(l, "best_rating")}
         ] ++
           if(SyliAtlas.Market.public?(),
             do: [{gettext("African stock exchanges"), Paths.markets(l)}],
@@ -492,21 +517,23 @@ defmodule SyliAtlasWeb.ProfileComponents do
 
       :trade ->
         [
-          {gettext("Economic communities"), Paths.communities(l)},
-          {gettext("Compare countries"), Paths.compare(l, [])}
+          rank.("current_account_pct_gdp", gettext("Current account ranking")),
+          {gettext("Economic communities"), Paths.communities(l)}
         ]
 
       :society ->
         [
-          {gettext("African ranking"), Paths.ranking(l)},
-          {gettext("Regions of Africa"), Paths.regions(l)}
+          rank.("population_m", gettext("Population ranking")),
+          rank.("unemployment", gettext("Unemployment ranking")),
+          rank.("gdp_per_capita_ppp", gettext("GDP per capita in PPP ranking"))
         ]
 
       _ ->
         [
-          {gettext("African ranking"), Paths.ranking(l)},
-          {gettext("Regions of Africa"), Paths.regions(l)},
-          {gettext("Economic communities"), Paths.communities(l)}
+          rank.("gdp_usd_bn", gettext("GDP ranking")),
+          rank.("gdp_per_capita_usd", gettext("GDP per capita ranking")),
+          rank.("real_gdp_growth", gettext("Growth ranking")),
+          {gettext("Regions of Africa"), Paths.regions(l)}
         ]
     end
   end

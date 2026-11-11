@@ -38,7 +38,8 @@ defmodule SyliAtlasWeb.AreaController do
 
     # Old or foreign slug or tab name: send to the canonical URL.
     if conn.request_path != paths[locale] do
-      redirect(conn, to: paths[locale] <> query(conn))
+      # Permanent: the old address passes its links on to the canonical one.
+      conn |> put_status(301) |> redirect(to: paths[locale] <> query(conn))
     else
       render_profile(conn, params, area, tab, data, from, to, paths)
     end

@@ -130,7 +130,7 @@ defmodule SyliAtlasWeb.MarketPagesTest do
     assert text =~ "4 000 XOF"
     assert text =~ "≈ 6,7 $"
     assert html |> LazyHTML.query("#price-chart-empty") |> Enum.count() == 1
-    assert conn |> get("/fr/bourses/brvm/ALPT") |> redirected_to() == "/fr/bourses/brvm/alpt"
+    assert conn |> get("/fr/bourses/brvm/ALPT") |> redirected_to(301) == "/fr/bourses/brvm/alpt"
   end
 
   test "the funds page", %{conn: conn} do

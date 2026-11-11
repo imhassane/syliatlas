@@ -41,7 +41,7 @@ defmodule SyliAtlas.Workers.OgWarmWorker do
         _ -> []
       end
 
-    [Paths.home(locale), Paths.ranking(locale), Paths.debt(locale), Paths.ratings(locale)] ++
+    [Paths.home(locale), Paths.ranking_main(locale), Paths.debt(locale), Paths.ratings(locale)] ++
       for(
         a <- SyliAtlas.Geo.list_areas(),
         a.kind in ["country", "region", "continent"],

@@ -31,6 +31,15 @@ defmodule SyliAtlasWeb.ConnCase do
     end
   end
 
+  @doc "Every sitemap part (/sitemaps/*.xml) as one text, for assertions."
+  def sitemaps do
+    for part <- ~w(pages countries ratings markets securities), into: "" do
+      Phoenix.ConnTest.build_conn()
+      |> Phoenix.ConnTest.dispatch(SyliAtlasWeb.Endpoint, :get, "/sitemaps/#{part}.xml")
+      |> Map.fetch!(:resp_body)
+    end
+  end
+
   setup tags do
     SyliAtlas.DataCase.setup_sandbox(tags)
     # The header band is cached by data version; tests change data within a second.

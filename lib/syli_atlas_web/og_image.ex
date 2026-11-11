@@ -165,7 +165,11 @@ defmodule SyliAtlasWeb.OgImage do
     max = rows |> Enum.map(&abs(elem(&1, 1))) |> Enum.max(fn -> 1 end)
 
     [
-      text(72, 190, fit(s.title, 52), size: 44, weight: 300, spacing: -1.2),
+      text(72, 190, fit(s.title, 68),
+        size: if(String.length(s.title) > 46, do: 34, else: 44),
+        weight: 300,
+        spacing: -1
+      ),
       for {{name, value, label}, i} <- Enum.with_index(rows) do
         y = 236 + i * 62
         w = max(640 * abs(value) / max(max, 1.0e-9), 4)

@@ -75,8 +75,10 @@ defmodule SyliAtlasWeb.Router do
   scope "/", SyliAtlasWeb do
     get "/health", HealthController, :show
     get "/sitemap.xml", SitemapController, :sitemap
+    get "/sitemaps/:part", SitemapController, :part
     get "/robots.txt", SitemapController, :robots
     get "/llms.txt", SitemapController, :llms
+    get "/llms-full.txt", SitemapController, :llms_full
     get "/og/:version/*path", OgImageController, :show
   end
 
@@ -151,9 +153,13 @@ defmodule SyliAtlasWeb.Router do
 
     get "/", PageController, :home
     get "/methode", PageController, :method
+    get "/a-propos", PageController, :about
+    get "/questions", QuestionsController, :index
+    get "/questions/:slug", QuestionsController, :show
     get "/accessibilite", PageController, :accessibility
     get "/hors-ligne", PageController, :offline
     get "/classement", RankingController, :index
+    get "/classement/:topic", RankingController, :topic
     get "/recherche", SearchController, :index
     get "/pays/:slug", AreaController, :show
     get "/pays/:slug/:tab", AreaController, :show
@@ -177,9 +183,13 @@ defmodule SyliAtlasWeb.Router do
 
     get "/", PageController, :home
     get "/method", PageController, :method
+    get "/about", PageController, :about
+    get "/questions", QuestionsController, :index
+    get "/questions/:slug", QuestionsController, :show
     get "/accessibility", PageController, :accessibility
     get "/offline", PageController, :offline
     get "/ranking", RankingController, :index
+    get "/ranking/:topic", RankingController, :topic
     get "/search", SearchController, :index
     get "/countries/:slug", AreaController, :show
     get "/countries/:slug/:tab", AreaController, :show

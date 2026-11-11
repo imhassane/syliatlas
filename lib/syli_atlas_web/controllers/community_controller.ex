@@ -59,7 +59,7 @@ defmodule SyliAtlasWeb.CommunityController do
     }
 
     if conn.request_path != paths[locale] do
-      redirect(conn, to: paths[locale])
+      conn |> put_status(301) |> redirect(to: paths[locale])
     else
       s = summary(community, locale)
       name = community.short[locale]
