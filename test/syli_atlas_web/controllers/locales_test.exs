@@ -106,6 +106,12 @@ defmodule SyliAtlasWeb.LocalesTest do
       assert text(doc("/ar/api"), "main") =~ "المعاملات"
     end
 
+    test "the home page carries the Yandex verification" do
+      assert attr(doc("/fr"), ~s(meta[name="yandex-verification"]), "content") == [
+               "b1d5b3859cfe52ef"
+             ]
+    end
+
     test "numbers follow the language" do
       assert SyliAtlasWeb.Format.number(1234.5, 1, "es") == "1.234,5"
 
