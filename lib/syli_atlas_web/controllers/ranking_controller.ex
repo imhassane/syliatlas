@@ -97,7 +97,10 @@ defmodule SyliAtlasWeb.RankingController do
             noindex: filtered?,
             json_ld: [
               Seo.breadcrumbs(
-                [{"Syli Atlas", Paths.home(locale)}, {gettext("Ranking"), Paths.ranking(locale)}] ++
+                [
+                  {"Syli Atlas", Paths.home(locale)},
+                  {gettext("Ranking"), Paths.ranking_main(locale)}
+                ] ++
                   if(topic, do: [{title, paths[locale]}], else: [])
               ),
               Seo.item_list(

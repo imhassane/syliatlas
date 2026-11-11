@@ -101,11 +101,16 @@ defmodule SyliAtlasWeb.OgImage do
     ]
   end
 
+  # The address (monospace, ~12 px a character) and the source (~10 px)
+  # share 1 056 px: the source gives way first.
   defp footer(url, source) do
+    url = url && short_url(url)
+    room = div(1016 - String.length(url || "") * 12, 10)
+
     [
-      if(url, do: text(72, 584, short_url(url), size: 20, mono: true, fill: @muted), else: []),
-      if(source,
-        do: text(1128, 584, fit(source, 60), size: 20, fill: @muted, anchor: "end"),
+      if(url, do: text(72, 584, url, size: 20, mono: true, fill: @muted), else: []),
+      if(source && room > 8,
+        do: text(1128, 584, fit(source, min(room, 64)), size: 20, fill: @muted, anchor: "end"),
         else: []
       )
     ]
