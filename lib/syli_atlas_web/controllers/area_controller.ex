@@ -3,7 +3,7 @@ defmodule SyliAtlasWeb.AreaController do
 
   alias SyliAtlas.Geo
   alias SyliAtlas.Geo.Area
-  import SyliAtlasWeb.Format, only: [change: 3, value: 3]
+  import SyliAtlasWeb.Format, only: [change: 3, value: 3, names: 1, names: 2]
 
   alias SyliAtlasWeb.{
     NotFoundError,
@@ -407,21 +407,21 @@ defmodule SyliAtlasWeb.AreaController do
     s = data["profile"]["series"]
 
     [
-      {gettext("How much has the economy of %{name} grown since %{from}?", name: name, from: from),
+      {gettext("How much has the economy of %{name} grown since %{from}?", names(name, from: from)),
        answer(name, data, from, to, locale)},
-      {gettext("What is the GDP per capita of %{name}?", name: name),
+      {gettext("What is the GDP per capita of %{name}?", names(name)),
        gettext(
          "%{value} in %{year} at market exchange rates, %{ppp} in purchasing power parity (IMF).",
          value: value(PublicData.at(s["gdp_per_capita_usd"], to), "gdp_per_capita_usd", locale),
          ppp: value(PublicData.at(s["gdp_per_capita_ppp"], to), "gdp_per_capita_ppp", locale),
          year: to
        )},
-      {gettext("What is the inflation rate in %{name}?", name: name),
+      {gettext("What is the inflation rate in %{name}?", names(name)),
        gettext("%{value} in %{year}, average annual change in consumer prices (IMF).",
          value: value(PublicData.at(s["inflation"], to), "inflation", locale),
          year: to
        )},
-      {gettext("What is the public debt of %{name}?", name: name),
+      {gettext("What is the public debt of %{name}?", names(name)),
        gettext("%{value} of GDP in %{year}, gross debt of the general government (IMF).",
          value: value(PublicData.at(s["public_debt_pct_gdp"], to), "public_debt_pct_gdp", locale),
          year: to
@@ -433,7 +433,7 @@ defmodule SyliAtlasWeb.AreaController do
 
         {rank, of} ->
           [
-            {gettext("Where does %{name} rank in Africa?", name: name),
+            {gettext("Where does %{name} rank in Africa?", names(name)),
              gettext(
                "Economy no. %{rank} of %{of} in Africa by GDP in current dollars in %{year} (IMF).",
                rank: rank,

@@ -5,7 +5,7 @@ defmodule SyliAtlasWeb.MarketComponents do
   """
   use Phoenix.Component
   use Gettext, backend: SyliAtlasWeb.Gettext
-  import SyliAtlasWeb.Format, only: [number: 3]
+  import SyliAtlasWeb.Format, only: [number: 3, names: 2]
   alias SyliAtlas.Market.Catalog
   alias SyliAtlasWeb.Paths
 
@@ -366,9 +366,9 @@ defmodule SyliAtlasWeb.MarketComponents do
             <div class="section-head">
               <p class="eyebrow">{gettext("Stock exchange")}</p>
               <h2 class="h1">
-                {gettext("%{country} on the %{exchange}",
-                  country: @name,
-                  exchange: x["exchange"]["short_name"]
+                {gettext(
+                  "%{name} on the %{exchange}",
+                  names(@name, exchange: x["exchange"]["short_name"])
                 )}
               </h2>
               <p :if={x["regional"]} class="lead">

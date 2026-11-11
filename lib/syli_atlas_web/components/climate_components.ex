@@ -139,8 +139,7 @@ defmodule SyliAtlasWeb.ClimateComponents do
               <p class="muted" id="climate-bready-none">
                 {gettext(
                   "%{name} is not covered yet: B-READY adds countries edition after edition (%{count} African economies in the latest one).",
-                  name: @name,
-                  count: @doc["covered"]["bready"]
+                  names(@name, count: @doc["covered"]["bready"])
                 )}
               </p>
             <% end %>

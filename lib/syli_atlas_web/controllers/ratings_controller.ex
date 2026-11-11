@@ -5,6 +5,7 @@ defmodule SyliAtlasWeb.RatingsController do
   alias SyliAtlas.Ratings
   alias SyliAtlas.Ratings.Scale
   alias SyliAtlasWeb.{NotFoundError, Paths, RatingComponents, Seo}
+  import SyliAtlasWeb.Format, only: [names: 1]
 
   plug :put_layout, false
 
@@ -109,7 +110,7 @@ defmodule SyliAtlasWeb.RatingsController do
   end
 
   defp description(%{"band" => nil}, name),
-    do: gettext("%{name} is not rated by S&P, Moody's or Fitch.", name: name)
+    do: gettext("%{name} is not rated by S&P, Moody's or Fitch.", names(name))
 
   defp description(entry, name) do
     gettext("%{name}: %{agencies}. %{verdict}, %{category}, %{gap}.",

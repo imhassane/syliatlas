@@ -12,6 +12,7 @@ defmodule SyliAtlasWeb.RatingComponents do
 
   alias SyliAtlas.Ratings.Scale
   alias SyliAtlasWeb.Paths
+  import SyliAtlasWeb.Format, only: [names: 1, names: 2]
 
   # Words ----------------------------------------------------------------
 
@@ -169,7 +170,7 @@ defmodule SyliAtlasWeb.RatingComponents do
   def headline(%{"band" => nil}, _name), do: gettext("No agency rating")
 
   def headline(%{"band" => "investment"} = e, name),
-    do: gettext("%{rating}: %{name} is investment grade", rating: e["label"], name: name)
+    do: gettext("%{rating}: %{name} is investment grade", names(name, rating: e["label"]))
 
   def headline(%{"band" => "speculative"} = e, _name),
     do: gettext("%{rating}: a fair rating, %{gap}", rating: e["label"], gap: gap_text(e))
@@ -190,14 +191,14 @@ defmodule SyliAtlasWeb.RatingComponents do
 
   def faq_items(name, %{"band" => nil}, _doc) do
     [
-      {gettext("What is the credit rating of %{name}?", name: name),
-       gettext("%{name} is not rated by S&P, Moody's or Fitch.", name: name)}
+      {gettext("What is the credit rating of %{name}?", names(name)),
+       gettext("%{name} is not rated by S&P, Moody's or Fitch.", names(name))}
     ]
   end
 
   def faq_items(name, rating, doc) do
     [
-      {gettext("What is the credit rating of %{name}?", name: name),
+      {gettext("What is the credit rating of %{name}?", names(name)),
        gettext("%{agencies}: %{verdict}, %{category}, %{gap}, %{rank}.",
          agencies: agencies_text(rating),
          verdict: String.downcase(verdict(rating["band"])),
@@ -267,7 +268,7 @@ defmodule SyliAtlasWeb.RatingComponents do
     """
   end
 
-  defp gauge_label(%{"label" => nil}, name), do: gettext("%{name} is not rated", name: name)
+  defp gauge_label(%{"label" => nil}, name), do: gettext("%{name} is not rated", names(name))
 
   defp gauge_label(e, name),
     do:
@@ -301,11 +302,9 @@ defmodule SyliAtlasWeb.RatingComponents do
             </.dynamic_tag>
             <p class="lead rt-lead">
               <%= if @entry["band"] do %>
-                {gettext("%{name} is no. %{rank} of the %{of} African countries rated, %{tier}.",
-                  name: @name,
-                  rank: @entry["rank"],
-                  of: @rated,
-                  tier: tier_text(@entry["rank"])
+                {gettext(
+                  "%{name} is no. %{rank} of the %{of} African countries rated, %{tier}.",
+                  names(@name, rank: @entry["rank"], of: @rated, tier: tier_text(@entry["rank"]))
                 )}
                 {meaning(@entry["band"])}
               <% else %>

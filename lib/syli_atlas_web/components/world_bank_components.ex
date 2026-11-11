@@ -10,7 +10,7 @@ defmodule SyliAtlasWeb.WorldBankComponents do
   use Gettext, backend: SyliAtlasWeb.Gettext
 
   import SyliAtlasWeb.UI
-  import SyliAtlasWeb.Format, only: [number: 3]
+  import SyliAtlasWeb.Format, only: [number: 3, names: 1]
 
   @creditors ~w(multilateral china other_bilateral bonds private)
 
@@ -450,7 +450,7 @@ defmodule SyliAtlasWeb.WorldBankComponents do
   end
 
   defp debt_lead(nil, name, _locale),
-    do: gettext("The World Bank publishes no external debt figures for %{name}.", name: name)
+    do: gettext("The World Bank publishes no external debt figures for %{name}.", names(name))
 
   defp debt_lead(c, name, locale) do
     gettext(
