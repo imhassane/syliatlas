@@ -18,7 +18,7 @@ defmodule SyliAtlasWeb.MotionTest do
       assert count(html, ".read-progress[aria-hidden=true]") == 1
       assert count(html, "button#to-top[hidden][aria-label]") == 1
       assert count(html, "main#main #vt-ready") == 1
-      assert count(html, ~s(link[rel=expect][href="#vt-ready"][blocking=render])) == 1
+      assert count(html, ~s(link[rel=expect][href="#main"][blocking=render])) == 1
     end
   end
 
@@ -47,7 +47,7 @@ defmodule SyliAtlasWeb.MotionTest do
     assert count(html, ".profile-head #profile-tabs") == 0
     assert count(html, "#profile-tabs .tab-indicator") == 1
     assert count(html, ~s(#profile-tabs a[aria-current=page] .tab-indicator)) == 1
-    assert count(html, "main > .tab-panel") == 1
+    assert count(html, "main > .tab-panel#tab-panel") == 1
   end
 
   test "a period chosen on a profile follows the reader from tab to tab" do

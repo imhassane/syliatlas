@@ -40,7 +40,6 @@ defmodule SyliAtlasWeb.TickerComponents do
       role="region"
       aria-label={gettext("Stock exchanges and sovereign ratings")}
       data-ticker
-      data-duration={@duration}
     >
       <button
         type="button"
@@ -113,14 +112,6 @@ defmodule SyliAtlasWeb.TickerComponents do
           </ul>
         </div>
       </div>
-      <%!-- Continuity from page to page: the loop position follows the clock,
-           set before the first paint so the band never jumps back to its start. --%>
-      <script>
-        (function (b) {
-          var d = parseFloat(b.dataset.duration);
-          if (d > 0) b.style.setProperty("--ticker-delay", -((Date.now() / 1000) % d) + "s");
-        })(document.getElementById("site-ticker"));
-      </script>
       <p :if={@data.indices != []} class="site-ticker-credit">
         <%= if SyliAtlas.Market.fake?() do %>
           <b>{gettext("Fictitious figures")}</b> ·

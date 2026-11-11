@@ -115,8 +115,8 @@ defmodule SyliAtlasWeb.Layouts do
     />
     <main id="main">
       {render_slot(@inner_block)}
-      <%!-- The first paint waits for this mark (root layout, rel="expect"), so the
-           page arrival (root layout) finds the tab bar and the tables there. --%>
+      <%!-- After a table filter or sort, the first paint waits for this mark (root
+           layout, « page arrival »), so the rows are there to be measured. --%>
       <span id="vt-ready" hidden></span>
     </main>
     <.site_footer locale={@locale} other_lang={@other_lang} />

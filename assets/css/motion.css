@@ -38,11 +38,11 @@ a.card:hover, .qcard:hover { transform: translateY(-2px); box-shadow: var(--shad
 .btn:active { transform: scale(.97); }
 
 /* Between pages: no browser view transition (it would freeze the scrolling
-   band in a still image). The new page moves itself, live, before its first
-   paint (root layout, « page arrival »): the content rises 14 px; a tab of a
-   profile keeps the tab bar in place, slides its underline and brings the
-   content in from the tab's side; a table filter or sort slides each row
-   from its old place. */
+   band in a still image), and a page paints as soon as its top arrives,
+   without moving. Only after a tab of a profile or a table filter does the
+   new page move itself, live (root layout, « page arrival »): the tab bar
+   stays in place, its underline slides and the content comes in from the
+   tab's side; or each row slides from its old place. */
 
 /* Long pages: blocks rise into place as they scroll into view. Native
    scroll-driven animations where supported (entry range only, so nothing

@@ -11,7 +11,10 @@
 .site-ticker-pause .i-play, .site-ticker.is-paused .site-ticker-pause .i-pause { display: none; }
 .site-ticker.is-paused .site-ticker-pause .i-play { display: block; }
 .site-ticker-view { grid-column: 2; overflow: hidden; }
-.site-ticker-track { display: flex; width: max-content; animation: site-ticker var(--ticker-duration, 90s) linear var(--ticker-delay, 0s) infinite; }
+.site-ticker-track { display: flex; width: max-content; animation: site-ticker var(--ticker-duration, 90s) linear infinite;
+  /* Continuity from page to page: the loop position follows the clock (--now,
+     set by the root layout before the first paint). */
+  animation-delay: calc(-1 * mod(var(--now, 0s), var(--ticker-duration, 90s))); }
 .site-ticker-view:hover .site-ticker-track,
 .site-ticker-view:focus-within .site-ticker-track,
 .site-ticker.is-paused .site-ticker-track { animation-play-state: paused; }
