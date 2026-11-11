@@ -1,0 +1,343 @@
+<.admin_shell current={:updates} counts={@admin_counts} until={@admin_until} key={@admin_key}>
+  <header class="adm-head">
+    <div class="adm-intro">
+      <p class="eyebrow adm-live">
+        <span aria-hidden="true"></span>Données · prochaine vérification à 06:00 UTC
+      </p>
+      <h1 class="adm-title">Mises à jour des données</h1>
+      <p class="muted">
+        Chaque matin, Oban demande au FMI quelle édition est en cours. Si elle est nouvelle, elle est téléchargée, validée, écrite dans SQLite, puis toutes les fiches sont recalculées.
+      </p>
+    </div>
+    <div class="adm-head-actions">
+      <.form for={%{}} action={~p"/admin/mises-a-jour/verifier"} method="post" id="updates-check">
+        <button class="btn btn-primary" type="submit">Vérifier maintenant</button>
+      </.form>
+    </div>
+  </header>
+
+  <p :if={msg = Phoenix.Flash.get(@flash, :info)} class="adm-flash ok" role="status">{msg}</p>
+  <p :if={msg = Phoenix.Flash.get(@flash, :error)} class="adm-flash err" role="alert">{msg}</p>
+
+  <dl class="stats" id="updates-stats">
+    <div>
+      <dt>Dernière vérification</dt>
+      <dd class="big num adm-big-sm">{when_(@imf && @imf.last_checked_at)}</dd>
+      <dd class="small muted">
+        {if @imf && @imf.last_checked_at, do: day(@imf.last_checked_at), else: "jamais"} · FMI
+      </dd>
+    </div>
+    <div>
+      <dt>Édition en ligne</dt>
+      <dd class="big adm-big-sm">{if @online, do: @online.label, else: "—"}</dd>
+      <dd class="small muted">
+        <%= if @online do %>
+          {(@online.stats || %{})["countries"] || "—"} pays · {(@online.stats || %{})[
+            "indicators"
+          ] ||
+            "—"} indicateurs · publiée le {day(@online.published_at)}
+        <% else %>
+          aucune édition publiée
+        <% end %>
+      </dd>
+    </div>
+    <div>
+      <dt>Lectures · p95</dt>
+      <% worst = Enum.max_by(@fns, & &1.p95, fn -> nil end) %>
+      <dd class="big num adm-big-sm">{if worst, do: ms_from_us(worst.p95), else: "—"}</dd>
+      <dd class={["small", if(worst && worst.p95 > @budget_us, do: "down", else: "muted")]}>
+        <%= if worst do %>
+          seuil 1,5 ms · {Enum.count(@fns, &(&1.status == :ok))} sur {length(@fns)} conformes
+        <% else %>
+          pas encore mesurées depuis le démarrage
+        <% end %>
+      </dd>
+    </div>
+    <div>
+      <dt>Échecs · 7 jours</dt>
+      <dd class="big num adm-big-sm">{@failures}</dd>
+      <dd class="small muted">tâches en échec ou relancées</dd>
+    </div>
+  </dl>
+
+  <.admin_tabs
+    current={@tab}
+    tabs={[
+      {"taches", "Tâches Oban", ~p"/admin/mises-a-jour"},
+      {"sources", "Sources", ~p"/admin/mises-a-jour?onglet=sources"},
+      {"fonctions", "Fonctions JSON", ~p"/admin/mises-a-jour?onglet=fonctions"}
+    ]}
+  />
+
+  <%= if @tab == "taches" do %>
+    <section class="card adm-list" id="queues">
+      <div class="adm-card-head">
+        <h2 class="h2">Files Oban</h2>
+        <span class="mono subtle small">Oban + moteur Lite (SQLite)</span>
+      </div>
+      <div class="table-wrap">
+        <table class="table adm-table">
+          <thead>
+            <tr>
+              <th class="l">File</th>
+              <th class="l">Rôle</th>
+              <th class="l">Planification (UTC)</th>
+              <th>Parallèle</th>
+              <th>En attente</th>
+              <th>Faites · 24 h</th>
+              <th class="l">État</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={q <- @queues} id={"queue-#{q.name}"}>
+              <td class="l mono">{q.name}</td>
+              <td class="l muted adm-wrap">{q.role}</td>
+              <td class="l mono subtle small">
+                {if q.schedule == [], do: "à la demande", else: Enum.join(q.schedule, " · ")}
+              </td>
+              <td>{q.limit}</td>
+              <td>{q.waiting}</td>
+              <td>{q.done}</td>
+              <td class="l">
+                <div class="adm-inline">
+                  <span class={[
+                    "pill",
+                    cond do
+                      q.paused? -> "pill-warn"
+                      q.running > 0 -> "pill-ok"
+                      true -> "pill-neutral"
+                    end
+                  ]}>
+                    {cond do
+                      q.paused? -> "En pause"
+                      q.running > 0 -> "Active"
+                      true -> "Au repos"
+                    end}
+                  </span>
+                  <.form
+                    for={%{}}
+                    action={~p"/admin/mises-a-jour/files/#{q.name}"}
+                    method="post"
+                    id={"queue-pause-#{q.name}"}
+                  >
+                    <input type="hidden" name="paused" value={to_string(!q.paused?)} />
+                    <button class="btn btn-quiet btn-sm" type="submit">
+                      {if q.paused?, do: "Relancer", else: "Pause"}
+                    </button>
+                  </.form>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card adm-list" id="jobs">
+      <div class="adm-card-head">
+        <h2 class="h2">Dernières tâches</h2>
+        <nav class="seg" aria-label="Filtre">
+          <a
+            :for={
+              {key, label} <- [
+                {"toutes", "Toutes"},
+                {"echecs", "Échecs"},
+                {"en-cours", "En cours"}
+              ]
+            }
+            href={
+              if key == "toutes",
+                do: ~p"/admin/mises-a-jour",
+                else: ~p"/admin/mises-a-jour?filtre=#{key}"
+            }
+            aria-current={if(key == @filter, do: "page")}
+          >
+            {label}
+          </a>
+        </nav>
+      </div>
+      <p :if={@jobs.total == 0} class="adm-empty muted">Aucune tâche.</p>
+      <div :if={@jobs.total > 0} class="table-wrap">
+        <table class="table adm-table">
+          <thead>
+            <tr>
+              <th class="l">Tâche</th>
+              <th class="l">File</th>
+              <th>Tentative</th>
+              <th>Durée</th>
+              <th class="l">Résultat</th>
+              <th>Quand</th>
+              <th class="l">État</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={j <- @jobs.entries} id={"job-#{j.id}"}>
+              <td class="l">
+                <b class="adm-strong">{worker_label(j.worker)}</b>
+                <div class="mono subtle small">{String.replace(j.worker, "SyliAtlas.", "")}</div>
+              </td>
+              <td class="l mono subtle small">{j.queue}</td>
+              <td>{j.attempt}/{j.max_attempts}</td>
+              <td>{duration(duration_ms(j))}</td>
+              <td class="l muted adm-wrap">{job_result(j)}</td>
+              <td class="subtle">{when_(j.completed_at || j.attempted_at || j.scheduled_at)}</td>
+              <td class="l">
+                <% {label, cls} = job_state(j.state) %>
+                <div class="adm-inline">
+                  <span class={["pill", cls]}>{label}</span>
+                  <.form
+                    :if={j.state in ["discarded", "retryable", "cancelled"]}
+                    for={%{}}
+                    action={~p"/admin/mises-a-jour/taches/#{j.id}/relancer"}
+                    method="post"
+                  >
+                    <button class="btn btn-quiet btn-sm" type="submit">Relancer</button>
+                  </.form>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <.admin_pager page={@jobs} path={~p"/admin/mises-a-jour"} params={@params} key="page" />
+    </section>
+  <% end %>
+
+  <%= if @tab == "sources" do %>
+    <section class="adm-cards" id="sources">
+      <div :for={s <- @sources} class="card adm-src" id={"source-#{s.code}"}>
+        <div class="adm-src-head">
+          <h2 class="h2">{s.name}</h2>
+          <% {label, cls} = source_status(s.status) %>
+          <span class={["pill", cls]}>{label}</span>
+        </div>
+        <p class="muted small">{source_what(s.code)}</p>
+        <dl>
+          <dt>Point d'accès</dt>
+          <dd class="mono small">{s.url}</dd>
+          <dt>Rythme</dt>
+          <dd>
+            {if s.status == "active", do: "Vérifiée chaque jour à 06:00 UTC", else: "à brancher"}
+          </dd>
+          <dt>Dernière vérification</dt>
+          <dd>
+            {if s.last_checked_at,
+              do: day(s.last_checked_at) <> " " <> when_(s.last_checked_at),
+              else: "—"}
+          </dd>
+        </dl>
+      </div>
+    </section>
+
+    <section class="card adm-list" id="editions">
+      <div class="adm-card-head">
+        <h2 class="h2">Éditions importées</h2>
+        <span class="small muted">Les éditions précédentes restent gardées : on peut revenir en arrière.</span>
+      </div>
+      <p :if={@editions.total == 0} class="adm-empty muted">Aucune édition importée.</p>
+      <div :if={@editions.total > 0} class="table-wrap">
+        <table class="table adm-table">
+          <thead>
+            <tr>
+              <th class="l">Édition</th>
+              <th class="l">Source</th>
+              <th>Pays</th>
+              <th>Valeurs</th>
+              <th>Avertissements</th>
+              <th>Publiée</th>
+              <th class="l">État</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={e <- @editions.entries} id={"edition-#{e.id}"}>
+              <td class="l">
+                <.link href={~p"/admin/mises-a-jour/editions/#{e.id}"} class="adm-strong">
+                  {e.label}
+                </.link>
+              </td>
+              <td class="l muted">{e.source.name}</td>
+              <td>{(e.stats || %{})["countries"] || "—"}</td>
+              <td>{int((e.stats || %{})["values"])}</td>
+              <td>{length(e.warnings || [])}</td>
+              <td class="subtle">{day(e.published_at)}</td>
+              <td class="l">
+                <% {label, cls} = edition_status(e.status) %>
+                <span class={["pill", cls]}>{label}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <.admin_pager page={@editions} path={~p"/admin/mises-a-jour"} params={@params} key="page" />
+    </section>
+  <% end %>
+
+  <%= if @tab == "fonctions" do %>
+    <section class="stack gap-3" id="functions">
+      <div class="adm-head">
+        <div class="adm-intro">
+          <h2 class="h2">Fonctions JSON face au seuil de 1,5 ms</h2>
+          <p class="small subtle">
+            Une fonction par écran : une seule requête SQLite qui renvoie la réponse JSON complète, en lisant les documents précalculés. Temps mesuré dans SQLite, réseau exclu · barre p50 → p99, pointillé = seuil. Mesures gardées en mémoire depuis le dernier démarrage.
+          </p>
+        </div>
+        <.form
+          for={%{}}
+          action={~p"/admin/mises-a-jour/mesurer"}
+          method="post"
+          id="functions-measure"
+        >
+          <button class="btn btn-secondary" type="submit">Mesurer maintenant</button>
+        </.form>
+      </div>
+      <div class="card table-wrap">
+        <p :if={@fns == []} class="adm-empty muted">
+          Pas encore de mesure depuis le démarrage. « Mesurer maintenant » rejoue chaque fonction 200 fois.
+        </p>
+        <table :if={@fns != []} class="table adm-table" id="functions-table">
+          <thead>
+            <tr>
+              <th class="l">Fonction</th>
+              <th>Appels</th>
+              <th>p50</th>
+              <th>p95</th>
+              <th>p99</th>
+              <th class="l adm-bar-col">0 → 2 ms</th>
+              <th>Lignes</th>
+              <th class="l">Statut</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={f <- @fns} id={"fn-#{f.name}"}>
+              <% {name, sig} = fn_label(f.name) %>
+              <td class="l">
+                <span class="mono adm-strong">{name}</span>
+                <div class="mono subtle small">{sig}</div>
+              </td>
+              <td class="muted">{int(f.calls)}</td>
+              <td>{ms_from_us(f.p50)}</td>
+              <td>{ms_from_us(f.p95)}</td>
+              <td class="adm-strong">{ms_from_us(f.p99)}</td>
+              <td class="l">
+                <div class="budget-bar" aria-hidden="true">
+                  <span style={bar_style(f)}></span><i></i>
+                </div>
+              </td>
+              <td class="muted">{f.rows}</td>
+              <td class="l">
+                <% {label, cls} = fn_status(f.status) %>
+                <span class={["pill", cls]}>{label}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card pad stack gap-2">
+        <h3 class="h3">Comment la fiche reste sous 1,5 ms</h3>
+        <p class="muted small">
+          Chaque pays et chaque région a un document JSONB précalculé à l'import (séries 2015 – 2030 et indice de volume). La fonction lit les deux années demandées dans ce document : pas de boucle en Elixir, pas de recalcul.
+        </p>
+      </div>
+    </section>
+  <% end %>
+</.admin_shell>

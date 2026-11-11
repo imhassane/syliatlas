@@ -1,0 +1,182 @@
+<.admin_shell current={:updates} counts={@admin_counts} until={@admin_until} key={@admin_key}>
+  <nav aria-label="Fil d'Ariane" class="adm-crumbs">
+    <a href={~p"/admin/mises-a-jour?onglet=sources"}>Mises à jour</a>
+    <span aria-hidden="true">/</span>
+    <span aria-current="page">{@edition.label}</span>
+  </nav>
+
+  <header class="adm-head">
+    <div class="adm-intro">
+      <div class="adm-inline">
+        <% {label, cls} = edition_status(@edition.status) %>
+        <span class={["pill", cls]}>{label}</span>
+        <span class="pill pill-neutral no-dot mono">
+          {@edition.source.name} · importée le {day(@edition.fetched_at || @edition.inserted_at)}
+        </span>
+      </div>
+      <h1 class="adm-title">Import de l'édition {@edition.label}</h1>
+      <p class="muted">
+        <%= case @edition.status do %>
+          <% "published" -> %>
+            Validée puis publiée le {day(@edition.published_at)}. Toutes les fiches, les régions et les comparaisons ont été recalculées.
+          <% "superseded" -> %>
+            Remplacée par une édition plus récente. Ses valeurs sont gardées : elle peut revenir en ligne.
+          <% "failed" -> %>
+            Refusée à la validation : rien n'a été publié.
+          <% _ -> %>
+            En cours de traitement.
+        <% end %>
+      </p>
+    </div>
+    <div class="adm-head-actions">
+      <.form
+        :if={@edition.status == "superseded"}
+        for={%{}}
+        action={~p"/admin/mises-a-jour/editions/#{@edition.id}/restaurer"}
+        method="post"
+        id="edition-restore"
+      >
+        <button class="btn btn-secondary" type="submit">Remettre cette édition en ligne</button>
+      </.form>
+      <.form
+        for={%{}}
+        action={~p"/admin/mises-a-jour/editions/#{@edition.id}/relancer"}
+        method="post"
+        id="edition-rerun"
+      >
+        <button class="btn btn-secondary" type="submit">Relancer l'import</button>
+      </.form>
+    </div>
+  </header>
+
+  <p :if={msg = Phoenix.Flash.get(@flash, :info)} class="adm-flash ok" role="status">{msg}</p>
+  <p :if={msg = Phoenix.Flash.get(@flash, :error)} class="adm-flash err" role="alert">{msg}</p>
+
+  <div class="adm-split">
+    <section class="card pad adm-steps" id="edition-steps">
+      <h2 class="h2">Étapes</h2>
+      <ol>
+        <li :for={{ok?, title, text, extra} <- steps(@edition, @after_job)}>
+          <span class={[
+            "pill no-dot adm-step-mark",
+            case ok? do
+              true -> "pill-ok"
+              false -> "pill-warn"
+              nil -> "pill-neutral"
+            end
+          ]}>
+            {case ok? do
+              true -> "✓"
+              false -> "!"
+              nil -> "…"
+            end}
+          </span>
+          <span class="adm-step-text"><b>{title}</b><span class="muted small">{text}</span></span>
+          <%= case extra do %>
+            <% {:retry, job_id} -> %>
+              <.form
+                for={%{}}
+                action={
+                  ~p"/admin/mises-a-jour/taches/#{job_id}/relancer?retour=/admin/mises-a-jour/editions/#{@edition.id}"
+                }
+                method="post"
+              >
+                <button class="btn btn-secondary btn-sm" type="submit">Relancer</button>
+              </.form>
+            <% ms when is_integer(ms) -> %>
+              <span class="mono subtle small">{duration(ms)}</span>
+            <% _ -> %>
+          <% end %>
+        </li>
+      </ol>
+    </section>
+
+    <section class="card pad stack gap-2 adm-controls" id="edition-checks">
+      <h2 class="h2">Contrôles de validation</h2>
+      <ul>
+        <li>
+          <span class="up">✓</span>{(@edition.stats || %{})["countries"] || "—"} pays présents (Sahara occidental non couvert)
+        </li>
+        <li>
+          <span class="up">✓</span>{(@edition.stats || %{})["indicators"] || "—"} indicateurs, années 2015 → 2030
+        </li>
+        <li :if={@edition.status != "failed"}>
+          <span class="up">✓</span>Aucune valeur négative pour le PIB ou la population
+        </li>
+        <li :for={w <- Enum.take(@edition.warnings || [], 6)}>
+          <span class="adm-bad">!</span><span>{warning_text(w, @names)}</span>
+        </li>
+      </ul>
+      <details :if={length(@edition.warnings || []) > 6} class="adm-more">
+        <summary>Voir les {length(@edition.warnings) - 6} autres avertissements</summary>
+        <ul>
+          <li :for={w <- Enum.drop(@edition.warnings, 6)}>
+            <span class="adm-bad">!</span><span>{warning_text(w, @names)}</span>
+          </li>
+        </ul>
+      </details>
+    </section>
+  </div>
+
+  <section class="card adm-list" id="edition-revisions">
+    <div class="adm-card-head">
+      <div>
+        <h2 class="h2">Ce qui a changé par rapport à l'édition précédente</h2>
+        <p class="small muted">
+          <%= if @previous do %>
+            Comparée à {@previous.label}. Taux en points, niveaux en pourcentage.
+          <% else %>
+            Pas d'édition précédente gardée pour cette source.
+          <% end %>
+        </p>
+      </div>
+      <nav :if={@previous} class="seg" aria-label="Filtre">
+        <a
+          href={~p"/admin/mises-a-jour/editions/#{@edition.id}"}
+          aria-current={if(!@all?, do: "page")}
+        >
+          Écarts ≥ 1
+        </a>
+        <a
+          href={~p"/admin/mises-a-jour/editions/#{@edition.id}?ecarts=tout"}
+          aria-current={if(@all?, do: "page")}
+        >
+          Tout
+        </a>
+      </nav>
+    </div>
+    <p :if={@previous && @revisions.total == 0} class="adm-empty muted">
+      Aucun écart de cette taille.
+    </p>
+    <div :if={@revisions.total > 0} class="table-wrap">
+      <table class="table adm-table">
+        <thead>
+          <tr>
+            <th class="l">Pays ou région</th>
+            <th class="l">Indicateur</th>
+            <th>Année</th>
+            <th>Avant ({@previous.label})</th>
+            <th>Maintenant</th>
+            <th>Écart</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={r <- @revisions.entries}>
+            <td class="l">{Map.get(@names, r.area, r.area)}</td>
+            <td class="l">{indicator(r.indicator)}</td>
+            <td>{r.year}</td>
+            <td class="subtle">{revision_value(r.before, r.rate?)}</td>
+            <td>{revision_value(r.after, r.rate?)}</td>
+            <td class="adm-strong">{revision_change(r.change, r.rate?)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <.admin_pager
+      page={@revisions}
+      path={~p"/admin/mises-a-jour/editions/#{@edition.id}"}
+      params={@params}
+      key="page"
+    />
+  </section>
+</.admin_shell>

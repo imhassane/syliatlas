@@ -14,12 +14,17 @@ defmodule SyliAtlasWeb.Layouts do
   alias SyliAtlasWeb.Paths
 
   @doc """
-  Public site layout: header, offline banner, content, footer. Public pages
+  Public site layout: header and band (sticky, hidden while scrolling down,
+  back when scrolling up), offline banner, content, footer. Public pages
   carry no session, so they can be cached by the CDN and the service worker.
   """
   attr :locale, :string, required: true
   attr :current, :atom, default: nil
   attr :alternates, :list, default: []
+
+  attr :ticker, :boolean,
+    default: true,
+    doc: "the band of indices and ratings under the header (off on account pages)"
 
   attr :current_user, :any,
     default: nil,
@@ -40,62 +45,70 @@ defmodule SyliAtlasWeb.Layouts do
     <div class="offline-banner" role="status">
       {gettext("You are offline. Figures shown are the ones saved on this device.")}
     </div>
-    <header class="site-header">
-      <div class="wrap">
-        <a class="brand" href={Paths.home(@locale)} aria-label="Syli Atlas">
-          <.logo size={28} />
-          <b>syli <span>atlas</span></b>
-        </a>
-        <.main_nav locale={@locale} current={@current} id="header-nav" class="nav nav-desktop" />
-        <div :if={@current != :search} class="header-search hide-mobile">
-          <SyliAtlasWeb.PageComponents.search_form locale={@locale} id="header-q" compact />
-        </div>
-        <div class="header-actions">
-          <a
-            :if={@current != :search}
-            class="icon-btn show-mobile"
-            href={Paths.search(@locale)}
-            aria-label={gettext("Search")}
-          >
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              aria-hidden="true"
-            ><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+    <div class="read-progress" aria-hidden="true"></div>
+    <div class="site-top" id="site-top" data-site-top>
+      <header class="site-header">
+        <div class="wrap">
+          <a class="brand" href={Paths.home(@locale)} aria-label="Syli Atlas">
+            <.logo size={28} />
+            <b>syli <span>atlas</span></b>
           </a>
-          <button type="button" class="btn btn-quiet hide-mobile" data-install>{gettext(
-            "Install the app"
-          )}</button>
-          <.lang_link :if={@other_lang} lang={@other_lang} class="btn btn-quiet hide-mobile" />
-          <.theme_button />
-          <.account_link user={@current_user} locale={@locale} class="btn btn-secondary hide-mobile" />
-          <button
-            type="button"
-            id="drawer-open"
-            class="icon-btn show-mobile"
-            aria-label={gettext("Menu")}
-            aria-expanded="false"
-            aria-controls="nav-drawer"
-          >
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.8"
-              stroke-linecap="round"
-              aria-hidden="true"
-            ><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
-          </button>
+          <.main_nav locale={@locale} current={@current} id="header-nav" class="nav nav-desktop" />
+          <div :if={@current != :search} class="header-search hide-mobile">
+            <SyliAtlasWeb.PageComponents.search_form locale={@locale} id="header-q" compact />
+          </div>
+          <div class="header-actions">
+            <a
+              :if={@current != :search}
+              class="icon-btn show-mobile"
+              href={Paths.search(@locale)}
+              aria-label={gettext("Search")}
+            >
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                aria-hidden="true"
+              ><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+            </a>
+            <button type="button" class="btn btn-quiet hide-mobile" data-install>{gettext(
+              "Install the app"
+            )}</button>
+            <.lang_link :if={@other_lang} lang={@other_lang} class="btn btn-quiet hide-mobile" />
+            <.theme_button />
+            <.account_link
+              user={@current_user}
+              locale={@locale}
+              class="btn btn-secondary hide-mobile"
+            />
+            <button
+              type="button"
+              id="drawer-open"
+              class="icon-btn show-mobile"
+              aria-label={gettext("Menu")}
+              aria-expanded="false"
+              aria-controls="nav-drawer"
+            >
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                aria-hidden="true"
+              ><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+            </button>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+      <SyliAtlasWeb.TickerComponents.site_ticker :if={@ticker} locale={@locale} />
+    </div>
     <.nav_drawer
       locale={@locale}
       current={@current}
@@ -104,8 +117,31 @@ defmodule SyliAtlasWeb.Layouts do
     />
     <main id="main">
       {render_slot(@inner_block)}
+      <%!-- The first paint waits for this mark (root layout, rel="expect"), so a page
+           transition finds the tab bar and the tables already there. --%>
+      <span id="vt-ready" hidden></span>
     </main>
     <.site_footer locale={@locale} other_lang={@other_lang} />
+    <button
+      type="button"
+      class="to-top"
+      id="to-top"
+      aria-label={gettext("Back to top")}
+      data-to-top
+      hidden
+    >
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      ><path d="M12 19V5M6 11l6-6 6 6"></path></svg>
+    </button>
     """
   end
 
@@ -299,7 +335,7 @@ defmodule SyliAtlasWeb.Layouts do
           {gettext("Sources:")} {gettext("IMF")}<span :if={@edition}> ({@edition})</span>
           · {gettext("World Bank (CC BY 4.0)")} · CEPII, BACI · {gettext(
             "IMF debt sustainability analyses"
-          )} · {gettext("rating agencies")}<span :if={@exchanges != []}> · Data by MansaAPI</span>.
+          )} · {gettext("rating agencies")}<span :if={@exchanges != []}> · {SyliAtlas.Market.Catalog.attribution("mansa")}</span>.
           <a href={Paths.method(@locale)}>{gettext("Terms of each source")}</a>
         </p>
         <p class="small muted">

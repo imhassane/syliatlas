@@ -1,8 +1,7 @@
 defmodule SyliAtlasWeb.MarketComponents do
   @moduledoc """
-  Pieces of the market pages: price and change formats, the scrolling band
-  of indices, the index chart, the source block, and the « stock exchange »
-  block of a country page. Prices arrive as strings (exact decimals).
+  Pieces of the market pages: price and change formats, the index chart,
+  the source block, and the « stock exchange » block of a country page. Prices arrive as strings (exact decimals).
   """
   use Phoenix.Component
   use Gettext, backend: SyliAtlasWeb.Gettext
@@ -177,51 +176,6 @@ defmodule SyliAtlasWeb.MarketComponents do
     """
   end
 
-  # The scrolling band -----------------------------------------------------------
-
-  attr :exchanges, :list, required: true
-  attr :locale, :string, required: true
-
-  @doc """
-  Indices at the last close, scrolling. The list is written twice so the
-  loop is seamless; the copy is hidden from screen readers. Still when the
-  reader asked for less motion, paused on hover.
-  """
-  def ticker_band(assigns) do
-    assigns =
-      assign(assigns, :items, Enum.filter(assigns.exchanges, &(&1["index"]["value"] != nil)))
-
-    ~H"""
-    <div
-      :if={@items != []}
-      class="ticker"
-      role="region"
-      aria-label={gettext("Indices at the last close")}
-    >
-      <div class="ticker-track">
-        <ul class="ticker-list">
-          <li :for={x <- @items}>
-            <a href={Paths.exchange(@locale, x["exchange"]["code"])}>
-              <b>{x["exchange"]["short_name"]}</b>
-              <span class="muted">{price(x["index"]["value"], @locale)}</span>
-              <span class={tone(x["index"]["change_pct"])}>{pct(x["index"]["change_pct"], @locale)}</span>
-            </a>
-          </li>
-        </ul>
-        <ul class="ticker-list" aria-hidden="true">
-          <li :for={x <- @items}>
-            <a href={Paths.exchange(@locale, x["exchange"]["code"])} tabindex="-1">
-              <b>{x["exchange"]["short_name"]}</b>
-              <span class="muted">{price(x["index"]["value"], @locale)}</span>
-              <span class={tone(x["index"]["change_pct"])}>{pct(x["index"]["change_pct"], @locale)}</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-    """
-  end
-
   # Index chart --------------------------------------------------------------------
 
   attr :id, :string, required: true
@@ -369,7 +323,11 @@ defmodule SyliAtlasWeb.MarketComponents do
     assigns = assign(assigns, :used, used_sources(assigns.sources))
 
     ~H"""
-    <span class="credit" data-credit>
+    <span :if={SyliAtlas.Market.fake?()} class="credit" data-credit>
+      <b>{gettext("Fictitious figures (development), not MansaAPI's")}</b>
+      · {when_text(@date, @locale)}
+    </span>
+    <span :if={!SyliAtlas.Market.fake?()} class="credit" data-credit>
       <%= for {s, i} <- Enum.with_index(@used) do %>
         {if i > 0, do: ", "}<a href={Catalog.url(s["code"]) || s["url"]} rel="noopener">{Catalog.attribution(
           s["code"]

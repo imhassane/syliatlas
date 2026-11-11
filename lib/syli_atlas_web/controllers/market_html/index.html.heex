@@ -1,6 +1,4 @@
 <Layouts.public locale={@locale} current={:markets} alternates={@alternates}>
-  <.ticker_band :if={@imported} exchanges={@exchanges} locale={@locale} />
-
   <section class="section-alt market-hero" id="market-hero">
     <div class="wrap market-hero-wrap">
       <nav aria-label={gettext("Breadcrumb")}>
@@ -56,7 +54,7 @@
       </p>
     </div>
 
-    <div :if={@imported} class="card market-table" id="market-table">
+    <div :if={@imported} class="card market-table" id="market-table" data-keep-place>
       <div class="market-toolbar">
         <div class="market-toolbar-title">
           <h2 class="h2">{gettext("All exchanges")}</h2>
@@ -154,7 +152,7 @@
               <th scope="col" class="l">{gettext("Source")}</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody data-reorder>
             <tr
               :for={x <- @rows}
               id={"exchange-#{x["exchange"]["code"]}"}

@@ -19,6 +19,10 @@ docker compose up -d mailpit
 MAILER_ADAPTER=smtp mix phx.server     # read them at http://localhost:8025
 ```
 
+Market data: `MANSA_FAKE=true` serves fictitious figures in MansaAPI's shapes
+(`SyliAtlas.Market.Sources.MansaFake`), so development never spends the daily
+quota of the real key. Pages then say the figures are fictitious.
+
 Every variable read at boot is listed in `.env.example`.
 
 ## Git workflow (Git Flow, no pre-production)
@@ -49,6 +53,7 @@ Every variable read at boot is listed in `.env.example`.
 | Branch | `develop` | `main` |
 | Emails | SMTP to the `mailpit` service (`SMTP_HOST=mailpit.railway.internal`), read on its Railway domain (basic auth `MP_UI_AUTH`) | Resend (`RESEND_API_KEY`, sending domain verified at Resend) |
 | Database | its own volume (`/data`) | its own volume (`/data`) |
+| Market data | `MANSA_FAKE=true`: fictitious figures, no MansaAPI call | MansaAPI (`STOCK_EXCHANGE_API_KEY`) |
 | Passkeys | bound to its own `PHX_HOST` | bound to the production `PHX_HOST` |
 
 Both set `FIRST_ADMIN_EMAIL`: only that address can become the first

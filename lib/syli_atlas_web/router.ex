@@ -54,6 +54,7 @@ defmodule SyliAtlasWeb.Router do
 
   pipeline :admin do
     plug SyliAtlasWeb.Plugs.AdminAuth
+    plug SyliAtlasWeb.Plugs.AdminShell
     plug :put_layout, false
     plug :admin_locale
   end
@@ -205,6 +206,20 @@ defmodule SyliAtlasWeb.Router do
     post "/notations/:id/approuver", RatingsController, :approve
     post "/notations/:id/rejeter", RatingsController, :reject
     post "/notations/verifier/:id", RatingsController, :check
+    get "/mises-a-jour", UpdatesController, :index
+    post "/mises-a-jour/verifier", UpdatesController, :check
+    post "/mises-a-jour/mesurer", UpdatesController, :measure
+    post "/mises-a-jour/files/:queue", UpdatesController, :pause
+    post "/mises-a-jour/taches/:id/relancer", UpdatesController, :retry_job
+    get "/mises-a-jour/editions/:id", UpdatesController, :edition
+    post "/mises-a-jour/editions/:id/relancer", UpdatesController, :rerun
+    post "/mises-a-jour/editions/:id/restaurer", UpdatesController, :restore
+    get "/marches", MarketController, :index
+    post "/marches/importer", MarketController, :import
+    post "/marches/pause", MarketController, :pause
+    post "/marches/anomalies/:id", MarketController, :decide
+    get "/emails", EmailsController, :index
+    post "/membres/:id/sessions", MembersController, :close_sessions
     get "/recherches", SearchMissesController, :index
     get "/membres", MembersController, :index
     post "/membres/:id/role", MembersController, :role

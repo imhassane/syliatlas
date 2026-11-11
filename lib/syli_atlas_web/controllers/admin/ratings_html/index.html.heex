@@ -1,152 +1,307 @@
-<main id="main" class="adm">
-  <div class="wrap stack gap-4">
-    <header class="adm-head">
+<.admin_shell
+  current={:ratings}
+  counts={@admin_counts}
+  until={@admin_until}
+  key={@admin_key}
+>
+  <input type="checkbox" id="adm-new-toggle" class="adm-toggle" hidden />
+  <header class="adm-head">
+    <div class="adm-intro">
+      <p class="eyebrow">Données</p>
+      <h1 class="adm-title">Notations à valider</h1>
+      <p class="muted">
+        La veille quotidienne lit l'actualité, l'IA propose une décision d'agence avec l'extrait qui la justifie. Rien n'est publié avant validation sur le communiqué de l'agence.
+      </p>
+    </div>
+    <div class="adm-head-actions">
+      <.form for={%{}} action={~p"/admin/notations/veille"} method="post" id="adm-watch-form">
+        <button class="btn btn-secondary" type="submit" id="adm-watch">Lancer la veille</button>
+      </.form>
+      <label for="adm-new-toggle" class="btn btn-primary" id="adm-new-open" role="button">
+        Saisir une notation
+      </label>
+    </div>
+  </header>
+
+  <p :if={msg = Phoenix.Flash.get(@flash, :info)} class="adm-flash ok" role="status">{msg}</p>
+  <p :if={msg = Phoenix.Flash.get(@flash, :error)} class="adm-flash err" role="alert">{msg}</p>
+
+  <dl class="stats" id="adm-stats">
+    <div>
+      <dt>À valider</dt>
+      <dd class="big num">{length(@pending)}</dd>
+      <dd class="small muted">propositions dans la file</dd>
+    </div>
+    <div>
+      <dt>Dernière veille</dt>
+      <dd class="big num adm-big-sm">
+        {if @last_watch, do: Calendar.strftime(@last_watch, "%H:%M") <> " UTC", else: "—"}
+      </dd>
+      <dd class="small muted">
+        {if @last_watch, do: fr_date(@last_watch), else: "jamais lancée"} · {if @extractor?,
+          do: "IA configurée",
+          else: "IA absente (ANTHROPIC_API_KEY)"}
+      </dd>
+    </div>
+    <div>
+      <dt>Lignes à vérifier</dt>
+      <dd class="big num">{length(@to_check)}</dd>
+      <dd class="small muted">notes en ligne à comparer au communiqué</dd>
+    </div>
+    <div>
+      <dt>Pays notés</dt>
+      <dd class="big num">{rated_count(@doc)}</dd>
+      <dd class="small muted">sur 54, au moins une agence</dd>
+    </div>
+  </dl>
+
+  <section class="card adm-new" id="adm-new">
+    <div class="adm-card-head">
       <div>
-        <p class="eyebrow">Admin Syli Atlas</p>
-        <h1 class="h1">Notations souveraines à valider</h1>
+        <h2 class="h2">Saisir une notation</h2>
         <p class="small muted">
-          Rien n'est publié sans validation humaine. La source publiée est toujours le communiqué de l'agence, jamais l'article ni l'IA.
+          Elle rejoint la file d'attente, puis se publie comme les autres.
         </p>
       </div>
-      <.form for={%{}} action={~p"/admin/notations/veille"} method="post">
-        <button class="btn btn-secondary" type="submit" id="adm-watch">Lancer la veille maintenant</button>
-        <p class="small muted">
-          IA : {if @extractor?,
-            do: "clé configurée",
-            else: "ANTHROPIC_API_KEY absente, la veille ne propose rien"}
-          <span :if={@last_watch}>· dernière veille : {Calendar.strftime(
-            @last_watch,
-            "%d/%m/%Y %H:%M"
-          )} UTC</span>
-        </p>
-      </.form>
-    </header>
+      <label for="adm-new-toggle" class="btn btn-quiet btn-sm" role="button">Fermer</label>
+    </div>
+    <.form for={%{}} action={~p"/admin/notations"} method="post" class="adm-form adm-pad">
+      <.adm_fields proposal={%SyliAtlas.Ratings.Proposal{}} doc={@doc} />
+      <div class="adm-actions">
+        <button class="btn btn-primary" type="submit">Ajouter à la file</button>
+      </div>
+    </.form>
+  </section>
 
-    <p :if={msg = Phoenix.Flash.get(@flash, :info)} class="adm-flash ok" role="status">{msg}</p>
-    <p :if={msg = Phoenix.Flash.get(@flash, :error)} class="adm-flash err" role="alert">{msg}</p>
-
-    <section class="stack gap-3" id="adm-pending">
-      <h2 class="h2">File d'attente <span class="muted num">{length(@pending)}</span></h2>
-      <p :if={@pending == []} class="muted">Aucune proposition en attente.</p>
-
-      <article :for={p <- @pending} class="card pad stack gap-2 adm-item" id={"proposal-#{p.id}"}>
-        <div class="adm-item-head">
-          <b>{country_name(@doc, p.country_code)}</b>
-          <span class="mono">{agency_name(p.agency)} · {display(p.rating)}</span>
-          <span class="small muted">{origin_label(p.origin)} · {Calendar.strftime(
-            p.inserted_at,
-            "%d/%m %H:%M"
-          )}</span>
-        </div>
-        <p :if={cur = current(@doc, p.country_code, p.agency)} class="small muted">
-          En ligne : {display(cur["rating"])}, {outlook_label(cur["outlook"])} ({cur[
-            "action_date"
-          ]})
-        </p>
-        <ul :if={p.warnings != []} class="adm-warn">
-          <li :for={w <- p.warnings}>⚠ {warning_label(w)}</li>
-        </ul>
-        <blockquote :if={p.excerpt} class="adm-quote">
-          « {p.excerpt} »
-          <footer :if={p.article_url} class="small">
-            <a href={p.article_url} rel="noopener noreferrer" target="_blank">{p.article_title ||
-              p.article_url} ↗</a>
-          </footer>
-        </blockquote>
-
-        <.form
-          for={%{}}
-          action={~p"/admin/notations/#{p.id}/approuver"}
-          method="post"
-          class="adm-form"
+  <section class="card adm-list" id="adm-pending">
+    <div class="adm-card-head">
+      <h2 class="h2">File d'attente</h2>
+      <nav class="adm-filters" aria-label="Filtrer la file">
+        <a
+          :for={
+            {key, label} <- [
+              {"toutes", "Toutes"},
+              {"changements", "Changements de note"},
+              {"confirmations", "Confirmations"}
+            ]
+          }
+          href={
+            if(key == "toutes",
+              do: ~p"/admin/notations",
+              else: ~p"/admin/notations?filtre=#{key}"
+            )
+          }
+          class={["btn btn-sm", if(key == @filter, do: "btn-primary", else: "btn-secondary")]}
+          aria-current={if(key == @filter, do: "page")}
+          id={"adm-filter-#{key}"}
         >
-          <.adm_fields proposal={p} doc={@doc} />
-          <div class="adm-actions">
-            <button class="btn btn-primary" type="submit">Publier</button>
-          </div>
-        </.form>
-        <.form for={%{}} action={~p"/admin/notations/#{p.id}/rejeter"} method="post">
-          <button class="btn btn-ghost small" type="submit">Rejeter</button>
-        </.form>
-      </article>
-    </section>
+          {label}
+        </a>
+      </nav>
+    </div>
 
-    <section class="card pad stack gap-2" id="adm-new">
-      <h2 class="h2">Saisir une décision</h2>
-      <p class="small muted">Elle rejoint la file d'attente, puis se publie comme les autres.</p>
-      <.form for={%{}} action={~p"/admin/notations"} method="post" class="adm-form">
-        <.adm_fields proposal={%SyliAtlas.Ratings.Proposal{}} doc={@doc} />
-        <div class="adm-actions">
-          <button class="btn btn-secondary" type="submit">Ajouter à la file</button>
+    <p :if={@shown.total == 0} class="adm-empty muted" id="adm-empty">
+      {if @pending == [],
+        do: "File vide. La prochaine veille passe demain à 07:20 UTC.",
+        else: "Aucune proposition de ce type dans la file."}
+    </p>
+
+    <%= for p <- @shown.entries do %>
+      <% {pill, pill_class} = decision_pill(p, @doc) %>
+      <% cur = current(@doc, p.country_code, p.agency) %>
+      <.form
+        for={%{}}
+        action={~p"/admin/notations/#{p.id}/approuver"}
+        method="post"
+        class="adm-row"
+        id={"proposal-#{p.id}"}
+      >
+        <input
+          type="checkbox"
+          id={"fix-#{p.id}"}
+          class="adm-toggle"
+          hidden
+          checked={"unknown_country" in (p.warnings || [])}
+        />
+        <div class="adm-row-main">
+          <div class="adm-item-head">
+            <b>{country_name(@doc, p.country_code)} · {agency_name(p.agency)}</b>
+            <span class={["pill", pill_class]}>{pill}</span>
+            <span class="mono subtle small">
+              {if(p.origin == "watch", do: "détectée", else: "saisie")} le {fr_date(p.inserted_at)} · {origin_label(
+                p.origin
+              )}
+            </span>
+          </div>
+          <p class="adm-proposal">
+            Proposition : <b class="num">{proposal_text(p, cur)}</b>, {outlook_label(p.outlook)}, {fr_date(
+              p.action_date
+            )}
+          </p>
+          <p :if={cur} class="small muted">
+            En ligne : {display(cur["rating"])}, {outlook_label(cur["outlook"])}, {fr_date(
+              cur["action_date"]
+            )}
+          </p>
+          <blockquote :if={p.excerpt} class="adm-quote">
+            Extrait retenu par l'IA : « {p.excerpt} »
+            <a
+              :if={p.article_url}
+              href={p.article_url}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              · {p.article_title || URI.parse(p.article_url).host} ↗
+            </a>
+          </blockquote>
+          <p class="adm-checks mono small">
+            Contrôles :
+            <%= for {{ok?, label}, i} <- Enum.with_index(checks(p)) do %>
+              {if i > 0, do: " · "}<span class={if(ok?, do: "subtle", else: "adm-bad")}>{label} {if ok?,
+                do: "✓",
+                else: "⚠"}</span>
+            <% end %>
+          </p>
+        </div>
+        <div class="adm-row-side">
+          <label class="adm-field">
+            Lien du communiqué de l'agence
+            <input
+              name="p[source_url]"
+              type="url"
+              value={p.source_url}
+              placeholder={source_placeholder(p.agency)}
+            />
+          </label>
+          <div class="adm-buttons">
+            <button class="btn btn-primary btn-sm" type="submit" id={"approve-#{p.id}"}>
+              Valider et publier
+            </button>
+            <label for={"fix-#{p.id}"} class="btn btn-secondary btn-sm" role="button">
+              Corriger
+            </label>
+            <button
+              class="btn btn-quiet btn-sm"
+              type="submit"
+              form={"reject-#{p.id}"}
+              id={"reject-btn-#{p.id}"}
+            >
+              Rejeter
+            </button>
+          </div>
+        </div>
+        <div class="adm-fix adm-form">
+          <.adm_fields proposal={p} doc={@doc} source={false} />
         </div>
       </.form>
-    </section>
+      <.form
+        for={%{}}
+        action={~p"/admin/notations/#{p.id}/rejeter"}
+        method="post"
+        id={"reject-#{p.id}"}
+        class="adm-hidden-form"
+      >
+      </.form>
+    <% end %>
+    <.admin_pager page={@shown} path={~p"/admin/notations"} params={@params} />
+  </section>
 
-    <section class="stack gap-3" id="adm-check">
-      <h2 class="h2">
-        Notes en ligne marquées « à vérifier » <span class="muted num">{length(@to_check)}</span>
-      </h2>
-      <p class="small muted">
-        Comparer au communiqué de l'agence, corriger si besoin, coller le lien du communiqué, puis valider.
-      </p>
-      <article :for={r <- @to_check} class="card pad stack gap-2" id={"check-#{r.id}"}>
+  <section class="card adm-list" id="adm-check">
+    <div class="adm-card-head">
+      <div>
+        <h2 class="h2">
+          Notes en ligne à vérifier <span class="muted num">{length(@to_check)}</span>
+        </h2>
+        <p class="small muted">
+          Comparer au communiqué de l'agence, corriger si besoin, coller le lien du communiqué, puis valider.
+        </p>
+      </div>
+    </div>
+    <p :if={@to_check_page.total == 0} class="adm-empty muted">Aucune note à vérifier.</p>
+
+    <.form
+      :for={r <- @to_check_page.entries}
+      for={%{}}
+      action={~p"/admin/notations/verifier/#{r.id}"}
+      method="post"
+      class="adm-row"
+      id={"check-#{r.id}"}
+    >
+      <input type="checkbox" id={"fix-check-#{r.id}"} class="adm-toggle" hidden />
+      <div class="adm-row-main">
         <div class="adm-item-head">
-          <b>{country_name(@doc, r.country_code)}</b>
-          <span class="mono">{agency_name(r.agency)} · {display(r.rating)} · {outlook_label(
-            r.outlook
-          )} · {r.action_date}</span>
+          <b>{country_name(@doc, r.country_code)} · {agency_name(r.agency)}</b>
+          <span class="pill pill-warn">À vérifier</span>
         </div>
+        <p class="adm-proposal">
+          En ligne : <b class="num">{display(r.rating)}</b>, {outlook_label(r.outlook)}, {fr_date(
+            r.action_date
+          )}
+        </p>
         <p :if={r.note} class="small muted">{r.note}</p>
-        <p :if={r.source_url} class="small">
+        <p :if={r.source_url} class="small adm-source">
           Source actuelle :
           <a href={r.source_url} rel="noopener noreferrer" target="_blank">{r.source_url}</a>
         </p>
-        <.form
-          for={%{}}
-          action={~p"/admin/notations/verifier/#{r.id}"}
-          method="post"
-          class="adm-form"
-        >
-          <label>Note <input name="r[rating]" value={r.rating} /></label>
-          <label>
-            Perspective
-            <select name="r[outlook]">
-              <option :for={{l, v} <- outlooks()} value={v} selected={v == (r.outlook || "")}>
-                {l}
-              </option>
-            </select>
+      </div>
+      <div class="adm-row-side">
+        <label class="adm-field">
+          Lien du communiqué de l'agence
+          <input name="r[source_url]" type="url" placeholder={source_placeholder(r.agency)} />
+        </label>
+        <div class="adm-buttons">
+          <button class="btn btn-primary btn-sm" type="submit">Marquer vérifiée</button>
+          <label for={"fix-check-#{r.id}"} class="btn btn-secondary btn-sm" role="button">
+            Corriger
           </label>
-          <label>Date
-          <input name="r[action_date]" value={r.action_date} placeholder="AAAA-MM-JJ" /></label>
-          <label class="adm-wide">Communiqué de l'agence
-          <input name="r[source_url]" type="url" placeholder="https://…" /></label>
-          <div class="adm-actions">
-            <button class="btn btn-secondary" type="submit">Marquer vérifiée</button>
-          </div>
-        </.form>
-      </article>
-    </section>
+        </div>
+      </div>
+      <div class="adm-fix adm-form">
+        <label>Note <input name="r[rating]" value={r.rating} /></label>
+        <label>
+          Perspective
+          <select name="r[outlook]">
+            <option :for={{l, v} <- outlooks()} value={v} selected={v == (r.outlook || "")}>
+              {l}
+            </option>
+          </select>
+        </label>
+        <label>
+          Date <input name="r[action_date]" value={r.action_date} placeholder="AAAA-MM-JJ" />
+        </label>
+      </div>
+    </.form>
+    <.admin_pager page={@to_check_page} path={~p"/admin/notations"} params={@params} key="verif" />
+  </section>
 
-    <section :if={@decided != []} class="stack gap-2" id="adm-decided">
+  <section :if={@decided.total > 0} class="card adm-list" id="adm-decided">
+    <div class="adm-card-head">
       <h2 class="h2">Dernières décisions de la file</h2>
-      <table class="table">
-        <thead>
-          <tr>
-            <th class="l">Pays</th><th class="l">Agence</th><th class="l">Note</th><th class="l">
-              Statut
-            </th><th class="l">Le</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr :for={p <- Enum.sort_by(@decided, & &1.reviewed_at, {:desc, DateTime})}>
-            <td class="l">{country_name(@doc, p.country_code)}</td>
-            <td class="l">{agency_name(p.agency)}</td>
-            <td class="l">{display(p.rating)}</td>
-            <td class="l">{status_label(p.status)}</td>
-            <td class="l">{p.reviewed_at && Calendar.strftime(p.reviewed_at, "%d/%m/%Y")}</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
-  </div>
-</main>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th class="l">Pays</th>
+          <th class="l">Agence</th>
+          <th class="l">Note</th>
+          <th class="l">Statut</th>
+          <th class="l">Le</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr :for={p <- @decided.entries}>
+          <td class="l">{country_name(@doc, p.country_code)}</td>
+          <td class="l">{agency_name(p.agency)}</td>
+          <td class="l">{display(p.rating)}</td>
+          <td class="l">{status_label(p.status)}</td>
+          <td class="l">{fr_date(p.reviewed_at)}</td>
+        </tr>
+      </tbody>
+    </table>
+    <.admin_pager page={@decided} path={~p"/admin/notations"} params={@params} key="decisions" />
+  </section>
+
+  <p class="mono subtle small">
+    La source publiée est toujours le communiqué de l'agence (spglobal.com, moodys.com, fitchratings.com), jamais l'article ni l'IA.
+  </p>
+</.admin_shell>

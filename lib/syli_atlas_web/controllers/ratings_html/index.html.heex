@@ -1,28 +1,4 @@
 <Layouts.public locale={@locale} current={:ratings} alternates={@alternates}>
-  <div
-    :if={@doc["recent"] != []}
-    class="ticker"
-    role="region"
-    aria-label={gettext("Latest rating decisions")}
-  >
-    <div class="ticker-track">
-      <ul :for={hidden <- [false, true]} class="ticker-list" aria-hidden={hidden && "true"}>
-        <li :for={r <- @doc["recent"]}>
-          <a
-            href={Paths.country_tab(@locale, @doc["countries"][r["code"]]["slug"][@locale], :markets) <> "#notation"}
-            tabindex={hidden && "-1"}
-          >
-            <b>{@doc["countries"][r["code"]]["name"][@locale]}</b>
-            <span class="muted">{agency_name(r["agency"])} · {date_text(r["action_date"], @locale)}</span>
-            <span class={if(r["action_type"] == "upgrade", do: "up", else: "down")}>
-              {if(r["action_type"] == "upgrade", do: "▲", else: "▼")} {Scale.display(r["rating"])}
-            </span>
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
-
   <.section id="ratings-list" tight={:top} class="rt-page">
     <nav aria-label={gettext("Breadcrumb")}>
       <ol class="crumbs">
@@ -31,7 +7,7 @@
       </ol>
     </nav>
 
-    <div class="card market-table" id="ratings-table">
+    <div class="card market-table" id="ratings-table" data-keep-place>
       <div class="market-toolbar">
         <div class="market-toolbar-title">
           <h1 class="market-h1 rt-h1">
@@ -98,7 +74,7 @@
               <th scope="col" class="l">{gettext("Verdict")}</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody data-reorder>
             <tr :for={e <- @rows} id={"rating-#{e["code"]}"}>
               <td class="l mono subtle" data-label="#">{e["rank"] || "—"}</td>
               <th scope="row" class="l">

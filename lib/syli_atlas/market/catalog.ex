@@ -64,12 +64,19 @@ defmodule SyliAtlas.Market.Catalog do
   def get(code), do: Map.get(@sources, code)
   def get!(code), do: Map.fetch!(@sources, code)
 
-  def name(code), do: (get(code) || %{name: code}).name
-  def url(code), do: (get(code) || %{url: nil}).url
+  # In development with the stand-in, nothing names or links MansaAPI.
+  def name(code) do
+    if SyliAtlas.Market.fake?(), do: "fictitious figures", else: (get(code) || %{name: code}).name
+  end
+
+  def url(code) do
+    if SyliAtlas.Market.fake?(), do: nil, else: (get(code) || %{url: nil}).url
+  end
 
   @doc "The credit the licence asks for, verbatim (not translated)."
   def attribution(code) do
-    case get(code) do
+    case SyliAtlas.Market.fake?() || get(code) do
+      true -> "Fictitious figures (development), not MansaAPI's"
       %{licence: %{attribution: text}} -> text
       _ -> code
     end

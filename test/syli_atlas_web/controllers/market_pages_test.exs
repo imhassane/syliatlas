@@ -10,11 +10,10 @@ defmodule SyliAtlasWeb.MarketPagesTest do
 
   defp doc(conn, path), do: conn |> get(path) |> html_response(200) |> LazyHTML.from_document()
 
-  test "the list shows every exchange, the scrolling band and the source", %{conn: conn} do
+  test "the list shows every exchange, the header band and the source", %{conn: conn} do
     html = doc(conn, "/fr/bourses")
     assert html |> LazyHTML.query("#market-list tbody tr") |> Enum.count() == 21
-    assert html |> LazyHTML.query(".ticker-list") |> Enum.count() == 2
-    assert html |> LazyHTML.query(".ticker-list[aria-hidden=true]") |> Enum.count() == 1
+    assert html |> LazyHTML.query("#site-ticker .site-ticker-list") |> Enum.count() == 2
     text = LazyHTML.text(html)
     assert text =~ "Data by MansaAPI"
     assert text =~ "pas un conseil en investissement"
@@ -45,10 +44,12 @@ defmodule SyliAtlasWeb.MarketPagesTest do
     SyliAtlas.Repo.delete_all(SyliAtlas.Market.EodPrice)
     SyliAtlas.Repo.delete_all(SyliAtlas.Market.IndexValue)
     SyliAtlas.Market.Snapshots.rebuild!()
+    SyliAtlasWeb.Ticker.reset()
 
     html = doc(build_conn(), "/fr/bourses")
     assert html |> LazyHTML.query("#market-empty") |> Enum.count() == 1
-    assert html |> LazyHTML.query("#market-summary, #market-table, .ticker") |> Enum.count() == 0
+    assert html |> LazyHTML.query("#market-summary, #market-table") |> Enum.count() == 0
+    assert html |> LazyHTML.query(~s(#site-ticker a[href^="/fr/bourses"])) |> Enum.count() == 0
   end
 
   test "the list is searched, filtered and sorted through the URL", %{conn: conn} do
