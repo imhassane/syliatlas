@@ -16,6 +16,7 @@ defmodule SyliAtlasWeb.Admin.MembersController do
       users: Accounts.list_users(search: params["q"], role: role),
       passkey_counts: passkey_counts(),
       stats: Accounts.stats(),
+      mail: SyliAtlas.Mailer.service(),
       q: params["q"] || "",
       role: role
     )

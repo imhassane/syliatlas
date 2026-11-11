@@ -56,7 +56,12 @@ defmodule SyliAtlas.Accounts.Digests do
     with %User{deactivated_at: nil} = user <- Repo.get(User, user_id),
          false <- sent_today?(user, today),
          %{} = digest <- build(user, today) do
-      case user |> AlertEmails.digest(digest) |> Emails.deliver() do
+      email =
+        user
+        |> AlertEmails.digest(digest)
+        |> Swoosh.Email.put_private(:idempotency_key, "digest-#{user.id}-#{today}")
+
+      case Emails.deliver(email) do
         :ok ->
           mark_sent(user, digest)
           :ok

@@ -193,7 +193,12 @@ defmodule SyliAtlas.Accounts.AlertEvents do
         :ok
 
       true ->
-        case delivery.user |> AlertEmails.alert(delivery) |> Emails.deliver() do
+        email =
+          delivery.user
+          |> AlertEmails.alert(delivery)
+          |> Swoosh.Email.put_private(:idempotency_key, "alert-delivery-#{delivery.id}")
+
+        case Emails.deliver(email) do
           :ok ->
             Repo.update_all(where(AlertDelivery, id: ^delivery.id),
               set: [sent_at: DateTime.utc_now(:second)]

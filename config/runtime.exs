@@ -50,45 +50,75 @@ if config_env() != :test do
        end)
 end
 
-# Emails (sign-in codes, alerts). MAILER_ADAPTER chooses, else the
-# variables present do:
+# Emails (sign-in codes, alerts, digests). MAILER_ADAPTER chooses, else
+# the variables present do:
 #
-#   resend   RESEND_API_KEY                 production
-#   smtp     SMTP_HOST (+ SMTP_PORT, 1025)  Mailpit on Railway, outside production
-#   local    nothing                        /dev/mailbox, development only
+#   resend   RESEND_API_KEY                   production (Resend's HTTP API, SyliAtlas.Mailer.Resend)
+#   smtp     SMTP_HOST, SMTP_PORT (1025)      Mailpit on Railway, or a local one
+#            SMTP_USERNAME, SMTP_PASSWORD     only if the server asks (Mailpit: no)
+#            SMTP_TLS never | if_available | always (default never: Mailpit
+#            talks plain SMTP on the private network)
+#   local    nothing                          /dev/mailbox, development only
 #
-# A release with neither sends nothing: sign-in says it is not open yet
-# (never a code written to the logs). MAIL_FROM: "Syli Atlas <bonjour@…>".
+# A release with none of them sends nothing: sign-in says it is not open
+# yet (never a code written to the logs). MAIL_FROM: "Syli Atlas
+# <bonjour@…>", an address of a domain verified at Resend in production.
 # FIRST_ADMIN_EMAIL, when set, is the only address that can become the
 # first administrator.
 if config_env() != :test do
-  mailer_adapter =
+  env = fn name -> System.get_env(name) |> then(&if(&1 in [nil, ""], do: nil, else: &1)) end
+
+  adapter =
     cond do
-      adapter = System.get_env("MAILER_ADAPTER") -> adapter
-      System.get_env("RESEND_API_KEY") -> "resend"
-      System.get_env("SMTP_HOST") -> "smtp"
+      adapter = env.("MAILER_ADAPTER") -> adapter
+      env.("RESEND_API_KEY") -> "resend"
+      env.("SMTP_HOST") -> "smtp"
       config_env() == :dev -> "local"
       true -> "none"
     end
 
   mailer =
-    case mailer_adapter do
+    case adapter do
       "resend" ->
-        [adapter: Swoosh.Adapters.Resend, api_key: System.fetch_env!("RESEND_API_KEY")]
-
-      "smtp" ->
+        # Our adapter (SyliAtlas.Mailer.Resend): Resend's HTTP API with Req,
+        # headers as Resend expects them, idempotency keys.
         [
-          adapter: Swoosh.Adapters.SMTP,
-          relay: System.get_env("SMTP_HOST", "localhost"),
-          port: String.to_integer(System.get_env("SMTP_PORT", "1025")),
-          ssl: false,
-          tls: :never,
-          auth: :never,
-          retries: 1,
-          no_mx_lookups: true
+          adapter: SyliAtlas.Mailer.Resend,
+          api_key: env.("RESEND_API_KEY") || raise("MAILER_ADAPTER=resend needs RESEND_API_KEY")
         ]
 
+      "smtp" ->
+        tls =
+          case env.("SMTP_TLS") || "never" do
+            "never" -> :never
+            "if_available" -> :if_available
+            "always" -> :always
+            other -> raise "SMTP_TLS=#{other}: expected never, if_available or always"
+          end
+
+        credentials =
+          case {env.("SMTP_USERNAME"), env.("SMTP_PASSWORD")} do
+            {nil, _} -> [auth: :never]
+            {user, password} -> [auth: :always, username: user, password: password || ""]
+          end
+
+        [
+          adapter: Swoosh.Adapters.SMTP,
+          relay: env.("SMTP_HOST") || "localhost",
+          port: String.to_integer(env.("SMTP_PORT") || "1025"),
+          ssl: false,
+          tls: tls,
+          retries: 1,
+          no_mx_lookups: true
+        ] ++ credentials
+
       "local" ->
+        if config_env() == :prod,
+          do:
+            raise(
+              "MAILER_ADAPTER=local keeps emails in memory, unreadable in a release: use smtp (Mailpit) or resend"
+            )
+
         [adapter: Swoosh.Adapters.Local]
 
       "none" ->
@@ -100,6 +130,10 @@ if config_env() != :test do
 
   if mailer, do: config(:syli_atlas, SyliAtlas.Mailer, mailer)
   config :syli_atlas, :mail_enabled, mailer != nil
+
+  # What the boot log and the admin show: the service, never a secret.
+  service = if adapter == "smtp", do: "smtp #{mailer[:relay]}:#{mailer[:port]}", else: adapter
+  config :syli_atlas, :mail_adapter, service
 
   case System.get_env("MAIL_FROM") do
     nil ->
