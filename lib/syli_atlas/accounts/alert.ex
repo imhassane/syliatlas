@@ -8,8 +8,9 @@ defmodule SyliAtlas.Accounts.Alert do
 
   @kinds ~w(rating_change new_edition indicator_above indicator_below)
   @frequencies ~w(immediate weekly)
-  # The IMF indicators a threshold can watch (see SyliAtlas.Sources).
-  @indicators ~w(NGDP_RPCH PCPIPCH GGXWDG_NGDP GGXCNL_NGDP BCA_NGDPD NGDPDPC LUR)
+  # The IMF indicators a threshold can watch (keys of SyliAtlas.Sources.Indicators).
+  @indicators ~w(real_gdp_growth inflation public_debt_pct_gdp fiscal_balance_pct_gdp
+                 current_account_pct_gdp gdp_per_capita_usd unemployment)
   @max_per_user 50
 
   schema "alerts" do
@@ -21,6 +22,8 @@ defmodule SyliAtlas.Accounts.Alert do
     field :frequency, :string, default: "immediate"
     field :active, :boolean, default: true
     field :last_triggered_at, :utc_datetime
+    field :last_value, :decimal
+    field :last_year, :integer
 
     timestamps(type: :utc_datetime)
   end

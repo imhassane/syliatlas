@@ -4631,6 +4631,7 @@ msgid "Comparison"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/session_html/code.html.heex:29
+#: lib/syli_atlas_web/controllers/unsubscribe_html/show.html.heex:16
 #, elixir-autogen, elixir-format
 msgid "Confirm"
 msgstr ""
@@ -4708,6 +4709,7 @@ msgid "Email me when a passkey is added or an admin session opens"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/account_html/security.html.heex:92
+#: lib/syli_atlas_web/controllers/unsubscribe_html/show.html.heex:5
 #, elixir-autogen, elixir-format
 msgid "Emails"
 msgstr ""
@@ -5197,4 +5199,61 @@ msgstr ""
 #, elixir-autogen, elixir-format
 msgctxt "account"
 msgid "Security"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/unsubscribe_html/show.html.heex:13
+#, elixir-autogen, elixir-format
+msgid "Alert on"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/unsubscribe_html/show.html.heex:8
+#, elixir-autogen, elixir-format
+msgid "Done"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/unsubscribe_html/show.html.heex:22
+#, elixir-autogen, elixir-format
+msgid "Manage my alerts"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/unsubscribe_html.ex:11
+#, elixir-autogen, elixir-format
+msgid "Stop every alert and the digest"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/unsubscribe_html.ex:10
+#, elixir-autogen, elixir-format
+msgid "Stop the digest of favourites"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/unsubscribe_html.ex:9
+#, elixir-autogen, elixir-format
+msgid "Stop this alert"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/unsubscribe_html.ex:13
+#, elixir-autogen, elixir-format
+msgid "This alert is paused. You can resume it from your space."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/unsubscribe_html.ex:8
+#, elixir-autogen, elixir-format
+msgid "This link is no longer valid."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/unsubscribe_controller.ex:19
+#: lib/syli_atlas_web/controllers/unsubscribe_controller.ex:39
+#: lib/syli_atlas_web/controllers/unsubscribe_controller.ex:57
+#, elixir-autogen, elixir-format
+msgid "Unsubscribe"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/unsubscribe_html.ex:14
+#, elixir-autogen, elixir-format
+msgid "You will no longer receive the digest."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/unsubscribe_html.ex:15
+#, elixir-autogen, elixir-format
+msgid "Your alerts are paused and the digest is off."
 msgstr ""

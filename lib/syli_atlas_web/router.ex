@@ -44,6 +44,14 @@ defmodule SyliAtlasWeb.Router do
     plug :put_account_locale
   end
 
+  # Unsubscribe links of emails: the signed token is the proof, so mail
+  # clients' one-click POST (RFC 8058) works without a session or CSRF token.
+  pipeline :unsubscribe do
+    plug :accepts, ["html"]
+    plug :put_root_layout, html: {SyliAtlasWeb.Layouts, :root}
+    plug :put_secure_browser_headers
+  end
+
   pipeline :admin do
     plug SyliAtlasWeb.Plugs.AdminAuth
     plug :put_layout, false
@@ -103,6 +111,13 @@ defmodule SyliAtlasWeb.Router do
     get "/my-space", AccountController, :favorites
     get "/my-space/alerts", AccountController, :alerts
     get "/my-space/security", AccountController, :security
+  end
+
+  scope "/unsubscribe", SyliAtlasWeb do
+    pipe_through :unsubscribe
+
+    get "/:token", UnsubscribeController, :show
+    post "/:token", UnsubscribeController, :create
   end
 
   scope "/account", SyliAtlasWeb do

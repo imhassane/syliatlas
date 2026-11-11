@@ -1,0 +1,27 @@
+<Layouts.public locale={@locale} current={:account}>
+  <section class="section section-alt auth">
+    <div class="wrap auth-narrow">
+      <div class="card pad stack gap-3" id="unsubscribe">
+        <p class="eyebrow">{gettext("Emails")}</p>
+        <%= cond do %>
+          <% @done -> %>
+            <h1 class="h1">{gettext("Done")}</h1>
+            <p class="muted" id="unsubscribe-done">{done(@scope)}</p>
+          <% @scope -> %>
+            <h1 class="h1">{what(@scope)}</h1>
+            <p :if={@alert} class="muted">
+              {gettext("Alert on")} <b>{@alert.area_code}</b>
+            </p>
+            <form method="post" action={"/unsubscribe/" <> @token} id="unsubscribe-form">
+              <button class="btn btn-primary" type="submit">{gettext("Confirm")}</button>
+            </form>
+          <% true -> %>
+            <h1 class="h1">{what(nil)}</h1>
+        <% end %>
+        <p class="small muted">
+          <a href={Paths.account(@locale, :alerts)}>{gettext("Manage my alerts")}</a>
+        </p>
+      </div>
+    </div>
+  </section>
+</Layouts.public>

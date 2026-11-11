@@ -71,6 +71,10 @@ defmodule SyliAtlas.Ratings.Review do
         |> Ecto.Changeset.change(status: "approved", reviewed_at: now())
         |> Repo.update!()
 
+        # Alerts on this country, in the same transaction: a refused
+        # validation alerts nobody.
+        SyliAtlas.Accounts.AlertEvents.rating_published(rating)
+
         rating
       end)
       |> tap(fn

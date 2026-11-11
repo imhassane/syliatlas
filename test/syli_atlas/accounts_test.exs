@@ -302,7 +302,7 @@ defmodule SyliAtlas.AccountsTest do
         Accounts.create_alert(member, %{
           "kind" => "indicator_below",
           "area_code" => "GHA",
-          "indicator" => "PCPIPCH",
+          "indicator" => "inflation",
           "threshold" => "5.1"
         })
 

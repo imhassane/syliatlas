@@ -80,13 +80,13 @@ defmodule SyliAtlasWeb.AccountHTML do
 
   def indicators,
     do: [
-      {"NGDP_RPCH", gettext("Real GDP growth (%)")},
-      {"PCPIPCH", gettext("Inflation (%)")},
-      {"GGXWDG_NGDP", gettext("Public debt (% of GDP)")},
-      {"GGXCNL_NGDP", gettext("Budget balance (% of GDP)")},
-      {"BCA_NGDPD", gettext("Current account (% of GDP)")},
-      {"NGDPDPC", gettext("GDP per capita (US$)")},
-      {"LUR", gettext("Unemployment (%)")}
+      {"real_gdp_growth", gettext("Real GDP growth (%)")},
+      {"inflation", gettext("Inflation (%)")},
+      {"public_debt_pct_gdp", gettext("Public debt (% of GDP)")},
+      {"fiscal_balance_pct_gdp", gettext("Budget balance (% of GDP)")},
+      {"current_account_pct_gdp", gettext("Current account (% of GDP)")},
+      {"gdp_per_capita_usd", gettext("GDP per capita (US$)")},
+      {"unemployment", gettext("Unemployment (%)")}
     ]
 
   def frequencies,

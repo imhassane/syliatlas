@@ -233,7 +233,7 @@ defmodule SyliAtlasWeb.AccountTest do
         "alert" => %{
           "area_code" => "GHA",
           "kind" => "indicator_below",
-          "indicator" => "PCPIPCH",
+          "indicator" => "inflation",
           "threshold" => "5",
           "frequency" => "immediate"
         }
@@ -295,5 +295,24 @@ defmodule SyliAtlasWeb.AccountTest do
     assert email.text_body =~ "Open my space : http"
     assert email.html_body =~ ~s(<td align="right">)
     assert email.html_body =~ "/en/my-space"
+  end
+
+  test "unsubscribe: the page asks, the one-click POST acts without a session", %{conn: conn} do
+    member = user_fixture()
+
+    {:ok, alert} =
+      Accounts.create_alert(member, %{"kind" => "rating_change", "area_code" => "SEN"})
+
+    token = SyliAtlas.Accounts.Unsubscribe.token(:alert, alert.id)
+
+    html = conn |> get("/unsubscribe/" <> token) |> html_response(200)
+    assert html =~ ~s(id="unsubscribe-form")
+    assert SyliAtlas.Repo.reload(alert).active
+
+    html = build_conn() |> post("/unsubscribe/" <> token) |> html_response(200)
+    assert html =~ ~s(id="unsubscribe-done")
+    refute SyliAtlas.Repo.reload(alert).active
+
+    assert build_conn() |> get("/unsubscribe/forged") |> html_response(404) =~ "plus valable"
   end
 end

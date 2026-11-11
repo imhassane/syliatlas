@@ -195,15 +195,33 @@ defmodule SyliAtlas.Accounts.Emails do
     end)
   end
 
-  defp build(to, locale, opts) do
+  defp build(to, locale, opts), do: compose(to, locale, opts)
+
+  @doc """
+  An email in the layout: `:subject`, `:preheader`, `:eyebrow`, `:title`,
+  `:blocks`, `:button`, `:footer` links, and `:unsubscribe` (a one-click
+  URL, sent as the List-Unsubscribe headers of RFC 8058).
+  """
+  def compose(to, locale, opts) do
     opts = Keyword.put(opts, :language, locale)
 
-    Swoosh.Email.new()
-    |> Swoosh.Email.to(to)
-    |> Swoosh.Email.from(from())
-    |> Swoosh.Email.subject(Keyword.fetch!(opts, :subject))
-    |> Swoosh.Email.text_body(EmailLayout.text(opts))
-    |> Swoosh.Email.html_body(EmailLayout.render(opts))
+    email =
+      Swoosh.Email.new()
+      |> Swoosh.Email.to(to)
+      |> Swoosh.Email.from(from())
+      |> Swoosh.Email.subject(Keyword.fetch!(opts, :subject))
+      |> Swoosh.Email.text_body(EmailLayout.text(opts))
+      |> Swoosh.Email.html_body(EmailLayout.render(opts))
+
+    case opts[:unsubscribe] do
+      nil ->
+        email
+
+      url ->
+        email
+        |> Swoosh.Email.header("List-Unsubscribe", "<#{url}>")
+        |> Swoosh.Email.header("List-Unsubscribe-Post", "List-Unsubscribe=One-Click")
+    end
   end
 
   defp from do

@@ -14,6 +14,7 @@ defmodule SyliAtlas.Accounts.User do
     field :security_emails, :boolean, default: true
     field :last_sign_in_at, :utc_datetime
     field :deactivated_at, :utc_datetime
+    field :last_digest_at, :utc_datetime
 
     timestamps(type: :utc_datetime)
   end

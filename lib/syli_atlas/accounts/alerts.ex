@@ -2,7 +2,7 @@ defmodule SyliAtlas.Accounts.Alerts do
   @moduledoc "A member's alerts: created, paused, changed and deleted from their space."
   import Ecto.Query
 
-  alias SyliAtlas.Accounts.{Alert, User}
+  alias SyliAtlas.Accounts.{Alert, AlertEvents, User}
   alias SyliAtlas.Repo
 
   def list(%User{id: id}),
@@ -21,9 +21,25 @@ defmodule SyliAtlas.Accounts.Alerts do
     if Repo.aggregate(where(Alert, user_id: ^user_id), :count) >= Alert.max_per_user() do
       {:error, :too_many_alerts}
     else
-      %Alert{user_id: user_id} |> Alert.changeset(attrs) |> Repo.insert()
+      %Alert{user_id: user_id} |> Alert.changeset(attrs) |> put_baseline() |> Repo.insert()
     end
   end
+
+  # A threshold starts from today's published value: it fires when a later
+  # edition crosses it from there (`SyliAtlas.Accounts.AlertRules`).
+  defp put_baseline(%Ecto.Changeset{valid?: true} = changeset) do
+    case Ecto.Changeset.apply_changes(changeset) do
+      %Alert{kind: kind, area_code: area, indicator: indicator}
+      when kind in ~w(indicator_above indicator_below) ->
+        {value, year} = AlertEvents.baseline(area, indicator)
+        Ecto.Changeset.change(changeset, last_value: value, last_year: year)
+
+      _other ->
+        changeset
+    end
+  end
+
+  defp put_baseline(changeset), do: changeset
 
   def update(%Alert{} = alert, attrs), do: alert |> Alert.changeset(attrs) |> Repo.update()
 

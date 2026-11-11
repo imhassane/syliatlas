@@ -83,6 +83,8 @@ defmodule SyliAtlasWeb.SitemapController do
     Disallow: /admin
     Disallow: /api/
     Disallow: /dev/
+    Disallow: /account
+    Disallow: /unsubscribe/
 
     Sitemap: #{Seo.url("/sitemap.xml")}
     """)
