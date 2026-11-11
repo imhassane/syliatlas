@@ -15,7 +15,8 @@ defmodule SyliAtlasWeb.OgImage.Specs do
 
   @doc "The spec of the page at `path` (« /fr/pays/senegal »), or nil."
   def for_path(path) do
-    with [locale | _] when locale in ["fr", "en"] <- String.split(path, "/", trim: true),
+    with [locale | _] <- String.split(path, "/", trim: true),
+         true <- SyliAtlas.Locales.valid?(locale),
          %{plug: plug, plug_opts: action, path_params: params} <-
            Phoenix.Router.route_info(SyliAtlasWeb.Router, "GET", path, "localhost") do
       Gettext.put_locale(SyliAtlasWeb.Gettext, locale)
@@ -45,7 +46,14 @@ defmodule SyliAtlasWeb.OgImage.Specs do
 
   defp spec(SyliAtlasWeb.RatingsController, :show, %{"slug" => slug}, locale) do
     doc = SyliAtlas.Ratings.document()
-    entry = doc && Enum.find(Map.values(doc["countries"]), &(&1["slug"][locale] == slug))
+
+    entry =
+      doc &&
+        Enum.find(
+          Map.values(doc["countries"]),
+          &(SyliAtlas.Locales.pick(&1["slug"], locale) == slug)
+        )
+
     entry && rating_spec(entry, doc, locale)
   end
 
@@ -82,7 +90,12 @@ defmodule SyliAtlasWeb.OgImage.Specs do
   end
 
   defp spec(SyliAtlasWeb.CommunityController, :show, %{"slug" => slug}, locale) do
-    community = Enum.find(SyliAtlas.Economy.Communities.all(), &(&1.slug[locale] == slug))
+    community =
+      Enum.find(
+        SyliAtlas.Economy.Communities.all(),
+        &(SyliAtlas.Locales.pick(&1.slug, locale) == slug)
+      )
+
     community && community_spec(community, locale)
   end
 
@@ -228,7 +241,7 @@ defmodule SyliAtlasWeb.OgImage.Specs do
 
           [
             region && Area.name(region, locale)
-            | Enum.map(Enum.take(communities, 1), & &1.short[locale])
+            | Enum.map(Enum.take(communities, 1), &SyliAtlas.Locales.pick(&1.short, locale))
           ]
           |> Enum.reject(&is_nil/1)
           |> Enum.join(" · ")
@@ -303,28 +316,16 @@ defmodule SyliAtlasWeb.OgImage.Specs do
     case Regex.run(~r/\((\w+) (\d{4})\)/, label) do
       [_, month, year] ->
         m = String.slice(month, 0, 3)
-        if locale == "fr", do: "#{fr_month(m)} #{year}", else: "#{m} #{year}"
+        number = Enum.find_index(~w(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec), &(&1 == m))
+
+        if number,
+          do: SyliAtlasWeb.Dates.month_year(number + 1, year, locale),
+          else: "#{m} #{year}"
 
       _ ->
         label
     end
   end
-
-  @fr_months %{
-    "Jan" => "janv.",
-    "Feb" => "févr.",
-    "Mar" => "mars",
-    "Apr" => "avr.",
-    "May" => "mai",
-    "Jun" => "juin",
-    "Jul" => "juil.",
-    "Aug" => "août",
-    "Sep" => "sept.",
-    "Oct" => "oct.",
-    "Nov" => "nov.",
-    "Dec" => "déc."
-  }
-  defp fr_month(m), do: @fr_months[m] || m
 
   defp slice(values, first, last) when is_list(values),
     do: Enum.slice(values, (first - 2015)..(last - 2015)//1)
@@ -354,7 +355,7 @@ defmodule SyliAtlasWeb.OgImage.Specs do
   # Ratings
 
   defp rating_spec(entry, doc, locale) do
-    name = entry["name"][locale]
+    name = SyliAtlas.Locales.pick(entry["name"], locale)
     alias SyliAtlasWeb.RatingComponents, as: R
 
     lines =
@@ -412,10 +413,10 @@ defmodule SyliAtlasWeb.OgImage.Specs do
     %{
       layout: :totals,
       eyebrow: gettext("Economic community"),
-      title: community.short[locale],
+      title: SyliAtlas.Locales.pick(community.short, locale),
       subtitle:
         gettext("%{name} · %{count} members",
-          name: community.name[locale],
+          name: SyliAtlas.Locales.pick(community.name, locale),
           count: length(s.members)
         ),
       figure_label: gettext("GDP %{year}", year: year),
@@ -466,7 +467,7 @@ defmodule SyliAtlasWeb.OgImage.Specs do
 
     country =
       Enum.find_value(e["country_names"] || [], fn c ->
-        c["code"] == row["country"] && (c["name"][locale] || c["name"])
+        c["code"] == row["country"] && (SyliAtlas.Locales.pick(c["name"], locale) || c["name"])
       end)
 
     %{

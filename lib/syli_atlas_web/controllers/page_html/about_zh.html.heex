@@ -1,0 +1,68 @@
+<Layouts.public locale={@locale} current={:method} alternates={@alternates}>
+  <.section>
+    <div class="prose stack gap-4" id="about">
+      <nav aria-label={gettext("Breadcrumb")}>
+        <ol class="crumbs">
+          <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+          <li aria-current="page">关于</li>
+        </ol>
+      </nav>
+      <p class="eyebrow">关于</p>
+      <h1 class="h1">Syli Atlas：用可核实的数据看非洲经济。</h1>
+      <p class="lead">
+        Syli Atlas 汇集非洲 54 个国家的经济数据：增长、GDP、债务、通胀、贸易、生活条件、主权信用评级和证券交易所，提供七种语言。本网站免费、非商业，无需注册账户。
+      </p>
+
+      <h2 class="h2">每个数字都注明来源</h2>
+      <p>
+        数据序列首先来自国际货币基金组织《世界经济展望》（{@edition_label}），其次来自世界银行、CEPII（BACI）、国际货币基金组织和世界银行的债务可持续性分析、评级机构，以及证券交易所数据提供方 MansaAPI。每个序列下方都写明来源、版本和日期；再利用条款见 <a href={
+          Paths.method(@locale)
+        }>方法与来源</a>页面。
+      </p>
+      <p>
+        区域合计、排名和某一时期内的变化由 Syli Atlas 自行计算，并如实标明。我们从不修改来源的数据。
+      </p>
+
+      <h2 class="h2">更新</h2>
+      <p>
+        我们每天检查数据来源。国际货币基金组织的新版本经导入、核查后发布；证券交易所数据在每次收盘后更新（收盘价，非实时）。主权评级取自评级机构的公告。
+      </p>
+
+      <h2 class="h2" id="cite">如何引用 Syli Atlas</h2>
+      <p>请引用原始来源和页面，并注明访问日期：</p>
+      <p class="small mono cite" dir="auto">
+        Syli Atlas, 数据来自国际货币基金组织, {@edition_label}, {SyliAtlasWeb.Seo.url(
+          Paths.area(@locale, "country", "senegal")
+        )}, 访问于 {SyliAtlasWeb.Dates.day_month_year(
+          Date.utc_today().day,
+          Date.utc_today().month,
+          Date.utc_today().year,
+          @locale,
+          :long
+        )}.
+      </p>
+      <p>
+        Syli Atlas 计算和撰写的内容（合计、排名、变化、文字、图表和图片）采用 <a
+          href={SyliAtlasWeb.Seo.license_url()}
+          rel="license"
+        >知识共享署名 4.0 许可协议（CC BY 4.0）</a>：可自由再利用，包括商业用途，但须注明 Syli Atlas 并附上页面链接。来源数据仍适用其自身条款（<a href={Paths.method(@locale) <> "#reuse"}>详情</a>）。
+      </p>
+      <p>
+        每个国家概况均可下载为 CSV，也可通过 <a href={Paths.api(@locale)}>JSON API</a>查询。股票价格仅在本网站显示：其来源的许可不允许再分发。
+      </p>
+
+      <h2 class="h2">信息，而非建议</h2>
+      <p>
+        Syli Atlas 提供信息，不提供投资建议。预测数据来自国际货币基金组织，每一版都会更新。
+      </p>
+
+      <h2 class="h2">联系我们</h2>
+      <p :if={@contact_email}>
+        发现错误、建议补充来源或有任何问题： <a href={"mailto:" <> @contact_email}>{@contact_email}</a>。
+      </p>
+      <p :if={!@contact_email}>
+        发现错误或建议补充来源： <a href={Paths.accessibility(@locale)}>无障碍</a> 页面也说明了联系方式。
+      </p>
+    </div>
+  </.section>
+</Layouts.public>

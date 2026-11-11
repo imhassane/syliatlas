@@ -17,6 +17,7 @@ defmodule SyliAtlas.Profiles.Builder do
   """
 
   alias SyliAtlas.Sources.Indicators
+  alias SyliAtlas.Geo.Area
 
   @default_from 2020
   @default_to 2025
@@ -78,8 +79,8 @@ defmodule SyliAtlas.Profiles.Builder do
     %{
       "code" => area.code,
       "kind" => area.kind,
-      "name" => %{"fr" => area.name_fr, "en" => area.name_en},
-      "slug" => %{"fr" => area.slug_fr, "en" => area.slug_en},
+      "name" => Area.names(area),
+      "slug" => Area.slugs(area),
       "region" => area.region_code,
       "edition" => meta.edition,
       "years" => %{

@@ -10,16 +10,22 @@ defmodule SyliAtlasWeb.Seo do
       %{
         description: description,
         canonical: url(paths[locale]),
-        image: image(paths[locale]),
-        alternates: [
-          {"fr", url(paths["fr"])},
-          {"en", url(paths["en"])},
-          {"x-default", url(paths["fr"])}
-        ]
+        image: image(paths[image_locale(locale)] || paths[locale]),
+        alternates:
+          for(
+            l <- SyliAtlas.Locales.all(),
+            paths[l],
+            do: {SyliAtlas.Locales.tag(l), url(paths[l])}
+          ) ++ [{"x-default", url(paths[SyliAtlas.Locales.default()] || paths["fr"])}]
       },
       extra
     )
   end
+
+  # The image renderer (resvg) does not shape Devanagari correctly yet:
+  # Hindi pages share the image of their English twin.
+  defp image_locale("hi"), do: "en"
+  defp image_locale(locale), do: locale
 
   @doc """
   The share image of a page: drawn from its figures by
@@ -75,7 +81,8 @@ defmodule SyliAtlasWeb.Seo do
     ]
   end
 
-  def alternates_for_header(paths), do: [{"fr", paths["fr"]}, {"en", paths["en"]}]
+  def alternates_for_header(paths),
+    do: for(l <- SyliAtlas.Locales.all(), paths[l], do: {l, paths[l]})
 
   def breadcrumbs(items) do
     %{

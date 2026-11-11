@@ -6,7 +6,7 @@
 .rank-list li a { color: var(--ink); text-decoration: none; font-weight: 500; min-width: 0; overflow-wrap: anywhere; }
 .rank-list li a:hover { color: var(--accent-text); }
 .rank-list li.is-current { background: var(--accent-bg); }
-.rank-list b { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.rank-list b { text-align: end; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .rank-list.rank-bars li { grid-template-columns: 28px minmax(110px, 1fr) minmax(60px, 2fr) 88px; }
 .rank-list.rank-bars .bar-track { width: 100%; }
 @container (width < 30rem) {
@@ -21,12 +21,12 @@
 /* Tables (UI.data_table/1): sticky header row and first column when wide,
    one card per row when narrow — never a sideways scroll on a phone. */
 .table-box { container-type: inline-size; overflow-x: auto; }
-.table-stack th[scope="row"] { font-family: var(--sans); font-size: 15px; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--ink); text-align: left; white-space: normal; height: 54px; border-bottom: 1px solid var(--border-faint); }
+.table-stack th[scope="row"] { font-family: var(--sans); font-size: 15px; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--ink); text-align: start; white-space: normal; height: 54px; border-bottom: 1px solid var(--border-faint); }
 .table-stack th[scope="row"] .small { display: block; font-weight: 400; }
 .table-stack tbody tr:last-child th { border-bottom: 0; }
 .table-stack tr.is-current th, .table-stack tr.is-current td { background: var(--accent-bg); }
-.table-stack thead th:first-child, .table-stack th[scope="row"] { padding-left: 24px; }
-.table-stack thead th:last-child, .table-stack td:last-child { padding-right: 24px; }
+.table-stack thead th:first-child, .table-stack th[scope="row"] { padding-inline-start: 24px; }
+.table-stack thead th:last-child, .table-stack td:last-child { padding-inline-end: 24px; }
 
 @container (width < 34rem) {
   .table-stack, .table-stack tbody, .table-stack tr, .table-stack th, .table-stack td { display: block; }
@@ -34,9 +34,9 @@
   .table-stack tr { padding: 14px 20px; border-top: 1px solid var(--border-faint); }
   .table-stack tbody tr:first-child { border-top: 0; }
   .table-stack th[scope="row"], .table-stack thead th:first-child { height: auto; padding: 0 0 6px; border: 0; }
-  .table-stack td { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; height: auto; padding: 5px 0; border: 0; white-space: normal; text-align: right; }
-  .table-stack td:last-child { padding-right: 0; }
-  .table-stack td::before { content: attr(data-label); flex: 1 1 auto; min-width: 0; text-align: left; color: var(--ink-muted); font-size: 14px; }
+  .table-stack td { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; height: auto; padding: 5px 0; border: 0; white-space: normal; text-align: end; }
+  .table-stack td:last-child { padding-inline-end: 0; }
+  .table-stack td::before { content: attr(data-label); flex: 1 1 auto; min-width: 0; text-align: start; color: var(--ink-muted); font-size: 14px; }
   .table-stack td.hide-sm { display: none; }
   .table-stack .bar-cell .bar-track { width: 72px; }
 }
@@ -48,9 +48,9 @@
   .table-wide tr { padding: 14px 20px; border-top: 1px solid var(--border-faint); }
   .table-wide tbody tr:first-child { border-top: 0; }
   .table-wide th[scope="row"], .table-wide thead th:first-child { height: auto; padding: 0 0 6px; border: 0; }
-  .table-wide td { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; height: auto; padding: 5px 0; border: 0; white-space: normal; text-align: right; }
-  .table-wide td:last-child { padding-right: 0; }
-  .table-wide td::before { content: attr(data-label); flex: 1 1 auto; min-width: 0; text-align: left; color: var(--ink-muted); font-size: 14px; }
+  .table-wide td { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; height: auto; padding: 5px 0; border: 0; white-space: normal; text-align: end; }
+  .table-wide td:last-child { padding-inline-end: 0; }
+  .table-wide td::before { content: attr(data-label); flex: 1 1 auto; min-width: 0; text-align: start; color: var(--ink-muted); font-size: 14px; }
   .table-wide td.hide-sm { display: none; }
   .table-wide .bar-cell .bar-track { width: 72px; }
 }
@@ -140,7 +140,7 @@
 /* Trade: share lists (SyliAtlasWeb.TradeComponents). */
 .share-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
 .share-list li { display: grid; grid-template-columns: minmax(120px, 1.2fr) 1fr 64px; gap: 12px; align-items: center; min-height: 36px; font-size: 14px; }
-.share-list b { text-align: right; }
+.share-list b { text-align: end; }
 .share-track { height: 10px; border-radius: 999px; background: var(--muted); overflow: hidden; }
 .share-track > span { display: block; height: 100%; border-radius: 999px; background: var(--c1); }
 .share-track-alt > span { background: var(--c3); }
@@ -171,7 +171,7 @@
 .overview-facts { display: grid; gap: 8px; margin: 8px 0 0; padding-top: 12px; border-top: 1px solid var(--border-faint); }
 .overview-facts > div { display: flex; justify-content: space-between; gap: 12px; font-size: 14px; }
 .overview-facts dt { color: var(--ink-muted); }
-.overview-facts dd { margin: 0; font-weight: 600; text-align: right; }
+.overview-facts dd { margin: 0; font-weight: 600; text-align: end; }
 .overview-more { margin-top: auto; padding-top: 8px; color: var(--accent-text); font-size: 14px; font-weight: 600; }
 .related-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); }
 .related-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }

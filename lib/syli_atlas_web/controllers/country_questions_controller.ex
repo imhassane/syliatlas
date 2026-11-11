@@ -20,7 +20,7 @@ defmodule SyliAtlasWeb.CountryQuestionsController do
     area = Geo.get_area_by_slug(slug, locale)
     if is_nil(area) or area.kind != "country", do: raise(NotFoundError)
 
-    paths = %{"fr" => questions_path("fr", area), "en" => questions_path("en", area)}
+    paths = SyliAtlas.Locales.each(fn l -> questions_path(l, area) end)
 
     if conn.request_path != paths[locale] do
       conn |> put_status(301) |> redirect(to: paths[locale])
@@ -58,7 +58,8 @@ defmodule SyliAtlasWeb.CountryQuestionsController do
   end
 
   @doc "The address of a country's questions."
-  def questions_path(locale, area), do: Paths.area(locale, area) <> "/questions"
+  def questions_path(locale, area),
+    do: Paths.area(locale, area) <> "/" <> Paths.segment(locale, :questions)
 
   # ---------------------------------------------------------------------------
 

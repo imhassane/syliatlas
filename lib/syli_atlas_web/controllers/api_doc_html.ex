@@ -72,13 +72,9 @@ defmodule SyliAtlasWeb.ApiDocHTML do
     """
   end
 
-  @months_fr ~w(janvier février mars avril mai juin juillet août septembre octobre novembre décembre)
-  @months_en ~w(January February March April May June July August September October November December)
-
   @doc "The IMF edition as a month: « octobre 2026 », “October 2026”."
   def edition_label(%{code: <<year::binary-size(4), "-", month::binary-size(2)>>}, locale) do
-    names = if locale == "fr", do: @months_fr, else: @months_en
-    Enum.at(names, String.to_integer(month) - 1) <> " " <> year
+    SyliAtlasWeb.Dates.month_year(String.to_integer(month), year, locale, :long)
   end
 
   def edition_label(_, _), do: "—"

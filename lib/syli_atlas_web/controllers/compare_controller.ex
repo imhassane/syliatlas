@@ -52,7 +52,7 @@ defmodule SyliAtlasWeb.CompareController do
               [
                 %{
                   id: a.code,
-                  name: item["name"][locale],
+                  name: SyliAtlas.Locales.pick(item["name"], locale),
                   color: Enum.at(@colors, i),
                   item: item,
                   area: a
@@ -63,10 +63,10 @@ defmodule SyliAtlasWeb.CompareController do
 
       names = Enum.map_join(series, ", ", & &1.name)
 
-      paths = %{
-        "fr" => Paths.compare("fr", Enum.map(areas, &SyliAtlas.Geo.Area.slug(&1, "fr"))),
-        "en" => Paths.compare("en", Enum.map(areas, &SyliAtlas.Geo.Area.slug(&1, "en")))
-      }
+      paths =
+        SyliAtlas.Locales.each(fn l ->
+          Paths.compare(l, Enum.map(areas, &SyliAtlas.Geo.Area.slug(&1, l)))
+        end)
 
       # Only the pairs chosen in SyliAtlasWeb.Topics are indexed, over the
       # default period: free combinations would make thousands of near-copies.

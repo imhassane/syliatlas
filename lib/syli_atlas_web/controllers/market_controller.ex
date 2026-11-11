@@ -37,7 +37,7 @@ defmodule SyliAtlasWeb.MarketController do
           into: %{nil => length(all)},
           do: {r, Enum.count(all, &(&1["exchange"]["region"] == r))}
 
-    paths = %{"fr" => Paths.markets("fr"), "en" => Paths.markets("en")}
+    paths = SyliAtlas.Locales.each(fn l -> Paths.markets(l) end)
     kept = %{"q" => q, "region" => region, "sort" => sort, "dir" => dir}
     filtered? = q != "" or region != nil or params["sort"] != nil
 
@@ -87,7 +87,7 @@ defmodule SyliAtlasWeb.MarketController do
     locale = conn.assigns.locale
     doc = Market.exchange(code) || raise NotFoundError
     e = doc["exchange"]
-    paths = %{"fr" => Paths.exchange("fr", code), "en" => Paths.exchange("en", code)}
+    paths = SyliAtlas.Locales.each(fn l -> Paths.exchange(l, code) end)
     page = Pagination.paginate(doc["securities"], params["page"], 20)
 
     render(conn, :exchange,
@@ -138,10 +138,7 @@ defmodule SyliAtlasWeb.MarketController do
     {doc, row} = Market.security(code, String.downcase(ticker)) || raise NotFoundError
     e = doc["exchange"]
 
-    paths = %{
-      "fr" => Paths.security("fr", code, row["ticker"]),
-      "en" => Paths.security("en", code, row["ticker"])
-    }
+    paths = SyliAtlas.Locales.each(fn l -> Paths.security(l, code, row["ticker"]) end)
 
     if conn.request_path != paths[locale] do
       conn |> put_status(301) |> redirect(to: paths[locale])
@@ -190,7 +187,7 @@ defmodule SyliAtlasWeb.MarketController do
   def etfs(conn, _params) do
     locale = conn.assigns.locale
     doc = Market.etfs() || %{"etfs" => [], "sources" => [], "date" => nil, "value" => nil}
-    paths = %{"fr" => Paths.etfs("fr"), "en" => Paths.etfs("en")}
+    paths = SyliAtlas.Locales.each(fn l -> Paths.etfs(l) end)
 
     render(conn, :etfs,
       page_title: gettext("Funds exposed to Africa (ETF): prices and daily change"),

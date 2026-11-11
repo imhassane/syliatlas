@@ -88,7 +88,7 @@
       >
         <.list_row
           :for={r <- Enum.take(@regions, 2) ++ Enum.take(@regions, -1)}
-          label={r["profile"]["name"][@locale]}
+          label={SyliAtlas.Locales.pick(r["profile"]["name"], @locale)}
           value={change(r["period"]["changes"]["gdp_usd_bn"], "gdp_usd_bn", @locale)}
           tone={tone(r["period"]["changes"]["gdp_usd_bn"], "gdp_usd_bn")}
         />

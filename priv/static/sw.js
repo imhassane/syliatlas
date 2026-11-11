@@ -19,6 +19,8 @@ const VERSION = new URL(self.location).searchParams.get("v") || "dev"
 const PAGES = "pages-" + VERSION
 const STATIC = "static-" + VERSION
 const API = "api-v1"
+// The offline page of each language of the site (SyliAtlasWeb.Paths.offline/1).
+const OFFLINE_PAGES = {fr: "/fr/hors-ligne", en: "/en/offline", es: "/es/sin-conexion", pt: "/pt/offline", ar: "/ar/offline", hi: "/hi/offline", zh: "/zh/offline"}
 const OFFLINE_START = ["/fr", "/en", "/fr/hors-ligne", "/en/offline"]
 
 self.addEventListener("install", event => {
@@ -39,7 +41,8 @@ self.addEventListener("message", event => {
   if (event.data === "skip-waiting") self.skipWaiting()
   if (event.data?.type === "save-assets") event.waitUntil(saveAssets(event.data.assets))
   if (event.data?.type === "save-pages" && !saving) {
-    saving = savePages(event.data.locale === "en" ? "en" : "fr").finally(() => { saving = null })
+    const locale = event.data.locale in OFFLINE_PAGES ? event.data.locale : "fr"
+    saving = savePages(locale).finally(() => { saving = null })
     event.waitUntil(saving)
   }
 })
@@ -90,8 +93,9 @@ async function networkFirst(request, cacheName) {
     if (request.mode === "navigate") {
       // Not saved: the offline page, shown under the asked address (it says
       // which page and lists the saved ones), else the home page.
-      const en = new URL(request.url).pathname.startsWith("/en")
-      const fallback = (await cache.match(en ? "/en/offline" : "/fr/hors-ligne")) || (await cache.match(en ? "/en" : "/fr"))
+      const first = new URL(request.url).pathname.split("/")[1]
+      const lang = first in OFFLINE_PAGES ? first : "fr"
+      const fallback = (await cache.match(OFFLINE_PAGES[lang])) || (await cache.match("/" + lang))
       if (fallback) return fallback
     }
     throw error

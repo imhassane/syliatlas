@@ -150,20 +150,20 @@ defmodule SyliAtlasWeb.RatingComponents do
 
   def agencies_text(_), do: ""
 
-  @months_fr ~w(janv. févr. mars avr. mai juin juil. août sept. oct. nov. déc.)
-  @months_en ~w(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
-
   @doc "A full, month or year date: « 14 nov. 2025 », « oct. 2026 », « 2026 »."
   def date_text(nil, _locale), do: nil
   def date_text("", _locale), do: nil
 
   def date_text(iso, locale) do
-    months = if locale == "en", do: @months_en, else: @months_fr
-
     case String.split(iso, "-") do
-      [y, m, d] -> "#{String.to_integer(d)} #{Enum.at(months, String.to_integer(m) - 1)} #{y}"
-      [y, m] -> "#{Enum.at(months, String.to_integer(m) - 1)} #{y}"
-      [y] -> y
+      [y, m, d] ->
+        SyliAtlasWeb.Dates.day_month_year(String.to_integer(d), String.to_integer(m), y, locale)
+
+      [y, m] ->
+        SyliAtlasWeb.Dates.month_year(String.to_integer(m), y, locale)
+
+      [y] ->
+        y
     end
   end
 
@@ -321,14 +321,14 @@ defmodule SyliAtlasWeb.RatingComponents do
               :if={!@page and @entry["band"]}
               class="btn btn-secondary"
               id="rating-history-link"
-              href={Paths.rating(@locale, @entry["slug"][@locale])}
+              href={Paths.rating(@locale, SyliAtlas.Locales.pick(@entry["slug"], @locale))}
             >
               {gettext("History of decisions")} →
             </a>
             <a
               :if={@page}
               class="btn btn-secondary"
-              href={Paths.area(@locale, "country", @entry["slug"][@locale])}
+              href={Paths.area(@locale, "country", SyliAtlas.Locales.pick(@entry["slug"], @locale))}
             >
               {gettext("Profile of %{name}", name: @name)} →
             </a>
@@ -466,7 +466,10 @@ defmodule SyliAtlasWeb.RatingComponents do
             <span class="eyebrow">{gettext("Best rated")}</span>
             <div>
               <div :for={{e, i} <- Enum.with_index(@top, 1)} class="list-row">
-                <a href={Paths.area(@locale, "country", e["slug"][@locale])}>{i} · {e["name"][@locale]}</a>
+                <a href={Paths.area(@locale, "country", SyliAtlas.Locales.pick(e["slug"], @locale))}>{i} · {SyliAtlas.Locales.pick(
+                  e["name"],
+                  @locale
+                )}</a>
                 <span>
                   <b class="num">{e["label"]}</b>
                   <.verdict_badge band={e["band"]}>{category(e["band"])}</.verdict_badge>
@@ -483,7 +486,9 @@ defmodule SyliAtlasWeb.RatingComponents do
             <div>
               <div :for={r <- @recent} class="list-row">
                 <span>
-                  {@doc["countries"][r["code"]]["name"][@locale]} · {agency_name(r["agency"])} · {date_text(
+                  {SyliAtlas.Locales.pick(@doc["countries"][r["code"]]["name"], @locale)} · {agency_name(
+                    r["agency"]
+                  )} · {date_text(
                     r["action_date"],
                     @locale
                   )}

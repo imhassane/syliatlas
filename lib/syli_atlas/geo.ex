@@ -23,8 +23,16 @@ defmodule SyliAtlas.Geo do
 
   def get_area_by_code(code), do: Repo.get_by(Area, code: code)
 
-  def get_area_by_slug(slug, "en"), do: Repo.get_by(Area, slug_en: slug)
-  def get_area_by_slug(slug, _locale), do: Repo.get_by(Area, slug_fr: slug)
+  def get_area_by_slug(slug, "fr"), do: Repo.get_by(Area, slug_fr: slug)
+
+  def get_area_by_slug(slug, locale) when locale in ["es", "pt"] do
+    case SyliAtlas.Geo.Names.code_for_slug(slug, locale) do
+      nil -> Repo.get_by(Area, slug_en: slug)
+      code -> get_area_by_code(code)
+    end
+  end
+
+  def get_area_by_slug(slug, _locale), do: Repo.get_by(Area, slug_en: slug)
 
   def countries_in_region(region_code) do
     Area |> where(kind: "country", region_code: ^region_code) |> Repo.all()

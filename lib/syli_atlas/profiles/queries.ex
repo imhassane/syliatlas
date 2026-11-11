@@ -8,6 +8,8 @@ defmodule SyliAtlas.Profiles.Queries do
   Indicator names are checked against `SyliAtlas.Sources.Indicators`
   before they reach SQL; every other input is a bound parameter.
   """
+  @locales SyliAtlas.Locales.all()
+
   alias SyliAtlas.Repo
   alias SyliAtlas.Sources.Indicators
 
@@ -78,8 +80,10 @@ defmodule SyliAtlas.Profiles.Queries do
       SELECT json_group_array(json_object('code', code, 'name', name, 'slug', slug,
                                           'region', region, 'value', v)) FROM (
         SELECT a.code, a.region_code AS region,
-               CASE WHEN ?5 = 'en' THEN a.name_en ELSE a.name_fr END AS name,
-               CASE WHEN ?5 = 'en' THEN a.slug_en ELSE a.slug_fr END AS slug,
+               CASE WHEN ?5 = 'fr' THEN a.name_fr
+                    ELSE coalesce(json_extract(p.doc, '$.name.' || ?5), a.name_en) END AS name,
+               CASE WHEN ?5 = 'fr' THEN a.slug_fr
+                    ELSE coalesce(json_extract(p.doc, '$.slug.' || ?5), a.slug_en) END AS slug,
                #{expr} AS v
         FROM profiles AS p
         JOIN areas AS a ON a.code = p.area_code
@@ -96,18 +100,28 @@ defmodule SyliAtlas.Profiles.Queries do
   GDP in current dollars and its change since the default reference year,
   rank in Africa by GDP, and the GDP series for the panel's sparkline.
   """
-  def map_countries(locale \\ "fr") when locale in ["fr", "en"] do
+  def map_countries(locale \\ "fr") when locale in @locales do
     run(:map_countries, "SELECT json(doc) FROM snapshots WHERE key = ?1", ["map:" <> locale])
   end
 
   @doc "The home page (`SyliAtlas.Profiles.HomeSnapshot`), in one row."
-  def home(locale) when locale in ["fr", "en"] do
+  def home(locale) when locale in @locales do
     run(:home, "SELECT json(doc) FROM snapshots WHERE key = ?1", ["home:" <> locale])
   end
 
   @doc "The regions page for the default period (`SyliAtlas.Profiles.RegionsSnapshot`), in one row."
-  def regions(locale) when locale in ["fr", "en"] do
+  def regions(locale) when locale in @locales do
     run(:regions, "SELECT json(doc) FROM snapshots WHERE key = ?1", ["regions:" <> locale])
+  end
+
+  @doc "True when a profile lacks the name of a language of the site."
+  def missing_locales? do
+    missing = Enum.map_join(@locales, " OR ", &"json_extract(doc, '$.name.#{&1}') IS NULL")
+
+    case Repo.query!("SELECT count(*) FROM profiles WHERE " <> missing).rows do
+      [[0]] -> false
+      _ -> true
+    end
   end
 
   @doc "Format number of a stored snapshot, nil when it is missing."
@@ -133,7 +147,7 @@ defmodule SyliAtlas.Profiles.Queries do
     {from, to} = SyliAtlas.Profiles.Builder.default_period()
     now = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
 
-    for locale <- ["fr", "en"] do
+    for locale <- @locales do
       Repo.query!(
         """
         INSERT INTO snapshots (key, doc, inserted_at, updated_at)
@@ -145,7 +159,7 @@ defmodule SyliAtlas.Profiles.Queries do
     end
 
     # The home page reads the map just written, so it comes after it.
-    for locale <- ["fr", "en"] do
+    for locale <- @locales do
       put_snapshot!("home:" <> locale, SyliAtlas.Profiles.HomeSnapshot.build(locale), now)
 
       put_snapshot!(
@@ -182,10 +196,10 @@ defmodule SyliAtlas.Profiles.Queries do
              count(gdp) OVER () AS ranked
       FROM (
         SELECT a.code, a.region_code AS region,
-               CASE WHEN ?1 = 'en' THEN a.name_en ELSE a.name_fr END AS name,
-               CASE WHEN ?1 = 'en' THEN a.slug_en ELSE a.slug_fr END AS slug,
-               CASE WHEN ?1 = 'en' THEN r.name_en ELSE r.name_fr END AS region_name,
-           CASE WHEN ?1 = 'en' THEN r.slug_en ELSE r.slug_fr END AS region_slug,
+               coalesce(json_extract(p.doc, '$.name.' || ?1), a.name_en) AS name,
+               coalesce(json_extract(p.doc, '$.slug.' || ?1), a.slug_en) AS slug,
+               coalesce(json_extract(rp.doc, '$.name.' || ?1), r.name_en) AS region_name,
+               coalesce(json_extract(rp.doc, '$.slug.' || ?1), r.slug_en) AS region_slug,
                #{value_sql("gdp_usd_bn", "?3")} AS gdp,
                #{change_sql("gdp_usd_bn")} AS gdp_change,
                #{change_sql("real_gdp_index")} AS real_change,
@@ -197,6 +211,7 @@ defmodule SyliAtlas.Profiles.Queries do
         FROM profiles AS p
         JOIN areas AS a ON a.code = p.area_code
         LEFT JOIN areas AS r ON r.code = a.region_code
+        LEFT JOIN profiles AS rp ON rp.area_code = a.region_code
         WHERE a.kind = 'country')
       ORDER BY rnk)
     """
@@ -211,9 +226,12 @@ defmodule SyliAtlas.Profiles.Queries do
       """
       SELECT json_group_array(json_object('code', code, 'kind', kind, 'name', name, 'slug', slug)) FROM (
         SELECT code, kind,
-               CASE WHEN ?2 = 'en' THEN name_en ELSE name_fr END AS name,
-               CASE WHEN ?2 = 'en' THEN slug_en ELSE slug_fr END AS slug
-        FROM areas WHERE search_text LIKE ?1
+               CASE WHEN ?2 = 'fr' THEN name_fr
+                    ELSE coalesce(json_extract(p.doc, '$.name.' || ?2), name_en) END AS name,
+               CASE WHEN ?2 = 'fr' THEN slug_fr
+                    ELSE coalesce(json_extract(p.doc, '$.slug.' || ?2), slug_en) END AS slug
+        FROM areas LEFT JOIN profiles AS p ON p.area_code = areas.code
+        WHERE search_text LIKE ?1
         ORDER BY kind <> 'country', name LIMIT 10)
       """,
       [q, locale]

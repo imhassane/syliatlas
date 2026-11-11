@@ -90,8 +90,14 @@
             <tr :for={e <- @rows} id={"rating-#{e["code"]}"}>
               <td class="l mono subtle" data-label="#">{e["rank"] || "—"}</td>
               <th scope="row" class="l">
-                <a href={Paths.rating(@locale, e["slug"][@locale])} class="rank-flagged">
-                  <.flag code={e["code"]} size="sm" sprite />{e["name"][@locale]}
+                <a
+                  href={Paths.rating(@locale, SyliAtlas.Locales.pick(e["slug"], @locale))}
+                  class="rank-flagged"
+                >
+                  <.flag code={e["code"]} size="sm" sprite />{SyliAtlas.Locales.pick(
+                    e["name"],
+                    @locale
+                  )}
                 </a>
               </th>
               <td :for={code <- ~w(sp moodys fitch)} class="l" data-label={agency_name(code)}>
@@ -164,7 +170,7 @@
           </h2>
           <p>
             <%= for {e, i} <- Enum.with_index(@unrated) do %>
-              <a href={Paths.area(@locale, "country", e["slug"][@locale])}>{e["name"][@locale]}</a>{if(
+              <a href={Paths.area(@locale, "country", SyliAtlas.Locales.pick(e["slug"], @locale))}>{SyliAtlas.Locales.pick(e["name"], @locale)}</a>{if(
                 i < length(@unrated) - 1,
                 do: ", ",
                 else: "."

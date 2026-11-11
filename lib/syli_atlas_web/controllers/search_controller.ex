@@ -25,7 +25,10 @@ defmodule SyliAtlasWeb.SearchController do
         render(conn, :index,
           page_title: gettext("Search"),
           seo: %{noindex: true},
-          alternates: [{"fr", "/fr/recherche"}, {"en", "/en/search"}],
+          alternates:
+            SyliAtlasWeb.Seo.alternates_for_header(
+              SyliAtlas.Locales.each(&SyliAtlasWeb.Paths.search/1)
+            ),
           q: q,
           search: search,
           countries: SyliAtlas.Geo.list_countries()

@@ -79,8 +79,8 @@ defmodule SyliAtlasWeb.RankingController do
 
     paths =
       if topic,
-        do: %{"fr" => Topics.ranking_path("fr", topic), "en" => Topics.ranking_path("en", topic)},
-        else: %{"fr" => Paths.ranking("fr"), "en" => Paths.ranking("en")}
+        do: SyliAtlas.Locales.each(fn l -> Topics.ranking_path(l, topic) end),
+        else: SyliAtlas.Locales.each(fn l -> Paths.ranking(l) end)
 
     filtered? = map_size(kept) > 0 or page.page > 1
     title = Topics.ranking_title(indicator, to)

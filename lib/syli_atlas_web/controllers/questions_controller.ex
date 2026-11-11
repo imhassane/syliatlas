@@ -15,7 +15,7 @@ defmodule SyliAtlasWeb.QuestionsController do
 
   def index(conn, _params) do
     locale = conn.assigns.locale
-    paths = %{"fr" => Topics.questions_path("fr"), "en" => Topics.questions_path("en")}
+    paths = SyliAtlas.Locales.each(fn l -> Topics.questions_path(l) end)
     title = gettext("Questions on African economies, answered with the figures")
 
     render(conn, :index,
@@ -56,7 +56,7 @@ defmodule SyliAtlasWeb.QuestionsController do
   def show(conn, %{"slug" => slug}) do
     locale = conn.assigns.locale
     id = Topics.question(slug) || raise NotFoundError
-    paths = %{"fr" => Topics.question_path("fr", id), "en" => Topics.question_path("en", id)}
+    paths = SyliAtlas.Locales.each(fn l -> Topics.question_path(l, id) end)
 
     if conn.request_path != paths[locale] do
       conn |> put_status(301) |> redirect(to: paths[locale])
@@ -317,10 +317,10 @@ defmodule SyliAtlasWeb.QuestionsController do
       |> Enum.sort_by(&(-&1.gdp))
       |> Enum.map(fn s ->
         %{
-          name: s.community.short[locale],
-          path: Paths.community(locale, s.community.slug[locale]),
+          name: SyliAtlas.Locales.pick(s.community.short, locale),
+          path: Paths.community(locale, SyliAtlas.Locales.pick(s.community.slug, locale)),
           value: SyliAtlasWeb.Format.value(s.gdp, "gdp_usd_bn", locale),
-          full: s.community.name[locale]
+          full: SyliAtlas.Locales.pick(s.community.name, locale)
         }
       end)
 
@@ -381,8 +381,8 @@ defmodule SyliAtlasWeb.QuestionsController do
     for code <- doc["ranking"], e = doc["countries"][code], keep?.(e) do
       %{
         code: code,
-        name: e["name"][locale],
-        path: Paths.rating(locale, e["slug"][locale]),
+        name: SyliAtlas.Locales.pick(e["name"], locale),
+        path: Paths.rating(locale, SyliAtlas.Locales.pick(e["slug"], locale)),
         value: e["label"]
       }
     end

@@ -31,10 +31,7 @@ defmodule SyliAtlasWeb.AreaController do
     {from, to} = PageComponents.period(params)
     data = PublicData.area(area.code, from, to) || raise NotFoundError
 
-    paths = %{
-      "fr" => Paths.area_tab("fr", area, tab),
-      "en" => Paths.area_tab("en", area, tab)
-    }
+    paths = SyliAtlas.Locales.each(fn l -> Paths.area_tab(l, area, tab) end)
 
     # Old or foreign slug or tab name: send to the canonical URL.
     if conn.request_path != paths[locale] do
@@ -66,8 +63,8 @@ defmodule SyliAtlasWeb.AreaController do
         |> Enum.map(fn r ->
           %{
             "code" => r["profile"]["code"],
-            "name" => r["profile"]["name"][locale],
-            "slug" => r["profile"]["slug"][locale],
+            "name" => SyliAtlas.Locales.pick(r["profile"]["name"], locale),
+            "slug" => SyliAtlas.Locales.pick(r["profile"]["slug"], locale),
             "kind" => r["profile"]["kind"],
             "value" => r["period"]["changes"]["gdp_usd_bn"]
           }
@@ -474,7 +471,7 @@ defmodule SyliAtlasWeb.AreaController do
       end
 
     with %{} <- other, %{"profile" => p} <- PublicData.area(other.code, from, to) do
-      %{name: p["name"][locale], series: p["series"]}
+      %{name: SyliAtlas.Locales.pick(p["name"], locale), series: p["series"]}
     else
       _ -> nil
     end
@@ -538,8 +535,8 @@ defmodule SyliAtlasWeb.AreaController do
     |> Enum.map(
       &%{
         "code" => &1["code"],
-        "name" => &1["name"][locale],
-        "slug" => &1["slug"][locale],
+        "name" => SyliAtlas.Locales.pick(&1["name"], locale),
+        "slug" => SyliAtlas.Locales.pick(&1["slug"], locale),
         "kind" => &1["kind"],
         "value" => &1["gdp_change_pct"]
       }

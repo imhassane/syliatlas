@@ -76,11 +76,128 @@ defmodule SyliAtlas.Economy.Communities do
 
   @as_of "2026-11-10"
 
+  @extra %{
+    "ecowas" => %{
+      slug: %{"es" => "cedeao", "pt" => "cedeao"},
+      short: %{
+        "es" => "CEDEAO",
+        "pt" => "CEDEAO",
+        "ar" => "إيكواس",
+        "hi" => "ECOWAS",
+        "zh" => "西共体"
+      },
+      name: %{
+        "es" => "Comunidad Económica de los Estados de África Occidental",
+        "pt" => "Comunidade Económica dos Estados da África Ocidental",
+        "ar" => "المجموعة الاقتصادية لدول غرب أفريقيا",
+        "hi" => "पश्चिम अफ़्रीकी राज्यों का आर्थिक समुदाय",
+        "zh" => "西非国家经济共同体"
+      }
+    },
+    "aes" => %{
+      slug: %{"es" => "aes", "pt" => "aes"},
+      short: %{
+        "es" => "AES",
+        "pt" => "AES",
+        "ar" => "تحالف دول الساحل",
+        "hi" => "AES",
+        "zh" => "萨赫勒国家联盟"
+      },
+      name: %{
+        "es" => "Alianza de Estados del Sahel",
+        "pt" => "Aliança dos Estados do Sahel",
+        "ar" => "تحالف دول الساحل",
+        "hi" => "साहेल राज्यों का गठबंधन",
+        "zh" => "萨赫勒国家联盟"
+      }
+    },
+    "waemu" => %{
+      slug: %{"es" => "uemoa", "pt" => "uemoa"},
+      short: %{
+        "es" => "UEMOA",
+        "pt" => "UEMOA",
+        "ar" => "الاتحاد الاقتصادي والنقدي لغرب أفريقيا",
+        "hi" => "WAEMU",
+        "zh" => "西非经货联盟"
+      },
+      name: %{
+        "es" => "Unión Económica y Monetaria de África Occidental",
+        "pt" => "União Económica e Monetária Oeste-Africana",
+        "ar" => "الاتحاد الاقتصادي والنقدي لغرب أفريقيا",
+        "hi" => "पश्चिम अफ़्रीकी आर्थिक और मौद्रिक संघ",
+        "zh" => "西非经济货币联盟"
+      }
+    },
+    "cemac" => %{
+      slug: %{"es" => "cemac", "pt" => "cemac"},
+      short: %{
+        "es" => "CEMAC",
+        "pt" => "CEMAC",
+        "ar" => "الجماعة الاقتصادية والنقدية لوسط أفريقيا",
+        "hi" => "CEMAC",
+        "zh" => "中部非洲经货共同体"
+      },
+      name: %{
+        "es" => "Comunidad Económica y Monetaria de África Central",
+        "pt" => "Comunidade Económica e Monetária da África Central",
+        "ar" => "الجماعة الاقتصادية والنقدية لوسط أفريقيا",
+        "hi" => "मध्य अफ़्रीका का आर्थिक और मौद्रिक समुदाय",
+        "zh" => "中部非洲经济货币共同体"
+      }
+    },
+    "eac" => %{
+      slug: %{"es" => "cae", "pt" => "cao"},
+      short: %{
+        "es" => "CAE",
+        "pt" => "CAO",
+        "ar" => "مجموعة شرق أفريقيا",
+        "hi" => "EAC",
+        "zh" => "东非共同体"
+      },
+      name: %{
+        "es" => "Comunidad de África Oriental",
+        "pt" => "Comunidade da África Oriental",
+        "ar" => "مجموعة شرق أفريقيا",
+        "hi" => "पूर्वी अफ़्रीकी समुदाय",
+        "zh" => "东非共同体"
+      }
+    },
+    "sadc" => %{
+      slug: %{"es" => "sadc", "pt" => "sadc"},
+      short: %{"es" => "SADC", "pt" => "SADC", "ar" => "سادك", "hi" => "SADC", "zh" => "南共体"},
+      name: %{
+        "es" => "Comunidad de Desarrollo de África Austral",
+        "pt" => "Comunidade de Desenvolvimento da África Austral",
+        "ar" => "مجموعة تنمية الجنوب الأفريقي",
+        "hi" => "दक्षिणी अफ़्रीकी विकास समुदाय",
+        "zh" => "南部非洲发展共同体"
+      }
+    }
+  }
+
+  # Names in the other languages of the site; Arabic, Hindi and Chinese
+  # pages use the English slugs.
+  @communities (for c <- @communities do
+                  extra = Map.fetch!(@extra, c.code)
+
+                  %{
+                    c
+                    | slug:
+                        Map.merge(c.slug, extra.slug)
+                        |> then(
+                          &Map.merge(%{"ar" => &1["en"], "hi" => &1["en"], "zh" => &1["en"]}, &1)
+                        ),
+                      short: Map.merge(c.short, extra.short),
+                      name: Map.merge(c.name, extra.name)
+                  }
+                end)
+
   def all, do: @communities
   def as_of, do: @as_of
   def get(code), do: Enum.find(@communities, &(&1.code == code))
 
-  def by_slug(slug, locale), do: Enum.find(@communities, &(&1.slug[locale] == slug))
+  def by_slug(slug, locale),
+    do: Enum.find(@communities, &(SyliAtlas.Locales.pick(&1.slug, locale) == slug))
 
   @doc "The communities a country belongs to."
   def for_country(code), do: Enum.filter(@communities, &(code in &1.members))

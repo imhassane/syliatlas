@@ -21,7 +21,7 @@ defmodule SyliAtlasWeb.RegionsController do
     by_code = Map.new(regions, &{&1.code, &1})
     focus = Enum.find_value(regions, &(&1.code == params["focus"] && &1.code))
 
-    paths = %{"fr" => Paths.regions("fr"), "en" => Paths.regions("en")}
+    paths = SyliAtlas.Locales.each(fn l -> Paths.regions(l) end)
     kept = Map.take(params, ~w(indicator from to focus))
     filtered? = map_size(kept) > 0
 

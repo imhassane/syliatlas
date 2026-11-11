@@ -99,8 +99,11 @@ defmodule SyliAtlasWeb.TickerComponents do
               {gettext("Ratings")} <span>{gettext("latest decisions")}</span>
             </li>
             <li :for={r <- @data.ratings}>
-              <a href={Paths.rating(@locale, r.slug[@locale])} tabindex={copy && "-1"}>
-                <b>{r.name[@locale]}</b>
+              <a
+                href={Paths.rating(@locale, SyliAtlas.Locales.pick(r.slug, @locale))}
+                tabindex={copy && "-1"}
+              >
+                <b>{SyliAtlas.Locales.pick(r.name, @locale)}</b>
                 <span class="mono muted">
                   <span class="site-ticker-detail">{RatingComponents.agency_name(r.agency)}</span>
                   {Scale.display(r.rating)}

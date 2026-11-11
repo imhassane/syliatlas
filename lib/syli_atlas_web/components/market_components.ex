@@ -90,7 +90,7 @@ defmodule SyliAtlasWeb.MarketComponents do
   end
 
   defp scale(v, locale) do
-    billion = if locale == "en", do: "bn", else: "Md"
+    billion = SyliAtlasWeb.Format.billion_word(locale)
 
     cond do
       abs(v) >= 1.0e9 -> {v / 1.0e9, billion}
@@ -103,9 +103,6 @@ defmodule SyliAtlasWeb.MarketComponents do
   def integer(nil, locale), do: na(locale)
   def integer(n, locale), do: number(n * 1.0, 0, locale)
 
-  @months_fr ~w(janv. févr. mars avr. mai juin juil. août sept. oct. nov. déc.)
-  @months_en ~w(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
-
   @doc "« 9 nov. 2026 » / « 9 Nov 2026 »; without the year when `year: false`."
   def day(iso, locale, opts \\ [])
   def day(nil, locale, _opts), do: na(locale)
@@ -113,9 +110,9 @@ defmodule SyliAtlasWeb.MarketComponents do
   def day(iso, locale, opts) do
     case Date.from_iso8601(String.slice(iso, 0, 10)) do
       {:ok, d} ->
-        months = if locale == "en", do: @months_en, else: @months_fr
-        base = "#{d.day} #{Enum.at(months, d.month - 1)}"
-        if Keyword.get(opts, :year, true), do: base <> " #{d.year}", else: base
+        if Keyword.get(opts, :year, true),
+          do: SyliAtlasWeb.Dates.day_month_year(d.day, d.month, d.year, locale),
+          else: SyliAtlasWeb.Dates.day_month(d.day, d.month, locale)
 
       _ ->
         iso
