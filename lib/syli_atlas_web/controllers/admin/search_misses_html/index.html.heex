@@ -1,15 +1,14 @@
+<.admin_bar current={:searches} />
 <main id="main" class="adm">
   <div class="wrap stack gap-4">
     <header class="adm-head">
       <div>
-        <p class="eyebrow">Admin Syli Atlas</p>
-        <h1 class="h1">Recherches sans résultat</h1>
+        <h1 class="adm-title">Recherches sans résultat</h1>
         <p class="small muted">
           Requêtes normalisées (sans accents, en minuscules), comptées. Aucune donnée sur le lecteur.
           Un nom tapé souvent mérite un alias dans <code>SyliAtlasWeb.Search.Index</code>.
         </p>
       </div>
-      <a class="btn btn-secondary" href={~p"/admin/notations"}>Notations</a>
     </header>
 
     <p :if={@misses == []} class="muted" id="misses-none">Aucune recherche sans résultat.</p>

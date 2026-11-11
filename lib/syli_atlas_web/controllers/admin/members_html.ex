@@ -1,6 +1,8 @@
 defmodule SyliAtlasWeb.Admin.MembersHTML do
   use SyliAtlasWeb, :html
 
+  import SyliAtlasWeb.AdminComponents
+
   embed_templates "members_html/*"
 
   def mail_label("resend"), do: "Resend"
