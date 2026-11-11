@@ -33,6 +33,8 @@ defmodule SyliAtlasWeb.ConnCase do
 
   setup tags do
     SyliAtlas.DataCase.setup_sandbox(tags)
+    # The header band is cached by data version; tests change data within a second.
+    SyliAtlasWeb.Ticker.reset()
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
 end

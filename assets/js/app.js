@@ -1,5 +1,5 @@
 // Syli Atlas: the script of every page. It holds the site's own behaviour
-// (map, drawer, filter sheets, toasts, updates, install, offline pages, motion) and nothing
+// (map, drawer, header band, filter sheets, toasts, updates, install, offline pages, motion) and nothing
 // heavy: the LiveView client lives in live.js, loaded only by LiveView pages
 // (see SyliAtlasWeb.LiveAssets), so public pages never download it.
 
@@ -21,6 +21,7 @@ import {initMarketSearch} from "./ui/market"
 import {initSearch} from "./ui/search"
 import {initPasskeys} from "./ui/passkeys"
 import {initAccount} from "./ui/account"
+import {initTicker} from "./ui/ticker"
 
 initTheme()
 initDrawer()
@@ -37,6 +38,7 @@ initMarketSearch()
 initSearch()
 initPasskeys()
 initAccount()
+initTicker()
 
 // The lines below enable quality of life phoenix_live_reload
 // development features:
