@@ -34,36 +34,42 @@
     </div>
   <% else %>
     <.section tight={:bottom} class="profile-head">
-      <.area_header
-        area={@area}
+      <ProfileComponents.region_head
+        ctx={@ctx}
         region={@region}
-        name={@name}
-        title={@heading}
-        tab={@tab != :overview && @tab_name}
-        locale={@locale}
-      />
-      <SyliAtlasWeb.AccountComponents.follow
-        kind="area"
-        ref={@area.code}
-        locale={@locale}
+        members={@members.total}
         path={@path}
       />
-      <.filter_sheet id="period-sheet" title={gettext("Period")} summary={"#{@from} → #{@to}"}>
-        <.period_form action={@path} from={@from} to={@to} />
-      </.filter_sheet>
-      <p class="lead" data-answer>{@answer}</p>
-      <.source_line edition={@profile["edition"]} locale={@locale} />
     </.section>
+
+    <%!-- Same sticky bar as a country's: the sections of the page, the period. --%>
+    <div class="tab-bar" data-sticky-filters>
+      <div class="wrap tab-bar-row">
+        <nav class="tab-nav" aria-label={gettext("Sections of this page")} id="region-sections">
+          <a href="#economie">{gettext("Economy")}</a>
+          <a href="#finances">{gettext("Finances and debt")}</a>
+          <a :if={@members.total > 0} href="#members">{gettext("Members")}</a>
+          <a href="#questions">{gettext("Questions")}</a>
+        </nav>
+        <div class="tab-bar-period">
+          <.filter_sheet id="period-sheet" title={gettext("Period")} summary={"#{@from} → #{@to}"}>
+            <.period_form action={@path} from={@from} to={@to} />
+          </.filter_sheet>
+        </div>
+      </div>
+    </div>
   <% end %>
 
   <%!-- What changes from tab to tab: it slides in from the side of the tab. --%>
   <div class="tab-panel" id="tab-panel">
     <section
-      :if={@area.kind == "country" and @tab in [:overview, :economy, :finances]}
+      :if={@area.kind != "country" or @tab in [:overview, :economy, :finances]}
       class="section tab-intro"
     >
       <div class="wrap stack gap-1">
-        <p :if={@tab in [:overview, :economy]} class="lead" data-answer>{@answer}</p>
+        <p :if={@area.kind != "country" or @tab in [:overview, :economy]} class="lead" data-answer>
+          {@answer}
+        </p>
         <.source_line edition={@profile["edition"]} locale={@locale} />
       </div>
     </section>

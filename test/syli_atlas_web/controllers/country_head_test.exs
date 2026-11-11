@@ -15,8 +15,8 @@ defmodule SyliAtlasWeb.CountryHeadTest do
     for tab <- ["", "/economie", "/finances-et-dette", "/marches"] do
       html = doc("/fr/pays/cote-d-ivoire" <> tab)
       assert count(html, ".country-head .flag-lg svg.flag-svg[aria-hidden=true]") == 1, tab
-      assert text(html, "h1.country-name") =~ "Côte d'Ivoire"
-      assert count(html, ".country-chips a") >= 3
+      assert text(html, "h1.entity-name") =~ "Côte d'Ivoire"
+      assert count(html, ".entity-chips a") >= 3
       assert count(html, "#country-kpis li") == 6
     end
 
@@ -43,10 +43,25 @@ defmodule SyliAtlasWeb.CountryHeadTest do
     assert count(html, ".profile-head [data-answer]") == 0
   end
 
-  test "a region keeps its header, without flag or key figures" do
+  test "a region: the same header, a globe instead of a flag, sections and period in the bar" do
     html = doc("/fr/regions/afrique-de-l-ouest")
-    assert count(html, ".country-head, .flag") == 0
-    assert count(html, ".profile-head [data-answer]") == 1
+    assert count(html, ".region-head .entity-mark svg") == 1
+    assert count(html, ".flag") == 0
+    assert text(html, "h1.entity-name") =~ "Afrique de l'Ouest"
+    assert count(html, "#region-kpis li") == 6
+    # Every member counts, not only the first six of the comparison query.
+    assert text(html, ".entity-chips") =~ "15 pays"
+    assert count(html, ".tab-bar #region-sections a[href='#economie']") == 1
+    assert count(html, ".tab-bar .tab-bar-period form[data-period]") == 1
+    assert count(html, ".tab-panel .tab-intro [data-answer]") == 1
+  end
+
+  test "the flag and the name sit on the same row of the header grid" do
+    html = doc("/fr/pays/cote-d-ivoire")
+    assert count(html, ".entity-id > .entity-mark-slot .flag-lg") == 1
+    assert count(html, ".entity-id > .entity-title > h1") == 1
+    assert count(html, ".entity-id > .entity-actions #follow") == 1
+    assert count(html, ".entity-id > .entity-meta .entity-chips") == 1
   end
 
   test "every African country has its flag, inline and in the shared file" do
