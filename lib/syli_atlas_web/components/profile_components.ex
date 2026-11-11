@@ -215,7 +215,7 @@ defmodule SyliAtlasWeb.ProfileComponents do
       ctx.trade && "CEPII, BACI",
       ctx.distress && gettext("IMF debt sustainability analyses"),
       ctx.rating && gettext("rating agencies"),
-      ctx.market != [] && "Data by MansaAPI"
+      ctx.market != [] && SyliAtlas.Market.Catalog.attribution("mansa")
     ]
     |> Enum.filter(& &1)
     |> Enum.join(" · ")

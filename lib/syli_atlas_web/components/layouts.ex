@@ -299,7 +299,7 @@ defmodule SyliAtlasWeb.Layouts do
           {gettext("Sources:")} {gettext("IMF")}<span :if={@edition}> ({@edition})</span>
           · {gettext("World Bank (CC BY 4.0)")} · CEPII, BACI · {gettext(
             "IMF debt sustainability analyses"
-          )} · {gettext("rating agencies")}<span :if={@exchanges != []}> · Data by MansaAPI</span>.
+          )} · {gettext("rating agencies")}<span :if={@exchanges != []}> · {SyliAtlas.Market.Catalog.attribution("mansa")}</span>.
           <a href={Paths.method(@locale)}>{gettext("Terms of each source")}</a>
         </p>
         <p class="small muted">

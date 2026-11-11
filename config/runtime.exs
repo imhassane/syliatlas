@@ -37,6 +37,20 @@ if config_env() != :test do
       )
 end
 
+# MANSA_FAKE=true (development): the market import reads
+# SyliAtlas.Market.Sources.MansaFake instead of mansaapi.com, fictitious
+# figures that spend none of the shared daily quota. Refused in the Railway
+# environment named "production".
+if config_env() != :test and System.get_env("MANSA_FAKE") in ~w(true 1) do
+  if System.get_env("RAILWAY_ENVIRONMENT_NAME") == "production",
+    do: raise("MANSA_FAKE=true is refused in production: fictitious market figures")
+
+  config :syli_atlas, SyliAtlas.Market.Sources.Mansa,
+    req_options: [plug: SyliAtlas.Market.Sources.MansaFake, retry: false]
+
+  config :syli_atlas, SyliAtlas.Market, fake: true
+end
+
 # Ratings watch: the AI extraction uses the Railway variable ANTHROPIC_API_KEY.
 # Without it, the watch still collects the news but proposes nothing.
 # (The administration needs an administrator account: the email code, then

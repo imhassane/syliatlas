@@ -251,8 +251,15 @@ defmodule SyliAtlas.Market.Snapshots do
 
   defp sources(e) do
     for {code, rank} <- e.id |> Reference.ranked_sources("prices") |> Enum.with_index(1) do
-      c = Catalog.get(code) || %{name: code, url: nil, kind: "other"}
-      %{"code" => code, "name" => c.name, "url" => c.url, "kind" => c.kind, "rank" => rank}
+      c = Catalog.get(code) || %{kind: "other"}
+
+      %{
+        "code" => code,
+        "name" => Catalog.name(code),
+        "url" => Catalog.url(code),
+        "kind" => c.kind,
+        "rank" => rank
+      }
     end
   end
 
