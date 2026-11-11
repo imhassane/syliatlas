@@ -2,7 +2,7 @@ defmodule SyliAtlasWeb.Admin.RatingsHTML do
   use SyliAtlasWeb, :html
 
   import SyliAtlasWeb.RatingComponents, only: [agency_name: 1, outlook_label: 1]
-  import SyliAtlasWeb.AdminComponents
+  import SyliAtlasWeb.AdminComponents, only: [admin_shell: 1]
   alias SyliAtlas.Ratings.{Proposal, Scale}
 
   embed_templates "ratings_html/*"

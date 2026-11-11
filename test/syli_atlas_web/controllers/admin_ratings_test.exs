@@ -30,7 +30,7 @@ defmodule SyliAtlasWeb.AdminRatingsTest do
     assert html =~ ~s(id="adm-check")
     # Layout of the mockup: admin menu, key figures, entry form behind a button.
     refute Enum.empty?(
-             LazyHTML.query(doc, ~s(#adm-bar a[aria-current="page"][href="/admin/notations"]))
+             LazyHTML.query(doc, ~s(#admin-side a[aria-current="page"][href="/admin/notations"]))
            )
 
     refute Enum.empty?(LazyHTML.query(doc, "#adm-stats"))
@@ -88,7 +88,8 @@ defmodule SyliAtlasWeb.AdminRatingsTest do
 
   test "the other admin pages share the admin menu", %{admin: conn} do
     html = conn |> get("/admin/recherches") |> html_response(200)
-    assert html =~ ~s(id="adm-bar")
+    assert html =~ ~s(id="admin-side")
+    assert html =~ ~s(href="/admin/recherches" aria-current="page")
   end
 
   test "a typed decision joins the queue, then is published", %{admin: conn} do

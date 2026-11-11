@@ -1,96 +1,99 @@
-<.admin_bar current={:members} />
-<main id="main" class="adm">
-  <div class="wrap stack gap-4">
-    <header class="adm-head">
-      <div>
-        <h1 class="adm-title">Membres</h1>
-        <p class="small muted">
-          Le premier compte créé est administrateur. Un membre promu entre dans l'administration avec le code e-mail puis une clé d'accès, qu'il enregistre à sa première connexion admin.
-        </p>
-      </div>
-    </header>
-
-    <p :if={msg = Phoenix.Flash.get(@flash, :info)} class="adm-flash ok" role="status">{msg}</p>
-    <p :if={msg = Phoenix.Flash.get(@flash, :error)} class="adm-flash err" role="alert">{msg}</p>
-
-    <dl class="stats" id="members-stats">
-      <div>
-        <dt>Comptes</dt><dd class="big num">{@stats.users}</dd>
-      </div>
-      <div>
-        <dt>Avec clé d'accès</dt><dd class="big num">{@stats.with_passkey}</dd>
-      </div>
-      <div>
-        <dt>Alertes actives</dt><dd class="big num">{@stats.alerts}</dd>
-      </div>
-    </dl>
-
-    <form class="row gap-2" method="get" action={~p"/admin/membres"} id="members-filter">
-      <input
-        class="input"
-        type="search"
-        name="q"
-        value={@q}
-        placeholder="Chercher une adresse"
-        aria-label="Chercher une adresse"
-      />
-      <select class="select" name="role" aria-label="Rôle">
-        <option value="" selected={@role == nil}>Tous</option>
-        <option value="admin" selected={@role == "admin"}>Admins</option>
-        <option value="member" selected={@role == "member"}>Membres</option>
-      </select>
-      <button class="btn btn-secondary" type="submit">Filtrer</button>
-    </form>
-
-    <div class="card table-wrap">
-      <table class="table" id="members">
-        <thead>
-          <tr>
-            <th>Adresse</th><th>Rôle</th><th>Clés</th><th>Inscrit</th><th>Dernière connexion</th><th>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr :for={u <- @users} id={"member-#{u.id}"}>
-            <td dir="ltr">
-              {u.email}<span :if={u.deactivated_at} class="pill pill-warn">désactivé</span>
-            </td>
-            <td>
-              <span class={["pill", if(u.role == "admin", do: "pill-info", else: "pill-neutral")]}>{if u.role ==
-                                                                                                         "admin",
-                                                                                                       do:
-                                                                                                         "admin",
-                                                                                                       else:
-                                                                                                         "membre"}</span>
-            </td>
-            <td class="num">{Map.get(@passkey_counts, u.id, 0)}</td>
-            <td>{date(u.inserted_at)}</td>
-            <td>{date(u.last_sign_in_at)}</td>
-            <td class="row gap-1">
-              <.form for={%{}} action={~p"/admin/membres/#{u.id}/role"} id={"member-role-#{u.id}"}>
-                <input
-                  type="hidden"
-                  name="role"
-                  value={if u.role == "admin", do: "member", else: "admin"}
-                />
-                <button class="btn btn-quiet btn-sm" type="submit">{if u.role == "admin",
-                  do: "Retirer admin",
-                  else: "Promouvoir admin"}</button>
-              </.form>
-              <.form
-                for={%{}}
-                action={~p"/admin/membres/#{u.id}/actif"}
-                id={"member-active-#{u.id}"}
-              >
-                <input type="hidden" name="active" value={to_string(u.deactivated_at != nil)} />
-                <button class="btn btn-quiet btn-sm" type="submit">{if u.deactivated_at,
-                  do: "Réactiver",
-                  else: "Désactiver"}</button>
-              </.form>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+<.admin_shell
+  current={:members}
+  counts={@admin_counts}
+  until={@admin_until}
+  key={@admin_key}
+>
+  <header class="adm-head">
+    <div class="adm-intro">
+      <p class="eyebrow">Communauté</p>
+      <h1 class="adm-title">Membres</h1>
+      <p class="small muted">
+        Le premier compte créé est administrateur. Un membre promu entre dans l'administration avec le code e-mail puis une clé d'accès, qu'il enregistre à sa première connexion admin.
+      </p>
     </div>
+  </header>
+
+  <p :if={msg = Phoenix.Flash.get(@flash, :info)} class="adm-flash ok" role="status">{msg}</p>
+  <p :if={msg = Phoenix.Flash.get(@flash, :error)} class="adm-flash err" role="alert">{msg}</p>
+
+  <dl class="stats stats-3" id="members-stats">
+    <div>
+      <dt>Comptes</dt><dd class="big num">{@stats.users}</dd>
+    </div>
+    <div>
+      <dt>Avec clé d'accès</dt><dd class="big num">{@stats.with_passkey}</dd>
+    </div>
+    <div>
+      <dt>Alertes actives</dt><dd class="big num">{@stats.alerts}</dd>
+    </div>
+  </dl>
+
+  <form class="row gap-2" method="get" action={~p"/admin/membres"} id="members-filter">
+    <input
+      class="input"
+      type="search"
+      name="q"
+      value={@q}
+      placeholder="Chercher une adresse"
+      aria-label="Chercher une adresse"
+    />
+    <select class="select" name="role" aria-label="Rôle">
+      <option value="" selected={@role == nil}>Tous</option>
+      <option value="admin" selected={@role == "admin"}>Admins</option>
+      <option value="member" selected={@role == "member"}>Membres</option>
+    </select>
+    <button class="btn btn-secondary" type="submit">Filtrer</button>
+  </form>
+
+  <div class="card table-wrap">
+    <table class="table" id="members">
+      <thead>
+        <tr>
+          <th>Adresse</th><th>Rôle</th><th>Clés</th><th>Inscrit</th><th>Dernière connexion</th><th>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr :for={u <- @users} id={"member-#{u.id}"}>
+          <td dir="ltr">
+            {u.email}<span :if={u.deactivated_at} class="pill pill-warn">désactivé</span>
+          </td>
+          <td>
+            <span class={["pill", if(u.role == "admin", do: "pill-info", else: "pill-neutral")]}>{if u.role ==
+                                                                                                       "admin",
+                                                                                                     do:
+                                                                                                       "admin",
+                                                                                                     else:
+                                                                                                       "membre"}</span>
+          </td>
+          <td class="num">{Map.get(@passkey_counts, u.id, 0)}</td>
+          <td>{date(u.inserted_at)}</td>
+          <td>{date(u.last_sign_in_at)}</td>
+          <td class="row gap-1">
+            <.form for={%{}} action={~p"/admin/membres/#{u.id}/role"} id={"member-role-#{u.id}"}>
+              <input
+                type="hidden"
+                name="role"
+                value={if u.role == "admin", do: "member", else: "admin"}
+              />
+              <button class="btn btn-quiet btn-sm" type="submit">{if u.role == "admin",
+                do: "Retirer admin",
+                else: "Promouvoir admin"}</button>
+            </.form>
+            <.form
+              for={%{}}
+              action={~p"/admin/membres/#{u.id}/actif"}
+              id={"member-active-#{u.id}"}
+            >
+              <input type="hidden" name="active" value={to_string(u.deactivated_at != nil)} />
+              <button class="btn btn-quiet btn-sm" type="submit">{if u.deactivated_at,
+                do: "Réactiver",
+                else: "Désactiver"}</button>
+            </.form>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-</main>
+</.admin_shell>

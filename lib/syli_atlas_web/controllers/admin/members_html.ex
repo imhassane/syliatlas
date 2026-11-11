@@ -1,7 +1,7 @@
 defmodule SyliAtlasWeb.Admin.MembersHTML do
   use SyliAtlasWeb, :html
 
-  import SyliAtlasWeb.AdminComponents
+  import SyliAtlasWeb.AdminComponents, only: [admin_shell: 1]
 
   embed_templates "members_html/*"
 
