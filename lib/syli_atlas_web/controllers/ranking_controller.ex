@@ -14,8 +14,11 @@ defmodule SyliAtlasWeb.RankingController do
     indicator =
       if Indicators.valid?(params["indicator"]), do: params["indicator"], else: "gdp_usd_bn"
 
+    # The value in the arrival year by default; the change over the period on
+    # demand. Real GDP is an index (100 = the start year): only its change means
+    # something.
     mode =
-      if params["mode"] == "value" and indicator != "real_gdp_index", do: "value", else: "change"
+      if params["mode"] == "change" or indicator == "real_gdp_index", do: "change", else: "value"
 
     region = Enum.find(Geo.list_regions(), &(&1.code == params["region"]))
 
