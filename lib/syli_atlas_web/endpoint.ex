@@ -54,5 +54,7 @@ defmodule SyliAtlasWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
+  # Content-Security-Policy of every HTML response (CSP_MODE).
+  plug SyliAtlasWeb.CSP
   plug SyliAtlasWeb.Router
 end

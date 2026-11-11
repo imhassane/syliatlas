@@ -1,0 +1,5 @@
+{"prerender": [{"where": {"and": [
+  {"href_matches": "/*"},
+  {"not": {"href_matches": ["/admin/*", "/admin", "/api/*", "/*/mon-espace*", "/*/my-space*", "/*/connexion*", "/*/sign-in*", "/unsubscribe/*", "/*/discussion*"]}},
+  {"not": {"selector_matches": "[data-method], [download], [rel~=nofollow], [target]"}}
+]}, "eagerness": "moderate"}]}
