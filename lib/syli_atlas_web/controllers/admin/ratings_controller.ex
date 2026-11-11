@@ -4,16 +4,32 @@ defmodule SyliAtlasWeb.Admin.RatingsController do
 
   alias SyliAtlas.Ratings
   alias SyliAtlas.Ratings.{Rating, Review}
+  alias SyliAtlasWeb.Admin.RatingsHTML
 
   def root(conn, _params), do: redirect(conn, to: ~p"/admin/notations")
 
-  def index(conn, _params) do
+  def index(conn, params) do
+    doc = Ratings.document()
+    pending = Review.list("pending")
+
+    filter =
+      if params["filtre"] in ~w(changements confirmations), do: params["filtre"], else: "toutes"
+
+    shown =
+      case filter do
+        "changements" -> Enum.filter(pending, &(RatingsHTML.kind(&1, doc) == :change))
+        "confirmations" -> Enum.filter(pending, &(RatingsHTML.kind(&1, doc) == :confirmation))
+        "toutes" -> pending
+      end
+
     render(conn, :index,
       page_title: "Admin · Notations",
-      pending: Review.list("pending"),
+      pending: pending,
+      shown: shown,
+      filter: filter,
       decided: Review.list("approved", 10) ++ Review.list("rejected", 10),
       to_check: Review.to_check(),
-      doc: Ratings.document(),
+      doc: doc,
       extractor?: SyliAtlas.Ratings.Extractor.configured?(),
       last_watch: SyliAtlas.Ratings.Watch.last_run()
     )

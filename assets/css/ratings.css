@@ -82,19 +82,55 @@ dd.rt-inv, dd.rt-spec, dd.rt-high, dd.rt-risk, dd.rt-def, b.rt-inv, b.rt-spec, b
 }
 
 /* Admin: validation queue. */
-.adm { padding: 32px 0 64px; }
-.adm-head { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: flex-start; }
-.adm-flash { padding: 10px 14px; border-radius: 8px; }
+/* admin (maquette « Admin — Notations à valider ») */
+.adm-bar { border-bottom: 1px solid var(--border); background: var(--alt); }
+.adm-bar .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 20px; min-height: 64px; }
+.adm-brand { font-size: 18px; font-weight: 600; color: var(--ink); text-decoration: none; }
+.adm-brand > span:first-child { font-weight: 400; color: var(--ink-muted); }
+.adm-brand .mono { font-size: 12px; font-weight: 400; }
+.adm { padding: 40px 0 64px; }
+.adm-head { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; align-items: flex-end; }
+.adm-intro { display: flex; flex-direction: column; gap: 10px; max-width: 760px; }
+.adm-intro p { margin: 0; font-size: 16px; line-height: 1.55; }
+.adm-title { margin: 0; font-size: 34px; font-weight: 400; letter-spacing: -0.02em; }
+.adm-head-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.adm-big-sm { font-size: 28px !important; }
+.adm-flash { margin: 0; padding: 10px 14px; border-radius: 8px; }
 .adm-flash.ok { background: var(--success-bg); color: var(--success-ink); }
 .adm-flash.err { background: var(--rt-def-bg); color: var(--rt-def-ink); }
-.adm-item-head { display: flex; flex-wrap: wrap; gap: 12px; align-items: baseline; }
-.adm-warn { margin: 0; padding: 0; list-style: none; color: var(--rt-risk-ink); font-size: 14px; }
-.adm-quote { margin: 0; padding: 8px 12px; border-left: 3px solid var(--rt-spec); font-style: italic; }
+.adm-list, .adm-new { padding: 0; overflow: hidden; }
+.adm-card-head { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid var(--border); }
+.adm-card-head .h2 { margin: 0; }
+.adm-card-head p { margin: 4px 0 0; }
+.adm-filters { display: flex; flex-wrap: wrap; gap: 6px; }
+.adm-empty { margin: 0; padding: 32px 24px; text-align: center; }
+.adm-pad { padding: 20px 24px 24px; }
+.adm-new { display: none; }
+.adm-toggle:checked ~ .adm-new { display: block; }
+.adm-row { display: flex; flex-wrap: wrap; gap: 16px 24px; padding: 24px; border-bottom: 1px solid var(--border-faint); }
+.adm-row:last-child, .adm-row:has(+ .adm-hidden-form:last-child) { border-bottom: 0; }
+.adm-row-main { flex: 2 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.adm-row-main p { margin: 0; }
+.adm-row-side { flex: 1 1 260px; display: flex; flex-direction: column; gap: 10px; justify-content: center; }
+.adm-item-head { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.adm-item-head b { font-size: 18px; }
+.adm-proposal { font-size: 15px; }
+.adm-quote { margin: 0; padding: 10px 14px; background: var(--alt); border-radius: 8px; font-size: 14px; color: var(--ink-muted); }
+.adm-quote a { white-space: nowrap; }
+.adm-checks { color: var(--ink-subtle); line-height: 1.6; }
+.adm-bad { color: var(--warning-ink); }
+.adm-source { overflow-wrap: anywhere; }
+.adm-field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--ink-muted); }
+.adm-buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.adm-row .adm-fix { display: none; flex: 1 1 100%; padding-top: 16px; border-top: 1px dashed var(--border); }
+.adm-row .adm-toggle:checked ~ .adm-fix { display: grid; }
+.adm-hidden-form { display: none; }
 .adm-form { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; align-items: end; }
 .adm-form label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
-.adm-form input, .adm-form select { font: inherit; padding: 6px 8px; border: 1px solid var(--border); border-radius: 6px; background: transparent; color: inherit; }
+.adm-form input, .adm-form select, .adm-field input { font: inherit; font-size: 14px; min-height: 40px; padding: 6px 10px; border: 1px solid var(--border-input); border-radius: 8px; background: var(--card); color: var(--ink); box-sizing: border-box; width: 100%; }
 .adm-wide { grid-column: 1 / -1; }
 .adm-actions { grid-column: 1 / -1; }
+@media (max-width: 47.99rem) { .adm-title { font-size: 28px; } .adm-row, .adm-card-head { padding: 18px 16px; } }
 
 /* Business climate block of a country profile. */
 .cl-row { display: flex; flex-direction: column; gap: 6px; }

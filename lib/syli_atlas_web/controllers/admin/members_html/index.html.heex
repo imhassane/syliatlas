@@ -1,14 +1,13 @@
+<.admin_bar current={:members} />
 <main id="main" class="adm">
   <div class="wrap stack gap-4">
     <header class="adm-head">
       <div>
-        <p class="eyebrow">Admin Syli Atlas · communauté</p>
-        <h1 class="h1">Membres</h1>
+        <h1 class="adm-title">Membres</h1>
         <p class="small muted">
           Le premier compte créé est administrateur. Un membre promu entre dans l'administration avec le code e-mail puis une clé d'accès, qu'il enregistre à sa première connexion admin.
         </p>
       </div>
-      <a class="btn btn-secondary" href={~p"/admin/notations"}>Notations</a>
     </header>
 
     <p :if={msg = Phoenix.Flash.get(@flash, :info)} class="adm-flash ok" role="status">{msg}</p>
