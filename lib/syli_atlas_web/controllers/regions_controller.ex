@@ -36,7 +36,17 @@ defmodule SyliAtlasWeb.RegionsController do
             "North, West, Central, East and Southern Africa side by side: growth, income, inflation and debt, from IMF data."
           ),
           %{
-            noindex: filtered?
+            noindex: filtered?,
+            json_ld: [
+              Seo.breadcrumbs([
+                {"Syli Atlas", Paths.home(locale)},
+                {gettext("Regions"), paths[locale]}
+              ]),
+              Seo.item_list(
+                gettext("Regions of Africa"),
+                for(r <- regions, do: {SyliAtlas.Geo.Area.name(r, locale), Paths.area(locale, r)})
+              )
+            ]
           }
         ),
       alternates: Seo.alternates_for_header(paths),

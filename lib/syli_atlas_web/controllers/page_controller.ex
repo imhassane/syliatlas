@@ -94,7 +94,23 @@ defmodule SyliAtlasWeb.PageController do
         Seo.page(
           locale,
           paths,
-          gettext("Where Syli Atlas figures come from and how totals and changes are computed.")
+          gettext("Where Syli Atlas figures come from and how totals and changes are computed."),
+          %{
+            json_ld: [
+              Seo.breadcrumbs([
+                {"Syli Atlas", Paths.home(locale)},
+                {gettext("Method and sources"), paths[locale]}
+              ]),
+              Seo.about_page(
+                gettext("Method and sources"),
+                paths[locale],
+                for(
+                  s <- data_sources(Sources.published_edition("imf_weo")),
+                  do: {s.name, s[:url]}
+                )
+              )
+            ]
+          }
         ),
       alternates: Seo.alternates_for_header(paths),
       edition: Sources.published_edition("imf_weo"),

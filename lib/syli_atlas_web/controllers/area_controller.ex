@@ -142,18 +142,9 @@ defmodule SyliAtlasWeb.AreaController do
       seo:
         Seo.page(locale, paths, answer, %{
           json_ld:
-            [
-              Seo.breadcrumbs(crumbs),
-              Seo.dataset(
-                if(tab == :overview,
-                  do: gettext("Economy of %{name}, 2015–2030", name: name),
-                  else: name <> " · " <> tab_name
-                ),
-                name,
-                "/api/v1/areas/#{area.code}",
-                profile["edition"]
-              )
-            ] ++ if(tab == :overview, do: [Seo.faq(faq)], else: [])
+            [Seo.breadcrumbs(crumbs)] ++
+              datasets(tab, area, name, paths[locale], profile, trade, world_bank, locale) ++
+              if(tab == :overview, do: [Seo.faq(faq)], else: [])
         }),
       alternates: Seo.alternates_for_header(paths),
       area: area,
@@ -195,12 +186,111 @@ defmodule SyliAtlasWeb.AreaController do
     )
   end
 
+  # One Dataset per source, on the page that shows it: the IMF series on the
+  # overview, CEPII on Trade, the World Bank on Society. The other tabs show
+  # the same IMF series again and carry none, so each dataset has one page.
+  defp datasets(:overview, area, name, path, profile, _trade, _wb, locale) do
+    edition = profile["edition"]
+    to = edition_estimate_year(profile)
+
+    [
+      Seo.dataset(
+        name: gettext("Economy of %{name}: GDP, growth, debt, inflation 2015–2030", names(name)),
+        description:
+          gettext(
+            "Macroeconomic indicators of %{name} from 2015 to 2030: GDP in current dollars and in purchasing power parity, real growth, GDP per capita, inflation, public debt, fiscal balance, current account, population. Source: IMF, %{edition}. %{year} is an estimate, later years are projections.",
+            names(name, edition: edition["label"], year: to)
+          ),
+        path: path,
+        locale: locale,
+        area: %{
+          name: name,
+          code: area.kind == "country" && area.code,
+          alternate: SyliAtlas.Geo.French.usual_name(name)
+        },
+        keywords:
+          for(
+            k <- [gettext("GDP"), gettext("growth"), gettext("public debt"), gettext("inflation")],
+            do: k <> " " <> name
+          ),
+        variables: [
+          {gettext("GDP, current dollars"), gettext("billion USD")},
+          {gettext("Real GDP growth"), "%"},
+          {gettext("GDP per capita"), "USD"},
+          {gettext("Inflation, annual average"), "%"},
+          {gettext("Gross public debt"), gettext("% of GDP")},
+          {gettext("Fiscal balance"), gettext("% of GDP")},
+          {gettext("Current account balance"), gettext("% of GDP")}
+        ],
+        downloads: [
+          {"text/csv", "/api/v1/areas/#{area.code}/csv"},
+          {"application/json", "/api/v1/areas/#{area.code}"}
+        ],
+        based_on: {"IMF, " <> edition["label"], "https://www.imf.org/en/Publications/WEO"},
+        modified: edition["fetched_at"],
+        temporal: "2015/2030"
+      )
+    ]
+  end
+
+  defp datasets(:trade, area, name, path, _profile, trade, _wb, locale) when is_map(trade) do
+    src = SyliAtlas.Trade.document()["source"]
+    year = SyliAtlas.Trade.document()["year"]
+
+    [
+      Seo.dataset(
+        name: gettext("Exports of %{name}: products and clients", names(name)),
+        description:
+          gettext(
+            "Goods exported by %{name} in %{year}: share of each product chapter (HS) and of each client country. Source: %{source}, version %{version}.",
+            names(name, year: year, source: src["name"], version: src["version"])
+          ),
+        path: path,
+        locale: locale,
+        area: %{name: name, code: area.code},
+        based_on: {src["name"], src["url"]},
+        modified: SyliAtlas.Trade.document()["as_of"],
+        temporal: to_string(year)
+      )
+    ]
+  end
+
+  defp datasets(:society, area, name, path, _profile, _trade, wb, locale) when is_map(wb) do
+    doc = SyliAtlas.WorldBank.document()
+    src = doc["sources"]["wdi"]
+
+    [
+      Seo.dataset(
+        name: gettext("Living conditions in %{name}: poverty, jobs, electricity", names(name)),
+        description:
+          gettext(
+            "Social indicators of %{name}: poverty, unemployment, access to electricity and the internet, remittances, foreign investment, value added and jobs by sector. Source: %{source}.",
+            names(name, source: src["name"])
+          ),
+        path: path,
+        locale: locale,
+        area: %{name: name, code: area.code},
+        based_on: {src["name"], src["url"]},
+        modified: doc["as_of"]
+      )
+    ]
+  end
+
+  defp datasets(_tab, _area, _name, _path, _profile, _trade, _wb, _locale), do: []
+
+  # The last year the IMF gives as an estimate (the default arrival year).
+  defp edition_estimate_year(_profile), do: elem(SyliAtlas.Profiles.Builder.default_period(), 1)
+
   # Titles name what people search: the subject, the measure, the year, the
   # source. A country also searched under another name has it in brackets
   # (Cabo Verde, Cap-Vert).
   defp title(:overview, area, name, to, _trade) do
     if area.kind == "country",
-      do: gettext("%{name}: GDP, growth, debt and inflation %{year} (IMF)", name: usual(name), year: to),
+      do:
+        gettext("%{name}: GDP, growth, debt and inflation %{year} (IMF)",
+          name: usual(name),
+          year: to
+        ),
       else: gettext("%{name}: economy %{year}, GDP and growth (IMF)", name: name, year: to)
   end
 
@@ -208,11 +298,16 @@ defmodule SyliAtlasWeb.AreaController do
     do: gettext("GDP of %{name} 2015–2030: growth and GDP per capita", title_names(name))
 
   defp title(:finances, _area, name, to, _trade),
-    do: gettext("Public debt of %{name}: level, creditors and risk (%{year})", title_names(name, year: to))
+    do:
+      gettext(
+        "Public debt of %{name}: level, creditors and risk (%{year})",
+        title_names(name, year: to)
+      )
 
   defp title(:trade, _area, name, _to, trade),
     do:
-      gettext("Exports of %{name}: products and main buyers (%{year})",
+      gettext(
+        "Exports of %{name}: products and main buyers (%{year})",
         title_names(name, year: (trade && trade["year"]) || "")
       )
 
@@ -349,7 +444,8 @@ defmodule SyliAtlasWeb.AreaController do
       "GDP of %{name}: %{gdp} in %{to}, %{per_capita} per person (%{ppp} in purchasing power parity). Real growth of %{growth} in %{to} (IMF).",
       names(name,
         gdp: value(PublicData.at(s["gdp_usd_bn"], to), "gdp_usd_bn", locale),
-        per_capita: value(PublicData.at(s["gdp_per_capita_usd"], to), "gdp_per_capita_usd", locale),
+        per_capita:
+          value(PublicData.at(s["gdp_per_capita_usd"], to), "gdp_per_capita_usd", locale),
         ppp: value(PublicData.at(s["gdp_per_capita_ppp"], to), "gdp_per_capita_ppp", locale),
         growth: rate(PublicData.at(s["real_gdp_growth"], to), locale),
         to: to
@@ -515,8 +611,10 @@ defmodule SyliAtlasWeb.AreaController do
     s = data["profile"]["series"]
 
     [
-      {gettext("How much has the economy of %{name} grown since %{from}?", names(name, from: from)),
-       answer(name, data, from, to, locale)},
+      {gettext(
+         "How much has the economy of %{name} grown since %{from}?",
+         names(name, from: from)
+       ), answer(name, data, from, to, locale)},
       {gettext("What is the GDP per capita of %{name}?", names(name)),
        gettext(
          "%{value} in %{year} at market exchange rates, %{ppp} in purchasing power parity (IMF).",

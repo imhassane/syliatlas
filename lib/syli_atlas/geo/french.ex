@@ -148,5 +148,10 @@ defmodule SyliAtlas.Geo.French do
   defp capitalize(""), do: ""
 
   defp vowel?(name),
-    do: name |> String.normalize(:nfd) |> String.first() |> String.downcase() |> Kernel.in(~w(a e i o u y))
+    do:
+      name
+      |> String.normalize(:nfd)
+      |> String.first()
+      |> String.downcase()
+      |> Kernel.in(~w(a e i o u y))
 end

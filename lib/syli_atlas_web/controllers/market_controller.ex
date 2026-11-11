@@ -50,7 +50,22 @@ defmodule SyliAtlasWeb.MarketController do
           gettext(
             "Every African stock exchange followed by Syli Atlas: main index, daily change, number of listed securities, with the source and date of each figure."
           ),
-          %{noindex: filtered?}
+          %{
+            noindex: filtered?,
+            json_ld: [
+              Seo.breadcrumbs([
+                {"Syli Atlas", Paths.home(locale)},
+                {gettext("Stock exchanges"), paths[locale]}
+              ]),
+              Seo.item_list(
+                gettext("African stock exchanges"),
+                for(
+                  x <- all,
+                  do: {x["exchange"]["name"], Paths.exchange(locale, x["exchange"]["code"])}
+                )
+              )
+            ]
+          }
         ),
       alternates: Seo.alternates_for_header(paths),
       overview: overview,
@@ -84,7 +99,18 @@ defmodule SyliAtlasWeb.MarketController do
               {"Syli Atlas", Paths.home(locale)},
               {gettext("Stock exchanges"), Paths.markets(locale)},
               {e["short_name"], paths[locale]}
-            ])
+            ]),
+            # Prices are shown here under the source's licence, not handed out:
+            # the dataset has no download.
+            Seo.dataset(
+              name: exchange_title(e, doc),
+              description: answer(doc, locale),
+              path: paths[locale],
+              locale: locale,
+              area: %{name: e["name"]},
+              based_on: {SyliAtlas.Market.Catalog.name(doc["index"]["source"] || "mansa"), nil},
+              modified: doc["index"]["date"] || doc["as_of"]
+            )
           ],
           noindex: params["page"] not in [nil, "1"]
         }),
@@ -135,7 +161,8 @@ defmodule SyliAtlasWeb.MarketController do
                 {gettext("Stock exchanges"), Paths.markets(locale)},
                 {e["short_name"], Paths.exchange(locale, code)},
                 {row["name"], paths[locale]}
-              ])
+              ]),
+              Seo.corporation(row["name"], row["ticker"], e["short_name"], paths[locale])
             ]
           }),
         alternates: Seo.alternates_for_header(paths),
@@ -164,7 +191,16 @@ defmodule SyliAtlasWeb.MarketController do
           paths,
           gettext(
             "Exchange-traded funds listed in Africa: price, daily change, volume and issuer."
-          )
+          ),
+          %{
+            json_ld: [
+              Seo.breadcrumbs([
+                {"Syli Atlas", Paths.home(locale)},
+                {gettext("Stock exchanges"), Paths.markets(locale)},
+                {"ETF", paths[locale]}
+              ])
+            ]
+          }
         ),
       alternates: Seo.alternates_for_header(paths),
       doc: doc,

@@ -116,8 +116,11 @@ defmodule SyliAtlasWeb.RatingsController do
 
   defp title(entry, name),
     do:
-      gettext("Credit rating of %{name}: %{agencies}",
-        names(name, agencies: entry |> RatingComponents.agencies_text() |> String.replace(" · ", ", "))
+      gettext(
+        "Credit rating of %{name}: %{agencies}",
+        names(name,
+          agencies: entry |> RatingComponents.agencies_text() |> String.replace(" · ", ", ")
+        )
       )
 
   defp description(%{"band" => nil}, name),

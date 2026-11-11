@@ -28,7 +28,14 @@ defmodule SyliAtlasWeb.CommunityController do
             Seo.breadcrumbs([
               {"Syli Atlas", Paths.home(locale)},
               {gettext("Economic communities"), paths[locale]}
-            ])
+            ]),
+            Seo.item_list(
+              gettext("Economic communities of Africa"),
+              for(
+                c <- Communities.all(),
+                do: {c.name[locale], Paths.community(locale, c.slug[locale])}
+              )
+            )
           ]
         }),
       alternates: Seo.alternates_for_header(paths),
@@ -91,7 +98,13 @@ defmodule SyliAtlasWeb.CommunityController do
                 {"Syli Atlas", Paths.home(locale)},
                 {gettext("Economic communities"), Paths.communities(locale)},
                 {name, paths[locale]}
-              ])
+              ]),
+              Seo.community(
+                community.name[locale],
+                name,
+                paths[locale],
+                for(m <- members, do: {m.name, Paths.area(locale, "country", m.slug)})
+              )
             ]
           }),
         alternates: Seo.alternates_for_header(paths),
