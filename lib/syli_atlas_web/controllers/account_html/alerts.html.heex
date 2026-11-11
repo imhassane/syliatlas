@@ -121,5 +121,100 @@
         )}
       </p>
     </section>
+    <section
+      :if={@exchanges != []}
+      class="card pad stack gap-3"
+      aria-labelledby="new-market-alert"
+      id="market-alert"
+    >
+      <h2 class="h2" id="new-market-alert">{gettext("New stock exchange alert")}</h2>
+      <.form
+        for={@market_form}
+        action={~p"/account/alerts"}
+        id="market-alert-form"
+        class="stack gap-3"
+      >
+        <div class="grid-2">
+          <label class="field">
+            <span class="eyebrow">{gettext("Exchange")}</span>
+            <select
+              class="select"
+              name={@market_form[:exchange_code].name}
+              id="market-exchange"
+              required
+            >
+              <option
+                :for={{code, name} <- @exchanges}
+                value={code}
+                selected={@market_form[:exchange_code].value == code}
+              >
+                {name}
+              </option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="eyebrow">{gettext("Ticker (empty: the index)")}</span>
+            <input
+              class="input"
+              type="text"
+              name={@market_form[:ticker].name}
+              id="market-ticker"
+              value={@market_form[:ticker].value}
+              autocapitalize="characters"
+              dir="ltr"
+            />
+          </label>
+        </div>
+        <fieldset class="stack gap-1">
+          <legend class="eyebrow">{gettext("Tell me when it")}</legend>
+          <label :for={{v, l} <- market_kinds()} class="choice">
+            <input
+              type="radio"
+              name={@market_form[:kind].name}
+              value={v}
+              checked={(@market_form[:kind].value || "session_move") == v}
+            />
+            {l}
+          </label>
+        </fieldset>
+        <label class="field">
+          <span class="eyebrow">{gettext(
+            "Threshold (percentage, or price in the security's currency)"
+          )}</span>
+          <input
+            class="input"
+            type="text"
+            inputmode="decimal"
+            name={@market_form[:threshold].name}
+            id="market-threshold"
+            value={@market_form[:threshold].value}
+            required
+          />
+        </label>
+        <p :for={{field, {msg, _}} <- @market_form.errors} class="adm-flash err" role="alert">
+          {field}: {msg}
+        </p>
+        <fieldset class="stack gap-1">
+          <legend class="eyebrow">{gettext("Frequency")}</legend>
+          <label :for={{v, l} <- frequencies()} class="choice">
+            <input
+              type="radio"
+              name={@market_form[:frequency].name}
+              value={v}
+              checked={(@market_form[:frequency].value || "immediate") == v}
+            />
+            {l}
+          </label>
+        </fieldset>
+        <button class="btn btn-primary" type="submit" id="market-alert-submit">
+          {gettext("Create the alert")}
+        </button>
+      </.form>
+      <p class="small muted">
+        {gettext(
+          "Checked after each session's closes (around 17:30 UTC on trading days). Figures the quality checks flag never alert."
+        )}
+      </p>
+    </section>
   </.space>
 </Layouts.public>

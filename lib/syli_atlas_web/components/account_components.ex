@@ -14,12 +14,33 @@ defmodule SyliAtlasWeb.AccountComponents do
   attr :ref, :string, required: true
   attr :locale, :string, required: true
   attr :path, :string, required: true, doc: "this page, to come back after signing in"
-  attr :alert_area, :string, default: nil, doc: "country code: shows the bell"
+  attr :alert_area, :any, default: nil, doc: "country code: shows the bell"
+  attr :alert_market, :any, default: nil, doc: "{exchange, ticker | nil}: shows the bell"
 
   def follow(assigns) do
+    alerts = Paths.account(assigns.locale, :alerts)
+
+    alert_href =
+      case assigns do
+        %{alert_area: code} when is_binary(code) ->
+          alerts <> "?area=" <> code
+
+        %{alert_market: {exchange, nil}} ->
+          alerts <> "?" <> URI.encode_query(%{"exchange" => exchange}) <> "#market-alert"
+
+        %{alert_market: {exchange, ticker}} ->
+          alerts <>
+            "?" <>
+            URI.encode_query(%{"exchange" => exchange, "ticker" => ticker}) <> "#market-alert"
+
+        _ ->
+          nil
+      end
+
     assigns =
       assign(assigns,
         key: assigns.kind <> ":" <> assigns.ref,
+        alert_href: alert_href,
         login: Paths.login(assigns.locale) <> "?return_to=" <> URI.encode_www_form(assigns.path)
       )
 
@@ -46,12 +67,7 @@ defmodule SyliAtlasWeb.AccountComponents do
         ><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"></path></svg>
         <span>{gettext("Follow")}</span>
       </a>
-      <a
-        :if={@alert_area}
-        class="btn btn-quiet btn-sm"
-        id="follow-alert"
-        href={Paths.account(@locale, :alerts) <> "?area=" <> @alert_area}
-      >
+      <a :if={@alert_href} class="btn btn-quiet btn-sm" id="follow-alert" href={@alert_href}>
         <svg
           width="18"
           height="18"

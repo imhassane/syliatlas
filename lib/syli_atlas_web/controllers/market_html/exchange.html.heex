@@ -20,6 +20,13 @@
       <h1 class="display area-title">{@e["short_name"]}</h1>
       <p :if={@e["name"] != @e["short_name"]} class="muted">{@e["name"]}</p>
     </div>
+    <SyliAtlasWeb.AccountComponents.follow
+      kind="exchange"
+      ref={@e["code"]}
+      locale={@locale}
+      path={SyliAtlasWeb.Paths.exchange(@locale, @e["code"])}
+      alert_market={{@e["code"], nil}}
+    />
     <p class="lead" data-answer>{@answer}</p>
     <p class="src">
       <.credit

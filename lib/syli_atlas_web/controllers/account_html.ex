@@ -99,7 +99,37 @@ defmodule SyliAtlasWeb.AccountHTML do
       {"never", gettext("Never")}
     ]
 
+  def market_kinds,
+    do: [
+      {"session_move", gettext("moves more than a percentage in one session (up or down)")},
+      {"price_above", gettext("closes above a price")},
+      {"price_below", gettext("closes below a price")}
+    ]
+
   @doc "What an alert watches, in a sentence."
+  def describe(%Alert{kind: kind} = alert, _countries, _locale)
+      when kind in ~w(session_move price_above price_below) do
+    subject =
+      case alert.ticker do
+        nil -> gettext("%{exchange} · index", exchange: String.upcase(alert.exchange_code))
+        ticker -> "#{ticker} · #{String.upcase(alert.exchange_code)}"
+      end
+
+    rule =
+      case kind do
+        "session_move" ->
+          gettext("session move of %{threshold} % or more", threshold: threshold(alert.threshold))
+
+        "price_above" ->
+          gettext("close above %{threshold}", threshold: threshold(alert.threshold))
+
+        "price_below" ->
+          gettext("close below %{threshold}", threshold: threshold(alert.threshold))
+      end
+
+    {subject, rule}
+  end
+
   def describe(%Alert{} = alert, countries, locale) do
     country =
       case Enum.find(countries, &(&1.code == alert.area_code)) do

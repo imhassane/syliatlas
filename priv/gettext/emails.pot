@@ -106,7 +106,7 @@ msgstr ""
 msgid "One last step: register your passkey."
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:203
+#: lib/syli_atlas/accounts/alert_emails.ex:273
 #: lib/syli_atlas/accounts/emails.ex:104
 #, elixir-autogen, elixir-format
 msgid "Open my space"
@@ -254,7 +254,7 @@ msgstr ""
 msgid "verified"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:54
+#: lib/syli_atlas/accounts/alert_emails.ex:55
 #, elixir-autogen, elixir-format
 msgid "%{agency} on %{country}"
 msgstr ""
@@ -264,99 +264,100 @@ msgstr ""
 msgid "%{country}: %{agency} %{action} the rating, %{rating}"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:105
+#: lib/syli_atlas/accounts/alert_emails.ex:118
 #, elixir-autogen, elixir-format
 msgid "%{country}: %{indicator} goes above %{threshold}"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:104
+#: lib/syli_atlas/accounts/alert_emails.ex:112
 #, elixir-autogen, elixir-format
 msgid "%{country}: %{indicator} goes below %{threshold}"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:133
+#: lib/syli_atlas/accounts/alert_emails.ex:203
 #, elixir-autogen, elixir-format
 msgid "%{from} to %{to}"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:257
+#: lib/syli_atlas/accounts/alert_emails.ex:336
 #, elixir-autogen, elixir-format
 msgid "%{year} is an IMF estimate: the next edition may revise it."
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:254
+#: lib/syli_atlas/accounts/alert_emails.ex:330
 #, elixir-autogen, elixir-format
 msgid "%{year} is an IMF projection: the next edition may revise it."
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:182
+#: lib/syli_atlas/accounts/alert_emails.ex:252
 #, elixir-autogen, elixir-format
 msgid "1 alert set off"
 msgid_plural "%{count} alerts set off"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:110
+#: lib/syli_atlas/accounts/alert_emails.ex:127
 #, elixir-autogen, elixir-format
 msgid "Alert · indicator"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:80
+#: lib/syli_atlas/accounts/alert_emails.ex:83
 #, elixir-autogen, elixir-format
 msgid "Alert · new IMF edition"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:53
+#: lib/syli_atlas/accounts/alert_emails.ex:54
 #, elixir-autogen, elixir-format
 msgid "Alert · sovereign rating"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:119
+#: lib/syli_atlas/accounts/alert_emails.ex:138
 #, elixir-autogen, elixir-format
 msgid "Before (%{year})"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:205
+#: lib/syli_atlas/accounts/alert_emails.ex:275
 #, elixir-autogen, elixir-format
 msgid "Change the digest"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:67
+#: lib/syli_atlas/accounts/alert_emails.ex:70
+#: lib/syli_atlas/accounts/alert_emails.ex:188
 #, elixir-autogen, elixir-format
 msgid "Date"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:52
+#: lib/syli_atlas/accounts/alert_emails.ex:53
 #, elixir-autogen, elixir-format
 msgid "Decision of %{date} on a country you follow."
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:200
+#: lib/syli_atlas/accounts/alert_emails.ex:270
 #, elixir-autogen, elixir-format
 msgid "Digest · %{period}"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:143
+#: lib/syli_atlas/accounts/alert_emails.ex:213
 #, elixir-autogen, elixir-format
 msgid "Followed countries · IMF, %{year} (%{status})"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:58
+#: lib/syli_atlas/accounts/alert_emails.ex:59
 #, elixir-autogen, elixir-format
 msgid "Followed country: %{country}. %{agency} %{action} its long-term foreign-currency rating."
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:249
+#: lib/syli_atlas/accounts/alert_emails.ex:324
 #, elixir-autogen, elixir-format
 msgid "GDP per capita (US$)"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:90
+#: lib/syli_atlas/accounts/alert_emails.ex:96
 #, elixir-autogen, elixir-format
 msgid "Inflation %{year}"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:71
+#: lib/syli_atlas/accounts/alert_emails.ex:74
 #, elixir-autogen, elixir-format
 msgid "Information, not investment advice."
 msgstr ""
@@ -366,60 +367,60 @@ msgstr ""
 msgid "Manage my alerts"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:109
+#: lib/syli_atlas/accounts/alert_emails.ex:126
 #, elixir-autogen, elixir-format
 msgid "New IMF edition: your threshold is crossed."
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:78
 #: lib/syli_atlas/accounts/alert_emails.ex:81
+#: lib/syli_atlas/accounts/alert_emails.ex:84
 #, elixir-autogen, elixir-format
 msgid "New IMF figures for %{country}"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:120
+#: lib/syli_atlas/accounts/alert_emails.ex:140
 #, elixir-autogen, elixir-format
 msgid "Now (%{year})"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:66
+#: lib/syli_atlas/accounts/alert_emails.ex:69
 #, elixir-autogen, elixir-format
 msgid "Outlook"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:65
+#: lib/syli_atlas/accounts/alert_emails.ex:68
 #, elixir-autogen, elixir-format
 msgid "Rating"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:165
+#: lib/syli_atlas/accounts/alert_emails.ex:235
 #, elixir-autogen, elixir-format
 msgid "Rating decisions"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:89
+#: lib/syli_atlas/accounts/alert_emails.ex:94
 #, elixir-autogen, elixir-format
 msgid "Real GDP growth %{year}"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:72
-#: lib/syli_atlas/accounts/alert_emails.ex:94
-#: lib/syli_atlas/accounts/alert_emails.ex:125
+#: lib/syli_atlas/accounts/alert_emails.ex:75
+#: lib/syli_atlas/accounts/alert_emails.ex:100
+#: lib/syli_atlas/accounts/alert_emails.ex:145
 #, elixir-autogen, elixir-format
 msgid "See %{country}"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:259
+#: lib/syli_atlas/accounts/alert_emails.ex:340
 #, elixir-autogen, elixir-format
 msgid "Source: IMF, World Economic Outlook."
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:266
+#: lib/syli_atlas/accounts/alert_emails.ex:347
 #, elixir-autogen, elixir-format
 msgid "Source: the agency's release, %{url}"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:206
+#: lib/syli_atlas/accounts/alert_emails.ex:277
 #, elixir-autogen, elixir-format
 msgid "Stop the digest"
 msgstr ""
@@ -429,12 +430,12 @@ msgstr ""
 msgid "Stop this alert"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:84
+#: lib/syli_atlas/accounts/alert_emails.ex:87
 #, elixir-autogen, elixir-format
 msgid "The IMF published a new edition (%{edition}); Syli Atlas has it online."
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:114
+#: lib/syli_atlas/accounts/alert_emails.ex:131
 #, elixir-autogen, elixir-format
 msgid "The new IMF edition (%{edition}) crosses the threshold of your alert."
 msgstr ""
@@ -444,127 +445,197 @@ msgstr ""
 msgid "Unsubscribe from every email"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:201
+#: lib/syli_atlas/accounts/alert_emails.ex:271
 #, elixir-autogen, elixir-format
 msgid "What moved in your favourites"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:192
+#: lib/syli_atlas/accounts/alert_emails.ex:262
 #, elixir-autogen, elixir-format
 msgid "Your month on Syli Atlas"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:121
+#: lib/syli_atlas/accounts/alert_emails.ex:141
 #, elixir-autogen, elixir-format
 msgid "Your threshold"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:193
+#: lib/syli_atlas/accounts/alert_emails.ex:263
 #, elixir-autogen, elixir-format
 msgid "Your week on Syli Atlas"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:263
+#: lib/syli_atlas/accounts/alert_emails.ex:344
 #, elixir-autogen, elixir-format
 msgid "actual"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:236
+#: lib/syli_atlas/accounts/alert_emails.ex:311
 #, elixir-autogen, elixir-format
 msgid "affirms"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:247
+#: lib/syli_atlas/accounts/alert_emails.ex:322
 #, elixir-autogen, elixir-format
 msgid "budget balance (% of GDP)"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:248
+#: lib/syli_atlas/accounts/alert_emails.ex:323
 #, elixir-autogen, elixir-format
 msgid "current account (% of GDP)"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:233
+#: lib/syli_atlas/accounts/alert_emails.ex:308
 #, elixir-autogen, elixir-format
 msgid "declares a default on"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:241
+#: lib/syli_atlas/accounts/alert_emails.ex:316
 #, elixir-autogen, elixir-format
 msgid "developing"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:232
+#: lib/syli_atlas/accounts/alert_emails.ex:307
 #, elixir-autogen, elixir-format
 msgid "downgrades"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:262
+#: lib/syli_atlas/accounts/alert_emails.ex:343
 #, elixir-autogen, elixir-format
 msgid "estimate"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:150
+#: lib/syli_atlas/accounts/alert_emails.ex:220
 #, elixir-autogen, elixir-format
 msgid "growth %{growth}, inflation %{inflation}"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:245
+#: lib/syli_atlas/accounts/alert_emails.ex:320
 #, elixir-autogen, elixir-format
 msgid "inflation"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:235
+#: lib/syli_atlas/accounts/alert_emails.ex:310
 #, elixir-autogen, elixir-format
 msgid "lowers the outlook of"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:239
+#: lib/syli_atlas/accounts/alert_emails.ex:314
 #, elixir-autogen, elixir-format
 msgid "negative"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:218
+#: lib/syli_atlas/accounts/alert_emails.ex:292
 #, elixir-autogen, elixir-format
 msgid "new IMF figures (%{edition})"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:238
+#: lib/syli_atlas/accounts/alert_emails.ex:313
 #, elixir-autogen, elixir-format
 msgid "positive"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:261
+#: lib/syli_atlas/accounts/alert_emails.ex:342
 #, elixir-autogen, elixir-format
 msgid "projection"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:246
+#: lib/syli_atlas/accounts/alert_emails.ex:321
 #, elixir-autogen, elixir-format
 msgid "public debt (% of GDP)"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:234
+#: lib/syli_atlas/accounts/alert_emails.ex:309
 #, elixir-autogen, elixir-format
 msgid "raises the outlook of"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:244
+#: lib/syli_atlas/accounts/alert_emails.ex:319
 #, elixir-autogen, elixir-format
 msgid "real GDP growth"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:240
+#: lib/syli_atlas/accounts/alert_emails.ex:315
 #, elixir-autogen, elixir-format
 msgid "stable"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:250
+#: lib/syli_atlas/accounts/alert_emails.ex:325
 #, elixir-autogen, elixir-format
 msgid "unemployment"
 msgstr ""
 
-#: lib/syli_atlas/accounts/alert_emails.ex:231
+#: lib/syli_atlas/accounts/alert_emails.ex:306
 #, elixir-autogen, elixir-format
 msgid "upgrades"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:159
+#, elixir-autogen, elixir-format
+msgid "%{name} goes above %{price}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:162
+#, elixir-autogen, elixir-format
+msgid "%{name} goes below %{price}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:156
+#, elixir-autogen, elixir-format
+msgid "%{name}: %{change} on the session"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:180
+#, elixir-autogen, elixir-format
+msgid "Alert · stock exchange"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:186
+#, elixir-autogen, elixir-format
+msgid "Close"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:179
+#, elixir-autogen, elixir-format
+msgid "Close of %{date}, %{exchange}."
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:193
+#, elixir-autogen, elixir-format
+msgid "Closing prices, not real time. Information, not investment advice."
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:186
+#, elixir-autogen, elixir-format
+msgid "Index"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:195
+#, elixir-autogen, elixir-format
+msgid "See %{name}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:187
+#, elixir-autogen, elixir-format
+msgid "Session"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:183
+#, elixir-autogen, elixir-format
+msgid "Your alert: %{name} %{rule}."
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:171
+#, elixir-autogen, elixir-format
+msgid "closes above %{price}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:174
+#, elixir-autogen, elixir-format
+msgid "closes below %{price}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:168
+#, elixir-autogen, elixir-format
+msgid "moves more than %{threshold} in a session"
 msgstr ""

@@ -29,6 +29,13 @@
         </span>
       </div>
     </div>
+    <SyliAtlasWeb.AccountComponents.follow
+      kind="security"
+      ref={@e["code"] <> "/" <> @row["ticker"]}
+      locale={@locale}
+      path={SyliAtlasWeb.Paths.security(@locale, @e["code"], @row["ticker"])}
+      alert_market={{@e["code"], @row["ticker"]}}
+    />
     <p class="lead" data-answer>{@answer}</p>
     <p class="src">
       <.credit sources={@doc["sources"]} date={@row["trade_date"]} locale={@locale} />

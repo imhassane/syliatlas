@@ -4,7 +4,9 @@ defmodule SyliAtlas.Accounts.AlertEvents do
 
     1. an event enqueues `AlertEventWorker` — a rating decision validated in
        the admin (in the same transaction, so a refused validation alerts
-       nobody), a new IMF edition published (after `AfterPublishWorker`);
+       nobody), a new IMF edition published (after `AfterPublishWorker`),
+       the market documents rebuilt with a session's closes (after
+       `MarketPublishWorker`);
     2. the worker finds the alerts concerned and writes one
        `AlertDelivery` per alert and event (unique: a job run twice never
        emails twice), then enqueues one `AlertEmailWorker` per immediate
@@ -29,6 +31,10 @@ defmodule SyliAtlas.Accounts.AlertEvents do
   @doc "A rating decision was published: call inside its transaction."
   def rating_published(%Rating{id: id}),
     do: %{"type" => "rating", "rating_id" => id} |> AlertEventWorker.new() |> Oban.insert!()
+
+  @doc "The market documents were rebuilt (a session's closes)."
+  def market_published,
+    do: %{"type" => "market"} |> AlertEventWorker.new() |> Oban.insert!()
 
   @doc "A new IMF edition is online."
   def edition_published(edition_id),
@@ -117,6 +123,114 @@ defmodule SyliAtlas.Accounts.AlertEvents do
         "edition" => edition.code,
         "edition_label" => edition.label
       })
+  end
+
+  @doc """
+  Records the deliveries of a market session: moves beyond a percentage
+  (index or security), closes crossing a price. Figures flagged by the
+  quality checks (stale, missing, suspect, held) never alert. Nothing
+  when the market data may not be shown (`SyliAtlas.Market.public?/0`).
+  """
+  def on_market do
+    if SyliAtlas.Market.public?() do
+      Repo.all(from a in active(), where: a.kind in ^Alert.market_kinds())
+      |> Enum.group_by(& &1.exchange_code)
+      |> Enum.flat_map(fn {code, alerts} ->
+        case SyliAtlas.Market.exchange(code) do
+          nil -> []
+          doc -> Enum.map(alerts, &market(&1, doc))
+        end
+      end)
+      |> Enum.count(& &1)
+    else
+      0
+    end
+  end
+
+  defp market(alert, doc) do
+    case quote_of(doc, alert.ticker) do
+      nil ->
+        false
+
+      q ->
+        key = "market:#{q.date}"
+
+        payload = %{
+          "exchange" => doc["exchange"]["code"],
+          "exchange_name" => doc["exchange"]["short_name"],
+          "ticker" => q.ticker,
+          "name" => q.name,
+          "value" => Decimal.to_string(q.value, :normal),
+          "change_pct" => q.change_pct && Decimal.to_string(q.change_pct, :normal),
+          "currency" => q.currency,
+          "date" => q.date,
+          "threshold" => Decimal.to_string(alert.threshold, :normal),
+          "sources" => doc["sources"]
+        }
+
+        case alert.kind do
+          "session_move" ->
+            q.change_pct != nil and
+              not Decimal.lt?(Decimal.abs(q.change_pct), alert.threshold) and
+              record(alert, key, payload)
+
+          price ->
+            previous = alert.last_value
+
+            alert
+            |> Ecto.Changeset.change(last_value: q.value)
+            |> Repo.update!()
+
+            kind = if price == "price_above", do: "indicator_above", else: "indicator_below"
+
+            AlertRules.crossed?(kind, alert.threshold, previous, q.value) and
+              record(alert, key, Map.put(payload, "previous", decimal_string(previous)))
+        end
+    end
+  end
+
+  # The index (no ticker) or a security, when its figures are sound.
+  defp quote_of(doc, nil) do
+    index = doc["index"]
+
+    if index["value"] && index["date"] && not flagged?(index["flags"]) do
+      %{
+        ticker: nil,
+        name: doc["exchange"]["index_name"] || doc["exchange"]["short_name"],
+        value: Decimal.new(index["value"]),
+        change_pct: index["change_pct"] && Decimal.new(index["change_pct"]),
+        currency: nil,
+        date: index["date"]
+      }
+    end
+  end
+
+  defp quote_of(doc, ticker) do
+    row = Enum.find(doc["securities"], &(String.upcase(&1["ticker"]) == ticker))
+
+    if row && row["close"] && row["current"] && not flagged?(row["flags"]) do
+      %{
+        ticker: row["ticker"],
+        name: row["name"],
+        value: Decimal.new(row["close"]),
+        change_pct: row["change_pct"] && Decimal.new(row["change_pct"]),
+        currency: row["currency"],
+        date: row["trade_date"]
+      }
+    end
+  end
+
+  defp flagged?(flags),
+    do: Enum.any?(~w(missing stale suspect held no_trade), &(flags[&1] == true))
+
+  @doc "The close a new price alert starts from, or nil."
+  def market_baseline(exchange_code, ticker) do
+    with %{} = doc <- SyliAtlas.Market.exchange(exchange_code),
+         %{value: value} <- quote_of(doc, ticker) do
+      value
+    else
+      _ -> nil
+    end
   end
 
   @doc """

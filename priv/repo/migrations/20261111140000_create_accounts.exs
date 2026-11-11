@@ -90,9 +90,14 @@ defmodule SyliAtlas.Repo.Migrations.CreateAccounts do
 
     create table(:alerts) do
       add :user_id, references(:users, on_delete: :delete_all), null: false
-      # rating_change | new_edition | indicator_above | indicator_below
+      # Countries: rating_change | new_edition | indicator_above | indicator_below
+      # Markets:   session_move | price_above | price_below
       add :kind, :string, null: false
-      add :area_code, :string, null: false
+      # A country (ISO3) for country alerts.
+      add :area_code, :string
+      # An exchange (BRVM), and a ticker for a security (nil: its index).
+      add :exchange_code, :string
+      add :ticker, :string
       # An IMF indicator code (PCPIPCH), for thresholds only.
       add :indicator, :string
       # Decimal, as typed (never a float).
@@ -106,5 +111,6 @@ defmodule SyliAtlas.Repo.Migrations.CreateAccounts do
 
     create index(:alerts, [:user_id])
     create index(:alerts, [:area_code, :kind])
+    create index(:alerts, [:exchange_code, :kind])
   end
 end

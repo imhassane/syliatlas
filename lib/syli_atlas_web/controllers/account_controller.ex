@@ -25,20 +25,45 @@ defmodule SyliAtlasWeb.AccountController do
   end
 
   def alerts(conn, params) do
-    user = conn.assigns.current_user
-    area = params["area"]
+    market = %Accounts.Alert{
+      kind: if(params["ticker"], do: "price_above", else: "session_move"),
+      exchange_code: params["exchange"],
+      ticker: params["ticker"]
+    }
 
-    render(conn, :alerts,
-      page_title: gettext("Alerts"),
-      tab: :alerts,
-      alerts: Accounts.list_alerts(user),
-      countries: Geo.list_countries(),
-      form:
-        Phoenix.Component.to_form(Accounts.change_alert(%Accounts.Alert{area_code: area}),
-          as: :alert
-        ),
-      seo: %{noindex: true}
+    render_alerts(conn,
+      form: to_alert_form(%Accounts.Alert{area_code: params["area"]}),
+      market_form: to_alert_form(market)
     )
+  end
+
+  defp render_alerts(conn, assigns) do
+    render(
+      conn,
+      :alerts,
+      [
+        page_title: gettext("Alerts"),
+        tab: :alerts,
+        alerts: Accounts.list_alerts(conn.assigns.current_user),
+        countries: Geo.list_countries(),
+        exchanges: exchanges(),
+        seo: %{noindex: true}
+      ] ++ assigns
+    )
+  end
+
+  defp to_alert_form(%Accounts.Alert{} = alert),
+    do: Phoenix.Component.to_form(Accounts.change_alert(alert), as: :alert)
+
+  # Exchanges with published data, for market alerts.
+  defp exchanges do
+    case SyliAtlas.Market.public?() && SyliAtlas.Market.overview() do
+      %{"exchanges" => list} ->
+        Enum.map(list, &{&1["exchange"]["code"], &1["exchange"]["short_name"]})
+
+      _ ->
+        []
+    end
   end
 
   def security(conn, _params) do
@@ -84,14 +109,15 @@ defmodule SyliAtlasWeb.AccountController do
         conn |> put_flash(:error, gettext("50 alerts at most.")) |> back(:alerts)
 
       {:error, changeset} ->
-        render(conn, :alerts,
-          page_title: gettext("Alerts"),
-          tab: :alerts,
-          alerts: Accounts.list_alerts(user),
-          countries: Geo.list_countries(),
-          form: Phoenix.Component.to_form(changeset, as: :alert),
-          seo: %{noindex: true}
-        )
+        form = Phoenix.Component.to_form(changeset, as: :alert)
+
+        if Ecto.Changeset.get_field(changeset, :kind) in Accounts.Alert.market_kinds(),
+          do: render_alerts(conn, form: to_alert_form(%Accounts.Alert{}), market_form: form),
+          else:
+            render_alerts(conn,
+              form: form,
+              market_form: to_alert_form(%Accounts.Alert{kind: "session_move"})
+            )
     end
   end
 

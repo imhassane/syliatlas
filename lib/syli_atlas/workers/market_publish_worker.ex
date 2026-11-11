@@ -12,6 +12,9 @@ defmodule SyliAtlas.Workers.MarketPublishWorker do
   @impl Oban.Worker
   def perform(_job) do
     SyliAtlas.Market.Snapshots.rebuild!()
+    # Market alerts read the documents just rebuilt; one event per window,
+    # and each delivery is unique per session, so repeats send nothing.
+    SyliAtlas.Accounts.AlertEvents.market_published()
     :ok
   end
 end

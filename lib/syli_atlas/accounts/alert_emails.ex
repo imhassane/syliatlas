@@ -25,7 +25,7 @@ defmodule SyliAtlas.Accounts.AlertEmails do
         eyebrow: content.eyebrow,
         title: content.title,
         blocks: content.blocks,
-        button: {content.button, url(country_path(p["country_code"], user.locale))},
+        button: {content.button, url(subject_path(kind, p, user.locale))},
         footer: [
           {dgettext("emails", "Manage my alerts"), url(Paths.account(user.locale, :alerts))},
           {dgettext("emails", "Stop this alert"), url(Unsubscribe.path(token))},
@@ -146,6 +146,73 @@ defmodule SyliAtlas.Accounts.AlertEmails do
     }
   end
 
+  defp content(kind, p, _country, _locale)
+       when kind in ["session_move", "price_above", "price_below"] do
+    name = p["name"]
+    value = money(p["value"], p["currency"])
+
+    subject =
+      case kind do
+        "session_move" ->
+          dgettext("emails", "%{name}: %{change} on the session",
+            name: name,
+            change: signed_percent(p["change_pct"])
+          )
+
+        "price_above" ->
+          dgettext("emails", "%{name} goes above %{price}",
+            name: name,
+            price: money(p["threshold"], p["currency"])
+          )
+
+        "price_below" ->
+          dgettext("emails", "%{name} goes below %{price}",
+            name: name,
+            price: money(p["threshold"], p["currency"])
+          )
+      end
+
+    rule =
+      case kind do
+        "session_move" ->
+          dgettext("emails", "moves more than %{threshold} in a session",
+            threshold: percent(p["threshold"])
+          )
+
+        "price_above" ->
+          dgettext("emails", "closes above %{price}", price: money(p["threshold"], p["currency"]))
+
+        "price_below" ->
+          dgettext("emails", "closes below %{price}", price: money(p["threshold"], p["currency"]))
+      end
+
+    %{
+      subject: subject,
+      preheader:
+        dgettext("emails", "Close of %{date}, %{exchange}.",
+          date: p["date"],
+          exchange: p["exchange_name"]
+        ),
+      eyebrow: dgettext("emails", "Alert · stock exchange"),
+      title: subject,
+      blocks: [
+        {:paragraph, dgettext("emails", "Your alert: %{name} %{rule}.", name: name, rule: rule)},
+        {:facts,
+         [
+           {if(p["ticker"], do: dgettext("emails", "Close"), else: dgettext("emails", "Index")),
+            value},
+           {dgettext("emails", "Session"), signed_percent(p["change_pct"])},
+           {dgettext("emails", "Date"), p["date"]}
+         ]},
+        # The credit the licence asks for, verbatim, with its link.
+        {:paragraph, credit(p["sources"])},
+        {:paragraph,
+         dgettext("emails", "Closing prices, not real time. Information, not investment advice.")}
+      ],
+      button: dgettext("emails", "See %{name}", name: name)
+    }
+  end
+
   @doc "The digest of favourites (`SyliAtlas.Accounts.Digests.build/2`)."
   def digest(%User{} = user, digest) do
     in_locale(user.locale, fn ->
@@ -235,6 +302,11 @@ defmodule SyliAtlas.Accounts.AlertEmails do
   defp line(%AlertDelivery{kind: "rating_change", payload: p}),
     do: "#{agency(p["agency"])} · #{p["rating"]} · #{action(p["action_type"])}"
 
+  defp line(%AlertDelivery{kind: kind, payload: p})
+       when kind in ["session_move", "price_above", "price_below"],
+       do:
+         "#{p["name"]} · #{money(p["value"], p["currency"])} · #{signed_percent(p["change_pct"])} · #{p["date"]}"
+
   defp line(%AlertDelivery{kind: "new_edition", payload: p}),
     do: dgettext("emails", "new IMF figures (%{edition})", edition: p["edition"])
 
@@ -320,6 +392,46 @@ defmodule SyliAtlas.Accounts.AlertEmails do
       area -> Geo.Area.name(area, locale)
     end
   end
+
+  defp subject_path(kind, p, locale)
+       when kind in ["session_move", "price_above", "price_below"] do
+    case p["ticker"] do
+      nil -> Paths.exchange(locale, p["exchange"])
+      ticker -> Paths.security(locale, p["exchange"], ticker)
+    end
+  end
+
+  defp subject_path(_kind, p, locale), do: country_path(p["country_code"], locale)
+
+  # « Data by MansaAPI (https://mansaapi.com) », as the licence asks next to
+  # every figure, exactly as the market pages credit it.
+  defp credit(sources) when is_list(sources) and sources != [] do
+    sources
+    |> Enum.map(fn s ->
+      code = s["code"]
+      text = SyliAtlas.Market.Catalog.attribution(code)
+
+      case SyliAtlas.Market.Catalog.url(code) || s["url"] do
+        nil -> text
+        link -> "#{text} (#{link})"
+      end
+    end)
+    |> Enum.uniq()
+    |> Enum.join(", ")
+  end
+
+  defp credit(_none), do: SyliAtlas.Market.Catalog.attribution("mansa")
+
+  defp signed_percent(nil), do: "—"
+
+  defp signed_percent(value) do
+    sign = if String.starts_with?(to_string(value), "-"), do: "", else: "+"
+    sign <> percent(value)
+  end
+
+  defp money(nil, _currency), do: "—"
+  defp money(value, nil), do: number(value)
+  defp money(value, currency), do: number(value) <> " " <> currency
 
   defp country_path(code, locale) do
     case code && Geo.get_area_by_code(code) do

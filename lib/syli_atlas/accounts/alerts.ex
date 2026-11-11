@@ -25,7 +25,7 @@ defmodule SyliAtlas.Accounts.Alerts do
     end
   end
 
-  # A threshold starts from today's published value: it fires when a later
+  # A threshold or a price starts from today's published value: it fires when a later
   # edition crosses it from there (`SyliAtlas.Accounts.AlertRules`).
   defp put_baseline(%Ecto.Changeset{valid?: true} = changeset) do
     case Ecto.Changeset.apply_changes(changeset) do
@@ -33,6 +33,12 @@ defmodule SyliAtlas.Accounts.Alerts do
       when kind in ~w(indicator_above indicator_below) ->
         {value, year} = AlertEvents.baseline(area, indicator)
         Ecto.Changeset.change(changeset, last_value: value, last_year: year)
+
+      %Alert{kind: kind, exchange_code: exchange, ticker: ticker}
+      when kind in ~w(price_above price_below) ->
+        Ecto.Changeset.change(changeset,
+          last_value: AlertEvents.market_baseline(exchange, ticker)
+        )
 
       _other ->
         changeset
