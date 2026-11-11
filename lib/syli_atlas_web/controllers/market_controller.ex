@@ -119,6 +119,15 @@ defmodule SyliAtlasWeb.MarketController do
       e: e,
       fx: Market.fx(),
       answer: answer(doc, locale),
+      # The other exchanges of the region: the small ones are reached from
+      # their neighbours, not only from the list.
+      neighbours:
+        for(
+          x <- (Market.overview() || %{})["exchanges"] || [],
+          x["exchange"]["code"] != code,
+          x["exchange"]["region"] == e["region"],
+          do: x
+        ),
       page: page,
       page_href: &Pagination.href(paths[locale], %{}, "page", &1, "securities")
     )

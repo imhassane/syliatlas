@@ -239,4 +239,17 @@
       </.card>
     </div>
   </.section>
+
+  <.section :if={@neighbours != []} tight={:top} id="other-exchanges">
+    <nav class="card pad stack gap-2" aria-label={gettext("Other exchanges of the region")}>
+      <p class="eyebrow">{gettext("Other exchanges of the region")}</p>
+      <ul class="related-list">
+        <li :for={x <- @neighbours}>
+          <a href={Paths.exchange(@locale, x["exchange"]["code"])}>{x["exchange"]["name"]}</a>
+        </li>
+        <li><a href={Paths.etfs(@locale)}>{gettext("Funds exposed to Africa (ETF)")}</a></li>
+        <li><a href={Paths.markets(@locale)}>{gettext("All exchanges")} →</a></li>
+      </ul>
+    </nav>
+  </.section>
 </Layouts.public>
