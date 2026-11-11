@@ -1,0 +1,27 @@
+<Layouts.public ticker={false} locale={@locale} current={:recap}>
+  <section class="section section-alt auth">
+    <div class="wrap auth-narrow">
+      <div class="card pad stack gap-3" id="recap-stop">
+        <p class="eyebrow">{gettext("The recap")}</p>
+        <%= if @done do %>
+          <h1 class="h1" id="recap-stopped">{gettext("Recap stopped")}</h1>
+          <p class="muted">
+            {gettext("Your address is deleted: you will receive nothing more from the recap.")}
+          </p>
+          <p class="small muted">
+            <a href={Paths.recap(@locale)}>{gettext("Subscribe again")}</a>
+          </p>
+        <% else %>
+          <h1 class="h1">{gettext("Stop the recap")}</h1>
+          <p class="muted">
+            {gettext("The recap sent to")}
+            <b dir="ltr">{@email}</b> {gettext("stops, and the address is deleted.")}
+          </p>
+          <form method="post" action={"/recap/stop/" <> @token} id="recap-stop-form">
+            <button class="btn btn-primary" type="submit">{gettext("Stop the recap")}</button>
+          </form>
+        <% end %>
+      </div>
+    </div>
+  </section>
+</Layouts.public>

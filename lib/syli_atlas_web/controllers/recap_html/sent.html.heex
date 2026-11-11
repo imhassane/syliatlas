@@ -1,0 +1,21 @@
+<Layouts.public ticker={false} locale={@locale} current={:recap}>
+  <section class="section section-alt auth">
+    <div class="wrap auth-narrow">
+      <div class="card pad stack gap-3" id="recap-sent">
+        <p class="eyebrow">{gettext("Last step")}</p>
+        <h1 class="h1">{gettext("Confirm in your inbox")}</h1>
+        <p class="muted">
+          {gettext("We sent a link to")} <b dir="ltr">{@email}</b>. {gettext(
+            "One click is enough: without it, no recap goes out."
+          )}
+        </p>
+        <p class="small muted">
+          {gettext("Nothing received? Check your spam, or")}
+          <a href={Paths.recap(@locale)}>{gettext("ask again")}</a>. {gettext(
+            "The link is valid for 7 days."
+          )}
+        </p>
+      </div>
+    </div>
+  </section>
+</Layouts.public>

@@ -40,10 +40,6 @@
 .grid-3 { grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); }
 .grid-4 { grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr)); }
 
-/* Footer */
-.footer-grid { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 32px; }
-.footer-about { max-width: 380px; }
-.footer-nav a { min-height: 32px; display: inline-flex; align-items: center; }
 
 /* Phones */
 @media (max-width: 39.99rem) {
@@ -188,14 +184,9 @@ main > section.section:first-of-type { padding-top: 40px; }
 .search-empty { margin: 0; padding: 10px 12px; color: var(--ink-muted); font-size: 14px; }
 #search-results .link-list a { display: flex; justify-content: space-between; gap: 12px; }
 
-/* Footer: four columns, then the sources. */
-.footer-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 28px 40px; flex: 1 1 560px; }
-.footer-credits { display: flex; flex-direction: column; gap: 6px; margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--border-faint); }
-.footer-credits p { margin: 0; }
 .profile-head + .section { padding-top: 32px; }
 .search-answer { flex-direction: column; align-items: flex-start; gap: 2px; }
 .search-compact input:not(:placeholder-shown) ~ .search-kbd { display: none; }
-.footer-about .btn { align-self: flex-start; padding-left: 0; }
 
 /* Themes panel, after the Navigation board: one line per theme. */
 .nav-mega { min-width: 380px; padding: 8px; gap: 2px; }

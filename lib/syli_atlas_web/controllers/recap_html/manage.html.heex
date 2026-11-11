@@ -1,0 +1,30 @@
+<Layouts.public ticker={false} locale={@locale} current={:recap}>
+  <section class="section section-alt">
+    <div class="wrap recap-page">
+      <div class="stack gap-3 recap-intro">
+        <p class="eyebrow">{gettext("The recap")}</p>
+        <h1 class="h1">{gettext("Change my recap")}</h1>
+        <p class="muted">{gettext("Sent to")} <b dir="ltr">{@email}</b>.</p>
+      </div>
+      <form
+        method="post"
+        action={"/recap/manage/" <> @token}
+        class="card pad stack gap-4"
+        id="recap-manage-form"
+      >
+        <p :if={@saved} class="adm-flash ok" role="status" id="recap-saved">
+          {gettext("Saved.")}
+        </p>
+        <p :if={@error} class="adm-flash err" role="alert" id="recap-error">{@error}</p>
+        <.country_picker regions={@regions} picked={@picked} max={@max} />
+        <.frequency_picker frequency={@frequency} />
+        <div class="row gap-3">
+          <button class="btn btn-primary" type="submit">{gettext("Save")}</button>
+          <a class="btn btn-quiet" href={"/recap/stop/" <> @token} id="recap-stop-link">{gettext(
+            "Stop the recap"
+          )}</a>
+        </div>
+      </form>
+    </div>
+  </section>
+</Layouts.public>

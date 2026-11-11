@@ -316,24 +316,27 @@ defmodule SyliAtlas.Accounts.AlertEmails do
 
   # Labels -------------------------------------------------------------------
 
-  defp agency("sp"), do: "S&P"
-  defp agency("moodys"), do: "Moody's"
-  defp agency("fitch"), do: "Fitch"
-  defp agency("afcra"), do: "AfCRA"
-  defp agency(other), do: other
+  @doc false
+  def agency("sp"), do: "S&P"
+  def agency("moodys"), do: "Moody's"
+  def agency("fitch"), do: "Fitch"
+  def agency("afcra"), do: "AfCRA"
+  def agency(other), do: other
 
-  defp action("upgrade"), do: dgettext("emails", "upgrades")
-  defp action("downgrade"), do: dgettext("emails", "downgrades")
-  defp action("default"), do: dgettext("emails", "declares a default on")
-  defp action("outlook_up"), do: dgettext("emails", "raises the outlook of")
-  defp action("outlook_down"), do: dgettext("emails", "lowers the outlook of")
-  defp action(_affirmed), do: dgettext("emails", "affirms")
+  @doc false
+  def action("upgrade"), do: dgettext("emails", "upgrades")
+  def action("downgrade"), do: dgettext("emails", "downgrades")
+  def action("default"), do: dgettext("emails", "declares a default on")
+  def action("outlook_up"), do: dgettext("emails", "raises the outlook of")
+  def action("outlook_down"), do: dgettext("emails", "lowers the outlook of")
+  def action(_affirmed), do: dgettext("emails", "affirms")
 
-  defp outlook("positive"), do: dgettext("emails", "positive")
-  defp outlook("negative"), do: dgettext("emails", "negative")
-  defp outlook("stable"), do: dgettext("emails", "stable")
-  defp outlook("developing"), do: dgettext("emails", "developing")
-  defp outlook(_none), do: "—"
+  @doc false
+  def outlook("positive"), do: dgettext("emails", "positive")
+  def outlook("negative"), do: dgettext("emails", "negative")
+  def outlook("stable"), do: dgettext("emails", "stable")
+  def outlook("developing"), do: dgettext("emails", "developing")
+  def outlook(_none), do: "—"
 
   defp indicator("real_gdp_growth"), do: dgettext("emails", "real GDP growth")
   defp indicator("inflation"), do: dgettext("emails", "inflation")

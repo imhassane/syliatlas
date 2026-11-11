@@ -1,0 +1,50 @@
+/* The country recap without an account: its page, the pages of its email
+   links, and the dialog opened from the footer (canvas « Fenêtre Recevoir
+   le récap »). Countries are checkboxes styled as chips: no script needed. */
+
+.recap-page { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 48px; align-items: start; }
+.recap-intro { max-width: 520px; }
+.recap-page form fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+
+.recap-picker { display: flex; flex-direction: column; gap: 12px; margin: 0; padding: 0; border: 0; min-width: 0; }
+.recap-picker legend { padding: 0; margin-bottom: 8px; font-size: 14px; font-weight: 500; }
+.recap-picker legend.h2 { font-size: 20px; }
+.recap-region { display: flex; flex-direction: column; gap: 8px; }
+.recap-region .eyebrow { margin: 8px 0 0; font-size: 11px; }
+.recap-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.recap-chip { position: relative; display: inline-flex; }
+.recap-chip input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.recap-chip span { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 16px; border-radius: 999px; background: var(--card); color: var(--ink); font-size: 14px; box-shadow: inset 0 0 0 1px var(--border-strong); cursor: pointer; }
+.recap-chip input:checked + span { background: var(--accent-bg); color: var(--accent-text); font-weight: 500; box-shadow: inset 0 0 0 1px var(--accent); }
+.recap-chip input:checked + span::before { content: "✓"; }
+.recap-chip input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.recap-add { max-width: 280px; }
+
+.recap-frequency { display: flex; flex-wrap: wrap; gap: 4px 24px; align-items: center; margin: 0; padding: 0; border: 0; }
+.recap-frequency legend { padding: 0; margin-bottom: 4px; font-size: 14px; font-weight: 500; }
+.recap-frequency legend.h2 { font-size: 20px; margin-bottom: 8px; }
+.recap-radio { display: flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer; }
+.recap-radio input { width: 18px; height: 18px; margin: 0; accent-color: var(--accent); }
+
+.recap-facts { display: grid; grid-template-columns: auto 1fr; gap: 10px 20px; margin: 0; }
+.recap-facts dt { color: var(--ink-subtle); font-size: 14px; }
+.recap-facts dd { margin: 0; overflow-wrap: anywhere; }
+
+/* Dialog */
+.recap-dialog { width: min(520px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 0; border-radius: 12px; background: var(--card); color: var(--ink); box-shadow: var(--shadow-window); overflow: auto; }
+.recap-dialog::backdrop { background: rgba(11, 26, 51, .55); }
+.recap-dialog-sun { height: 3px; background: linear-gradient(90deg, #ffb547, #ff6b3d 22%, #f0347a 45%, #8a3ffc 70%, #3b6cff); }
+.recap-dialog-body { display: flex; flex-direction: column; gap: 20px; padding: 24px 32px 32px; }
+.recap-dialog-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.recap-dialog-head .icon-btn { margin: -8px -12px 0 0; }
+.recap-dialog-title { margin: 0; font-size: 30px; line-height: 1.15; font-weight: 300; letter-spacing: -.02em; }
+.recap-dialog p { margin: 0; }
+.recap-dialog-icon { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 50%; background: var(--accent-bg); color: var(--accent-text); }
+.recap-dialog [hidden] { display: none !important; }
+
+@media (max-width: 39.99rem) {
+  /* A sheet from the bottom on phones. */
+  .recap-dialog { width: 100vw; max-width: 100vw; max-height: 92dvh; margin: auto 0 0; border-radius: 16px 16px 0 0; }
+  .recap-dialog-body { padding: 20px 20px max(24px, env(safe-area-inset-bottom)); }
+  .recap-dialog-title { font-size: 26px; }
+}
