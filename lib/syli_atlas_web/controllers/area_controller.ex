@@ -371,8 +371,11 @@ defmodule SyliAtlasWeb.AreaController do
   end
 
   defp members(%{"members" => codes}, from, to, locale) when is_list(codes) and codes != [] do
+    # The comparison query takes six areas at a time (the compare page's
+    # limit): a region of fifteen countries is asked in three goes.
     codes
-    |> PublicData.compare(from, to)
+    |> Enum.chunk_every(6)
+    |> Enum.flat_map(&PublicData.compare(&1, from, to))
     |> Enum.map(
       &%{
         "code" => &1["code"],

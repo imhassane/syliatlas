@@ -19,6 +19,136 @@ defmodule SyliAtlasWeb.ProfileComponents do
   def tab_label(:society), do: gettext("Society")
   def tab_label(:markets), do: gettext("Markets and rating")
 
+  # Header of a detail page ------------------------------------------------
+
+  attr :crumbs, :list, required: true, doc: "{label, href} tuples; the last one is this page"
+  attr :title, :string, required: true, doc: "the H1"
+  attr :suffix, :string, default: nil, doc: "the open tab, after the name (hidden on a phone)"
+  attr :tag, :string, default: nil, doc: "a code shown after the name (ticker)"
+  attr :subtitle, :string, default: nil, doc: "a full name, under the title"
+  attr :kpis_id, :string, default: "head-kpis"
+  attr :class, :string, default: nil
+
+  slot :mark, doc: "the flag, or a tile (UI.flag/1, monogram/1, region_mark/1)"
+  slot :chips, doc: "what the page belongs to, as pills"
+  slot :actions, doc: "follow and alert"
+
+  slot :kpi, doc: "a key figure; its inner block is the line under the value" do
+    attr :id, :string, required: true
+    attr :label, :string, required: true
+    attr :value, :string, required: true
+    attr :tone, :any
+    attr :href, :string
+  end
+
+  @doc """
+  Header shared by every detail page (country, region, community, exchange,
+  security): breadcrumb; mark, name and actions on one line, the mark and the
+  actions centred on the name; under the name, the full name and the pills;
+  then a strip of key figures.
+  """
+  def entity_head(assigns) do
+    assigns = assign(assigns, :kpi_count, length(assigns.kpi))
+
+    ~H"""
+    <div class={["entity-head", @class]}>
+      <nav aria-label={gettext("Breadcrumb")}>
+        <ol class="crumbs">
+          <%= for {{label, href}, i} <- Enum.with_index(@crumbs) do %>
+            <li :if={i < length(@crumbs) - 1}><a href={href}>{label}</a></li>
+            <li :if={i == length(@crumbs) - 1} aria-current="page">{label}</li>
+          <% end %>
+        </ol>
+      </nav>
+      <div class={["entity-id", @mark == [] && "entity-id-plain"]}>
+        <div :if={@mark != []} class="entity-mark-slot">{render_slot(@mark)}</div>
+        <div class="entity-title">
+          <h1 class="entity-name">
+            {@title}<span :if={@suffix} class="entity-name-tab"> · {@suffix}</span>
+          </h1>
+          <span :if={@tag} class="entity-tag mono">{@tag}</span>
+        </div>
+        <div :if={@actions != []} class="entity-actions">{render_slot(@actions)}</div>
+        <div :if={@subtitle || @chips != []} class="entity-meta">
+          <p :if={@subtitle} class="entity-subtitle">{@subtitle}</p>
+          <div :if={@chips != []} class="entity-chips">{render_slot(@chips)}</div>
+        </div>
+      </div>
+      <ul :if={@kpi != []} class={["card entity-kpis", "entity-kpis-#{@kpi_count}"]} id={@kpis_id}>
+        <li :for={k <- @kpi}>
+          <a :if={k[:href]} href={k.href} id={"kpi-#{k.id}"} class="entity-kpi">
+            <span class="entity-kpi-label">{k.label}</span>
+            <span class={["num entity-kpi-value", k[:tone]]}>{k.value}</span>
+            <span class="entity-kpi-sub">{render_slot(k)}</span>
+          </a>
+          <div :if={!k[:href]} id={"kpi-#{k.id}"} class="entity-kpi">
+            <span class="entity-kpi-label">{k.label}</span>
+            <span class={["num entity-kpi-value", k[:tone]]}>{k.value}</span>
+            <span class="entity-kpi-sub">{render_slot(k)}</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+    """
+  end
+
+  attr :text, :string, required: true, doc: "a short name or a ticker (up to six letters)"
+
+  @doc "A tile with a short name, where a page has no flag (exchange, security, community)."
+  def monogram(assigns) do
+    ~H"""
+    <span
+      class={["entity-mark mono", String.length(@text) > 4 && "entity-mark-long"]}
+      aria-hidden="true"
+    >
+      {@text}
+    </span>
+    """
+  end
+
+  @doc "The tile of a region or of the continent: a globe."
+  def region_mark(assigns) do
+    ~H"""
+    <span class="entity-mark" aria-hidden="true">
+      <svg
+        width="26"
+        height="26"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        focusable="false"
+      >
+        <circle cx="12" cy="12" r="9"></circle>
+        <ellipse cx="12" cy="12" rx="4" ry="9"></ellipse>
+        <path d="M3.5 9h17M3.5 15h17"></path>
+      </svg>
+    </span>
+    """
+  end
+
+  @doc "The tile of an economic community: linked circles."
+  def community_mark(assigns) do
+    ~H"""
+    <span class="entity-mark" aria-hidden="true">
+      <svg
+        width="26"
+        height="26"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.6"
+        focusable="false"
+      >
+        <circle cx="12" cy="5.5" r="2.5"></circle>
+        <circle cx="5.5" cy="17.5" r="2.5"></circle>
+        <circle cx="18.5" cy="17.5" r="2.5"></circle>
+        <path d="M10.8 7.7 6.7 15.3M13.2 7.7l4.1 7.6M8 17.5h8"></path>
+      </svg>
+    </span>
+    """
+  end
+
   attr :ctx, :map, required: true, doc: "everything the profile knows (see AreaController)"
   attr :region, :any, default: nil
   attr :heading, :string, required: true
@@ -32,59 +162,41 @@ defmodule SyliAtlasWeb.ProfileComponents do
   """
   def country_head(assigns) do
     ctx = assigns.ctx
+    locale = ctx.locale
     suffix = String.replace_prefix(assigns.heading, ctx.name, "") |> String.trim_leading(" · ")
+    region = assigns.region
+
+    crumbs =
+      [{"Syli Atlas", Paths.home(locale)}] ++
+        if(region,
+          do: [{SyliAtlas.Geo.Area.name(region, locale), Paths.area(locale, region)}],
+          else: []
+        ) ++
+        if(ctx.tab != :overview,
+          do: [{ctx.name, Paths.area(locale, ctx.area)}, {assigns.tab_name, nil}],
+          else: [{ctx.name, nil}]
+        )
 
     assigns =
       assign(assigns,
         name: ctx.name,
         area: ctx.area,
-        locale: ctx.locale,
+        locale: locale,
+        crumbs: crumbs,
         suffix: if(suffix in ["", assigns.heading], do: nil, else: suffix),
         kpis: head_kpis(ctx)
       )
 
     ~H"""
-    <div class="country-head">
-      <nav aria-label={gettext("Breadcrumb")}>
-        <ol class="crumbs">
-          <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
-          <li :if={@region}>
-            <a href={Paths.area(@locale, @region)}>{SyliAtlas.Geo.Area.name(@region, @locale)}</a>
-          </li>
-          <%= if @ctx.tab != :overview do %>
-            <li><a href={Paths.area(@locale, @area)}>{@name}</a></li>
-            <li aria-current="page">{@tab_name}</li>
-          <% else %>
-            <li aria-current="page">{@name}</li>
-          <% end %>
-        </ol>
-      </nav>
-      <div class="country-id">
-        <SyliAtlasWeb.UI.flag code={@area.code} size="lg" />
-        <div class="country-id-text">
-          <h1 class="country-name">
-            {@name}<span :if={@suffix} class="country-name-tab"> · {@suffix}</span>
-          </h1>
-          <div class="country-chips">
-            <a :if={@region} class="pill pill-neutral no-dot" href={Paths.area(@locale, @region)}>
-              {SyliAtlas.Geo.Area.name(@region, @locale)}
-            </a>
-            <a
-              :for={c <- @ctx.communities}
-              class="pill pill-neutral no-dot"
-              href={Paths.community(@locale, c.slug[@locale])}
-            >
-              {c.short[@locale]}
-            </a>
-            <a
-              :if={@ctx.currency}
-              class="pill pill-neutral no-dot"
-              href={Paths.area_tab(@locale, @area, :finances) <> @ctx.period_query <> "#monnaie"}
-            >
-              {@ctx.currency.name} ({@ctx.currency.code})
-            </a>
-          </div>
-        </div>
+    <.entity_head
+      crumbs={@crumbs}
+      title={@name}
+      suffix={@suffix}
+      kpis_id="country-kpis"
+      class="country-head"
+    >
+      <:mark><SyliAtlasWeb.UI.flag code={@area.code} size="lg" /></:mark>
+      <:actions>
         <SyliAtlasWeb.AccountComponents.follow
           kind="area"
           ref={@area.code}
@@ -92,18 +204,160 @@ defmodule SyliAtlasWeb.ProfileComponents do
           path={@path}
           alert_area={@area.code}
         />
-      </div>
-      <ul class="card country-kpis" id="country-kpis">
-        <li :for={k <- @kpis}>
-          <a href={k.href} id={"kpi-#{k.id}"}>
-            <span class="country-kpi-label">{k.label}</span>
-            <span class={["num country-kpi-value", k.tone]}>{k.value}</span>
-            <span class="country-kpi-sub">{k.sub}</span>
-          </a>
-        </li>
-      </ul>
-    </div>
+      </:actions>
+      <:chips>
+        <a :if={@region} class="pill pill-neutral no-dot" href={Paths.area(@locale, @region)}>
+          {SyliAtlas.Geo.Area.name(@region, @locale)}
+        </a>
+        <a
+          :for={c <- @ctx.communities}
+          class="pill pill-neutral no-dot"
+          href={Paths.community(@locale, c.slug[@locale])}
+        >
+          {c.short[@locale]}
+        </a>
+        <a
+          :if={@ctx.currency}
+          class="pill pill-neutral no-dot"
+          href={Paths.area_tab(@locale, @area, :finances) <> @ctx.period_query <> "#monnaie"}
+        >
+          {@ctx.currency.name} ({@ctx.currency.code})
+        </a>
+      </:chips>
+      <:kpi
+        :for={k <- @kpis}
+        id={k.id}
+        label={k.label}
+        value={k.value}
+        tone={k.tone}
+        href={k.href}
+      >
+        {k.sub}
+      </:kpi>
+    </.entity_head>
     """
+  end
+
+  attr :ctx, :map, required: true, doc: "everything the profile knows (see AreaController)"
+  attr :region, :any, default: nil, doc: "the continent, for the breadcrumb"
+  attr :members, :integer, default: 0, doc: "how many countries the area groups"
+  attr :path, :string, required: true
+
+  @doc """
+  Header of a region or of the continent, built like a country's: a globe
+  where a country has its flag, then key figures that lead to the sections
+  of the page.
+  """
+  def region_head(assigns) do
+    ctx = assigns.ctx
+    locale = ctx.locale
+
+    crumbs =
+      [{"Syli Atlas", Paths.home(locale)}] ++
+        if(assigns.region,
+          do: [
+            {SyliAtlas.Geo.Area.name(assigns.region, locale), Paths.area(locale, assigns.region)}
+          ],
+          else: []
+        ) ++ [{ctx.name, nil}]
+
+    assigns = assign(assigns, crumbs: crumbs, kpis: region_kpis(ctx, assigns.members))
+
+    ~H"""
+    <.entity_head crumbs={@crumbs} title={@ctx.name} kpis_id="region-kpis" class="region-head">
+      <:mark><.region_mark /></:mark>
+      <:actions>
+        <SyliAtlasWeb.AccountComponents.follow
+          kind="area"
+          ref={@ctx.area.code}
+          locale={@ctx.locale}
+          path={@path}
+        />
+      </:actions>
+      <:chips>
+        <span class="pill pill-neutral no-dot">{area_kind_label(@ctx.area.kind)}</span>
+        <a :if={@members > 0} class="pill pill-neutral no-dot" href="#members">
+          {ngettext("%{count} country", "%{count} countries", @members)}
+        </a>
+      </:chips>
+      <:kpi
+        :for={k <- @kpis}
+        id={k.id}
+        label={k.label}
+        value={k.value}
+        tone={k.tone}
+        href={k.href}
+      >
+        {k.sub}
+      </:kpi>
+    </.entity_head>
+    """
+  end
+
+  defp area_kind_label("continent"), do: gettext("Continent")
+  defp area_kind_label(_), do: gettext("African Union region")
+
+  defp region_kpis(ctx, members) do
+    l = ctx.locale
+    series = ctx.profile["series"]
+    changes = ctx.data["period"]["changes"]
+    at = fn k -> PublicData.at(series[k], ctx.to) end
+    since = gettext("since %{year}", year: ctx.from)
+
+    [
+      %{
+        id: "gdp",
+        label: gettext("GDP %{year}", year: ctx.to),
+        value: value(at.("gdp_usd_bn"), "gdp_usd_bn", l),
+        sub: change(changes["gdp_usd_bn"], "gdp_usd_bn", l) <> " " <> since,
+        tone: nil,
+        href: "#economie"
+      },
+      %{
+        id: "growth",
+        label: gettext("Growth %{year}", year: ctx.to),
+        value: value(at.("real_gdp_growth"), "real_gdp_growth", l),
+        sub:
+          gettext("real GDP %{change} %{since}",
+            change: change(changes["real_gdp_index"], "real_gdp_index", l),
+            since: since
+          ),
+        tone: SyliAtlasWeb.Format.tone(at.("real_gdp_growth"), "real_gdp_growth"),
+        href: "#economie"
+      },
+      %{
+        id: "gdp-per-capita",
+        label: gettext("GDP per capita"),
+        value: value(at.("gdp_per_capita_usd"), "gdp_per_capita_usd", l),
+        sub: to_string(ctx.to),
+        tone: nil,
+        href: "#economie"
+      },
+      %{
+        id: "debt",
+        label: gettext("Public debt"),
+        value: value(at.("public_debt_pct_gdp"), "public_debt_pct_gdp", l),
+        sub: gettext("of GDP, %{year}", year: ctx.to),
+        tone: nil,
+        href: "#finances"
+      },
+      %{
+        id: "population",
+        label: gettext("Population"),
+        value: value(at.("population_m"), "population_m", l),
+        sub: to_string(ctx.to),
+        tone: nil,
+        href: if(members > 0, do: "#members", else: "#economie")
+      },
+      %{
+        id: "inflation",
+        label: gettext("Inflation"),
+        value: value(at.("inflation"), "inflation", l),
+        sub: to_string(ctx.to),
+        tone: nil,
+        href: "#economie"
+      }
+    ]
   end
 
   defp head_kpis(ctx) do

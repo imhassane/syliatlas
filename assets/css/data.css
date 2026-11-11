@@ -179,41 +179,66 @@
 .related-list li:first-child a { border-top: 0; }
 .related-list a:hover { color: var(--accent-text); }
 
-/* Header of a country profile (ProfileComponents.country_head): the same on
-   every tab, so the tab bar never jumps. Flag, name and what the country
-   belongs to; follow and alert; six key figures, each opening its tab. */
-.country-head { display: flex; flex-direction: column; gap: 18px; }
-.country-id { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
-.country-id-text { display: flex; flex-direction: column; gap: 8px; flex: 1 1 420px; min-width: 0; }
-.country-name { margin: 0; font-size: clamp(30px, 4vw, 44px); line-height: 1.05; font-weight: 400; letter-spacing: -.03em; }
-.country-name-tab { color: var(--ink-muted); }
-.country-chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.country-chips .pill { text-decoration: none; font-size: 13px; }
-.country-chips .pill:hover { background: var(--accent-bg); color: var(--accent-text); }
-.country-kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); margin: 0; padding: 0; list-style: none; overflow: clip; }
-.country-kpis li + li { border-left: 1px solid var(--border); }
-.country-kpis a { display: flex; flex-direction: column; gap: 4px; height: 100%; padding: 14px 18px; color: var(--ink); text-decoration: none; transition: background .18s var(--ease); }
-.country-kpis a:hover { background: var(--alt); }
-.country-kpis a:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
-.country-kpi-label { font-family: var(--mono); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-subtle); }
-.country-kpi-value { font-size: 24px; letter-spacing: -.02em; }
-.country-kpi-sub { font-size: 12px; color: var(--ink-subtle); }
-.country-kpi-value.rt-ink-investment { color: var(--success-ink); }
-.country-kpi-value.rt-ink-speculative { color: var(--accent-text); }
-.country-kpi-value.rt-ink-highly_speculative, .country-kpi-value.rt-ink-substantial_risk, .country-kpi-value.rt-ink-default { color: var(--signal-text); }
+/* Header of every detail page (ProfileComponents.entity_head): country,
+   region, community, exchange, security. Mark, name and actions share one
+   line and are centred on the name; the full name and the pills sit under
+   the name, aligned with it; then a strip of key figures. */
+.entity-head { display: flex; flex-direction: column; gap: 18px; }
+.entity-id { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px 20px; }
+.entity-id-plain { grid-template-columns: minmax(0, 1fr) auto; }
+.entity-mark-slot { display: flex; }
+.entity-title { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 14px; min-width: 0; }
+.entity-name { margin: 0; font-size: clamp(30px, 4vw, 44px); line-height: 1.05; font-weight: 400; letter-spacing: -.03em; overflow-wrap: anywhere; }
+.entity-name-tab { color: var(--ink-muted); }
+.entity-tag { font-size: 15px; color: var(--ink-subtle); }
+.entity-actions { display: flex; justify-content: flex-end; }
+.entity-actions .follow { margin: 0; flex-wrap: nowrap; }
+.entity-meta { grid-column: 2 / -1; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.entity-id-plain .entity-meta { grid-column: 1 / -1; }
+.entity-subtitle { margin: 0; color: var(--ink-muted); font-size: 15px; }
+.entity-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.entity-chips .pill { text-decoration: none; font-size: 13px; }
+.entity-chips a.pill:hover { background: var(--accent-bg); color: var(--accent-text); }
+/* Where a page has no flag: a tile the size of a large flag. */
+.entity-mark { display: inline-flex; align-items: center; justify-content: center; flex: none; width: 64px; height: 48px; border-radius: 8px; background: var(--accent-bg); color: var(--accent-text); font-size: 15px; font-weight: 600; letter-spacing: .02em; line-height: 1; }
+.entity-mark-long { font-size: 12px; letter-spacing: 0; }
+/* Key figures: as many columns as figures, thin lines between them. */
+.entity-kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 1px; margin: 0; padding: 0; list-style: none; overflow: clip; background: var(--border); }
+.entity-kpis-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.entity-kpis-5 { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.entity-kpis li { display: flex; background: var(--card); }
+.entity-kpi { display: flex; flex-direction: column; gap: 4px; width: 100%; padding: 14px 18px; color: var(--ink); text-decoration: none; transition: background .18s var(--ease); }
+a.entity-kpi:hover { background: var(--alt); }
+a.entity-kpi:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.entity-kpi-label { font-family: var(--mono); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-subtle); }
+.entity-kpi-value { font-size: 24px; letter-spacing: -.02em; }
+.entity-kpi-sub { font-size: 12px; color: var(--ink-subtle); }
+.entity-kpi-value.rt-ink-investment { color: var(--success-ink); }
+.entity-kpi-value.rt-ink-speculative { color: var(--accent-text); }
+.entity-kpi-value.rt-ink-highly_speculative, .entity-kpi-value.rt-ink-substantial_risk, .entity-kpi-value.rt-ink-default { color: var(--signal-text); }
 @media (max-width: 60rem) {
-  .country-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .country-kpis li:nth-child(4) { border-left: 0; }
-  .country-kpis li:nth-child(n+4) { border-top: 1px solid var(--border); }
+  .entity-kpis, .entity-kpis-5 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .entity-kpis-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
-/* Phone: the figures scroll sideways, one small card each. */
+/* Phone: mark, name and the actions (icons) on one line; the pills and the
+   figures scroll sideways under it, one small card per figure. */
 @media (max-width: 40rem) {
-  .country-id { gap: 12px; }
-  .country-id-text { flex-basis: 0; flex-grow: 1; }
-  .country-kpis { display: flex; gap: 8px; margin: 0 -16px; padding: 2px 16px; overflow-x: auto; scrollbar-width: none; background: none; box-shadow: none; border: 0; border-radius: 0; }
-  .country-kpis li, .country-kpis li + li { flex: none; width: 132px; border: 0; }
-  .country-kpis a { border-radius: 14px; background: var(--card); box-shadow: inset 0 0 0 1px var(--border); padding: 12px; }
-  .country-kpi-value { font-size: 20px; }
+  .entity-id { gap: 10px 12px; }
+  .entity-name { font-size: 28px; }
+  .entity-name-tab { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .entity-meta { grid-column: 1 / -1; }
+  .entity-mark { width: 40px; height: 30px; border-radius: 6px; font-size: 11px; }
+  .entity-mark-long { font-size: 9px; }
+  .entity-mark svg { width: 18px; height: 18px; }
+  .entity-actions .follow { gap: 6px; }
+  .entity-actions .follow .btn { min-width: 44px; min-height: 44px; padding: 0; justify-content: center; }
+  .entity-actions .follow .btn span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .entity-chips { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px; padding: 0 16px; scrollbar-width: none; }
+  .entity-chips .pill { flex: none; }
+  .entity-kpis, .entity-kpis-4, .entity-kpis-5 { display: flex; gap: 8px; margin: 0 -16px; padding: 2px 16px; overflow-x: auto; scrollbar-width: none; background: none; box-shadow: none; border: 0; border-radius: 0; }
+  .entity-kpis li { flex: none; width: 132px; background: none; }
+  .entity-kpi { border-radius: 14px; background: var(--card); box-shadow: inset 0 0 0 1px var(--border); padding: 12px; }
+  .entity-kpi-value { font-size: 20px; }
 }
 
 /* Flags (UI.flag/1): decorative, with a thin line so pale flags show. */
@@ -242,17 +267,3 @@
 /* One line under the tabs and the period together. */
 .tab-bar-row { border-bottom: 1px solid var(--border); }
 .tab-bar-row .tab-nav { border-bottom: 0; }
-
-/* Phone: flag, name and the two actions (icons) on one line; what the
-   country belongs to scrolls sideways under it. */
-@media (max-width: 40rem) {
-  .country-id { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 10px 12px; }
-  .country-id-text { display: contents; }
-  .country-name { grid-column: 2; grid-row: 1; font-size: 28px; }
-  .country-name-tab { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .country-id .follow { grid-column: 3; grid-row: 1; flex-wrap: nowrap; gap: 6px; margin: 0; }
-  .country-id .follow .btn { min-width: 44px; min-height: 44px; padding: 0; justify-content: center; }
-  .country-id .follow .btn span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-  .country-chips { grid-column: 1 / -1; flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px; padding: 0 16px; scrollbar-width: none; }
-  .country-chips .pill { flex: none; }
-}

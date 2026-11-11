@@ -1,89 +1,104 @@
 <Layouts.public locale={@locale} current={:markets} alternates={@alternates}>
-  <.section variant="alt">
-    <nav aria-label={gettext("Breadcrumb")}>
-      <ol class="crumbs">
-        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
-        <li><a href={Paths.markets(@locale)}>{gettext("Stock exchanges")}</a></li>
-        <li aria-current="page">{@e["short_name"]}</li>
-      </ol>
-    </nav>
-    <div class="stack gap-3">
-      <p class="eyebrow">
-        {if length(@e["countries"]) > 1,
-          do:
-            gettext("Regional exchange · %{count} countries · %{region}",
-              count: length(@e["countries"]),
-              region: region_label(@e["region"])
-            ),
-          else: gettext("Stock exchange · %{region}", region: region_label(@e["region"]))}
-      </p>
-      <h1 class="display area-title">{@e["short_name"]}</h1>
-      <p :if={@e["name"] != @e["short_name"]} class="muted">{@e["name"]}</p>
-    </div>
-    <SyliAtlasWeb.AccountComponents.follow
-      kind="exchange"
-      ref={@e["code"]}
-      locale={@locale}
-      path={SyliAtlasWeb.Paths.exchange(@locale, @e["code"])}
-      alert_market={{@e["code"], nil}}
-    />
-    <p class="lead" data-answer>{@answer}</p>
-    <p class="src">
-      <.credit
-        sources={@doc["sources"]}
-        date={@doc["index"]["date"] || @doc["session"]["date"]}
-        locale={@locale}
-      />
-    </p>
-    <nav
-      :if={@e["country_names"] != []}
-      class="row gap-2 market-countries"
-      aria-label={gettext("Countries served")}
+  <.section tight={:bottom} class="profile-head">
+    <ProfileComponents.entity_head
+      crumbs={[
+        {"Syli Atlas", Paths.home(@locale)},
+        {gettext("Stock exchanges"), Paths.markets(@locale)},
+        {@e["short_name"], nil}
+      ]}
+      title={@e["short_name"]}
+      subtitle={@e["name"] != @e["short_name"] && @e["name"]}
+      kpis_id="exchange-kpis"
+      class="exchange-head"
     >
-      <a :for={c <- @e["country_names"]} class="chip" href={country_href(c, @locale)}>{c["name"][
-        @locale
-      ]}</a>
-    </nav>
+      <:mark>
+        <%= case @e["countries"] do %>
+          <% [code] -> %>
+            <SyliAtlasWeb.UI.flag code={code} size="lg" />
+          <% _ -> %>
+            <ProfileComponents.region_mark />
+        <% end %>
+      </:mark>
+      <:actions>
+        <SyliAtlasWeb.AccountComponents.follow
+          kind="exchange"
+          ref={@e["code"]}
+          locale={@locale}
+          path={SyliAtlasWeb.Paths.exchange(@locale, @e["code"])}
+          alert_market={{@e["code"], nil}}
+        />
+      </:actions>
+      <:chips>
+        <span class="pill pill-neutral no-dot">
+          {if length(@e["countries"]) > 1,
+            do: gettext("Regional exchange"),
+            else: gettext("Stock exchange")}
+        </span>
+        <span class="pill pill-neutral no-dot">{region_label(@e["region"])}</span>
+        <a
+          :for={c <- @e["country_names"]}
+          class="pill pill-neutral no-dot"
+          href={country_href(c, @locale)}
+        >
+          {c["name"][@locale]}
+        </a>
+      </:chips>
+      <:kpi
+        id="index"
+        label={@e["index_name"] || gettext("Main index")}
+        value={price(@doc["index"]["value"], @locale)}
+      >
+        <.freshness index={@doc["index"]} locale={@locale} />
+      </:kpi>
+      <:kpi
+        id="session"
+        label={gettext("Session")}
+        value={pct(@doc["index"]["change_pct"], @locale)}
+        tone={tone(@doc["index"]["change_pct"])}
+      >
+        <span :if={@doc["index"]["flags"]["suspect"]} class="pill pill-warn no-dot">
+          {gettext("to check")}
+        </span>
+        <span :if={!@doc["index"]["flags"]["suspect"]}>{gettext("change of the index")}</span>
+      </:kpi>
+      <:kpi
+        id="ytd"
+        label={gettext("Since 1 January")}
+        value={ytd(@doc["index"]["ytd_pct"], @locale)}
+        tone={tone(@doc["index"]["ytd_pct"])}
+      >
+        {gettext("as given by the source")}
+      </:kpi>
+      <:kpi
+        id="traded"
+        label={gettext("Traded that day")}
+        value={amount(@doc["session"]["value"], @e["currency"], @locale)}
+      >
+        {usd(SyliAtlas.Market.to_usd(@doc["session"]["value"], @e["currency"], @fx), @locale)}
+        <span :if={@doc["session"]["top"]}>
+          · {gettext("%{share} % on %{name}",
+            share: number(@doc["session"]["top"]["share"], 0, @locale),
+            name: @doc["session"]["top"]["name"]
+          )}
+        </span>
+      </:kpi>
+    </ProfileComponents.entity_head>
+  </.section>
+
+  <.section class="tab-intro">
+    <div class="stack gap-1">
+      <p class="lead" data-answer>{@answer}</p>
+      <p class="src">
+        <.credit
+          sources={@doc["sources"]}
+          date={@doc["index"]["date"] || @doc["session"]["date"]}
+          locale={@locale}
+        />
+      </p>
+    </div>
   </.section>
 
   <.section>
-    <dl class="stats">
-      <div>
-        <dt>{@e["index_name"] || gettext("Main index")}</dt>
-        <dd class="big">{price(@doc["index"]["value"], @locale)}</dd>
-        <dd class="small muted"><.freshness index={@doc["index"]} locale={@locale} /></dd>
-      </div>
-      <div>
-        <dt>{gettext("Session")}</dt>
-        <dd class={["big", tone(@doc["index"]["change_pct"])]}>
-          {pct(@doc["index"]["change_pct"], @locale)}
-        </dd>
-        <dd :if={@doc["index"]["flags"]["suspect"]} class="small">
-          <span class="pill pill-warn no-dot">{gettext("to check")}</span>
-        </dd>
-      </div>
-      <div>
-        <dt>{gettext("Since 1 January")}</dt>
-        <dd class={["big", tone(@doc["index"]["ytd_pct"])]}>
-          {ytd(@doc["index"]["ytd_pct"], @locale)}
-        </dd>
-        <dd class="small muted">{gettext("as given by the source")}</dd>
-      </div>
-      <div>
-        <dt>{gettext("Traded that day")}</dt>
-        <dd class="big">{amount(@doc["session"]["value"], @e["currency"], @locale)}</dd>
-        <dd class="small muted">
-          {usd(SyliAtlas.Market.to_usd(@doc["session"]["value"], @e["currency"], @fx), @locale)}
-          <span :if={@doc["session"]["top"]}>
-            · {gettext("%{share} % on %{name}",
-              share: number(@doc["session"]["top"]["share"], 0, @locale),
-              name: @doc["session"]["top"]["name"]
-            )}
-          </span>
-        </dd>
-      </div>
-    </dl>
-
     <div class="grid grid-2 market-grid">
       <.card pad>
         <.card_head
