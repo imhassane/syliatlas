@@ -1,0 +1,36 @@
+<Layouts.public ticker={false} locale={@locale} current={:recap}>
+  <section class="section section-alt auth">
+    <div class="wrap auth-narrow">
+      <div class="card pad stack gap-3" id="recap-confirmation">
+        <%= if @done do %>
+          <p class="eyebrow">{gettext("Done")}</p>
+          <h1 class="h1" id="recap-confirmed">{gettext("Your recap is on")}</h1>
+          <dl class="recap-facts">
+            <dt>{gettext("Countries")}</dt>
+            <dd>{Enum.join(@countries, ", ")}</dd>
+            <dt>{gettext("Frequency")}</dt>
+            <dd>{frequency_label(@frequency)}</dd>
+          </dl>
+          <p class="small muted">
+            <a href={@manage}>{gettext("Change my countries")}</a>
+            · {gettext("the same link is at the bottom of every recap.")}
+          </p>
+        <% else %>
+          <p class="eyebrow">{gettext("Recap · confirmation")}</p>
+          <h1 class="h1">{gettext("Confirm your recap")}</h1>
+          <dl class="recap-facts">
+            <dt>{gettext("Address")}</dt>
+            <dd dir="ltr">{@email}</dd>
+            <dt>{gettext("Countries")}</dt>
+            <dd>{Enum.join(@countries, ", ")}</dd>
+            <dt>{gettext("Frequency")}</dt>
+            <dd>{frequency_label(@frequency)}</dd>
+          </dl>
+          <form method="post" action={"/recap/confirm/" <> @token} id="recap-confirm-form">
+            <button class="btn btn-primary btn-lg" type="submit">{gettext("Confirm my recap")}</button>
+          </form>
+        <% end %>
+      </div>
+    </div>
+  </section>
+</Layouts.public>

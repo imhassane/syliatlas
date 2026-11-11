@@ -54,6 +54,17 @@ defmodule SyliAtlasWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  # The country recap without an account (docs/recap.md). No session: the
+  # form sits in the footer of cached pages, which carry no CSRF token. A
+  # forged request can only make Syli Atlas send a confirmation email, which
+  # the rate limits of SyliAtlas.Recaps bound; the other links carry a
+  # signed token.
+  pipeline :recap do
+    plug :accepts, ["html", "json"]
+    plug :put_root_layout, html: {SyliAtlasWeb.Layouts, :root}
+    plug :put_secure_browser_headers
+  end
+
   pipeline :admin do
     plug SyliAtlasWeb.Plugs.AdminAuth
     plug SyliAtlasWeb.Plugs.AdminShell
@@ -117,6 +128,29 @@ defmodule SyliAtlasWeb.Router do
     get "/my-space", AccountController, :favorites
     get "/my-space/alerts", AccountController, :alerts
     get "/my-space/security", AccountController, :security
+  end
+
+  scope "/fr", SyliAtlasWeb do
+    pipe_through [:recap, :fr]
+    get "/recap", RecapController, :new
+    post "/recap", RecapController, :create
+  end
+
+  scope "/en", SyliAtlasWeb do
+    pipe_through [:recap, :en]
+    get "/recap", RecapController, :new
+    post "/recap", RecapController, :create
+  end
+
+  scope "/recap", SyliAtlasWeb do
+    pipe_through :recap
+
+    get "/confirm/:token", RecapController, :confirmation
+    post "/confirm/:token", RecapController, :confirm
+    get "/manage/:token", RecapController, :manage
+    post "/manage/:token", RecapController, :update
+    get "/stop/:token", RecapController, :stop
+    post "/stop/:token", RecapController, :unsubscribe
   end
 
   scope "/unsubscribe", SyliAtlasWeb do

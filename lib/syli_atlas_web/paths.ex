@@ -64,6 +64,9 @@ defmodule SyliAtlasWeb.Paths do
   @doc "The public API documentation: /fr/api, /en/api."
   def api(locale), do: "/#{locale}/api"
   def discussion(locale, area), do: area(locale, area) <> "/discussion"
+  @doc "The page to ask for the country recap without an account."
+  def recap(locale), do: "/#{locale}/recap"
+
   def login(locale), do: "/#{locale}/#{segment(locale, :login)}"
   def login_code(locale), do: login(locale) <> "/code"
   def admin_key(locale), do: login(locale) <> "/" <> segment(locale, :passkey)

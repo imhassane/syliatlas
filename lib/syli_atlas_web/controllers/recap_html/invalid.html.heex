@@ -1,0 +1,14 @@
+<Layouts.public ticker={false} locale={@locale} current={:recap}>
+  <section class="section section-alt auth">
+    <div class="wrap auth-narrow">
+      <div class="card pad stack gap-3" id="recap-invalid">
+        <p class="eyebrow">{gettext("The recap")}</p>
+        <h1 class="h1">{gettext("This link is no longer valid.")}</h1>
+        <p class="muted">
+          {gettext("A confirmation link works for 7 days.")}
+          <a href={Paths.recap(@locale)}>{gettext("Ask for the recap again")}</a>
+        </p>
+      </div>
+    </div>
+  </section>
+</Layouts.public>

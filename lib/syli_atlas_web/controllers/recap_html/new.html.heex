@@ -1,0 +1,53 @@
+<Layouts.public ticker={false} locale={@locale} current={:recap}>
+  <section class="recap-hero">
+    <div class="recap-hero-band" aria-hidden="true"></div>
+    <div class="wrap recap-hero-text">
+      <p class="eyebrow">{gettext("The Monday recap")}</p>
+      <h1 class="h1">{gettext("Your countries, every Monday")}</h1>
+      <p class="lead muted">
+        {gettext(
+          "The rating decisions, the stock exchange, the currency and the IMF landmarks of the countries you choose. Free, without an account."
+        )}
+      </p>
+    </div>
+  </section>
+  <section class="recap-body">
+    <form
+      method="post"
+      action={Paths.recap(@locale)}
+      class="wrap recap-form"
+      id="recap-form"
+      data-recap-page
+    >
+      <p :if={@error} class="adm-flash err" role="alert" id="recap-error">{@error}</p>
+      <.country_picker regions={@regions} picked={@picked} max={@max} />
+      <.frequency_picker frequency={@frequency} />
+      <section class="recap-step" aria-labelledby="recap-step-address">
+        <h2 class="recap-step-title" id="recap-step-address">
+          <span aria-hidden="true">3</span>{gettext("Your address")}
+        </h2>
+        <label class="vh" for="recap-email">{gettext("Email address")}</label>
+        <input
+          class="input recap-email"
+          type="email"
+          name="email"
+          id="recap-email"
+          autocomplete="email"
+          placeholder={gettext("you@example.com")}
+          value={@email}
+          required
+        />
+        <p class="small muted" id="recap-privacy">
+          {gettext(
+            "We keep the address, the countries, the rhythm and the language, nothing else: no name, no IP address, no tracking of opens or clicks. One email to confirm, nothing goes out before; stopping the recap deletes the address, an address never confirmed is deleted after 7 days."
+          )}
+        </p>
+      </section>
+      <.summary_bar names={picked_names(@regions, @picked)} frequency={@frequency} max={@max}>
+        <button class="btn btn-primary btn-lg" type="submit" id="recap-submit">
+          {gettext("Get the recap")} →
+        </button>
+      </.summary_bar>
+    </form>
+  </section>
+</Layouts.public>

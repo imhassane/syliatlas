@@ -50,6 +50,9 @@ config :syli_atlas, Oban,
        # Digests of favourites: Mondays, and the 1st for monthly ones (the
        # worker picks who is due), after the morning check of the sources.
        {"40 6 * * *", SyliAtlas.Workers.DigestWorker},
+       # Country recaps without an account (docs/recap.md): purge of the
+       # addresses never confirmed, then the recaps due today.
+       {"45 6 * * *", SyliAtlas.Workers.RecapWorker},
        # Server time of the public API: a probe, then the finished hours written.
        {"5 * * * *", SyliAtlas.Workers.ApiTimingWorker}
      ]}

@@ -25,6 +25,10 @@ quota of the real key. Pages then say the figures are fictitious.
 
 Every variable read at boot is listed in `.env.example`.
 
+Documentation of features: `docs/recap.md` (the country recap without an
+account: what is stored, for how long, the emails and the licence of the
+market figures).
+
 ## Git workflow (Git Flow, no pre-production)
 
 | Branch | From | Merged into | Deployed to |
