@@ -1,0 +1,125 @@
+<Layouts.public locale={@locale} current={:account} current_user={@current_user}>
+  <.space locale={@locale} user={@current_user} tab={@tab} flash={@flash}>
+    <header class="stack gap-1">
+      <p class="eyebrow">{gettext("My space")}</p>
+      <h1 class="h1">{gettext("Alerts")}</h1>
+      <p class="muted">{gettext("An email when a condition is met, once per event.")}</p>
+    </header>
+
+    <div class="card" id="alerts">
+      <p :if={@alerts == []} class="pad muted" id="alerts-empty">{gettext("No alert yet.")}</p>
+      <ul :if={@alerts != []} class="alert-list">
+        <li :for={a <- @alerts} id={"alert-#{a.id}"}>
+          <% {country, rule} = describe(a, @countries, @locale) %>
+          <div class="grow stack">
+            <b>{country}</b>
+            <span class="small muted">{rule}</span>
+          </div>
+          <span class="pill pill-neutral">{frequency_label(a.frequency)}</span>
+          <span class="small muted">{gettext("Last sent:")} {when_label(
+            a.last_triggered_at,
+            @locale
+          )}</span>
+          <.form
+            for={%{}}
+            action={~p"/account/alerts/#{a.id}"}
+            method="put"
+            id={"alert-toggle-#{a.id}"}
+          >
+            <input type="hidden" name="active" value={to_string(!a.active)} />
+            <button class="btn btn-quiet btn-sm" type="submit">
+              {if a.active, do: gettext("Pause"), else: gettext("Resume")}
+            </button>
+          </.form>
+          <.form
+            for={%{}}
+            action={~p"/account/alerts/#{a.id}"}
+            method="delete"
+            id={"alert-delete-#{a.id}"}
+          >
+            <button class="btn btn-quiet btn-sm" type="submit">{gettext("Delete")}</button>
+          </.form>
+        </li>
+      </ul>
+    </div>
+
+    <section class="card pad stack gap-3" aria-labelledby="new-alert">
+      <h2 class="h2" id="new-alert">{gettext("New alert")}</h2>
+      <.form for={@form} action={~p"/account/alerts"} id="alert-form" class="stack gap-3">
+        <label class="field">
+          <span class="eyebrow">{gettext("Country")}</span>
+          <select class="select" name={@form[:area_code].name} id="alert-area" required>
+            <option value="">—</option>
+            <option
+              :for={c <- @countries}
+              value={c.code}
+              selected={@form[:area_code].value == c.code}
+            >
+              {SyliAtlas.Geo.Area.name(c, @locale)}
+            </option>
+          </select>
+        </label>
+        <fieldset class="stack gap-1">
+          <legend class="eyebrow">{gettext("Tell me when")}</legend>
+          <label :for={{v, l} <- alert_kinds()} class="choice">
+            <input
+              type="radio"
+              name={@form[:kind].name}
+              value={v}
+              checked={(@form[:kind].value || "rating_change") == v}
+            />
+            {l}
+          </label>
+        </fieldset>
+        <div class="grid-2">
+          <label class="field">
+            <span class="eyebrow">{gettext("Indicator (thresholds)")}</span>
+            <select class="select" name={@form[:indicator].name} id="alert-indicator">
+              <option
+                :for={{v, l} <- indicators()}
+                value={v}
+                selected={@form[:indicator].value == v}
+              >
+                {l}
+              </option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="eyebrow">{gettext("Threshold")}</span>
+            <input
+              class="input"
+              type="text"
+              inputmode="decimal"
+              name={@form[:threshold].name}
+              id="alert-threshold"
+              value={@form[:threshold].value}
+            />
+          </label>
+        </div>
+        <p :for={{field, {msg, _}} <- @form.errors} class="adm-flash err" role="alert">
+          {field}: {msg}
+        </p>
+        <fieldset class="stack gap-1">
+          <legend class="eyebrow">{gettext("Frequency")}</legend>
+          <label :for={{v, l} <- frequencies()} class="choice">
+            <input
+              type="radio"
+              name={@form[:frequency].name}
+              value={v}
+              checked={(@form[:frequency].value || "immediate") == v}
+            />
+            {l}
+          </label>
+        </fieldset>
+        <button class="btn btn-primary" type="submit" id="alert-submit">{gettext(
+          "Create the alert"
+        )}</button>
+      </.form>
+      <p class="small muted">
+        {gettext(
+          "IMF indicators change twice a year (April, October); ratings once a decision is validated."
+        )}
+      </p>
+    </section>
+  </.space>
+</Layouts.public>

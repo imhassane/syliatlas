@@ -63,6 +63,12 @@ config :syli_atlas, SyliAtlas.Market, preview: true
 # at the `config/runtime.exs`.
 config :syli_atlas, SyliAtlas.Mailer, adapter: Swoosh.Adapters.Local
 
+# Passkeys (WebAuthn): the site's origin and relying party. Set from
+# PHX_HOST in production (config/runtime.exs).
+config :syli_atlas, SyliAtlas.Accounts.Passkeys,
+  origin: "http://localhost:4000",
+  rp_id: "localhost"
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.25.4",

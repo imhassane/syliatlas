@@ -61,7 +61,7 @@ msgstr "Ajouter un pays ou une région"
 msgid "Add…"
 msgstr "Ajouter…"
 
-#: lib/syli_atlas_web/components/layouts.ex:247
+#: lib/syli_atlas_web/components/layouts.ex:267
 #, elixir-autogen, elixir-format
 msgid "African economies in verifiable figures. Free, open, in French and English."
 msgstr "Les économies africaines en chiffres vérifiables. Gratuit, ouvert, en français et en anglais."
@@ -132,8 +132,8 @@ msgstr "Appliquer"
 msgid "Area"
 msgstr "Zone"
 
-#: lib/syli_atlas_web/components/layouts.ex:474
-#: lib/syli_atlas_web/components/layouts.ex:489
+#: lib/syli_atlas_web/components/layouts.ex:524
+#: lib/syli_atlas_web/components/layouts.ex:539
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr "Reconnexion en cours"
@@ -184,9 +184,9 @@ msgstr "Vérifié chaque jour"
 msgid "Cite this page"
 msgstr "Citer cette page"
 
-#: lib/syli_atlas_web/components/layouts.ex:142
-#: lib/syli_atlas_web/components/layouts.ex:174
-#: lib/syli_atlas_web/components/layouts.ex:266
+#: lib/syli_atlas_web/components/layouts.ex:156
+#: lib/syli_atlas_web/components/layouts.ex:194
+#: lib/syli_atlas_web/components/layouts.ex:286
 #: lib/syli_atlas_web/components/map_components.ex:256
 #: lib/syli_atlas_web/controllers/compare_controller.ex:68
 #: lib/syli_atlas_web/controllers/compare_html/show.html.heex:5
@@ -215,13 +215,14 @@ msgstr "Comparer les cinq régions"
 msgid "Continent"
 msgstr "Continent"
 
-#: lib/syli_atlas_web/components/layouts.ex:123
-#: lib/syli_atlas_web/components/layouts.ex:144
-#: lib/syli_atlas_web/components/layouts.ex:253
+#: lib/syli_atlas_web/components/layouts.ex:133
+#: lib/syli_atlas_web/components/layouts.ex:160
+#: lib/syli_atlas_web/components/layouts.ex:273
 #, elixir-autogen, elixir-format
 msgid "Countries"
 msgstr "Pays"
 
+#: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:50
 #: lib/syli_atlas_web/controllers/area_html.ex:16
 #: lib/syli_atlas_web/controllers/community_html/show.html.heex:53
 #: lib/syli_atlas_web/controllers/debt_html/index.html.heex:42
@@ -237,7 +238,7 @@ msgstr "Pays"
 msgid "Daily updates"
 msgstr "Mises à jour quotidiennes"
 
-#: lib/syli_atlas_web/components/layouts.ex:269
+#: lib/syli_atlas_web/components/layouts.ex:289
 #, elixir-autogen, elixir-format
 msgid "Data"
 msgstr "Données"
@@ -313,7 +314,7 @@ msgstr "Des chiffres à vérifier, citer et réutiliser."
 msgid "Five regions, very different paths."
 msgstr "Cinq régions, des trajectoires très différentes."
 
-#: lib/syli_atlas_web/components/layouts.ex:251
+#: lib/syli_atlas_web/components/layouts.ex:271
 #, elixir-autogen, elixir-format
 msgid "Footer"
 msgstr "Pied de page"
@@ -323,7 +324,7 @@ msgstr "Pied de page"
 #: lib/syli_atlas_web/controllers/community_html/show.html.heex:17
 #: lib/syli_atlas_web/controllers/community_html/show.html.heex:56
 #: lib/syli_atlas_web/controllers/page_html.ex:141
-#: lib/syli_atlas_web/controllers/regions_html/index.html.heex:259
+#: lib/syli_atlas_web/controllers/regions_html/index.html.heex:267
 #, elixir-autogen, elixir-format
 msgid "GDP %{year}"
 msgstr "PIB %{year}"
@@ -450,8 +451,8 @@ msgstr "Indicateur"
 msgid "Inflation"
 msgstr "Inflation"
 
-#: lib/syli_atlas_web/components/layouts.ex:66
-#: lib/syli_atlas_web/components/layouts.ex:386
+#: lib/syli_atlas_web/components/layouts.ex:71
+#: lib/syli_atlas_web/components/layouts.ex:407
 #: lib/syli_atlas_web/components/page_components.ex:198
 #, elixir-autogen, elixir-format
 msgid "Install the app"
@@ -472,7 +473,7 @@ msgstr "Institution, édition et date de copie sont affichées à côté des chi
 msgid "Last check: %{date}"
 msgstr "Dernière vérification : %{date}"
 
-#: lib/syli_atlas_web/components/layouts.ex:120
+#: lib/syli_atlas_web/components/layouts.ex:130
 #, elixir-autogen, elixir-format
 msgid "Main"
 msgstr "Principal"
@@ -488,9 +489,9 @@ msgstr "Pays membres"
 msgid "Method"
 msgstr "Méthode"
 
-#: lib/syli_atlas_web/components/layouts.ex:168
-#: lib/syli_atlas_web/components/layouts.ex:270
-#: lib/syli_atlas_web/components/layouts.ex:382
+#: lib/syli_atlas_web/components/layouts.ex:188
+#: lib/syli_atlas_web/components/layouts.ex:290
+#: lib/syli_atlas_web/components/layouts.ex:403
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:220
 #: lib/syli_atlas_web/controllers/page_controller.ex:91
 #, elixir-autogen, elixir-format
@@ -522,7 +523,7 @@ msgstr "Nombre d'habitants, estimation du FMI."
 msgid "Often viewed:"
 msgstr "Souvent consultés :"
 
-#: lib/syli_atlas_web/components/layouts.ex:383
+#: lib/syli_atlas_web/components/layouts.ex:404
 #: lib/syli_atlas_web/controllers/page_html/home.html.heex:151
 #, elixir-autogen, elixir-format
 msgid "Open data"
@@ -552,7 +553,7 @@ msgstr "Population"
 msgid "Population %{year}"
 msgstr "Population %{year}"
 
-#: lib/syli_atlas_web/components/layouts.ex:271
+#: lib/syli_atlas_web/components/layouts.ex:291
 #, elixir-autogen, elixir-format
 msgid "Public API"
 msgstr "API publique"
@@ -646,7 +647,7 @@ msgstr "Retirer %{name}"
 msgid "Reuse"
 msgstr "Réutilisation"
 
-#: lib/syli_atlas_web/components/layouts.ex:53
+#: lib/syli_atlas_web/components/layouts.ex:58
 #: lib/syli_atlas_web/components/page_components.ex:154
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:98
 #: lib/syli_atlas_web/controllers/ratings_html/index.html.heex:73
@@ -682,8 +683,8 @@ msgstr "Afficher"
 msgid "Side by side, over the same period."
 msgstr "Côte à côte, sur la même période."
 
-#: lib/syli_atlas_web/components/layouts.ex:71
-#: lib/syli_atlas_web/components/layouts.ex:388
+#: lib/syli_atlas_web/components/layouts.ex:441
+#: lib/syli_atlas_web/controllers/session_controller.ex:112
 #, elixir-autogen, elixir-format
 msgid "Sign in"
 msgstr "Connexion"
@@ -700,12 +701,12 @@ msgstr "Depuis"
 msgid "Size of the economy at market exchange rates."
 msgstr "Taille de l'économie aux taux de change du marché."
 
-#: lib/syli_atlas_web/components/layouts.ex:34
+#: lib/syli_atlas_web/components/layouts.ex:39
 #, elixir-autogen, elixir-format
 msgid "Skip to content"
 msgstr "Aller au contenu"
 
-#: lib/syli_atlas_web/components/layouts.ex:481
+#: lib/syli_atlas_web/components/layouts.ex:531
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr "Une erreur est survenue"
@@ -727,7 +728,7 @@ msgstr "Sources"
 msgid "Start with a question"
 msgstr "Partir d'une question"
 
-#: lib/syli_atlas_web/components/layouts.ex:308
+#: lib/syli_atlas_web/components/layouts.ex:328
 #, elixir-autogen, elixir-format
 msgid "Switch theme"
 msgstr "Changer de thème"
@@ -794,7 +795,7 @@ msgstr "Valeur l'année d'arrivée"
 msgid "Volume of output, excluding inflation and exchange rates. 2015 = 100."
 msgstr "Volume de production, hors inflation et change. 2015 = 100."
 
-#: lib/syli_atlas_web/components/layouts.ex:466
+#: lib/syli_atlas_web/components/layouts.ex:516
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr "Connexion introuvable"
@@ -859,7 +860,7 @@ msgstr "Pourquoi Syli Atlas"
 msgid "World: %{v}"
 msgstr "Monde : %{v}"
 
-#: lib/syli_atlas_web/components/layouts.ex:36
+#: lib/syli_atlas_web/components/layouts.ex:41
 #, elixir-autogen, elixir-format
 msgid "You are offline. Figures shown are the ones saved on this device."
 msgstr "Vous êtes hors ligne. Les chiffres affichés sont ceux enregistrés sur cet appareil."
@@ -915,7 +916,7 @@ msgstr "moyenne pondérée"
 msgid "Choose"
 msgstr "Choisir"
 
-#: lib/syli_atlas_web/components/layouts.ex:365
+#: lib/syli_atlas_web/components/layouts.ex:386
 #, elixir-autogen, elixir-format
 msgid "Close the menu"
 msgstr "Fermer le menu"
@@ -930,13 +931,13 @@ msgstr "Filtres"
 msgid "Indicators in %{year}"
 msgstr "Indicateurs en %{year}"
 
-#: lib/syli_atlas_web/components/layouts.ex:76
-#: lib/syli_atlas_web/components/layouts.ex:356
+#: lib/syli_atlas_web/components/layouts.ex:81
+#: lib/syli_atlas_web/components/layouts.ex:377
 #, elixir-autogen, elixir-format
 msgid "Menu"
 msgstr "Menu"
 
-#: lib/syli_atlas_web/controllers/area_html/show.html.heex:21
+#: lib/syli_atlas_web/controllers/area_html/show.html.heex:28
 #: lib/syli_atlas_web/controllers/regions_html/index.html.heex:57
 #, elixir-autogen, elixir-format
 msgid "Period"
@@ -968,7 +969,7 @@ msgid "%{a} to %{b}"
 msgstr "%{a} à %{b}"
 
 #: lib/syli_atlas_web/controllers/regions_html/index.html.heex:223
-#: lib/syli_atlas_web/controllers/regions_html/index.html.heex:256
+#: lib/syli_atlas_web/controllers/regions_html/index.html.heex:259
 #, elixir-autogen, elixir-format
 msgid "1 country"
 msgid_plural "%{count} countries"
@@ -1265,47 +1266,48 @@ msgstr "FMI, aux taux de change du marché · pointillés : projections"
 msgid "World, in dollars since %{year}"
 msgstr "Monde, en dollars depuis %{year}"
 
-#: lib/syli_atlas_web/components/layouts.ex:402
+#: lib/syli_atlas_web/components/layouts.ex:452
 #, elixir-autogen, elixir-format
 msgid "A new version of Syli Atlas is available"
 msgstr "Une nouvelle version de Syli Atlas est disponible"
 
-#: lib/syli_atlas_web/components/layouts.ex:408
+#: lib/syli_atlas_web/components/layouts.ex:458
 #, elixir-autogen, elixir-format
 msgid "Back online"
 msgstr "De nouveau en ligne"
 
-#: lib/syli_atlas_web/components/layouts.ex:399
+#: lib/syli_atlas_web/components/layouts.ex:449
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:76
 #, elixir-autogen, elixir-format
 msgid "Close"
 msgstr "Fermer"
 
-#: lib/syli_atlas_web/components/layouts.ex:412
+#: lib/syli_atlas_web/components/layouts.ex:462
 #, elixir-autogen, elixir-format
 msgid "In Safari, tap Share, then « Add to Home Screen »."
 msgstr "Dans Safari, touchez Partager, puis « Sur l'écran d'accueil »."
 
-#: lib/syli_atlas_web/components/layouts.ex:413
+#: lib/syli_atlas_web/components/layouts.ex:463
 #, elixir-autogen, elixir-format
 msgid "Install"
 msgstr "Installer"
 
-#: lib/syli_atlas_web/components/layouts.ex:409
+#: lib/syli_atlas_web/components/layouts.ex:459
 #, elixir-autogen, elixir-format
 msgid "Install Syli Atlas"
 msgstr "Installer Syli Atlas"
 
-#: lib/syli_atlas_web/components/layouts.ex:401
+#: lib/syli_atlas_web/components/layouts.ex:451
 #, elixir-autogen, elixir-format
 msgid "Later"
 msgstr "Plus tard"
 
-#: lib/syli_atlas_web/components/layouts.ex:404
+#: lib/syli_atlas_web/components/layouts.ex:454
 #, elixir-autogen, elixir-format
 msgid "New IMF figures are online"
 msgstr "De nouveaux chiffres du FMI sont en ligne"
 
-#: lib/syli_atlas_web/components/layouts.ex:414
+#: lib/syli_atlas_web/components/layouts.ex:464
 #, elixir-autogen, elixir-format
 msgid "Not now"
 msgstr "Pas maintenant"
@@ -1315,37 +1317,37 @@ msgstr "Pas maintenant"
 msgid "Notifications"
 msgstr "Notifications"
 
-#: lib/syli_atlas_web/components/layouts.ex:411
+#: lib/syli_atlas_web/components/layouts.ex:461
 #, elixir-autogen, elixir-format
 msgid "One tap from your home screen, readable offline, no app store."
 msgstr "À un geste de votre écran d'accueil, lisible hors ligne, sans magasin d'applications."
 
-#: lib/syli_atlas_web/components/layouts.ex:407
+#: lib/syli_atlas_web/components/layouts.ex:457
 #, elixir-autogen, elixir-format
 msgid "Pages you have already opened stay readable."
 msgstr "Les pages déjà ouvertes restent lisibles."
 
-#: lib/syli_atlas_web/components/layouts.ex:400
+#: lib/syli_atlas_web/components/layouts.ex:450
 #, elixir-autogen, elixir-format
 msgid "Refresh"
 msgstr "Actualiser"
 
-#: lib/syli_atlas_web/components/layouts.ex:403
+#: lib/syli_atlas_web/components/layouts.ex:453
 #, elixir-autogen, elixir-format
 msgid "Refresh to see it. Nothing you are reading will be lost."
 msgstr "Actualisez pour la voir. Vous restez sur la même page."
 
-#: lib/syli_atlas_web/components/layouts.ex:405
+#: lib/syli_atlas_web/components/layouts.ex:455
 #, elixir-autogen, elixir-format
 msgid "Refresh to see the latest edition."
 msgstr "Actualisez pour voir la dernière édition."
 
-#: lib/syli_atlas_web/components/layouts.ex:415
+#: lib/syli_atlas_web/components/layouts.ex:465
 #, elixir-autogen, elixir-format
 msgid "Syli Atlas is installed"
 msgstr "Syli Atlas est installé"
 
-#: lib/syli_atlas_web/components/layouts.ex:406
+#: lib/syli_atlas_web/components/layouts.ex:456
 #, elixir-autogen, elixir-format
 msgid "You are offline"
 msgstr "Vous êtes hors ligne"
@@ -1437,7 +1439,7 @@ msgstr "Bourses africaines"
 msgid "All"
 msgstr "Toutes"
 
-#: lib/syli_atlas_web/components/layouts.ex:260
+#: lib/syli_atlas_web/components/layouts.ex:280
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:62
 #, elixir-autogen, elixir-format
 msgid "All exchanges"
@@ -1570,6 +1572,7 @@ msgstr "Chaque clôture est enregistrée depuis le premier import. L'historique 
 msgid "Every close is recorded from the first import on. The curve appears from the second session."
 msgstr "Chaque clôture est enregistrée depuis le premier import. La courbe apparaît dès la deuxième séance."
 
+#: lib/syli_atlas_web/controllers/account_html.ex:69
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:39
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:53
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:117
@@ -1797,6 +1800,7 @@ msgstr "Titres cotés à la %{exchange}"
 msgid "Securities traded that day"
 msgstr "Titres échangés ce jour-là"
 
+#: lib/syli_atlas_web/controllers/account_html.ex:70
 #: lib/syli_atlas_web/controllers/market_html/security.html.heex:103
 #: lib/syli_atlas_web/search.ex:235
 #, elixir-autogen, elixir-format
@@ -1875,9 +1879,9 @@ msgstr "Bourse"
 msgid "Stock exchange · %{region}"
 msgstr "Bourse · %{region}"
 
-#: lib/syli_atlas_web/components/layouts.ex:130
-#: lib/syli_atlas_web/components/layouts.ex:151
-#: lib/syli_atlas_web/components/layouts.ex:258
+#: lib/syli_atlas_web/components/layouts.ex:140
+#: lib/syli_atlas_web/components/layouts.ex:167
+#: lib/syli_atlas_web/components/layouts.ex:278
 #: lib/syli_atlas_web/controllers/market_controller.ex:85
 #: lib/syli_atlas_web/controllers/market_controller.ex:130
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:6
@@ -2493,7 +2497,7 @@ msgstr "Pas encore en catégorie investissement, mais dans le haut de la catégo
 msgid "Rated countries by category: %{parts}; %{unrated} without a rating"
 msgstr "Pays notés par catégorie : %{parts} ; %{unrated} sans note"
 
-#: lib/syli_atlas_web/components/layouts.ex:198
+#: lib/syli_atlas_web/components/layouts.ex:218
 #, elixir-autogen, elixir-format
 msgid "Ratings"
 msgstr "Notations"
@@ -3472,7 +3476,7 @@ msgstr "Obligations (euro-obligations)"
 msgid "China"
 msgstr "Chine"
 
-#: lib/syli_atlas_web/components/layouts.ex:190
+#: lib/syli_atlas_web/components/layouts.ex:210
 #: lib/syli_atlas_web/components/world_bank_components.ex:53
 #: lib/syli_atlas_web/controllers/debt_controller.ex:43
 #: lib/syli_atlas_web/controllers/debt_html/index.html.heex:6
@@ -4124,7 +4128,7 @@ msgstr "Un pays, un thème, un titre : « dette Sénégal »"
 msgid "Adults with an account"
 msgstr "Adultes ayant un compte"
 
-#: lib/syli_atlas_web/components/layouts.ex:255
+#: lib/syli_atlas_web/components/layouts.ex:275
 #, elixir-autogen, elixir-format
 msgid "All 54 countries"
 msgstr "Les 54 pays"
@@ -4145,7 +4149,7 @@ msgstr "Comparer des pays"
 msgid "Convergence criteria"
 msgstr "Critères de convergence"
 
-#: lib/syli_atlas_web/components/layouts.ex:265
+#: lib/syli_atlas_web/components/layouts.ex:285
 #: lib/syli_atlas_web/components/profile_components.ex:322
 #: lib/syli_atlas_web/components/profile_components.ex:336
 #: lib/syli_atlas_web/components/profile_components.ex:350
@@ -4194,17 +4198,17 @@ msgstr "Pour aller plus loin"
 
 #: lib/syli_atlas_web/components/profile_components.ex:101
 #: lib/syli_atlas_web/controllers/community_html/show.html.heex:31
-#: lib/syli_atlas_web/controllers/regions_html/index.html.heex:263
+#: lib/syli_atlas_web/controllers/regions_html/index.html.heex:271
 #, elixir-autogen, elixir-format
 msgid "Growth %{year}"
 msgstr "Croissance %{year}"
 
-#: lib/syli_atlas_web/components/layouts.ex:279
+#: lib/syli_atlas_web/components/layouts.ex:299
 #, elixir-autogen, elixir-format
 msgid "IMF"
 msgstr "FMI"
 
-#: lib/syli_atlas_web/components/layouts.ex:280
+#: lib/syli_atlas_web/components/layouts.ex:300
 #: lib/syli_atlas_web/components/profile_components.ex:216
 #, elixir-autogen, elixir-format
 msgid "IMF debt sustainability analyses"
@@ -4230,7 +4234,7 @@ msgstr "En %{year}, la %{largest} est la première communauté économique afric
 msgid "In the region: %{region}"
 msgstr "Dans la région : %{region}"
 
-#: lib/syli_atlas_web/components/layouts.ex:286
+#: lib/syli_atlas_web/components/layouts.ex:306
 #, elixir-autogen, elixir-format
 msgid "Information, not investment advice. Figures are those of the sources; totals and rankings are Syli Atlas calculations."
 msgstr "De l'information, pas un conseil en investissement. Les chiffres sont ceux des sources ; totaux et classements sont des calculs Syli Atlas."
@@ -4288,7 +4292,7 @@ msgstr "Classement de la dette publique"
 msgid "Ranked by GDP in %{year}"
 msgstr "Classés par PIB en %{year}"
 
-#: lib/syli_atlas_web/components/layouts.ex:210
+#: lib/syli_atlas_web/components/layouts.ex:230
 #: lib/syli_atlas_web/controllers/community_html/index.html.heex:11
 #, elixir-autogen, elixir-format
 msgid "Regions and communities"
@@ -4322,7 +4326,7 @@ msgstr "Onglets de la fiche"
 msgid "See the details"
 msgstr "Voir le détail"
 
-#: lib/syli_atlas_web/components/layouts.ex:273
+#: lib/syli_atlas_web/components/layouts.ex:293
 #, elixir-autogen, elixir-format
 msgid "Site map"
 msgstr "Plan du site"
@@ -4352,7 +4356,7 @@ msgstr "Notations souveraines des 54 pays"
 msgid "Syli Atlas calculation from IMF figures (%{edition}) · GDP and population: sums · growth: weighted by GDP in PPP · debt: weighted by GDP in dollars · membership as of %{date}: ECOWAS without Burkina Faso, Mali and Niger, members of the AES"
 msgstr "Calcul Syli Atlas à partir des chiffres du FMI (%{edition}) · PIB et population : sommes · croissance : pondérée par le PIB en PPA · dette : pondérée par le PIB en dollars · composition au %{date} : CEDEAO sans le Burkina Faso, le Mali et le Niger, membres de l'AES"
 
-#: lib/syli_atlas_web/components/layouts.ex:283
+#: lib/syli_atlas_web/components/layouts.ex:303
 #, elixir-autogen, elixir-format
 msgid "Terms of each source"
 msgstr "Conditions de chaque source"
@@ -4367,9 +4371,9 @@ msgstr "La page %{community}"
 msgid "Theme"
 msgstr "Thème"
 
-#: lib/syli_atlas_web/components/layouts.ex:133
-#: lib/syli_atlas_web/components/layouts.ex:154
-#: lib/syli_atlas_web/components/layouts.ex:263
+#: lib/syli_atlas_web/components/layouts.ex:147
+#: lib/syli_atlas_web/components/layouts.ex:170
+#: lib/syli_atlas_web/components/layouts.ex:283
 #, elixir-autogen, elixir-format
 msgid "Themes"
 msgstr "Thèmes"
@@ -4384,7 +4388,7 @@ msgstr "Essayez un nom de pays (Côte d'Ivoire, Ivory Coast, CIV), une communaut
 msgid "World Bank"
 msgstr "Banque mondiale"
 
-#: lib/syli_atlas_web/components/layouts.ex:280
+#: lib/syli_atlas_web/components/layouts.ex:300
 #: lib/syli_atlas_web/components/profile_components.ex:214
 #, elixir-autogen, elixir-format
 msgid "World Bank (CC BY 4.0)"
@@ -4405,7 +4409,7 @@ msgstr "des exportations : %{product}, %{year} (CEPII)"
 msgid "public debt, % of GDP, %{year} (IMF)"
 msgstr "dette publique, % du PIB, %{year} (FMI)"
 
-#: lib/syli_atlas_web/components/layouts.ex:282
+#: lib/syli_atlas_web/components/layouts.ex:302
 #: lib/syli_atlas_web/components/profile_components.ex:217
 #, elixir-autogen, elixir-format
 msgid "rating agencies"
@@ -4436,7 +4440,7 @@ msgstr "pondérée par le PIB en PPA"
 msgid "Growth %{year}: %{value}"
 msgstr "Croissance %{year} : %{value}"
 
-#: lib/syli_atlas_web/components/layouts.ex:279
+#: lib/syli_atlas_web/components/layouts.ex:299
 #, elixir-autogen, elixir-format
 msgid "Sources:"
 msgstr "Sources :"
@@ -4452,24 +4456,24 @@ msgstr "Autres régions et ensembles"
 msgid "Rating history of %{name}"
 msgstr "Historique des notes : %{name}"
 
-#: lib/syli_atlas_web/components/layouts.ex:205
+#: lib/syli_atlas_web/components/layouts.ex:225
 #, elixir-autogen, elixir-format
 msgid "%{n} rated"
 msgstr "%{n} notés"
 
-#: lib/syli_atlas_web/components/layouts.ex:131
+#: lib/syli_atlas_web/components/layouts.ex:141
 #, elixir-autogen, elixir-format
 msgid "1 exchange"
 msgid_plural "%{count} exchanges"
 msgstr[0] "%{count} place"
 msgstr[1] "%{count} places"
 
-#: lib/syli_atlas_web/components/layouts.ex:193
+#: lib/syli_atlas_web/components/layouts.ex:213
 #, elixir-autogen, elixir-format
 msgid "54 countries"
 msgstr "54 pays"
 
-#: lib/syli_atlas_web/components/layouts.ex:212
+#: lib/syli_atlas_web/components/layouts.ex:232
 #, elixir-autogen, elixir-format
 msgid "AU regions, ECOWAS, AES, WAEMU, CEMAC, EAC, SADC"
 msgstr "Régions UA, CEDEAO, AES, UEMOA, CEMAC, EAC, SADC"
@@ -4484,17 +4488,17 @@ msgstr "Communautés et unions monétaires"
 msgid "Compare the communities"
 msgstr "Comparer les communautés"
 
-#: lib/syli_atlas_web/components/layouts.ex:167
+#: lib/syli_atlas_web/components/layouts.ex:184
 #, elixir-autogen, elixir-format
 msgid "Each theme compares the 54 countries; a country profile has the same theme in a tab."
 msgstr "Chaque thème compare les 54 pays ; la fiche d'un pays reprend le même thème dans un onglet."
 
-#: lib/syli_atlas_web/components/layouts.ex:192
+#: lib/syli_atlas_web/components/layouts.ex:212
 #, elixir-autogen, elixir-format
 msgid "Levels, creditors, risk of debt distress · 54 countries"
 msgstr "Niveaux, créanciers, risque de surendettement · 54 pays"
 
-#: lib/syli_atlas_web/components/layouts.ex:202
+#: lib/syli_atlas_web/components/layouts.ex:222
 #, elixir-autogen, elixir-format
 msgid "S&P, Moody's, Fitch · %{n} countries rated"
 msgstr "S&P, Moody's, Fitch · %{n} pays notés"
@@ -4503,3 +4507,694 @@ msgstr "S&P, Moody's, Fitch · %{n} pays notés"
 #, elixir-autogen, elixir-format
 msgid "Totals of the members in %{year}, from IMF figures, by the same rules as the regions."
 msgstr "Totaux des membres en %{year}, à partir des chiffres du FMI, selon les mêmes règles que les régions."
+
+#: lib/syli_atlas_web/controllers/account_html.ex:119
+#, elixir-autogen, elixir-format
+msgid "%{indicator} above %{threshold}"
+msgstr "%{indicator} au-dessus de %{threshold}"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:125
+#, elixir-autogen, elixir-format
+msgid "%{indicator} below %{threshold}"
+msgstr "%{indicator} sous %{threshold}"
+
+#: lib/syli_atlas_web/controllers/account_html/favorites.html.heex:30
+#, elixir-autogen, elixir-format
+msgid "1 alert"
+msgid_plural "%{count} alerts"
+msgstr[0] "%{count} alerte"
+msgstr[1] "%{count} alertes"
+
+#: lib/syli_atlas_web/controllers/account_controller.ex:84
+#, elixir-autogen, elixir-format
+msgid "50 alerts at most."
+msgstr "50 alertes au plus."
+
+#: lib/syli_atlas_web/controllers/session_html/code.html.heex:14
+#, elixir-autogen, elixir-format
+msgid "6-digit code"
+msgstr "Code à 6 chiffres"
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:48
+#, elixir-autogen, elixir-format
+msgid "Add a passkey"
+msgstr "Ajouter une clé d'accès"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:41
+#: lib/syli_atlas_web/controllers/session_controller.ex:90
+#, elixir-autogen, elixir-format
+msgid "Administration"
+msgstr "Administration"
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:25
+#, elixir-autogen, elixir-format
+msgid "Administration · first sign-in"
+msgstr "Administration · première connexion"
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:50
+#, elixir-autogen, elixir-format
+msgid "Administration · second proof"
+msgstr "Administration · deuxième preuve"
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:14
+#, elixir-autogen, elixir-format
+msgid "Administration · two proofs"
+msgstr "Administration · deux preuves"
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:9
+#, elixir-autogen, elixir-format
+msgid "Administrator account."
+msgstr "Compte administrateur."
+
+#: lib/syli_atlas_web/controllers/session_html/new.html.heex:66
+#, elixir-autogen, elixir-format
+msgid "Administrator accounts then confirm with their passkey."
+msgstr "Les comptes administrateurs confirment ensuite avec leur clé d'accès."
+
+#: lib/syli_atlas_web/controllers/account_controller.ex:81
+#, elixir-autogen, elixir-format
+msgid "Alert created."
+msgstr "Alerte créée."
+
+#: lib/syli_atlas_web/controllers/account_controller.ex:111
+#, elixir-autogen, elixir-format
+msgid "Alert deleted."
+msgstr "Alerte supprimée."
+
+#: lib/syli_atlas_web/controllers/account_controller.ex:32
+#: lib/syli_atlas_web/controllers/account_controller.ex:88
+#: lib/syli_atlas_web/controllers/account_html.ex:62
+#: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:5
+#: lib/syli_atlas_web/controllers/session_html/new.html.heex:16
+#, elixir-autogen, elixir-format
+msgid "Alerts"
+msgstr "Alertes"
+
+#: lib/syli_atlas_web/controllers/account_controller.ex:123
+#, elixir-autogen, elixir-format
+msgid "An administrator keeps at least one passkey."
+msgstr "Un administrateur garde au moins une clé d'accès."
+
+#: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:6
+#, elixir-autogen, elixir-format
+msgid "An email when a condition is met, once per event."
+msgstr "Un e-mail quand une condition est remplie, une seule fois par événement."
+
+#: lib/syli_atlas_web/controllers/account_html/favorites.html.heex:16
+#, elixir-autogen, elixir-format
+msgid "Browse the countries"
+msgstr "Parcourir les pays"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:86
+#, elixir-autogen, elixir-format
+msgid "Budget balance (% of GDP)"
+msgstr "Solde budgétaire (% du PIB)"
+
+#: lib/syli_atlas_web/controllers/session_html/code.html.heex:9
+#, elixir-autogen, elixir-format
+msgid "Change address"
+msgstr "Changer d'adresse"
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:87
+#, elixir-autogen, elixir-format
+msgid "Close every other session"
+msgstr "Fermer toutes les autres sessions"
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:7
+#, elixir-autogen, elixir-format
+msgid "Code received by email"
+msgstr "Code reçu par e-mail"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:71
+#, elixir-autogen, elixir-format
+msgid "Comparison"
+msgstr "Comparaison"
+
+#: lib/syli_atlas_web/controllers/session_html/code.html.heex:29
+#, elixir-autogen, elixir-format
+msgid "Confirm"
+msgstr "Valider"
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:51
+#, elixir-autogen, elixir-format
+msgid "Confirm with your passkey"
+msgstr "Confirmez avec votre clé d'accès"
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:69
+#, elixir-autogen, elixir-format
+msgid "Continue as a member"
+msgstr "Continuer comme membre"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:68
+#, elixir-autogen, elixir-format
+msgid "Country or region"
+msgstr "Pays ou région"
+
+#: lib/syli_atlas_web/components/account_components.ex:67
+#: lib/syli_atlas_web/controllers/account_html/favorites.html.heex:37
+#, elixir-autogen, elixir-format
+msgid "Create an alert"
+msgstr "Créer une alerte"
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:42
+#, elixir-autogen, elixir-format
+msgid "Create my passkey"
+msgstr "Créer ma clé d'accès"
+
+#: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:114
+#, elixir-autogen, elixir-format
+msgid "Create the alert"
+msgstr "Créer l'alerte"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:87
+#, elixir-autogen, elixir-format
+msgid "Current account (% of GDP)"
+msgstr "Solde courant (% du PIB)"
+
+#: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:40
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:146
+#, elixir-autogen, elixir-format
+msgid "Delete"
+msgstr "Supprimer"
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:135
+#, elixir-autogen, elixir-format
+msgid "Delete my account"
+msgstr "Supprimer mon compte"
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:144
+#, elixir-autogen, elixir-format
+msgid "Delete your account for good?"
+msgstr "Supprimer votre compte définitivement ?"
+
+#: lib/syli_atlas_web/controllers/session_html/new.html.heex:20
+#, elixir-autogen, elixir-format
+msgid "Digest"
+msgstr "Récap"
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:101
+#, elixir-autogen, elixir-format
+msgid "Digest of favourites"
+msgstr "Récapitulatif des favoris"
+
+#: lib/syli_atlas_web/controllers/session_html/new.html.heex:42
+#, elixir-autogen, elixir-format
+msgid "Email address"
+msgstr "Adresse e-mail"
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:120
+#, elixir-autogen, elixir-format
+msgid "Email me when a passkey is added or an admin session opens"
+msgstr "Me prévenir par e-mail quand une clé d'accès est ajoutée ou une session admin ouverte"
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:92
+#, elixir-autogen, elixir-format
+msgid "Emails"
+msgstr "E-mails"
+
+#: lib/syli_atlas_web/controllers/session_controller.ex:122
+#, elixir-autogen, elixir-format
+msgid "Enter the code"
+msgstr "Saisir le code"
+
+#: lib/syli_atlas_web/controllers/session_html/code.html.heex:6
+#, elixir-autogen, elixir-format
+msgid "Enter the code you received"
+msgstr "Saisissez le code reçu"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:97
+#, elixir-autogen, elixir-format
+msgid "Every Monday"
+msgstr "Chaque lundi"
+
+#: lib/syli_atlas_web/controllers/account_controller.ex:18
+#: lib/syli_atlas_web/controllers/account_html.ex:61
+#: lib/syli_atlas_web/controllers/account_html/favorites.html.heex:5
+#: lib/syli_atlas_web/controllers/session_html/new.html.heex:12
+#, elixir-autogen, elixir-format
+msgid "Favourites"
+msgstr "Favoris"
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:137
+#, elixir-autogen, elixir-format
+msgid "Favourites, alerts, passkeys and sessions are erased."
+msgstr "Favoris, alertes, clés d'accès et sessions sont effacés."
+
+#: lib/syli_atlas_web/controllers/session_html/new.html.heex:34
+#, elixir-autogen, elixir-format
+msgid "Fingerprint, face or device PIN."
+msgstr "Empreinte, visage ou code de l'appareil."
+
+#: lib/syli_atlas_web/components/account_components.ex:34
+#: lib/syli_atlas_web/components/account_components.ex:47
+#, elixir-autogen, elixir-format
+msgid "Follow"
+msgstr "Suivre"
+
+#: lib/syli_atlas_web/controllers/session_html/new.html.heex:6
+#, elixir-autogen, elixir-format
+msgid "Follow the countries and markets that matter to you."
+msgstr "Suivez les pays et les marchés qui comptent pour vous."
+
+#: lib/syli_atlas_web/components/account_components.ex:33
+#, elixir-autogen, elixir-format
+msgid "Followed"
+msgstr "Suivi"
+
+#: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:103
+#, elixir-autogen, elixir-format
+msgid "Frequency"
+msgstr "Fréquence"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:88
+#, elixir-autogen, elixir-format
+msgid "GDP per capita (US$)"
+msgstr "PIB par habitant (dollars US)"
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:22
+#: lib/syli_atlas_web/controllers/session_html/new.html.heex:58
+#, elixir-autogen, elixir-format
+msgid "Get a code"
+msgstr "Recevoir un code"
+
+#: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:119
+#, elixir-autogen, elixir-format
+msgid "IMF indicators change twice a year (April, October); ratings once a decision is validated."
+msgstr "Les indicateurs du FMI changent deux fois par an (avril, octobre) ; les notations dès qu'une décision est validée."
+
+#: lib/syli_atlas_web/controllers/account_html.ex:93
+#, elixir-autogen, elixir-format
+msgid "Immediately"
+msgstr "Tout de suite"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:93
+#, elixir-autogen, elixir-format
+msgid "In the weekly digest"
+msgstr "Dans le récap de la semaine"
+
+#: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:76
+#, elixir-autogen, elixir-format
+msgid "Indicator (thresholds)"
+msgstr "Indicateur (seuils)"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:84
+#, elixir-autogen, elixir-format
+msgid "Inflation (%)"
+msgstr "Inflation (%)"
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:123
+#, elixir-autogen, elixir-format
+msgid "Language of emails and of my space"
+msgstr "Langue des e-mails et de mon espace"
+
+#: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:19
+#, elixir-autogen, elixir-format
+msgid "Last sent:"
+msgstr "Dernier envoi :"
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:29
+#, elixir-autogen, elixir-format
+msgid "Last used:"
+msgstr "Dernière utilisation :"
+
+#: lib/syli_atlas_web/components/layouts.ex:431
+#: lib/syli_atlas_web/components/layouts.ex:439
+#: lib/syli_atlas_web/controllers/account_html.ex:31
+#: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:4
+#: lib/syli_atlas_web/controllers/account_html/favorites.html.heex:4
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:4
+#: lib/syli_atlas_web/controllers/session_html/new.html.heex:5
+#, elixir-autogen, elixir-format
+msgid "My space"
+msgstr "Mon espace"
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:44
+#, elixir-autogen, elixir-format
+msgid "Name of the new passkey"
+msgstr "Nom de la nouvelle clé"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:99
+#, elixir-autogen, elixir-format
+msgid "Never"
+msgstr "Jamais"
+
+#: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:47
+#, elixir-autogen, elixir-format
+msgid "New alert"
+msgstr "Nouvelle alerte"
+
+#: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:10
+#, elixir-autogen, elixir-format
+msgid "No alert yet."
+msgstr "Aucune alerte pour l'instant."
+
+#: lib/syli_atlas_web/controllers/session_html/new.html.heex:8
+#, elixir-autogen, elixir-format
+msgid "No password: a code by email, or your device's fingerprint or face."
+msgstr "Pas de mot de passe : un code par e-mail, ou l'empreinte et le visage de votre appareil."
+
+#: lib/syli_atlas_web/controllers/account_html/favorites.html.heex:9
+#, elixir-autogen, elixir-format
+msgid "Nothing followed yet"
+msgstr "Rien de suivi pour l'instant"
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:45
+#, elixir-autogen, elixir-format
+msgid "Nothing leaves your device: Syli Atlas keeps the public key, never your fingerprint. Register a second one on your phone afterwards."
+msgstr "Rien ne quitte votre appareil : Syli Atlas garde la clé publique, jamais votre empreinte. Enregistrez-en une deuxième sur votre téléphone ensuite."
+
+#: lib/syli_atlas_web/controllers/account_html.ex:98
+#, elixir-autogen, elixir-format
+msgid "On the 1st of the month"
+msgstr "Le 1er du mois"
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:58
+#, elixir-autogen, elixir-format
+msgid "Open sessions"
+msgstr "Sessions ouvertes"
+
+#: lib/syli_atlas_web/controllers/account_controller.ex:138
+#, elixir-autogen, elixir-format
+msgid "Other sessions closed."
+msgstr "Autres sessions fermées."
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:9
+#, elixir-autogen, elixir-format
+msgid "Passkey"
+msgstr "Clé d'accès"
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:33
+#, elixir-autogen, elixir-format
+msgid "Passkey name"
+msgstr "Nom de la clé"
+
+#: lib/syli_atlas_web/controllers/account_controller.ex:119
+#, elixir-autogen, elixir-format
+msgid "Passkey removed."
+msgstr "Clé d'accès retirée."
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:18
+#, elixir-autogen, elixir-format
+msgid "Passkeys"
+msgstr "Clés d'accès"
+
+#: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:31
+#, elixir-autogen, elixir-format
+msgid "Pause"
+msgstr "Mettre en pause"
+
+#: lib/syli_atlas_web/controllers/account_controller.ex:145
+#, elixir-autogen, elixir-format
+msgid "Preferences saved."
+msgstr "Préférences enregistrées."
+
+#: lib/syli_atlas_web/controllers/account_html.ex:85
+#, elixir-autogen, elixir-format
+msgid "Public debt (% of GDP)"
+msgstr "Dette publique (% du PIB)"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:83
+#, elixir-autogen, elixir-format
+msgid "Real GDP growth (%)"
+msgstr "Croissance du PIB réel (%)"
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:26
+#, elixir-autogen, elixir-format
+msgid "Register your passkey"
+msgstr "Enregistrez votre clé d'accès"
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:61
+#, elixir-autogen, elixir-format
+msgid "Registered passkeys:"
+msgstr "Clés enregistrées :"
+
+#: lib/syli_atlas_web/controllers/account_html/favorites.html.heex:49
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:38
+#, elixir-autogen, elixir-format
+msgid "Remove"
+msgstr "Retirer"
+
+#: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:31
+#, elixir-autogen, elixir-format
+msgid "Resume"
+msgstr "Reprendre"
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:129
+#, elixir-autogen, elixir-format
+msgid "Save"
+msgstr "Enregistrer"
+
+#: lib/syli_atlas_web/controllers/session_html/code.html.heex:8
+#, elixir-autogen, elixir-format
+msgid "Sent to"
+msgstr "Envoyé à"
+
+#: lib/syli_atlas_web/controllers/session_html/new.html.heex:27
+#, elixir-autogen, elixir-format
+msgid "Sign in or create an account"
+msgstr "Se connecter ou créer un compte"
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:20
+#, elixir-autogen, elixir-format
+msgid "Sign in with your device's fingerprint, face or PIN."
+msgstr "Se connecter avec l'empreinte, le visage ou le code de l'appareil."
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:15
+#, elixir-autogen, elixir-format
+msgid "Sign in with your email code first"
+msgstr "Connectez-vous d'abord avec le code e-mail"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:44
+#, elixir-autogen, elixir-format
+msgid "Sign out"
+msgstr "Se déconnecter"
+
+#: lib/syli_atlas_web/controllers/session_controller.ex:144
+#: lib/syli_atlas_web/controllers/session_html/new.html.heex:61
+#, elixir-autogen, elixir-format
+msgid "Sign-in by email is not open yet. Come back soon."
+msgstr "La connexion par e-mail n'est pas encore ouverte. Revenez bientôt."
+
+#: lib/syli_atlas_web/controllers/session_html/code.html.heex:5
+#, elixir-autogen, elixir-format
+msgid "Sign-in · step 1"
+msgstr "Connexion · étape 1"
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:5
+#, elixir-autogen, elixir-format
+msgid "Steps"
+msgstr "Étapes"
+
+#: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:63
+#, elixir-autogen, elixir-format
+msgid "Tell me when"
+msgstr "Me prévenir quand"
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:10
+#, elixir-autogen, elixir-format
+msgid "The administration asks for the email code, then a passkey. Keep at least two passkeys: the last one cannot be removed."
+msgstr "L'administration demande le code e-mail, puis une clé d'accès. Gardez au moins deux clés : la dernière ne peut pas être retirée."
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:53
+#, elixir-autogen, elixir-format
+msgid "The email code is verified. Your account is an administrator: access also asks for this device's fingerprint, face or PIN."
+msgstr "Le code e-mail est vérifié. Votre compte est administrateur : l'accès demande aussi l'empreinte, le visage ou le code de cet appareil."
+
+#: lib/syli_atlas_web/controllers/session_controller.ex:146
+#, elixir-autogen, elixir-format
+msgid "The email could not be sent. Try again in a moment."
+msgstr "L'e-mail n'a pas pu partir. Réessayez dans un instant."
+
+#: lib/syli_atlas_web/controllers/account_controller.ex:162
+#, elixir-autogen, elixir-format
+msgid "The last administrator cannot delete their account."
+msgstr "Le dernier administrateur ne peut pas supprimer son compte."
+
+#: lib/syli_atlas_web/controllers/session_html.ex:26
+#, elixir-autogen, elixir-format
+msgid "The passkey did not work. Try again, or use a code."
+msgstr "La clé d'accès n'a pas marché. Réessayez, ou utilisez un code."
+
+#: lib/syli_atlas_web/controllers/session_controller.ex:141
+#, elixir-autogen, elixir-format
+msgid "This account is deactivated."
+msgstr "Ce compte est désactivé."
+
+#: lib/syli_atlas_web/controllers/account_controller.ex:105
+#, elixir-autogen, elixir-format
+msgid "This alert could not be changed."
+msgstr "Cette alerte n'a pas pu être modifiée."
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:51
+#, elixir-autogen, elixir-format
+msgid "This browser cannot use passkeys."
+msgstr "Ce navigateur ne gère pas les clés d'accès."
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:66
+#, elixir-autogen, elixir-format
+msgid "This browser cannot use passkeys. Open Syli Atlas in a recent browser."
+msgstr "Ce navigateur ne gère pas les clés d'accès. Ouvrez Syli Atlas dans un navigateur récent."
+
+#: lib/syli_atlas_web/controllers/session_controller.ex:135
+#, elixir-autogen, elixir-format
+msgid "This code has expired. Ask for a new one."
+msgstr "Ce code a expiré. Demandez-en un nouveau."
+
+#: lib/syli_atlas_web/controllers/session_controller.ex:140
+#, elixir-autogen, elixir-format
+msgid "This code was already used. Ask for a new one."
+msgstr "Ce code a déjà servi. Demandez-en un nouveau."
+
+#: lib/syli_atlas_web/controllers/session_controller.ex:129
+#, elixir-autogen, elixir-format
+msgid "This email address does not look right."
+msgstr "Cette adresse e-mail ne semble pas valide."
+
+#: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:88
+#, elixir-autogen, elixir-format
+msgid "Threshold"
+msgstr "Seuil"
+
+#: lib/syli_atlas_web/controllers/session_controller.ex:133
+#, elixir-autogen, elixir-format
+msgid "Too many codes asked for this address. Try again in an hour."
+msgstr "Trop de codes demandés pour cette adresse. Réessayez dans une heure."
+
+#: lib/syli_atlas_web/controllers/session_controller.ex:138
+#, elixir-autogen, elixir-format
+msgid "Too many wrong codes. Ask for a new one."
+msgstr "Trop de codes erronés. Demandez-en un nouveau."
+
+#: lib/syli_atlas_web/controllers/account_html.ex:89
+#, elixir-autogen, elixir-format
+msgid "Unemployment (%)"
+msgstr "Chômage (%)"
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:58
+#: lib/syli_atlas_web/controllers/session_html/new.html.heex:31
+#, elixir-autogen, elixir-format
+msgid "Use my passkey"
+msgstr "Utiliser ma clé d'accès"
+
+#: lib/syli_atlas_web/controllers/account_html/favorites.html.heex:11
+#, elixir-autogen, elixir-format
+msgid "Use the star at the top of a country, region, exchange or security page: it lands here, with its alerts."
+msgstr "Utilisez l'étoile en haut d'une fiche pays, région, bourse ou titre : elle arrive ici, avec ses alertes."
+
+#: lib/syli_atlas_web/controllers/session_html/code.html.heex:32
+#, elixir-autogen, elixir-format
+msgid "Valid for 10 minutes, 5 attempts. Nothing received? Check your spam, or"
+msgstr "Valable 10 minutes, 5 essais. Rien reçu ? Regardez dans les indésirables, ou"
+
+#: lib/syli_atlas_web/controllers/session_html/new.html.heex:55
+#, elixir-autogen, elixir-format
+msgid "We send you a 6-digit code, valid for 10 minutes."
+msgstr "Nous vous envoyons un code à 6 chiffres, valable 10 minutes."
+
+#: lib/syli_atlas_web/controllers/session_controller.ex:130
+#, elixir-autogen, elixir-format
+msgid "Wrong code. Check the last email received."
+msgstr "Code erroné. Vérifiez le dernier e-mail reçu."
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:17
+#, elixir-autogen, elixir-format
+msgid "You signed in with a passkey only. The administration also asks for the code received by email."
+msgstr "Vous vous êtes connecté avec une clé d'accès seulement. L'administration demande aussi le code reçu par e-mail."
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:28
+#, elixir-autogen, elixir-format
+msgid "Your account is an administrator. Every sign-in to the administration will ask for the email code and this passkey."
+msgstr "Votre compte est administrateur. Chaque connexion à l'administration demandera le code e-mail et cette clé."
+
+#: lib/syli_atlas_web/controllers/account_html.ex:75
+#, elixir-autogen, elixir-format
+msgid "a rating agency acts (new rating or outlook)"
+msgstr "une agence de notation agit (nouvelle note ou perspective)"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:28
+#, elixir-autogen, elixir-format
+msgid "administrator"
+msgstr "administrateur"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:77
+#, elixir-autogen, elixir-format
+msgid "an indicator goes above a threshold"
+msgstr "un indicateur dépasse un seuil"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:78
+#, elixir-autogen, elixir-format
+msgid "an indicator goes below a threshold"
+msgstr "un indicateur passe sous un seuil"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:113
+#, elixir-autogen, elixir-format
+msgid "any rating action"
+msgstr "toute action d'une agence"
+
+#: lib/syli_atlas_web/controllers/session_html/code.html.heex:33
+#, elixir-autogen, elixir-format
+msgid "ask for a new code"
+msgstr "demandez un nouveau code"
+
+#: lib/syli_atlas_web/controllers/session_html/new.html.heex:13
+#, elixir-autogen, elixir-format
+msgid "countries, regions, exchanges, securities."
+msgstr "pays, régions, bourses, titres."
+
+#: lib/syli_atlas_web/controllers/account_html.ex:146
+#, elixir-autogen, elixir-format
+msgid "email code"
+msgstr "code e-mail"
+
+#: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:70
+#, elixir-autogen, elixir-format
+msgid "favourites and alerts stay open, the administration stays closed."
+msgstr "favoris et alertes restent ouverts, l'administration reste fermée."
+
+#: lib/syli_atlas_web/controllers/account_html.ex:140
+#, elixir-autogen, elixir-format
+msgid "never"
+msgstr "jamais"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:116
+#, elixir-autogen, elixir-format
+msgid "new IMF figures"
+msgstr "nouveaux chiffres du FMI"
+
+#: lib/syli_atlas_web/controllers/session_html/new.html.heex:21
+#, elixir-autogen, elixir-format
+msgid "one email a week, if you want it."
+msgstr "un e-mail par semaine, si vous le souhaitez."
+
+#: lib/syli_atlas_web/controllers/session_html/new.html.heex:37
+#, elixir-autogen, elixir-format
+msgid "or by email"
+msgstr "ou par e-mail"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:146
+#, elixir-autogen, elixir-format
+msgid "passkey"
+msgstr "clé d'accès"
+
+#: lib/syli_atlas_web/controllers/account_html.ex:76
+#, elixir-autogen, elixir-format
+msgid "the IMF publishes new figures"
+msgstr "le FMI publie de nouveaux chiffres"
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:65
+#, elixir-autogen, elixir-format
+msgid "this device"
+msgstr "cet appareil"
+
+#: lib/syli_atlas_web/controllers/session_html/new.html.heex:17
+#, elixir-autogen, elixir-format
+msgid "thresholds, new ratings, new IMF editions."
+msgstr "seuils, nouvelles notes, nouvelles éditions du FMI."
+
+#: lib/syli_atlas_web/controllers/account_controller.ex:48
+#: lib/syli_atlas_web/controllers/account_html.ex:63
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:5
+#, elixir-autogen, elixir-format
+msgctxt "account"
+msgid "Security"
+msgstr "Sécurité"

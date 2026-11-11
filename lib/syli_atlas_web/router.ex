@@ -1,6 +1,8 @@
 defmodule SyliAtlasWeb.Router do
   use SyliAtlasWeb, :router
 
+  import SyliAtlasWeb.Auth, only: [fetch_current_user: 2, require_user: 2, put_account_locale: 2]
+
   pipeline :browser do
     plug :accepts, ["html"]
     plug :fetch_session
@@ -23,6 +25,23 @@ defmodule SyliAtlasWeb.Router do
     plug :accepts, ["html"]
     plug :put_root_layout, html: {SyliAtlasWeb.Layouts, :root}
     plug :put_secure_browser_headers
+  end
+
+  # Sign-in and the member's space: the session, the signed-in account.
+  pipeline :account do
+    plug :fetch_current_user
+    plug :put_account_locale
+  end
+
+  # Actions of the space and the passkey ceremonies: forms and JSON.
+  pipeline :account_actions do
+    plug :accepts, ["html", "json"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+    plug :fetch_current_user
+    plug :put_account_locale
   end
 
   pipeline :admin do
@@ -54,6 +73,60 @@ defmodule SyliAtlasWeb.Router do
   scope "/", SyliAtlasWeb do
     pipe_through :public
     get "/", PageController, :root
+  end
+
+  scope "/fr", SyliAtlasWeb do
+    pipe_through [:browser, :fr, :account]
+
+    get "/connexion", SessionController, :new
+    post "/connexion", SessionController, :create
+    get "/connexion/code", SessionController, :code
+    post "/connexion/code", SessionController, :verify
+    get "/connexion/cle", SessionController, :admin_key
+
+    pipe_through :require_user
+    get "/mon-espace", AccountController, :favorites
+    get "/mon-espace/alertes", AccountController, :alerts
+    get "/mon-espace/securite", AccountController, :security
+  end
+
+  scope "/en", SyliAtlasWeb do
+    pipe_through [:browser, :en, :account]
+
+    get "/sign-in", SessionController, :new
+    post "/sign-in", SessionController, :create
+    get "/sign-in/code", SessionController, :code
+    post "/sign-in/code", SessionController, :verify
+    get "/sign-in/passkey", SessionController, :admin_key
+
+    pipe_through :require_user
+    get "/my-space", AccountController, :favorites
+    get "/my-space/alerts", AccountController, :alerts
+    get "/my-space/security", AccountController, :security
+  end
+
+  scope "/account", SyliAtlasWeb do
+    pipe_through :account_actions
+
+    get "/me", AccountController, :me
+    post "/passkey/options", PasskeyController, :sign_in_options
+    post "/passkey", PasskeyController, :sign_in
+    post "/passkeys/options", PasskeyController, :registration_options
+    post "/passkeys", PasskeyController, :register
+    post "/admin-proof/options", PasskeyController, :admin_options
+    post "/admin-proof", PasskeyController, :admin_confirm
+
+    pipe_through :require_user
+    delete "/session", SessionController, :delete
+    post "/favorites", AccountController, :toggle_favorite
+    post "/alerts", AccountController, :create_alert
+    put "/alerts/:id", AccountController, :update_alert
+    delete "/alerts/:id", AccountController, :delete_alert
+    delete "/passkeys/:id", AccountController, :delete_passkey
+    delete "/sessions/:id", AccountController, :delete_session
+    delete "/sessions", AccountController, :delete_other_sessions
+    put "/preferences", AccountController, :update_preferences
+    delete "/", AccountController, :delete_account
   end
 
   scope "/fr", SyliAtlasWeb do
@@ -118,6 +191,9 @@ defmodule SyliAtlasWeb.Router do
     post "/notations/:id/rejeter", RatingsController, :reject
     post "/notations/verifier/:id", RatingsController, :check
     get "/recherches", SearchMissesController, :index
+    get "/membres", MembersController, :index
+    post "/membres/:id/role", MembersController, :role
+    post "/membres/:id/actif", MembersController, :active
   end
 
   scope "/api/v1", SyliAtlasWeb.Api do

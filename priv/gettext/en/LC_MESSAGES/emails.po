@@ -1,0 +1,254 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/syli_atlas/accounts/emails.ex:67
+#, elixir-autogen, elixir-format
+msgid "%{code} is your Syli Atlas code"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:143
+#, elixir-autogen, elixir-format
+msgid "A passkey was added to your account"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:149
+#, elixir-autogen, elixir-format
+msgid "A passkey was just registered on your account. It signs in without a code."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:115
+#, elixir-autogen, elixir-format
+msgid "Administration"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:50
+#, elixir-autogen, elixir-format
+msgid "Administrator account: after this code, Syli Atlas will ask for your passkey (fingerprint, face or device PIN). Without it, the administration stays closed."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:98
+#, elixir-autogen, elixir-format
+msgid "Alerts"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:184
+#, elixir-autogen, elixir-format
+msgid "Browser"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:165
+#, elixir-autogen, elixir-format
+msgid "Check my passkeys"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:156
+#, elixir-autogen, elixir-format
+msgid "Device"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:60
+#, elixir-autogen, elixir-format
+msgid "Did not ask for it? Ignore this email: nobody can sign in without this code."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:182
+#, elixir-autogen, elixir-format
+msgid "Email code"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:41
+#, elixir-autogen, elixir-format
+msgid "Enter this code on the Syli Atlas sign-in page. It is valid for 10 minutes and works once."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:96
+#, elixir-autogen, elixir-format
+msgid "Favourites"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:155
+#, elixir-autogen, elixir-format
+msgid "Name"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:146
+#, elixir-autogen, elixir-format
+msgid "New passkey added"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:177
+#, elixir-autogen, elixir-format
+msgid "New sign-in to the administration"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:187
+#, elixir-autogen, elixir-format
+msgid "Not you? Close every session and remove the passkey from « Security »."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:159
+#, elixir-autogen, elixir-format
+msgid "Not you? Remove this passkey now from « Security »: every session opened with it will be closed."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:114
+#, elixir-autogen, elixir-format
+msgid "One last step: register your passkey."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:104
+#, elixir-autogen, elixir-format
+msgid "Open my space"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:100
+#: lib/syli_atlas/accounts/emails.ex:183
+#, elixir-autogen, elixir-format
+msgid "Passkey"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:134
+#, elixir-autogen, elixir-format
+msgid "Register my passkey"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:145
+#, elixir-autogen, elixir-format
+msgid "Security"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:176
+#, elixir-autogen, elixir-format
+msgid "Security · administration"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:193
+#, elixir-autogen, elixir-format
+msgid "See open sessions"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:72
+#, elixir-autogen, elixir-format
+msgid "Sign-in"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:174
+#, elixir-autogen, elixir-format
+msgid "Sign-in to the Syli Atlas administration"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:71
+#, elixir-autogen, elixir-format
+msgid "Sign-in · administration"
+msgstr ""
+
+#: lib/syli_atlas/accounts/email_layout.ex:67
+#: lib/syli_atlas/accounts/email_layout.ex:94
+#, elixir-autogen, elixir-format
+msgid "Syli Atlas · African economies, every figure sourced."
+msgstr ""
+
+#: lib/syli_atlas/accounts/email_layout.ex:68
+#, elixir-autogen, elixir-format
+msgid "This email was sent automatically: replies are not read."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:129
+#, elixir-autogen, elixir-format
+msgid "Tip: register a second passkey on another device, so you are never locked out."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:124
+#, elixir-autogen, elixir-format
+msgid "To protect the administration, every admin sign-in asks for two proofs: the code received by email, then your passkey (fingerprint, face or device PIN). Register it now, from the device you will use."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:45
+#, elixir-autogen, elixir-format
+msgid "Valid for 10 minutes"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:68
+#, elixir-autogen, elixir-format
+msgid "Valid for 10 minutes, it works once."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:86
+#, elixir-autogen, elixir-format
+msgid "Welcome"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:84
+#, elixir-autogen, elixir-format
+msgid "Welcome to Syli Atlas"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:116
+#, elixir-autogen, elixir-format
+msgid "You are the administrator"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:113
+#, elixir-autogen, elixir-format
+msgid "You are the administrator of Syli Atlas"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:90
+#, elixir-autogen, elixir-format
+msgid "You can now follow the countries, exchanges and securities you care about, and be told when something changes."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:119
+#, elixir-autogen, elixir-format
+msgid "Your account is the first one created on Syli Atlas: it is the administrator. The following accounts will be members."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:179
+#, elixir-autogen, elixir-format
+msgid "Your administrator account just opened a session."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:85
+#, elixir-autogen, elixir-format
+msgid "Your favourites and alerts are waiting in your space."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:74
+#, elixir-autogen, elixir-format
+msgid "Your sign-in code"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:87
+#, elixir-autogen, elixir-format
+msgid "Your space is ready"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:99
+#, elixir-autogen, elixir-format
+msgid "a threshold, a new rating, a new IMF edition"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:101
+#, elixir-autogen, elixir-format
+msgid "sign in with your fingerprint or face"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:97
+#, elixir-autogen, elixir-format
+msgid "the star at the top of each page"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:182
+#, elixir-autogen, elixir-format
+msgid "verified"
+msgstr ""

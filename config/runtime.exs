@@ -37,21 +37,85 @@ if config_env() != :test do
       )
 end
 
-# Admin (/admin): HTTP basic auth with the Railway variables ADMIN_USER and
-# ADMIN_PASSWORD. Without both, /admin answers 404.
 # Ratings watch: the AI extraction uses the Railway variable ANTHROPIC_API_KEY.
 # Without it, the watch still collects the news but proposes nothing.
+# (The administration needs an administrator account: the email code, then
+# a passkey. ADMIN_USER and ADMIN_PASSWORD are no longer read.)
 if config_env() != :test do
-  config :syli_atlas, :admin,
-    username: System.get_env("ADMIN_USER"),
-    password: System.get_env("ADMIN_PASSWORD")
-
   config :syli_atlas, SyliAtlas.Ratings.Extractor,
     api_key:
       (case System.get_env("ANTHROPIC_API_KEY") do
          v when v in [nil, ""] -> nil
          v -> String.trim(v)
        end)
+end
+
+# Emails (sign-in codes, alerts). MAILER_ADAPTER chooses, else the
+# variables present do:
+#
+#   resend   RESEND_API_KEY                 production
+#   smtp     SMTP_HOST (+ SMTP_PORT, 1025)  Mailpit on Railway, outside production
+#   local    nothing                        /dev/mailbox, development only
+#
+# A release with neither sends nothing: sign-in says it is not open yet
+# (never a code written to the logs). MAIL_FROM: "Syli Atlas <bonjour@…>".
+# FIRST_ADMIN_EMAIL, when set, is the only address that can become the
+# first administrator.
+if config_env() != :test do
+  mailer_adapter =
+    cond do
+      adapter = System.get_env("MAILER_ADAPTER") -> adapter
+      System.get_env("RESEND_API_KEY") -> "resend"
+      System.get_env("SMTP_HOST") -> "smtp"
+      config_env() == :dev -> "local"
+      true -> "none"
+    end
+
+  mailer =
+    case mailer_adapter do
+      "resend" ->
+        [adapter: Swoosh.Adapters.Resend, api_key: System.fetch_env!("RESEND_API_KEY")]
+
+      "smtp" ->
+        [
+          adapter: Swoosh.Adapters.SMTP,
+          relay: System.get_env("SMTP_HOST", "localhost"),
+          port: String.to_integer(System.get_env("SMTP_PORT", "1025")),
+          ssl: false,
+          tls: :never,
+          auth: :never,
+          retries: 1,
+          no_mx_lookups: true
+        ]
+
+      "local" ->
+        [adapter: Swoosh.Adapters.Local]
+
+      "none" ->
+        nil
+
+      other ->
+        raise "unknown MAILER_ADAPTER #{inspect(other)}, expected resend, smtp or local"
+    end
+
+  if mailer, do: config(:syli_atlas, SyliAtlas.Mailer, mailer)
+  config :syli_atlas, :mail_enabled, mailer != nil
+
+  case System.get_env("MAIL_FROM") do
+    nil ->
+      :ok
+
+    from ->
+      case Regex.run(~r/^\s*(.*?)\s*<([^>]+)>\s*$/, from) do
+        [_, name, address] -> config :syli_atlas, :mail_from, {name, address}
+        nil -> config :syli_atlas, :mail_from, {"Syli Atlas", String.trim(from)}
+      end
+  end
+
+  case System.get_env("FIRST_ADMIN_EMAIL") do
+    v when v in [nil, ""] -> :ok
+    v -> config :syli_atlas, :first_admin_email, v |> String.trim() |> String.downcase()
+  end
 end
 
 # Raw payloads go to Cloudflare R2 when its four variables are set, else to
@@ -118,6 +182,11 @@ if config_env() == :prod do
       """
 
   host = System.get_env("PHX_HOST") || "example.com"
+
+  # Passkeys belong to the site's host: changing PHX_HOST makes existing ones unusable.
+  config :syli_atlas, SyliAtlas.Accounts.Passkeys,
+    origin: "https://" <> host,
+    rp_id: host
 
   config :syli_atlas, :dns_cluster_query, System.get_env("DNS_CLUSTER_QUERY")
 

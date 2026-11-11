@@ -12,6 +12,13 @@
       tab={@tab != :overview && @tab_name}
       locale={@locale}
     />
+    <SyliAtlasWeb.AccountComponents.follow
+      kind="area"
+      ref={@area.code}
+      locale={@locale}
+      path={@path}
+      alert_area={@area.kind == "country" && @area.code}
+    />
     <.filter_sheet
       :if={
         @tab in [:overview, :economy, :finances] and

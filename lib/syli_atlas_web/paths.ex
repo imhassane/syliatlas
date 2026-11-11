@@ -57,6 +57,13 @@ defmodule SyliAtlasWeb.Paths do
   def offline(locale), do: "/#{locale}/#{segment(locale, :offline)}"
   def discussion(locale, area), do: area(locale, area) <> "/discussion"
   def login(locale), do: "/#{locale}/#{segment(locale, :login)}"
+  def login_code(locale), do: login(locale) <> "/code"
+  def admin_key(locale), do: login(locale) <> "/" <> segment(locale, :passkey)
+
+  @doc "The member's space: favourites, then `:alerts` and `:security`."
+  def account(locale), do: "/#{locale}/#{segment(locale, :account)}"
+  def account(locale, :favorites), do: account(locale)
+  def account(locale, tab), do: account(locale) <> "/" <> segment(locale, tab)
 
   def ratings(locale), do: "/#{locale}/#{segment(locale, :ratings)}"
   def rating(locale, slug), do: ratings(locale) <> "/" <> slug
@@ -94,4 +101,12 @@ defmodule SyliAtlasWeb.Paths do
   def segment(_, :debt), do: "dette"
   def segment("en", :login), do: "sign-in"
   def segment(_, :login), do: "connexion"
+  def segment("en", :passkey), do: "passkey"
+  def segment(_, :passkey), do: "cle"
+  def segment("en", :account), do: "my-space"
+  def segment(_, :account), do: "mon-espace"
+  def segment("en", :alerts), do: "alerts"
+  def segment(_, :alerts), do: "alertes"
+  def segment("en", :security), do: "security"
+  def segment(_, :security), do: "securite"
 end
