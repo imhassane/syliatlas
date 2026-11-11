@@ -10,6 +10,7 @@ defmodule SyliAtlasWeb.Admin.UpdatesController do
   alias SyliAtlas.{Imports, Sources}
   alias SyliAtlas.Profiles.{Benchmark, QueryStats}
   alias SyliAtlas.Workers.{CheckSourcesWorker, ImportEditionWorker}
+  alias SyliAtlasWeb.Pagination
 
   @tabs ~w(taches sources fonctions)
   @filters %{"echecs" => :failed, "en-cours" => :running}
@@ -24,10 +25,16 @@ defmodule SyliAtlasWeb.Admin.UpdatesController do
       tab: tab,
       filter: filter,
       queues: Jobs.queues(),
-      jobs: Jobs.recent(Map.get(@filters, filter, :all)),
+      jobs:
+        Pagination.from_count(
+          Jobs.count(Map.get(@filters, filter, :all)),
+          params["page"],
+          &Jobs.recent(Map.get(@filters, filter, :all), &1, &2)
+        ),
+      params: Map.take(params, ["onglet", "filtre"]),
       failures: Jobs.failures(7),
       sources: Sources.list_sources(),
-      editions: Sources.list_editions(20),
+      editions: Pagination.paginate(Sources.list_editions(500), params["page"]),
       online: Sources.published_edition("imf_weo"),
       imf: Sources.get_source("imf_weo"),
       fns: stats,
@@ -87,10 +94,14 @@ defmodule SyliAtlasWeb.Admin.UpdatesController do
       previous: previous,
       all?: all?,
       revisions:
-        if(previous,
-          do: Sources.revisions(edition, previous, if(all?, do: 0.05, else: 1.0)),
-          else: []
+        Pagination.paginate(
+          if(previous,
+            do: Sources.revisions(edition, previous, if(all?, do: 0.05, else: 1.0), 5000),
+            else: []
+          ),
+          params["page"]
         ),
+      params: Map.take(params, ["ecarts"]),
       after_job: Jobs.latest("SyliAtlas.Workers.AfterPublishWorker", %{edition_id: edition.id}),
       names: SyliAtlas.Geo.list_areas() |> Map.new(&{&1.code, &1.name_fr})
     )

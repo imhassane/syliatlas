@@ -27,6 +27,25 @@ defmodule SyliAtlasWeb.Pagination do
     }
   end
 
+  @doc """
+  A page read from the database: `total` rows in all, `fetch.(limit, offset)`
+  reads the rows of the page (clamped to the existing pages).
+  """
+  def from_count(total, page, fetch, per_page \\ @per_page) when is_function(fetch, 2) do
+    pages = max(div(total + per_page - 1, per_page), 1)
+    page = page |> to_page() |> min(pages) |> max(1)
+    offset = (page - 1) * per_page
+
+    %__MODULE__{
+      entries: fetch.(per_page, offset),
+      page: page,
+      pages: pages,
+      total: total,
+      offset: offset,
+      per_page: per_page
+    }
+  end
+
   @doc "Page holding the first item matching `fun` (1 when none does)."
   def page_of(list, fun, per_page \\ @per_page) do
     case Enum.find_index(list, fun) do

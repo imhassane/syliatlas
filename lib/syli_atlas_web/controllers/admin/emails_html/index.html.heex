@@ -52,8 +52,8 @@
   </nav>
 
   <section class="card adm-list" id="emails">
-    <p :if={@rows == []} class="adm-empty muted">Aucun e-mail.</p>
-    <div :if={@rows != []} class="table-wrap">
+    <p :if={@rows.total == 0} class="adm-empty muted">Aucun e-mail.</p>
+    <div :if={@rows.total > 0} class="table-wrap">
       <table class="table adm-table">
         <thead>
           <tr>
@@ -66,7 +66,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr :for={r <- @rows} id={"email-#{r.id}"}>
+          <tr :for={r <- @rows.entries} id={"email-#{r.id}"}>
             <td class="l" dir="ltr">{r.email}</td>
             <td class="l">{kind_label(r.kind)}</td>
             <td class="l muted adm-wrap">
@@ -95,5 +95,6 @@
         </tbody>
       </table>
     </div>
+    <.admin_pager page={@rows} path={~p"/admin/emails"} params={@params} key="page" />
   </section>
 </.admin_shell>

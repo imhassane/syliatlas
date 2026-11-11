@@ -155,4 +155,36 @@ defmodule SyliAtlasWeb.AdminPagesTest do
       end
     end
   end
+
+  describe "pagination" do
+    test "members: 10 a page, the filters kept in the page links" do
+      for i <- 1..12, do: AccountsFixtures.user_fixture(%{email: "membre#{i}@example.com"})
+
+      html = admin() |> get("/admin/membres?q=membre") |> html_response(200)
+      doc = LazyHTML.from_document(html)
+      assert Enum.count(LazyHTML.query(doc, "#members tbody tr")) == 10
+      assert html =~ "1–10 sur 12"
+      assert html =~ ~s(href="/admin/membres?page=2&amp;q=membre")
+
+      html = admin() |> get("/admin/membres?q=membre&page=2") |> html_response(200)
+      doc = LazyHTML.from_document(html)
+      assert Enum.count(LazyHTML.query(doc, "#members tbody tr")) == 2
+      assert html =~ "11–12 sur 12"
+    end
+
+    test "jobs: a page past the end shows the last page" do
+      for _ <- 1..13,
+          do: Oban.insert!(SyliAtlas.Workers.MarketPublishWorker.new(%{}, unique: false))
+
+      html = admin() |> get("/admin/mises-a-jour?page=9") |> html_response(200)
+      doc = LazyHTML.from_document(html)
+      assert Enum.count(LazyHTML.query(doc, "#jobs tbody tr")) == 3
+      assert html =~ "11–13 sur 13"
+    end
+
+    test "a short list has no pager" do
+      html = admin() |> get("/admin/emails") |> html_response(200)
+      refute html =~ ~s(class="pager")
+    end
+  end
 end

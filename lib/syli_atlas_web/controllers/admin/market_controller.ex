@@ -8,6 +8,7 @@ defmodule SyliAtlasWeb.Admin.MarketController do
   alias SyliAtlas.Admin.{Jobs, MarketAdmin}
   alias SyliAtlas.Market
   alias SyliAtlas.Market.Catalog
+  alias SyliAtlasWeb.Pagination
 
   @tabs ~w(anomalies bourses sources fantome)
   @severities ~w(high mid low)
@@ -21,9 +22,11 @@ defmodule SyliAtlasWeb.Admin.MarketController do
       page_title: "Admin · Données de marché",
       tab: tab,
       severity: severity,
-      issues: MarketAdmin.issues(severity),
+      issues: Pagination.paginate(MarketAdmin.issues(severity), params["page"]),
+      params: Map.take(params, ["onglet", "gravite"]),
       counts: MarketAdmin.issue_counts(),
       exchanges: exchanges,
+      exchanges_page: Pagination.paginate(exchanges, params["page"]),
       official: MarketAdmin.official_count(exchanges),
       last_import: MarketAdmin.last_import(),
       quota: MarketAdmin.quota("mansa"),

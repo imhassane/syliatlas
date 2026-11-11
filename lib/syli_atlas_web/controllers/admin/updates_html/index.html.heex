@@ -156,8 +156,8 @@
           </a>
         </nav>
       </div>
-      <p :if={@jobs == []} class="adm-empty muted">Aucune tâche.</p>
-      <div :if={@jobs != []} class="table-wrap">
+      <p :if={@jobs.total == 0} class="adm-empty muted">Aucune tâche.</p>
+      <div :if={@jobs.total > 0} class="table-wrap">
         <table class="table adm-table">
           <thead>
             <tr>
@@ -171,7 +171,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr :for={j <- @jobs} id={"job-#{j.id}"}>
+            <tr :for={j <- @jobs.entries} id={"job-#{j.id}"}>
               <td class="l">
                 <b class="adm-strong">{worker_label(j.worker)}</b>
                 <div class="mono subtle small">{String.replace(j.worker, "SyliAtlas.", "")}</div>
@@ -199,6 +199,7 @@
           </tbody>
         </table>
       </div>
+      <.admin_pager page={@jobs} path={~p"/admin/mises-a-jour"} params={@params} key="page" />
     </section>
   <% end %>
 
@@ -233,8 +234,8 @@
         <h2 class="h2">Éditions importées</h2>
         <span class="small muted">Les éditions précédentes restent gardées : on peut revenir en arrière.</span>
       </div>
-      <p :if={@editions == []} class="adm-empty muted">Aucune édition importée.</p>
-      <div :if={@editions != []} class="table-wrap">
+      <p :if={@editions.total == 0} class="adm-empty muted">Aucune édition importée.</p>
+      <div :if={@editions.total > 0} class="table-wrap">
         <table class="table adm-table">
           <thead>
             <tr>
@@ -248,7 +249,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr :for={e <- @editions} id={"edition-#{e.id}"}>
+            <tr :for={e <- @editions.entries} id={"edition-#{e.id}"}>
               <td class="l">
                 <.link href={~p"/admin/mises-a-jour/editions/#{e.id}"} class="adm-strong">
                   {e.label}
@@ -267,6 +268,7 @@
           </tbody>
         </table>
       </div>
+      <.admin_pager page={@editions} path={~p"/admin/mises-a-jour"} params={@params} key="page" />
     </section>
   <% end %>
 

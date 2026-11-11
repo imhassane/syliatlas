@@ -69,8 +69,20 @@ defmodule SyliAtlas.Accounts do
 
   # Administration ---------------------------------------------------------
 
+  @doc "How many accounts match the filters of `list_users/1`."
+  def count_users(opts \\ []), do: opts |> users_query() |> Repo.aggregate(:count)
+
   def list_users(opts \\ []) do
-    query = from u in User, as: :u, order_by: [desc: u.inserted_at], limit: 200
+    opts
+    |> users_query()
+    |> order_by([u], desc: u.inserted_at, desc: u.id)
+    |> limit(^Keyword.get(opts, :limit, 200))
+    |> offset(^Keyword.get(opts, :offset, 0))
+    |> Repo.all()
+  end
+
+  defp users_query(opts) do
+    query = from(u in User, as: :u)
 
     query =
       case opts[:search] do
@@ -100,7 +112,7 @@ defmodule SyliAtlas.Accounts do
           query
       end
 
-    Repo.all(query)
+    query
   end
 
   def get_user!(id), do: Repo.get!(User, id)

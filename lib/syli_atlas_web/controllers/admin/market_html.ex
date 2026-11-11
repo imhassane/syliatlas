@@ -1,7 +1,7 @@
 defmodule SyliAtlasWeb.Admin.MarketHTML do
   use SyliAtlasWeb, :html
 
-  import SyliAtlasWeb.AdminComponents, only: [admin_shell: 1, admin_tabs: 1]
+  import SyliAtlasWeb.AdminComponents, only: [admin_shell: 1, admin_tabs: 1, admin_pager: 1]
   import SyliAtlasWeb.Admin.Format
   alias SyliAtlas.Market.Catalog
 

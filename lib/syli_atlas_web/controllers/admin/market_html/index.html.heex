@@ -116,8 +116,8 @@
         </a>
       </nav>
     </div>
-    <p :if={@issues == []} class="adm-empty muted">Aucune anomalie ouverte.</p>
-    <div :if={@issues != []} class="table-wrap">
+    <p :if={@issues.total == 0} class="adm-empty muted">Aucune anomalie ouverte.</p>
+    <div :if={@issues.total > 0} class="table-wrap">
       <table class="table adm-table">
         <thead>
           <tr>
@@ -129,7 +129,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr :for={i <- @issues} id={"issue-#{i.id}"}>
+          <tr :for={i <- @issues.entries} id={"issue-#{i.id}"}>
             <td class="l">
               <% {label, cls} = severity(i.severity) %>
               <span class={["pill", cls]}>{label}</span>
@@ -165,6 +165,7 @@
         </tbody>
       </table>
     </div>
+    <.admin_pager page={@issues} path={~p"/admin/marches"} params={@params} key="page" />
   </section>
 
   <section :if={@tab == "bourses"} class="card adm-list" id="exchanges">
@@ -187,7 +188,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr :for={r <- @exchanges} id={"exchange-#{r.exchange.code}"}>
+          <tr :for={r <- @exchanges_page.entries} id={"exchange-#{r.exchange.code}"}>
             <td class="l">
               <b class="adm-strong">{r.exchange.short_name}</b>
               <span class="mono subtle small">{r.exchange.mic || r.exchange.city}</span>
@@ -209,6 +210,7 @@
         </tbody>
       </table>
     </div>
+    <.admin_pager page={@exchanges_page} path={~p"/admin/marches"} params={@params} key="page" />
     <p class="mono subtle small adm-note">
       Le classement des sources se règle quand une deuxième source existe pour une bourse : aujourd'hui, MansaAPI est la seule active.
     </p>

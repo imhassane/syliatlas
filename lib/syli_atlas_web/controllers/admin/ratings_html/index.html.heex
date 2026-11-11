@@ -100,13 +100,13 @@
       </nav>
     </div>
 
-    <p :if={@shown == []} class="adm-empty muted" id="adm-empty">
+    <p :if={@shown.total == 0} class="adm-empty muted" id="adm-empty">
       {if @pending == [],
         do: "File vide. La prochaine veille passe demain à 07:20 UTC.",
         else: "Aucune proposition de ce type dans la file."}
     </p>
 
-    <%= for p <- @shown do %>
+    <%= for p <- @shown.entries do %>
       <% {pill, pill_class} = decision_pill(p, @doc) %>
       <% cur = current(@doc, p.country_code, p.agency) %>
       <.form
@@ -203,6 +203,7 @@
       >
       </.form>
     <% end %>
+    <.admin_pager page={@shown} path={~p"/admin/notations"} params={@params} />
   </section>
 
   <section class="card adm-list" id="adm-check">
@@ -216,10 +217,10 @@
         </p>
       </div>
     </div>
-    <p :if={@to_check == []} class="adm-empty muted">Aucune note à vérifier.</p>
+    <p :if={@to_check_page.total == 0} class="adm-empty muted">Aucune note à vérifier.</p>
 
     <.form
-      :for={r <- @to_check}
+      :for={r <- @to_check_page.entries}
       for={%{}}
       action={~p"/admin/notations/verifier/#{r.id}"}
       method="post"
@@ -270,9 +271,10 @@
         </label>
       </div>
     </.form>
+    <.admin_pager page={@to_check_page} path={~p"/admin/notations"} params={@params} key="verif" />
   </section>
 
-  <section :if={@decided != []} class="card adm-list" id="adm-decided">
+  <section :if={@decided.total > 0} class="card adm-list" id="adm-decided">
     <div class="adm-card-head">
       <h2 class="h2">Dernières décisions de la file</h2>
     </div>
@@ -287,7 +289,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr :for={p <- Enum.sort_by(@decided, & &1.reviewed_at, {:desc, DateTime})}>
+        <tr :for={p <- @decided.entries}>
           <td class="l">{country_name(@doc, p.country_code)}</td>
           <td class="l">{agency_name(p.agency)}</td>
           <td class="l">{display(p.rating)}</td>
@@ -296,6 +298,7 @@
         </tr>
       </tbody>
     </table>
+    <.admin_pager page={@decided} path={~p"/admin/notations"} params={@params} key="decisions" />
   </section>
 
   <p class="mono subtle small">

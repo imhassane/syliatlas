@@ -10,7 +10,7 @@ defmodule SyliAtlasWeb.Admin.RatingsController do
 
   def index(conn, params) do
     doc = Ratings.document()
-    pending = Review.list("pending")
+    pending = Review.list("pending", 1000)
 
     filter =
       if params["filtre"] in ~w(changements confirmations), do: params["filtre"], else: "toutes"
@@ -25,10 +25,15 @@ defmodule SyliAtlasWeb.Admin.RatingsController do
     render(conn, :index,
       page_title: "Admin · Notations",
       pending: pending,
-      shown: shown,
+      shown: SyliAtlasWeb.Pagination.paginate(shown, params["page"]),
+      params: Map.take(params, ["filtre", "page", "verif", "decisions"]),
       filter: filter,
-      decided: Review.list("approved", 10) ++ Review.list("rejected", 10),
+      decided:
+        (Review.list("approved", 500) ++ Review.list("rejected", 500))
+        |> Enum.sort_by(& &1.reviewed_at, {:desc, DateTime})
+        |> SyliAtlasWeb.Pagination.paginate(params["decisions"]),
       to_check: Review.to_check(),
+      to_check_page: SyliAtlasWeb.Pagination.paginate(Review.to_check(), params["verif"]),
       doc: doc,
       extractor?: SyliAtlas.Ratings.Extractor.configured?(),
       last_watch: SyliAtlas.Ratings.Watch.last_run()
