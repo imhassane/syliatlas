@@ -1,0 +1,71 @@
+<Layouts.public locale={@locale} current={:login} current_user={@current_user}>
+  <section class="section section-alt auth">
+    <div class="wrap auth-grid">
+      <div class="stack gap-3 auth-intro">
+        <p class="eyebrow">{gettext("My space")}</p>
+        <h1 class="display">{gettext("Follow the countries and markets that matter to you.")}</h1>
+        <p class="lead muted">
+          {gettext("No password: a code by email, or your device's fingerprint or face.")}
+        </p>
+        <ul class="auth-perks">
+          <li>
+            <b>{gettext("Favourites")}</b>
+            <span class="muted">— {gettext("countries, regions, exchanges, securities.")}</span>
+          </li>
+          <li>
+            <b>{gettext("Alerts")}</b>
+            <span class="muted">— {gettext("thresholds, new ratings, new IMF editions.")}</span>
+          </li>
+          <li>
+            <b>{gettext("Digest")}</b>
+            <span class="muted">— {gettext("one email a week, if you want it.")}</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="card pad stack gap-3 auth-card">
+        <h2 class="h2">{gettext("Sign in or create an account")}</h2>
+        <p :if={@error} class="adm-flash err" role="alert" id="login-error">{@error}</p>
+
+        <.passkey_button id="passkey-sign-in" action="sign-in" class="btn btn-primary btn-lg">
+          {gettext("Use my passkey")}
+        </.passkey_button>
+        <p class="small muted center passkey-hint" hidden>
+          {gettext("Fingerprint, face or device PIN.")}
+        </p>
+        <p class="auth-or small muted passkey-hint" hidden>
+          <span>{gettext("or by email")}</span>
+        </p>
+
+        <.form for={%{}} action={Paths.login(@locale)} id="login-form" class="stack gap-3">
+          <label class="field">
+            <span class="eyebrow">{gettext("Email address")}</span>
+            <input
+              class="input"
+              type="email"
+              name="email"
+              id="login-email"
+              value={@email}
+              autocomplete="email webauthn"
+              required
+              disabled={!@mail?}
+            />
+          </label>
+          <p class="small muted">
+            {gettext("We send you a 6-digit code, valid for 10 minutes.")}
+          </p>
+          <button class="btn btn-secondary" type="submit" id="login-submit" disabled={!@mail?}>
+            {gettext("Get a code")}
+          </button>
+          <p :if={!@mail?} class="small muted" id="login-closed">
+            {gettext("Sign-in by email is not open yet. Come back soon.")}
+          </p>
+        </.form>
+
+        <p class="small muted">
+          {gettext("Administrator accounts then confirm with their passkey.")}
+        </p>
+      </div>
+    </div>
+  </section>
+</Layouts.public>

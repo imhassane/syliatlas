@@ -1,0 +1,55 @@
+<Layouts.public locale={@locale} current={:account} current_user={@current_user}>
+  <.space locale={@locale} user={@current_user} tab={@tab} flash={@flash}>
+    <header class="stack gap-1">
+      <p class="eyebrow">{gettext("My space")}</p>
+      <h1 class="h1">{gettext("Favourites")}</h1>
+    </header>
+
+    <div :if={@favorites == []} class="card pad stack gap-2" id="favorites-empty">
+      <h2 class="h3">{gettext("Nothing followed yet")}</h2>
+      <p class="muted">
+        {gettext(
+          "Use the star at the top of a country, region, exchange or security page: it lands here, with its alerts."
+        )}
+      </p>
+      <p>
+        <a class="btn btn-secondary" href={Paths.ranking(@locale)}>{gettext(
+          "Browse the countries"
+        )}</a>
+      </p>
+    </div>
+
+    <ul :if={@favorites != []} class="fav-grid" id="favorites">
+      <li :for={f <- @favorites} class="card pad stack gap-2" id={"favorite-#{f.favorite.id}"}>
+        <p class="eyebrow">{kind_label(f.favorite.kind)}</p>
+        <a :if={f.href} class="h3 fav-name" href={f.href}>{f.name}</a>
+        <span :if={!f.href} class="h3">{f.name}</span>
+        <div class="row between small">
+          <%= if f.area && @alert_counts[f.area.code] do %>
+            <a href={Paths.account(@locale, :alerts)} class="pill pill-info">
+              {ngettext("1 alert", "%{count} alerts", @alert_counts[f.area.code])}
+            </a>
+          <% else %>
+            <a
+              :if={f.area && f.area.kind == "country"}
+              href={Paths.account(@locale, :alerts) <> "?area=" <> f.area.code}
+            >
+              {gettext("Create an alert")}
+            </a>
+            <span :if={!(f.area && f.area.kind == "country")}></span>
+          <% end %>
+          <.form
+            for={%{}}
+            action={~p"/account/favorites"}
+            id={"unfavorite-#{f.favorite.id}"}
+          >
+            <input type="hidden" name="kind" value={f.favorite.kind} />
+            <input type="hidden" name="ref" value={f.favorite.ref} />
+            <input type="hidden" name="on" value="false" />
+            <button class="btn btn-quiet btn-sm" type="submit">{gettext("Remove")}</button>
+          </.form>
+        </div>
+      </li>
+    </ul>
+  </.space>
+</Layouts.public>

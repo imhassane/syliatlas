@@ -25,6 +25,7 @@ defmodule SyliAtlas.Application do
     # See https://elixir.hexdocs.pm/Supervisor.html
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: SyliAtlas.Supervisor]
+    SyliAtlas.Mailer.log_service()
     Supervisor.start_link(children, opts)
   end
 

@@ -81,11 +81,9 @@ defmodule SyliAtlasWeb.SearchTest do
 
   test "the admin lists the misses" do
     SyliAtlas.Search.Miss.record("wakanda", "fr")
-    auth = Plug.BasicAuth.encode_basic_auth("admin", "test-password")
 
     html =
-      build_conn()
-      |> put_req_header("authorization", auth)
+      SyliAtlas.AccountsFixtures.admin_conn()
       |> get("/admin/recherches")
       |> html_response(200)
 

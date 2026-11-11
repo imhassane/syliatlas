@@ -6,13 +6,12 @@ defmodule SyliAtlasWeb.AdminRatingsTest do
   setup %{conn: conn} do
     SyliAtlas.Geo.seed_areas!()
     SyliAtlas.Ratings.seed!()
-    auth = Plug.BasicAuth.encode_basic_auth("admin", "test-password")
-    {:ok, admin: put_req_header(conn, "authorization", auth)}
+    {:ok, admin: SyliAtlas.AccountsFixtures.admin_conn(conn)}
   end
 
-  test "the admin asks for credentials and is not indexed", %{conn: conn} do
+  test "the admin asks to sign in and is not indexed", %{conn: conn} do
     conn = get(conn, "/admin/notations")
-    assert conn.status == 401
+    assert redirected_to(conn) == "/fr/connexion"
     assert get_resp_header(conn, "x-robots-tag") == ["noindex, nofollow"]
   end
 
@@ -45,10 +44,7 @@ defmodule SyliAtlasWeb.AdminRatingsTest do
     assert redirected_to(conn) == "/admin/notations"
     [p] = Review.list("pending")
 
-    auth = Plug.BasicAuth.encode_basic_auth("admin", "test-password")
-
-    build_conn()
-    |> put_req_header("authorization", auth)
+    SyliAtlas.AccountsFixtures.admin_conn()
     |> post("/admin/notations/#{p.id}/approuver", %{
       "p" => %{"source_url" => "https://www.fitchratings.com/research/sovereigns/kenya"}
     })

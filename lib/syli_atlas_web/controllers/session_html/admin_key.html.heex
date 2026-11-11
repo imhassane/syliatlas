@@ -1,0 +1,75 @@
+<Layouts.public locale={@locale} current={:login} current_user={@current_user}>
+  <section class="section section-alt auth">
+    <div class="wrap auth-narrow">
+      <div class="card pad stack gap-3" id="admin-key">
+        <ol class="auth-steps" aria-label={gettext("Steps")}>
+          <li class={@code_given? && "done"}>
+            <span>1</span>{gettext("Code received by email")}
+          </li>
+          <li aria-current="step"><span>2</span>{gettext("Passkey")}</li>
+        </ol>
+
+        <%= cond do %>
+          <% not @code_given? -> %>
+            <p class="eyebrow">{gettext("Administration · two proofs")}</p>
+            <h1 class="h1">{gettext("Sign in with your email code first")}</h1>
+            <p class="muted">
+              {gettext(
+                "You signed in with a passkey only. The administration also asks for the code received by email."
+              )}
+            </p>
+            <a class="btn btn-primary" href={Paths.login(@locale)} id="admin-key-code">
+              {gettext("Get a code")}
+            </a>
+          <% @passkeys == [] -> %>
+            <p class="eyebrow">{gettext("Administration · first sign-in")}</p>
+            <h1 class="h1">{gettext("Register your passkey")}</h1>
+            <p class="muted">
+              {gettext(
+                "Your account is an administrator. Every sign-in to the administration will ask for the email code and this passkey."
+              )}
+            </p>
+            <label class="field">
+              <span class="eyebrow">{gettext("Passkey name")}</span>
+              <input class="input" type="text" id="passkey-name" maxlength="60" value="" />
+            </label>
+            <.passkey_button
+              id="passkey-register"
+              action="register"
+              name="passkey-name"
+              class="btn btn-primary btn-lg"
+            >
+              {gettext("Create my passkey")}
+            </.passkey_button>
+            <p class="small muted">
+              {gettext(
+                "Nothing leaves your device: Syli Atlas keeps the public key, never your fingerprint. Register a second one on your phone afterwards."
+              )}
+            </p>
+          <% true -> %>
+            <p class="eyebrow">{gettext("Administration · second proof")}</p>
+            <h1 class="h1">{gettext("Confirm with your passkey")}</h1>
+            <p class="muted">
+              {gettext(
+                "The email code is verified. Your account is an administrator: access also asks for this device's fingerprint, face or PIN."
+              )}
+            </p>
+            <.passkey_button id="passkey-admin" action="admin" class="btn btn-primary btn-lg">
+              {gettext("Use my passkey")}
+            </.passkey_button>
+            <p class="small muted">
+              {gettext("Registered passkeys:")} {Enum.map_join(@passkeys, ", ", & &1.name)}
+            </p>
+        <% end %>
+
+        <p class="small muted passkey-unsupported" hidden>
+          {gettext("This browser cannot use passkeys. Open Syli Atlas in a recent browser.")}
+        </p>
+        <p class="small muted">
+          <a href={Paths.account(@locale)}>{gettext("Continue as a member")}</a>
+          · {gettext("favourites and alerts stay open, the administration stays closed.")}
+        </p>
+      </div>
+    </div>
+  </section>
+</Layouts.public>

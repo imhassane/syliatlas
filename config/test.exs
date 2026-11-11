@@ -20,6 +20,10 @@ config :syli_atlas, SyliAtlasWeb.Endpoint,
 # In test we don't send emails
 config :syli_atlas, SyliAtlas.Mailer, adapter: Swoosh.Adapters.Test
 
+config :syli_atlas, SyliAtlas.Accounts.Passkeys,
+  origin: "https://syliatlas.test",
+  rp_id: "syliatlas.test"
+
 # Disable swoosh api client as it is only required for production adapters
 config :swoosh, :api_client, false
 
@@ -50,7 +54,6 @@ config :syli_atlas, SyliAtlas.Market.Sources.Mansa,
   req_options: [plug: {Req.Test, SyliAtlas.Market.Sources.Mansa}, retry: false]
 
 # Admin credentials and the ratings watch, stubbed (Req.Test).
-config :syli_atlas, :admin, username: "admin", password: "test-password"
 
 config :syli_atlas, SyliAtlas.Ratings.Extractor,
   api_key: "test-key",

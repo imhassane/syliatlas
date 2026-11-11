@@ -20,6 +20,11 @@ defmodule SyliAtlasWeb.Layouts do
   attr :locale, :string, required: true
   attr :current, :atom, default: nil
   attr :alternates, :list, default: []
+
+  attr :current_user, :any,
+    default: nil,
+    doc: "set on account pages; public pages ask /account/me"
+
   slot :inner_block, required: true
 
   def public(assigns) do
@@ -68,7 +73,7 @@ defmodule SyliAtlasWeb.Layouts do
           )}</button>
           <.lang_link :if={@other_lang} lang={@other_lang} class="btn btn-quiet hide-mobile" />
           <.theme_button />
-          <a class="btn btn-secondary hide-mobile" href={Paths.login(@locale)}>{gettext("Sign in")}</a>
+          <.account_link user={@current_user} locale={@locale} class="btn btn-secondary hide-mobile" />
           <button
             type="button"
             id="drawer-open"
@@ -91,7 +96,12 @@ defmodule SyliAtlasWeb.Layouts do
         </div>
       </div>
     </header>
-    <.nav_drawer locale={@locale} current={@current} other_lang={@other_lang} />
+    <.nav_drawer
+      locale={@locale}
+      current={@current}
+      other_lang={@other_lang}
+      current_user={@current_user}
+    />
     <main id="main">
       {render_slot(@inner_block)}
     </main>
@@ -347,6 +357,7 @@ defmodule SyliAtlasWeb.Layouts do
   attr :locale, :string, required: true
   attr :current, :atom, default: nil
   attr :other_lang, :any, default: nil
+  attr :current_user, :any, default: nil
 
   @doc """
   Phone navigation: a drawer from the right edge, swiped closed with the
@@ -395,11 +406,40 @@ defmodule SyliAtlasWeb.Layouts do
           <div class="drawer-foot stack gap-2">
             <button type="button" class="btn btn-secondary" data-install>{gettext("Install the app")}</button>
             <.lang_link :if={@other_lang} lang={@other_lang} class="btn btn-secondary" />
-            <a class="btn btn-primary" href={Paths.login(@locale)}>{gettext("Sign in")}</a>
+            <.account_link user={@current_user} locale={@locale} class="btn btn-primary" />
           </div>
         </div>
       </div>
     </div>
+    """
+  end
+
+  attr :user, :any, required: true
+  attr :locale, :string, required: true
+  attr :class, :string, required: true
+
+  # "Sign in", or "My space" once signed in. Public pages are cached without
+  # a session: assets/js/ui/account.js turns the link into "My space" there.
+  defp account_link(assigns) do
+    ~H"""
+    <a
+      :if={@user}
+      class={@class}
+      href={Paths.account(@user.locale)}
+      data-account-link
+    >
+      {gettext("My space")}
+    </a>
+    <a
+      :if={!@user}
+      class={@class}
+      href={Paths.login(@locale)}
+      data-account-link
+      data-space-href={Paths.account(@locale)}
+      data-space-label={gettext("My space")}
+    >
+      {gettext("Sign in")}
+    </a>
     """
   end
 

@@ -46,7 +46,10 @@ config :syli_atlas, Oban,
        {"15 20 * * 1-5", SyliAtlas.Workers.MarketImportWorker, args: %{"mode" => "catchup"}},
        # Ratings news watch: proposals for /admin/notations (agencies often
        # publish on Friday evenings, so the Saturday run catches them).
-       {"20 7 * * *", SyliAtlas.Workers.RatingsWatchWorker}
+       {"20 7 * * *", SyliAtlas.Workers.RatingsWatchWorker},
+       # Digests of favourites: Mondays, and the 1st for monthly ones (the
+       # worker picks who is due), after the morning check of the sources.
+       {"40 6 * * *", SyliAtlas.Workers.DigestWorker}
      ]}
   ]
 
@@ -62,6 +65,12 @@ config :syli_atlas, SyliAtlas.Market, preview: true
 # For production it's recommended to configure a different adapter
 # at the `config/runtime.exs`.
 config :syli_atlas, SyliAtlas.Mailer, adapter: Swoosh.Adapters.Local
+
+# Passkeys (WebAuthn): the site's origin and relying party. Set from
+# PHX_HOST in production (config/runtime.exs).
+config :syli_atlas, SyliAtlas.Accounts.Passkeys,
+  origin: "http://localhost:4000",
+  rp_id: "localhost"
 
 # Configure esbuild (the version is required)
 config :esbuild,

@@ -1,0 +1,14 @@
+# Local services. Mailpit catches every email sent in development when the
+# app runs with MAILER_ADAPTER=smtp (SMTP_HOST defaults to localhost:1025):
+#
+#   docker compose up -d mailpit
+#   MAILER_ADAPTER=smtp mix phx.server
+#   open http://localhost:8025
+services:
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    environment:
+      MP_MAX_MESSAGES: 500

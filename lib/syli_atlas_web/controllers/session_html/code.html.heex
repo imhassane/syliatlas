@@ -1,0 +1,38 @@
+<Layouts.public locale={@locale} current={:login} current_user={@current_user}>
+  <section class="section section-alt auth">
+    <div class="wrap auth-narrow">
+      <div class="card pad stack gap-3">
+        <p class="eyebrow">{gettext("Sign-in · step 1")}</p>
+        <h1 class="h1">{gettext("Enter the code you received")}</h1>
+        <p class="muted">
+          {gettext("Sent to")} <b dir="ltr">{@email}</b>.
+          <a href={Paths.login(@locale)}>{gettext("Change address")}</a>
+        </p>
+        <p :if={@error} class="adm-flash err" role="alert" id="code-error">{@error}</p>
+        <.form for={%{}} action={Paths.login_code(@locale)} id="code-form" class="stack gap-3">
+          <label class="field">
+            <span class="eyebrow">{gettext("6-digit code")}</span>
+            <input
+              class="input code-input"
+              type="text"
+              name="code"
+              id="code-input"
+              inputmode="numeric"
+              autocomplete="one-time-code"
+              pattern="[0-9 ]{6,7}"
+              maxlength="7"
+              dir="ltr"
+              required
+              autofocus
+            />
+          </label>
+          <button class="btn btn-primary" type="submit" id="code-submit">{gettext("Confirm")}</button>
+        </.form>
+        <p class="small muted">
+          {gettext("Valid for 10 minutes, 5 attempts. Nothing received? Check your spam, or")}
+          <a href={Paths.login(@locale)}>{gettext("ask for a new code")}</a>.
+        </p>
+      </div>
+    </div>
+  </section>
+</Layouts.public>
