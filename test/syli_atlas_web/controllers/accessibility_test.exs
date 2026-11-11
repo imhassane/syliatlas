@@ -43,8 +43,10 @@ defmodule SyliAtlasWeb.AccessibilityTest do
         else: Application.delete_env(:syli_atlas, :site)
     end)
 
-    assert build_conn() |> get("/fr/accessibilite") |> html_response(200) =~
-             "mailto:a11y@example.org"
+    html = build_conn() |> get("/fr/accessibilite") |> html_response(200)
+    assert html =~ "mailto:a11y@example.org"
+    # Cloudflare would replace it with « [email protected] », decoded only by script.
+    assert html =~ ~r{<!--email_off-->\s*<a href="mailto:a11y@example.org"}
   end
 
   test "each chart comes with its values as a table", %{conn: conn} do
