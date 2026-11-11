@@ -64,7 +64,8 @@ defmodule SyliAtlasWeb.SeoPagesTest do
       [dataset] = doc("/fr/pays/senegal") |> json_ld() |> Enum.filter(&(&1["@type"] == "Dataset"))
       assert dataset["description"] =~ "FMI"
       assert dataset["url"] == "http://localhost:4000/fr/pays/senegal"
-      assert dataset["license"] =~ "/fr/methode#reuse"
+      assert dataset["license"] == "https://creativecommons.org/licenses/by/4.0/"
+      assert dataset["creditText"] == "Syli Atlas"
       assert dataset["creator"]["@id"] =~ "#organization"
       assert length(dataset["variableMeasured"]) >= 5
       formats = Enum.map(dataset["distribution"], & &1["encodingFormat"])
@@ -201,6 +202,26 @@ defmodule SyliAtlasWeb.SeoPagesTest do
 
     test "old addresses move permanently" do
       assert redirected_to(get(build_conn(), "/fr/pays/senegal/"), 301) == "/fr/pays/senegal"
+    end
+
+    test "the licence of the calculations is stated, sources keep theirs" do
+      d = doc("/fr/methode")
+      assert text(d, "#reuse ~ p") =~ "CC BY 4.0"
+      assert text(d, "#reuse ~ p") =~ "MansaAPI"
+
+      assert "https://creativecommons.org/licenses/by/4.0/" in (d
+                                                                |> LazyHTML.query(
+                                                                  ~s(a[rel=license])
+                                                                )
+                                                                |> LazyHTML.attribute("href"))
+
+      assert "/fr/methode#reuse" in (doc("/fr")
+                                     |> LazyHTML.query(".site-footer a")
+                                     |> LazyHTML.attribute("href"))
+
+      csv = build_conn() |> get("/api/v1/areas/SEN/csv") |> response(200)
+      assert csv |> String.split("\n") |> hd() =~ "CC BY 4.0"
+      assert build_conn() |> get("/llms.txt") |> response(200) =~ "CC BY 4.0"
     end
 
     test "dates are machine-readable" do

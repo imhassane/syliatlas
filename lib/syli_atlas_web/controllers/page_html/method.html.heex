@@ -123,11 +123,30 @@
         )}
       </p>
 
-      <h2 class="h2">{gettext("Reuse")}</h2>
+      <h2 class="h2" id="reuse">{gettext("Reuse")}</h2>
       <p>
         {gettext(
-          "Every profile can be downloaded as CSV. The JSON API is open: /api/v1/areas, /api/v1/compare, /api/v1/ranking. Please cite the IMF and Syli Atlas."
+          "What Syli Atlas computes and writes (regional and community totals, ranks, changes over a period, answer sentences, charts and share images) is under the Creative Commons Attribution 4.0 licence (CC BY 4.0): you may copy, adapt and republish it, commercial use included, as long as you credit Syli Atlas with a link to the page."
         )}
+        <a href={SyliAtlasWeb.Seo.license_url()} rel="license">{gettext("Read the licence")}</a>
+      </p>
+      <p>
+        {gettext(
+          "Source figures keep the terms of their source, listed above: cite the IMF, the World Bank, CEPII or the agency along with Syli Atlas. Stock prices are the exception: their source (MansaAPI) allows display on this site only, so they are not covered by this licence and may not be redistributed."
+        )}
+      </p>
+      <p class="small mono cite" id="reuse-example">
+        {gettext(
+          "Example: « Source: Syli Atlas (CC BY 4.0), from IMF, %{edition}, %{url} ».",
+          edition: (@edition && @edition.label) || "World Economic Outlook",
+          url: SyliAtlasWeb.Seo.url(Paths.area(@locale, "country", "senegal"))
+        )}
+      </p>
+      <p>
+        {gettext(
+          "Every profile can be downloaded as CSV, and the JSON API is open: see the API page."
+        )}
+        <a href={Paths.api(@locale)}>{gettext("Public API")} →</a>
       </p>
     </div>
   </.section>

@@ -105,6 +105,15 @@ defmodule SyliAtlasWeb.Seo do
     }
   end
 
+  @license "https://creativecommons.org/licenses/by/4.0/"
+
+  @doc """
+  The licence of what Syli Atlas computes and writes (totals, ranks, changes,
+  sentences, images): CC BY 4.0. Source figures keep their source's terms;
+  stock prices (MansaAPI) are not redistributable.
+  """
+  def license_url, do: @license
+
   @doc """
   A `Dataset` as Google Dataset Search reads it: a description, the page
   itself as `url`, its publisher and licence, the variables measured, the
@@ -127,7 +136,8 @@ defmodule SyliAtlasWeb.Seo do
       "isAccessibleForFree" => true,
       "creator" => %{"@id" => url("/#organization")},
       "publisher" => %{"@id" => url("/#organization")},
-      "license" => url(SyliAtlasWeb.Paths.method(locale) <> "#reuse")
+      "license" => license_url(),
+      "creditText" => "Syli Atlas"
     }
     |> put_if("keywords", opts[:keywords])
     |> put_if("dateModified", opts[:modified])

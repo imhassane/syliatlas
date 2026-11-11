@@ -91,6 +91,10 @@ defmodule SyliAtlasWeb.SitemapController do
     > named public source (IMF, World Bank, CEPII BACI, rating agencies, MansaAPI for markets),
     > with its edition and terms on the method page. Non-commercial, free, no account needed.
 
+    Licence: what Syli Atlas computes and writes (totals, ranks, changes, sentences, images) is CC BY 4.0
+    (#{Seo.license_url()}): reuse freely with credit to Syli Atlas and the page address. Source figures keep
+    their source's terms; stock prices (MansaAPI) are not redistributable.
+
     IMF edition: #{(edition && edition.label) || "n/a"}. Country profiles have one page per theme:
     overview, economy, finances and debt, trade, society, markets. Information, not investment advice.
 
