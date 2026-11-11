@@ -19,7 +19,8 @@ defmodule SyliAtlas.Workers.ApiTimingWorker do
     "/api/v1/areas/CIV/csv",
     "/api/v1/compare?codes=CIV,GHA,SEN",
     "/api/v1/ranking",
-    "/api/v1/ranking?indicator=inflation&mode=value"
+    "/api/v1/ranking?indicator=inflation&mode=value",
+    "/api/v1/indicators"
   ]
 
   @impl Oban.Worker

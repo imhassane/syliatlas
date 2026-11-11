@@ -3,7 +3,7 @@ defmodule SyliAtlasWeb.Plugs.ApiRateLimit do
   Requests per minute and per visitor address (`SyliAtlasWeb.ClientIp`).
 
   Two counters: the public API, and the routes the site itself calls
-  (`/search` while typing, the offline pack, the version check), which
+  (`/api/internal`: search while typing, the offline pack, the version check), which
   must never eat into the public quota. Limits are read at run time:
 
       config :syli_atlas, SyliAtlasWeb.Plugs.ApiRateLimit,
@@ -52,6 +52,8 @@ defmodule SyliAtlasWeb.Plugs.ApiRateLimit do
   end
 
   @doc "Which counter a request uses: `:public` or `:internal`."
+  def bucket(%Plug.Conn{path_info: ["api", "internal" | _]}), do: :internal
+
   def bucket(%Plug.Conn{path_info: ["api", "v1", route | _]}) when route in @internal,
     do: :internal
 

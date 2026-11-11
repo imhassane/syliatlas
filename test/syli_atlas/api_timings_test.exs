@@ -35,10 +35,10 @@ defmodule SyliAtlas.ApiTimingsTest do
     # The probe's measures are in the current hour: written an hour later.
     assert ApiTimings.last_day() == %{}
     later = DateTime.add(DateTime.utc_now(), 1, :hour)
-    assert ApiTimings.flush(later) == 5
+    assert ApiTimings.flush(later) == 6
 
     assert later |> ApiTimings.last_day() |> Map.keys() |> Enum.sort() ==
-             ~w(area areas compare csv ranking)
+             ~w(area areas compare csv indicators ranking)
   end
 
   test "probed routes all answer" do

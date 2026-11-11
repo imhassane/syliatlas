@@ -16,7 +16,7 @@ defmodule SyliAtlas.ApiTimings do
   @keep 5_000
   @budget_us 10_000
 
-  @routes ~w(areas area csv compare ranking)
+  @routes ~w(areas area compare ranking indicators csv)
 
   @doc "The public routes that are measured and shown, in page order."
   def routes, do: @routes

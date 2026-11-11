@@ -13,7 +13,7 @@ defmodule SyliAtlasWeb.PublicPagesTest do
   test "the page says which version it was built from, as the API does", %{conn: conn} do
     html = conn |> get("/fr") |> html_response(200)
     [_, version] = Regex.run(~r/name="syli-version" content="([^"]+)"/, html)
-    api = build_conn() |> get("/api/v1/version") |> json_response(200)
+    api = build_conn() |> get("/api/internal/version") |> json_response(200)
     assert api["page_version"] == version
     assert String.starts_with?(version, api["build"] <> ".")
   end

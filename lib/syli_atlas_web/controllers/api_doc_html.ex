@@ -15,6 +15,63 @@ defmodule SyliAtlasWeb.ApiDocHTML do
     if locale == "fr", do: String.replace(text, ".", ",") <> " ms", else: text <> " ms"
   end
 
+  @errors %{
+    "invalid_period" =>
+      {"années hors 2015–2030, ou from ≥ to", "years outside 2015–2030, or from ≥ to"},
+    "codes_required" => {"aucun code fourni", "no code given"},
+    "unknown_indicator" => {"indicateur inconnu", "unknown indicator"},
+    "unknown_area" => {"code de zone inconnu", "unknown area code"},
+    "not_found" => {"route inconnue", "unknown route"},
+    "rate_limited" => {"trop de requêtes", "too many requests"}
+  }
+
+  @doc "What an error code means, in the page's language."
+  def error_text(code, locale) do
+    {fr, en} = Map.get(@errors, code, {code, code})
+    tr(locale, fr, en)
+  end
+
+  @doc "The label of a unit code, in the page's language."
+  def unit_label(nil, _locale), do: nil
+
+  def unit_label(code, locale) do
+    Enum.find_value(SyliAtlasWeb.Api.Catalog.units(), code, fn u ->
+      u.code == code && if(locale == "fr", do: u.label.fr, else: u.label.en)
+    end)
+  end
+
+  attr :fields, :list, required: true
+  attr :locale, :string, required: true
+
+  @doc "The fields of an answer or a schema: path, type, meaning, values, unit."
+  def fields_table(assigns) do
+    ~H"""
+    <div class="api-ftable" role="table" aria-label={tr(@locale, "Champs", "Fields")}>
+      <div class="api-frow api-table-head" role="row">
+        <span role="columnheader">{tr(@locale, "Champ", "Field")}</span>
+        <span role="columnheader">Type</span>
+        <span role="columnheader">{tr(@locale, "Description", "Description")}</span>
+      </div>
+      <div :for={f <- @fields} class="api-frow" role="row">
+        <span role="cell"><code class="api-fpath">{f.path}</code></span>
+        <span role="cell" class="api-ftype">
+          <a :if={f.link} href={"#schema-" <> f.link}><code>{f.type}</code></a>
+          <code :if={!f.link}>{f.type}</code>
+        </span>
+        <span role="cell" class="api-fdesc">
+          {f.desc}
+          <span :if={f.values} class="api-fvalues">
+            {tr(@locale, "Valeurs", "Values")} : <code>{f.values}</code>
+          </span>
+          <span :if={f.unit} class="api-fvalues">
+            {tr(@locale, "Unité", "Unit")} : {unit_label(f.unit, @locale)}
+          </span>
+        </span>
+      </div>
+    </div>
+    """
+  end
+
   @months_fr ~w(janvier février mars avril mai juin juillet août septembre octobre novembre décembre)
   @months_en ~w(January February March April May June July August September October November December)
 

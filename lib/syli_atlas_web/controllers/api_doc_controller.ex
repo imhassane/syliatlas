@@ -65,7 +65,10 @@ defmodule SyliAtlasWeb.ApiDocController do
       rate_limit: rate_limit(),
       edition: Sources.published_edition("imf_weo"),
       base_url: SyliAtlasWeb.Endpoint.url() <> "/api/v1",
-      error_example: ApiDoc.error_example(locale)
+      error_example: ApiDoc.error_example(locale),
+      indicators: ApiDoc.indicators(locale),
+      value_lists: ApiDoc.value_lists(locale),
+      shared_schemas: ApiDoc.shared_schemas(locale)
     )
   end
 

@@ -118,7 +118,8 @@ defmodule SyliAtlasWeb.SitemapController do
     - [About, how to cite](#{Seo.url(Paths.about("en"))})
     - [Public API documentation](#{Seo.url(Paths.api("en"))}): routes, parameters, examples, limits, server time
     - [Public JSON API, list of areas](#{Seo.url("/api/v1/areas")})
-    - [Search API](#{Seo.url("/api/v1/search?q=debt+senegal&locale=en")})
+    - [OpenAPI description of the API](#{Seo.url("/api/v1/openapi.json")})
+    - [Indicators: units and definitions](#{Seo.url("/api/v1/indicators")})
     - [Sitemap](#{Seo.url("/sitemap.xml")})
 
     ## Economic communities
