@@ -317,16 +317,46 @@ defmodule SyliAtlasWeb.Layouts do
             {gettext("African economies in verifiable figures. Every figure cites its source.")}
           </p>
         </div>
-        <div class="footer-recap card" id="footer-recap">
-          <p class="eyebrow">{gettext("The Monday recap")}</p>
-          <p class="muted">
-            {gettext(
-              "Choose your countries: ratings, stock exchange, currency and IMF landmarks, every Monday by email. Without an account."
-            )}
-          </p>
-          <a class="btn btn-primary btn-lg" href={Paths.recap(@locale)} data-recap-open>
-            {gettext("Get the recap")} →
-          </a>
+      </div>
+      <div class="wrap">
+        <div class="footer-recap" id="footer-recap">
+          <form
+            class="footer-recap-inner"
+            method="get"
+            action={Paths.recap(@locale)}
+            data-recap-start
+            aria-labelledby="footer-recap-title"
+          >
+            <div class="footer-recap-text">
+              <p class="eyebrow">{gettext("The Monday recap")}</p>
+              <h2 id="footer-recap-title">
+                {gettext(
+                  "Ratings, stock exchange, currency and IMF landmarks of your countries, every Monday."
+                )}
+              </h2>
+            </div>
+            <div class="footer-recap-form">
+              <label class="eyebrow" for="footer-recap-email">{gettext("Email address")}</label>
+              <div class="footer-recap-row">
+                <input
+                  class="input"
+                  type="email"
+                  name="email"
+                  id="footer-recap-email"
+                  autocomplete="email"
+                  placeholder={gettext("you@example.com")}
+                />
+                <button class="btn btn-primary btn-lg" type="submit">
+                  {gettext("Choose my countries")} →
+                </button>
+              </div>
+              <p class="small muted">
+                {gettext(
+                  "Without an account. The next step opens the choice of countries, the address already filled in."
+                )}
+              </p>
+            </div>
+          </form>
         </div>
       </div>
       <nav aria-label={gettext("Footer")} class="wrap footer-nav">

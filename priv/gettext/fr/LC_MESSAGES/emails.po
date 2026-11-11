@@ -275,7 +275,7 @@ msgid "%{country}: %{indicator} goes below %{threshold}"
 msgstr "%{country} : %{indicator} passe sous %{threshold}"
 
 #: lib/syli_atlas/accounts/alert_emails.ex:220
-#: lib/syli_atlas/recaps/emails.ex:66
+#: lib/syli_atlas/recaps/emails.ex:68
 #, elixir-autogen, elixir-format
 msgid "%{from} to %{to}"
 msgstr "du %{from} au %{to}"
@@ -334,7 +334,7 @@ msgid "Decision of %{date} on a country you follow."
 msgstr "Décision du %{date} sur un pays que vous suivez."
 
 #: lib/syli_atlas/accounts/alert_emails.ex:287
-#: lib/syli_atlas/recaps/emails.ex:83
+#: lib/syli_atlas/recaps/emails.ex:85
 #, elixir-autogen, elixir-format
 msgid "Digest · %{period}"
 msgstr "Récap · %{period}"
@@ -360,7 +360,7 @@ msgid "Inflation %{year}"
 msgstr "Inflation %{year}"
 
 #: lib/syli_atlas/accounts/alert_emails.ex:74
-#: lib/syli_atlas/recaps/emails.ex:287
+#: lib/syli_atlas/recaps/emails.ex:327
 #, elixir-autogen, elixir-format
 msgid "Information, not investment advice."
 msgstr "Information, pas un conseil en investissement."
@@ -392,7 +392,7 @@ msgid "Outlook"
 msgstr "Perspective"
 
 #: lib/syli_atlas/accounts/alert_emails.ex:68
-#: lib/syli_atlas/recaps/emails.ex:185
+#: lib/syli_atlas/recaps/emails.ex:212
 #, elixir-autogen, elixir-format
 msgid "Rating"
 msgstr "Note"
@@ -470,7 +470,7 @@ msgid "Your week on Syli Atlas"
 msgstr "Votre semaine sur Syli Atlas"
 
 #: lib/syli_atlas/accounts/alert_emails.ex:366
-#: lib/syli_atlas/recaps/emails.ex:306
+#: lib/syli_atlas/recaps/emails.ex:363
 #, elixir-autogen, elixir-format
 msgid "actual"
 msgstr "observé"
@@ -506,7 +506,7 @@ msgid "downgrades"
 msgstr "abaisse"
 
 #: lib/syli_atlas/accounts/alert_emails.ex:365
-#: lib/syli_atlas/recaps/emails.ex:305
+#: lib/syli_atlas/recaps/emails.ex:362
 #, elixir-autogen, elixir-format
 msgid "estimate"
 msgstr "estimation"
@@ -542,7 +542,7 @@ msgid "positive"
 msgstr "positive"
 
 #: lib/syli_atlas/accounts/alert_emails.ex:364
-#: lib/syli_atlas/recaps/emails.ex:304
+#: lib/syli_atlas/recaps/emails.ex:361
 #, elixir-autogen, elixir-format
 msgid "projection"
 msgstr "projection"
@@ -647,56 +647,56 @@ msgstr "clôture sous %{price}"
 msgid "moves more than %{threshold} in a session"
 msgstr "varie de plus de %{threshold} en une séance"
 
-#: lib/syli_atlas/recaps/emails.ex:166
+#: lib/syli_atlas/recaps/emails.ex:192
 #, elixir-autogen, elixir-format
 msgid "%{agency} %{action} its rating: %{rating}, outlook %{outlook} · %{date}"
 msgstr "%{agency} %{action} sa note : %{rating}, perspective %{outlook} · %{date}"
 
-#: lib/syli_atlas/recaps/emails.ex:112
+#: lib/syli_atlas/recaps/emails.ex:124
 #, elixir-autogen, elixir-format
 msgid "%{countries}: your month"
 msgstr "%{countries} : votre mois"
 
-#: lib/syli_atlas/recaps/emails.ex:113
+#: lib/syli_atlas/recaps/emails.ex:125
 #, elixir-autogen, elixir-format
 msgid "%{countries}: your week"
 msgstr "%{countries} : votre semaine"
 
-#: lib/syli_atlas/recaps/emails.ex:139
+#: lib/syli_atlas/recaps/emails.ex:156
 #, elixir-autogen, elixir-format
 msgid "%{count} decision"
 msgid_plural "%{count} decisions"
 msgstr[0] "%{count} décision"
 msgstr[1] "%{count} décisions"
 
-#: lib/syli_atlas/recaps/emails.ex:120
+#: lib/syli_atlas/recaps/emails.ex:132
 #, elixir-autogen, elixir-format
 msgid "%{count} rating decision"
 msgid_plural "%{count} rating decisions"
 msgstr[0] "%{count} décision de notation"
 msgstr[1] "%{count} décisions de notation"
 
-#: lib/syli_atlas/recaps/emails.ex:203
+#: lib/syli_atlas/recaps/emails.ex:232
 #, elixir-autogen, elixir-format
 msgid "%{index}: %{change} %{over} · close of %{date}"
 msgstr "%{index} : %{change} %{over} · clôture du %{date}"
 
-#: lib/syli_atlas/recaps/emails.ex:220
+#: lib/syli_atlas/recaps/emails.ex:249
 #, elixir-autogen, elixir-format
 msgid "%{name}, fixed peg: 1 %{anchor} = %{rate} %{code}"
 msgstr "%{name}, parité fixe : 1 %{anchor} = %{rate} %{code}"
 
-#: lib/syli_atlas/recaps/emails.ex:154
+#: lib/syli_atlas/recaps/emails.ex:180
 #, elixir-autogen, elixir-format
 msgid "%{up} up, %{down} down"
 msgstr "%{up} en hausse, %{down} en baisse"
 
-#: lib/syli_atlas/recaps/emails.ex:231
+#: lib/syli_atlas/recaps/emails.ex:260
 #, elixir-autogen, elixir-format
 msgid "1 USD = %{rate} %{code}"
 msgstr "1 USD = %{rate} %{code}"
 
-#: lib/syli_atlas/recaps/emails.ex:94
+#: lib/syli_atlas/recaps/emails.ex:106
 #, elixir-autogen, elixir-format
 msgid "Change my countries"
 msgstr "Modifier mes pays"
@@ -721,18 +721,18 @@ msgstr "Confirmez votre inscription"
 msgid "Countries"
 msgstr "Pays"
 
-#: lib/syli_atlas/recaps/emails.ex:219
-#: lib/syli_atlas/recaps/emails.ex:230
+#: lib/syli_atlas/recaps/emails.ex:248
+#: lib/syli_atlas/recaps/emails.ex:259
 #, elixir-autogen, elixir-format
 msgid "Currency"
 msgstr "Monnaie"
 
-#: lib/syli_atlas/recaps/emails.ex:202
+#: lib/syli_atlas/recaps/emails.ex:231
 #, elixir-autogen, elixir-format
 msgid "Exchange"
 msgstr "Bourse"
 
-#: lib/syli_atlas/recaps/emails.ex:153
+#: lib/syli_atlas/recaps/emails.ex:179
 #, elixir-autogen, elixir-format
 msgid "Exchanges"
 msgstr "Bourses"
@@ -742,37 +742,37 @@ msgstr "Bourses"
 msgid "Frequency"
 msgstr "Fréquence"
 
-#: lib/syli_atlas/recaps/emails.ex:248
+#: lib/syli_atlas/recaps/emails.ex:280
 #, elixir-autogen, elixir-format
 msgid "Growth"
 msgstr "Croissance"
 
-#: lib/syli_atlas/recaps/emails.ex:157
+#: lib/syli_atlas/recaps/emails.ex:183
 #, elixir-autogen, elixir-format
 msgid "IMF"
 msgstr "FMI"
 
-#: lib/syli_atlas/recaps/emails.ex:243
+#: lib/syli_atlas/recaps/emails.ex:275
 #, elixir-autogen, elixir-format
 msgid "IMF landmarks, %{year} (%{status})"
 msgstr "Repères FMI, %{year} (%{status})"
 
-#: lib/syli_atlas/recaps/emails.ex:266
+#: lib/syli_atlas/recaps/emails.ex:300
 #, elixir-autogen, elixir-format
 msgid "IMF, World Economic Outlook"
 msgstr "FMI, Perspectives de l'économie mondiale"
 
-#: lib/syli_atlas/recaps/emails.ex:267
+#: lib/syli_atlas/recaps/emails.ex:303
 #, elixir-autogen, elixir-format
 msgid "IMF, World Economic Outlook (%{label})"
 msgstr "FMI, Perspectives de l'économie mondiale (%{label})"
 
-#: lib/syli_atlas/recaps/emails.ex:249
+#: lib/syli_atlas/recaps/emails.ex:281
 #, elixir-autogen, elixir-format
 msgid "Inflation"
 msgstr "Inflation"
 
-#: lib/syli_atlas/recaps/emails.ex:185
+#: lib/syli_atlas/recaps/emails.ex:213
 #, elixir-autogen, elixir-format
 msgid "No decision · %{current}"
 msgstr "aucune décision · %{current}"
@@ -789,12 +789,12 @@ msgstr[1] "Ce n'est pas vous ? Ne faites rien : sans clic, rien n'est envoyé et
 msgid "One click, and the recap starts."
 msgstr "Un clic, et le récap commence."
 
-#: lib/syli_atlas/recaps/emails.ex:250
+#: lib/syli_atlas/recaps/emails.ex:282
 #, elixir-autogen, elixir-format
 msgid "Public debt, % of GDP"
 msgstr "Dette publique, % du PIB"
 
-#: lib/syli_atlas/recaps/emails.ex:150
+#: lib/syli_atlas/recaps/emails.ex:176
 #, elixir-autogen, elixir-format
 msgid "Ratings"
 msgstr "Notations"
@@ -804,7 +804,7 @@ msgstr "Notations"
 msgid "Recap · confirmation"
 msgstr "Récap · confirmation"
 
-#: lib/syli_atlas/recaps/emails.ex:255
+#: lib/syli_atlas/recaps/emails.ex:288
 #, elixir-autogen, elixir-format
 msgid "See the profile"
 msgstr "Voir la fiche"
@@ -814,17 +814,17 @@ msgstr "Voir la fiche"
 msgid "Someone, most likely you, asked for the Syli Atlas recap at this address:"
 msgstr "Quelqu'un, sans doute vous, a demandé le récap de Syli Atlas pour cette adresse :"
 
-#: lib/syli_atlas/recaps/emails.ex:282
+#: lib/syli_atlas/recaps/emails.ex:322
 #, elixir-autogen, elixir-format
 msgid "Sources:"
 msgstr "Sources :"
 
-#: lib/syli_atlas/recaps/emails.ex:95
+#: lib/syli_atlas/recaps/emails.ex:107
 #, elixir-autogen, elixir-format
 msgid "Stop the recap"
 msgstr "Arrêter le récap"
 
-#: lib/syli_atlas/recaps/emails.ex:129
+#: lib/syli_atlas/recaps/emails.ex:146
 #, elixir-autogen, elixir-format
 msgid "The landmarks of your countries."
 msgstr "Les repères de vos pays."
@@ -834,86 +834,86 @@ msgstr "Les repères de vos pays."
 msgid "This address already receives the Syli Atlas recap. Confirm to replace its countries and frequency with these:"
 msgstr "Cette adresse reçoit déjà le récap de Syli Atlas. Confirmez pour remplacer ses pays et sa fréquence par ceux-ci :"
 
-#: lib/syli_atlas/recaps/emails.ex:74
+#: lib/syli_atlas/recaps/emails.ex:76
 #, elixir-autogen, elixir-format
 msgid "You receive this recap because you asked for it on Syli Atlas, without an account. Alerts on a threshold or a share price need a free space."
 msgstr "Vous recevez ce récap parce que vous l'avez demandé sur Syli Atlas, sans compte. Les alertes sur un seuil ou un cours demandent un espace gratuit."
 
-#: lib/syli_atlas/recaps/emails.ex:109
+#: lib/syli_atlas/recaps/emails.ex:121
 #, elixir-autogen, elixir-format
 msgid "Your %{count} countries"
 msgstr "Vos %{count} pays"
 
-#: lib/syli_atlas/recaps/emails.ex:87
+#: lib/syli_atlas/recaps/emails.ex:89
 #, elixir-autogen, elixir-format
 msgid "Your country this month"
 msgid_plural "Your %{count} countries this month"
 msgstr[0] "Votre pays ce mois-ci"
 msgstr[1] "Vos %{count} pays ce mois-ci"
 
-#: lib/syli_atlas/recaps/emails.ex:89
+#: lib/syli_atlas/recaps/emails.ex:96
 #, elixir-autogen, elixir-format
 msgid "Your country this week"
 msgid_plural "Your %{count} countries this week"
 msgstr[0] "Votre pays cette semaine"
 msgstr[1] "Vos %{count} pays cette semaine"
 
-#: lib/syli_atlas/recaps/emails.ex:302
+#: lib/syli_atlas/recaps/emails.ex:359
 #, elixir-autogen, elixir-format
 msgid "every Monday"
 msgstr "chaque lundi"
 
-#: lib/syli_atlas/recaps/emails.ex:277
+#: lib/syli_atlas/recaps/emails.ex:315
 #, elixir-autogen, elixir-format
 msgid "exchanges and exchange rates: %{credit}, closing prices, not real time"
 msgstr "bourses et change : %{credit}, cours de clôture, pas de temps réel"
 
-#: lib/syli_atlas/recaps/emails.ex:123
+#: lib/syli_atlas/recaps/emails.ex:140
 #, elixir-autogen, elixir-format
 msgid "exchanges: %{up} up, %{down} down"
 msgstr "bourses : %{up} en hausse, %{down} en baisse"
 
-#: lib/syli_atlas/recaps/emails.ex:125
+#: lib/syli_atlas/recaps/emails.ex:142
 #, elixir-autogen, elixir-format
 msgid "new IMF figures"
 msgstr "nouveaux chiffres du FMI"
 
-#: lib/syli_atlas/recaps/emails.ex:145
+#: lib/syli_atlas/recaps/emails.ex:165
 #, elixir-autogen, elixir-format
 msgid "new edition: %{label}"
 msgstr "nouvelle édition : %{label}"
 
-#: lib/syli_atlas/recaps/emails.ex:137
+#: lib/syli_atlas/recaps/emails.ex:154
 #, elixir-autogen, elixir-format
 msgid "no decision"
 msgstr "aucune décision"
 
-#: lib/syli_atlas/recaps/emails.ex:146
+#: lib/syli_atlas/recaps/emails.ex:170
 #, elixir-autogen, elixir-format
 msgid "no new edition (latest: %{label})"
 msgstr "pas de nouvelle édition (dernière : %{label})"
 
-#: lib/syli_atlas/recaps/emails.ex:181
+#: lib/syli_atlas/recaps/emails.ex:207
 #, elixir-autogen, elixir-format
 msgid "not rated"
 msgstr "pas de note"
 
-#: lib/syli_atlas/recaps/emails.ex:301
+#: lib/syli_atlas/recaps/emails.ex:358
 #, elixir-autogen, elixir-format
 msgid "on the 1st of each month"
 msgstr "le 1er de chaque mois"
 
-#: lib/syli_atlas/recaps/emails.ex:198
+#: lib/syli_atlas/recaps/emails.ex:227
 #, elixir-autogen, elixir-format
 msgid "over the month"
 msgstr "sur le mois"
 
-#: lib/syli_atlas/recaps/emails.ex:199
+#: lib/syli_atlas/recaps/emails.ex:228
 #, elixir-autogen, elixir-format
 msgid "over the week"
 msgstr "sur la semaine"
 
-#: lib/syli_atlas/recaps/emails.ex:286
+#: lib/syli_atlas/recaps/emails.ex:326
 #, elixir-autogen, elixir-format
 msgid "rating agencies"
 msgstr "agences de notation"

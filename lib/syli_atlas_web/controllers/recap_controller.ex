@@ -23,12 +23,14 @@ defmodule SyliAtlasWeb.RecapController do
 
   def new(conn, params) do
     locale = conn.assigns.locale
-    picked = params |> Map.get("pays", params["country"] || "") |> String.upcase() |> List.wrap()
+    # ?pays=CIV from a country page; ?email= from the footer band without JavaScript.
+    picked = params |> Map.get("pays", params["country"] || "") |> to_string() |> String.upcase()
+    email = if is_binary(params["email"]), do: String.slice(params["email"], 0, 254), else: ""
 
     render_form(
       conn,
       locale,
-      %{"countries" => picked, "frequency" => "weekly", "email" => ""},
+      %{"countries" => List.wrap(picked), "frequency" => "weekly", "email" => email},
       nil
     )
   end

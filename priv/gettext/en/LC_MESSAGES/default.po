@@ -110,8 +110,8 @@ msgstr ""
 msgid "Apply"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:756
-#: lib/syli_atlas_web/components/layouts.ex:771
+#: lib/syli_atlas_web/components/layouts.ex:788
+#: lib/syli_atlas_web/components/layouts.ex:803
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr ""
@@ -163,7 +163,7 @@ msgstr ""
 
 #: lib/syli_atlas_web/components/layouts.ex:193
 #: lib/syli_atlas_web/components/layouts.ex:232
-#: lib/syli_atlas_web/components/layouts.ex:349
+#: lib/syli_atlas_web/components/layouts.ex:375
 #: lib/syli_atlas_web/components/map_components.ex:270
 #: lib/syli_atlas_web/controllers/compare_controller.ex:81
 #: lib/syli_atlas_web/controllers/compare_controller.ex:104
@@ -196,8 +196,10 @@ msgstr ""
 
 #: lib/syli_atlas_web/components/layouts.ex:170
 #: lib/syli_atlas_web/components/layouts.ex:200
-#: lib/syli_atlas_web/components/layouts.ex:334
-#: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:21
+#: lib/syli_atlas_web/components/layouts.ex:360
+#: lib/syli_atlas_web/controllers/recap_html.ex:48
+#: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:9
+#: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:24
 #, elixir-autogen, elixir-format
 msgid "Countries"
 msgstr ""
@@ -258,7 +260,7 @@ msgstr ""
 msgid "Five regions, very different paths."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:332
+#: lib/syli_atlas_web/components/layouts.ex:358
 #, elixir-autogen, elixir-format
 msgid "Footer"
 msgstr ""
@@ -408,7 +410,7 @@ msgid "Inflation"
 msgstr ""
 
 #: lib/syli_atlas_web/components/layouts.ex:77
-#: lib/syli_atlas_web/components/layouts.ex:624
+#: lib/syli_atlas_web/components/layouts.ex:656
 #: lib/syli_atlas_web/components/page_components.ex:203
 #, elixir-autogen, elixir-format
 msgid "Install the app"
@@ -446,8 +448,8 @@ msgid "Method"
 msgstr ""
 
 #: lib/syli_atlas_web/components/layouts.ex:226
-#: lib/syli_atlas_web/components/layouts.ex:364
-#: lib/syli_atlas_web/components/layouts.ex:620
+#: lib/syli_atlas_web/components/layouts.ex:390
+#: lib/syli_atlas_web/components/layouts.ex:652
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:242
 #: lib/syli_atlas_web/controllers/page_controller.ex:140
 #: lib/syli_atlas_web/controllers/page_controller.ex:143
@@ -480,7 +482,7 @@ msgstr ""
 msgid "Often viewed:"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:621
+#: lib/syli_atlas_web/components/layouts.ex:653
 #: lib/syli_atlas_web/controllers/page_html/home.html.heex:151
 #, elixir-autogen, elixir-format
 msgid "Open data"
@@ -507,7 +509,7 @@ msgstr ""
 msgid "Population %{year}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:365
+#: lib/syli_atlas_web/components/layouts.ex:391
 #: lib/syli_atlas_web/controllers/api_doc_controller.ex:47
 #: lib/syli_atlas_web/controllers/page_html/method.html.heex:149
 #, elixir-autogen, elixir-format
@@ -532,7 +534,7 @@ msgstr ""
 msgid "Public debt of a group is weighted by GDP in dollars."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:350
+#: lib/syli_atlas_web/components/layouts.ex:376
 #: lib/syli_atlas_web/controllers/area_html/questions.html.heex:4
 #: lib/syli_atlas_web/controllers/area_html/show.html.heex:52
 #: lib/syli_atlas_web/controllers/questions_controller.ex:35
@@ -596,6 +598,7 @@ msgid "Region"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/page_html/home.html.heex:84
+#: lib/syli_atlas_web/controllers/recap_html.ex:33
 #: lib/syli_atlas_web/controllers/regions_controller.ex:43
 #: lib/syli_atlas_web/controllers/regions_html/index.html.heex:8
 #: lib/syli_atlas_web/offline_pages.ex:25
@@ -650,7 +653,7 @@ msgstr ""
 msgid "Side by side, over the same period."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:658
+#: lib/syli_atlas_web/components/layouts.ex:690
 #: lib/syli_atlas_web/controllers/session_controller.ex:112
 #, elixir-autogen, elixir-format
 msgid "Sign in"
@@ -673,7 +676,7 @@ msgstr ""
 msgid "Skip to content"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:763
+#: lib/syli_atlas_web/components/layouts.ex:795
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr ""
@@ -697,7 +700,7 @@ msgstr ""
 msgid "Start with a question"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:545
+#: lib/syli_atlas_web/components/layouts.ex:577
 #, elixir-autogen, elixir-format
 msgid "Switch theme"
 msgstr ""
@@ -764,7 +767,7 @@ msgstr ""
 msgid "Volume of output, excluding inflation and exchange rates. 2015 = 100."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:748
+#: lib/syli_atlas_web/components/layouts.ex:780
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr ""
@@ -880,7 +883,7 @@ msgstr ""
 msgid "Choose"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:603
+#: lib/syli_atlas_web/components/layouts.ex:635
 #, elixir-autogen, elixir-format
 msgid "Close the menu"
 msgstr ""
@@ -896,7 +899,7 @@ msgid "Indicators in %{year}"
 msgstr ""
 
 #: lib/syli_atlas_web/components/layouts.ex:91
-#: lib/syli_atlas_web/components/layouts.ex:594
+#: lib/syli_atlas_web/components/layouts.ex:626
 #, elixir-autogen, elixir-format
 msgid "Menu"
 msgstr ""
@@ -1228,50 +1231,50 @@ msgstr ""
 msgid "World, in dollars since %{year}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:678
+#: lib/syli_atlas_web/components/layouts.ex:710
 #, elixir-autogen, elixir-format
 msgid "A new version of Syli Atlas is available"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:684
+#: lib/syli_atlas_web/components/layouts.ex:716
 #, elixir-autogen, elixir-format
 msgid "Back online"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:433
-#: lib/syli_atlas_web/components/layouts.ex:520
-#: lib/syli_atlas_web/components/layouts.ex:675
+#: lib/syli_atlas_web/components/layouts.ex:459
+#: lib/syli_atlas_web/components/layouts.ex:553
+#: lib/syli_atlas_web/components/layouts.ex:707
 #: lib/syli_atlas_web/controllers/account_html/security.html.heex:76
 #, elixir-autogen, elixir-format
 msgid "Close"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:688
+#: lib/syli_atlas_web/components/layouts.ex:720
 #, elixir-autogen, elixir-format
 msgid "In Safari, tap Share, then « Add to Home Screen »."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:689
+#: lib/syli_atlas_web/components/layouts.ex:721
 #, elixir-autogen, elixir-format
 msgid "Install"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:685
+#: lib/syli_atlas_web/components/layouts.ex:717
 #, elixir-autogen, elixir-format
 msgid "Install Syli Atlas"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:677
+#: lib/syli_atlas_web/components/layouts.ex:709
 #, elixir-autogen, elixir-format
 msgid "Later"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:680
+#: lib/syli_atlas_web/components/layouts.ex:712
 #, elixir-autogen, elixir-format
 msgid "New IMF figures are online"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:690
+#: lib/syli_atlas_web/components/layouts.ex:722
 #, elixir-autogen, elixir-format
 msgid "Not now"
 msgstr ""
@@ -1281,37 +1284,37 @@ msgstr ""
 msgid "Notifications"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:687
+#: lib/syli_atlas_web/components/layouts.ex:719
 #, elixir-autogen, elixir-format
 msgid "One tap from your home screen, readable offline, no app store."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:683
+#: lib/syli_atlas_web/components/layouts.ex:715
 #, elixir-autogen, elixir-format
 msgid "Pages you have already opened stay readable."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:676
+#: lib/syli_atlas_web/components/layouts.ex:708
 #, elixir-autogen, elixir-format
 msgid "Refresh"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:679
+#: lib/syli_atlas_web/components/layouts.ex:711
 #, elixir-autogen, elixir-format
 msgid "Refresh to see it. Nothing you are reading will be lost."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:681
+#: lib/syli_atlas_web/components/layouts.ex:713
 #, elixir-autogen, elixir-format
 msgid "Refresh to see the latest edition."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:691
+#: lib/syli_atlas_web/components/layouts.ex:723
 #, elixir-autogen, elixir-format
 msgid "Syli Atlas is installed"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:682
+#: lib/syli_atlas_web/components/layouts.ex:714
 #, elixir-autogen, elixir-format
 msgid "You are offline"
 msgstr ""
@@ -1391,11 +1394,12 @@ msgstr ""
 
 #: lib/syli_atlas_web/controllers/market_html.ex:8
 #: lib/syli_atlas_web/controllers/ratings_html.ex:9
+#: lib/syli_atlas_web/controllers/recap_html.ex:35
 #, elixir-autogen, elixir-format
 msgid "All"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:343
+#: lib/syli_atlas_web/components/layouts.ex:369
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:266
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:61
 #, elixir-autogen, elixir-format
@@ -1821,7 +1825,7 @@ msgstr ""
 
 #: lib/syli_atlas_web/components/layouts.ex:177
 #: lib/syli_atlas_web/components/layouts.ex:205
-#: lib/syli_atlas_web/components/layouts.ex:341
+#: lib/syli_atlas_web/components/layouts.ex:367
 #: lib/syli_atlas_web/components/ticker_components.ex:82
 #: lib/syli_atlas_web/controllers/market_controller.ex:58
 #: lib/syli_atlas_web/controllers/market_controller.ex:100
@@ -4070,7 +4074,7 @@ msgstr ""
 msgid "Adults with an account"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:337
+#: lib/syli_atlas_web/components/layouts.ex:363
 #, elixir-autogen, elixir-format
 msgid "All 54 countries"
 msgstr ""
@@ -4086,7 +4090,7 @@ msgstr ""
 msgid "Convergence criteria"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:348
+#: lib/syli_atlas_web/components/layouts.ex:374
 #: lib/syli_atlas_web/components/profile_components.ex:775
 #: lib/syli_atlas_web/components/profile_components.ex:825
 #: lib/syli_atlas_web/components/profile_components.ex:826
@@ -4146,12 +4150,12 @@ msgstr ""
 msgid "Growth %{year}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:377
+#: lib/syli_atlas_web/components/layouts.ex:403
 #, elixir-autogen, elixir-format
 msgid "IMF"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:378
+#: lib/syli_atlas_web/components/layouts.ex:404
 #: lib/syli_atlas_web/components/profile_components.ex:629
 #, elixir-autogen, elixir-format
 msgid "IMF debt sustainability analyses"
@@ -4177,7 +4181,7 @@ msgstr ""
 msgid "In the region: %{region}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:386
+#: lib/syli_atlas_web/components/layouts.ex:412
 #, elixir-autogen, elixir-format
 msgid "Information, not investment advice. Figures are those of the sources; totals and rankings are Syli Atlas calculations."
 msgstr ""
@@ -4270,7 +4274,7 @@ msgstr ""
 msgid "See the details"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:369
+#: lib/syli_atlas_web/components/layouts.ex:395
 #, elixir-autogen, elixir-format
 msgid "Site map"
 msgstr ""
@@ -4300,7 +4304,7 @@ msgstr ""
 msgid "Syli Atlas calculation from IMF figures (%{edition}) · GDP and population: sums · growth: weighted by GDP in PPP · debt: weighted by GDP in dollars · membership as of %{date}: ECOWAS without Burkina Faso, Mali and Niger, members of the AES"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:392
+#: lib/syli_atlas_web/components/layouts.ex:418
 #, elixir-autogen, elixir-format
 msgid "Terms of each source"
 msgstr ""
@@ -4331,7 +4335,7 @@ msgstr ""
 msgid "World Bank"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:378
+#: lib/syli_atlas_web/components/layouts.ex:404
 #: lib/syli_atlas_web/components/profile_components.ex:627
 #, elixir-autogen, elixir-format
 msgid "World Bank (CC BY 4.0)"
@@ -4352,7 +4356,7 @@ msgstr ""
 msgid "public debt, % of GDP, %{year} (IMF)"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:380
+#: lib/syli_atlas_web/components/layouts.ex:406
 #: lib/syli_atlas_web/components/profile_components.ex:630
 #, elixir-autogen, elixir-format
 msgid "rating agencies"
@@ -4383,7 +4387,7 @@ msgstr ""
 msgid "Growth %{year}: %{value}"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:377
+#: lib/syli_atlas_web/components/layouts.ex:403
 #, elixir-autogen, elixir-format
 msgid "Sources:"
 msgstr ""
@@ -4552,7 +4556,7 @@ msgstr ""
 msgid "Budget balance (% of GDP)"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:521
+#: lib/syli_atlas_web/components/layouts.ex:552
 #: lib/syli_atlas_web/controllers/session_html/code.html.heex:9
 #, elixir-autogen, elixir-format
 msgid "Change address"
@@ -4643,8 +4647,9 @@ msgstr ""
 msgid "Digest of favourites"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:461
-#: lib/syli_atlas_web/controllers/recap_html/new.html.heex:16
+#: lib/syli_atlas_web/components/layouts.ex:337
+#: lib/syli_atlas_web/components/layouts.ex:493
+#: lib/syli_atlas_web/controllers/recap_html/new.html.heex:23
 #: lib/syli_atlas_web/controllers/session_html/new.html.heex:42
 #, elixir-autogen, elixir-format
 msgid "Email address"
@@ -4671,9 +4676,9 @@ msgstr ""
 msgid "Enter the code you received"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:484
+#: lib/syli_atlas_web/components/layouts.ex:516
 #: lib/syli_atlas_web/controllers/account_html.ex:92
-#: lib/syli_atlas_web/controllers/recap_html.ex:45
+#: lib/syli_atlas_web/controllers/recap_html.ex:90
 #, elixir-autogen, elixir-format
 msgid "Every Monday"
 msgstr ""
@@ -4712,11 +4717,12 @@ msgstr ""
 msgid "Followed"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:481
+#: lib/syli_atlas_web/components/layouts.ex:513
 #: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:103
 #: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:198
-#: lib/syli_atlas_web/controllers/recap_html.ex:42
-#: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:23
+#: lib/syli_atlas_web/controllers/recap_html.ex:81
+#: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:11
+#: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:26
 #, elixir-autogen, elixir-format
 msgid "Frequency"
 msgstr ""
@@ -4772,8 +4778,8 @@ msgstr ""
 msgid "Last used:"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:648
-#: lib/syli_atlas_web/components/layouts.ex:656
+#: lib/syli_atlas_web/components/layouts.ex:680
+#: lib/syli_atlas_web/components/layouts.ex:688
 #: lib/syli_atlas_web/controllers/account_html.ex:30
 #: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:4
 #: lib/syli_atlas_web/controllers/account_html/favorites.html.heex:4
@@ -4895,7 +4901,7 @@ msgid "Resume"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/account_html/security.html.heex:129
-#: lib/syli_atlas_web/controllers/recap_html/manage.html.heex:15
+#: lib/syli_atlas_web/controllers/recap_html/manage.html.heex:20
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr ""
@@ -4937,7 +4943,7 @@ msgstr ""
 msgid "Sign-in · step 1"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:429
+#: lib/syli_atlas_web/components/layouts.ex:455
 #: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:5
 #, elixir-autogen, elixir-format
 msgid "Steps"
@@ -4958,7 +4964,7 @@ msgstr ""
 msgid "The email code is verified. Your account is an administrator: access also asks for this device's fingerprint, face or PIN."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_controller.ex:261
+#: lib/syli_atlas_web/controllers/recap_controller.ex:269
 #: lib/syli_atlas_web/controllers/session_controller.ex:146
 #, elixir-autogen, elixir-format
 msgid "The email could not be sent. Try again in a moment."
@@ -5336,17 +5342,17 @@ msgstr ""
 msgid "Accessibility statement of Syli Atlas: compliance with the RGAA, known barriers and how to report one."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:781
+#: lib/syli_atlas_web/components/layouts.ex:813
 #, elixir-autogen, elixir-format
 msgid "Accessibility: fully compliant"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:783
+#: lib/syli_atlas_web/components/layouts.ex:815
 #, elixir-autogen, elixir-format
 msgid "Accessibility: not compliant"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:782
+#: lib/syli_atlas_web/components/layouts.ex:814
 #, elixir-autogen, elixir-format
 msgid "Accessibility: partially compliant"
 msgstr ""
@@ -5806,7 +5812,7 @@ msgstr ""
 msgid "(IMF)."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:363
+#: lib/syli_atlas_web/components/layouts.ex:389
 #: lib/syli_atlas_web/controllers/area_html/questions.html.heex:22
 #: lib/syli_atlas_web/controllers/page_controller.ex:107
 #, elixir-autogen, elixir-format
@@ -6147,7 +6153,7 @@ msgstr ""
 msgid "Population ranking"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:353
+#: lib/syli_atlas_web/components/layouts.ex:379
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Rankings"
 msgstr ""
@@ -6223,7 +6229,7 @@ msgstr ""
 msgid "Source figures keep the terms of their source, listed above: cite the IMF, the World Bank, CEPII or the agency along with Syli Atlas. Stock prices are the exception: their source (MansaAPI) allows display on this site only, so they are not covered by this licence and may not be redistributed."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:389
+#: lib/syli_atlas_web/components/layouts.ex:415
 #, elixir-autogen, elixir-format
 msgid "Syli Atlas calculations: CC BY 4.0"
 msgstr ""
@@ -6233,7 +6239,7 @@ msgstr ""
 msgid "What Syli Atlas computes and writes (regional and community totals, ranks, changes over a period, answer sentences, charts and share images) is under the Creative Commons Attribution 4.0 licence (CC BY 4.0): you may copy, adapt and republish it, commercial use included, as long as you credit Syli Atlas with a link to the page."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:475
+#: lib/syli_atlas_web/components/layouts.ex:507
 #, elixir-autogen, elixir-format
 msgid "+ Another country"
 msgstr ""
@@ -6243,12 +6249,12 @@ msgstr ""
 msgid "A confirmation link works for 7 days."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:473
+#: lib/syli_atlas_web/components/layouts.ex:505
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Add a country"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:19
+#: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:22
 #, elixir-autogen, elixir-format
 msgid "Address"
 msgstr ""
@@ -6263,108 +6269,92 @@ msgstr ""
 msgid "Ask for the recap again"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:12
+#: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:15
 #, elixir-autogen, elixir-format
 msgid "Change my countries"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_controller.ex:217
+#: lib/syli_atlas_web/controllers/recap_controller.ex:224
 #: lib/syli_atlas_web/controllers/recap_html/manage.html.heex:6
 #, elixir-autogen, elixir-format
 msgid "Change my recap"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_controller.ex:272
+#: lib/syli_atlas_web/controllers/recap_controller.ex:280
 #, elixir-autogen, elixir-format
 msgid "Check the form."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_controller.ex:44
+#: lib/syli_atlas_web/controllers/recap_controller.ex:51
 #, elixir-autogen, elixir-format
 msgid "Check your inbox"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_controller.ex:127
-#: lib/syli_atlas_web/controllers/recap_controller.ex:269
+#: lib/syli_atlas_web/controllers/recap_controller.ex:134
+#: lib/syli_atlas_web/controllers/recap_controller.ex:277
 #, elixir-autogen, elixir-format
 msgid "Choose between 1 and %{max} countries."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:323
-#, elixir-autogen, elixir-format
-msgid "Choose your countries: ratings, stock exchange, currency and IMF landmarks, every Monday by email. Without an account."
-msgstr ""
-
-#: lib/syli_atlas_web/components/layouts.ex:513
+#: lib/syli_atlas_web/components/layouts.ex:545
 #: lib/syli_atlas_web/controllers/recap_html/sent.html.heex:6
 #, elixir-autogen, elixir-format
 msgid "Confirm in your inbox"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:27
+#: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:30
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Confirm my recap"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_controller.ex:65
-#: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:17
+#: lib/syli_atlas_web/controllers/recap_controller.ex:72
+#: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:20
 #, elixir-autogen, elixir-format
 msgid "Confirm your recap"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:431
+#: lib/syli_atlas_web/components/layouts.ex:457
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Confirmation"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:465
+#: lib/syli_atlas_web/components/layouts.ex:497
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Countries of the recap"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_controller.ex:266
+#: lib/syli_atlas_web/controllers/recap_controller.ex:274
 #, elixir-autogen, elixir-format
 msgid "Enter a valid email address."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_controller.ex:205
+#: lib/syli_atlas_web/controllers/recap_controller.ex:212
 #, elixir-autogen, elixir-format
 msgid "Every Monday, the rating decisions, the stock exchange, the currency and the IMF landmarks of the African countries you choose. Free, without an account."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:346
+#: lib/syli_atlas_web/components/layouts.ex:372
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Explore"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:9
-#, elixir-autogen, elixir-format, fuzzy
-msgid "First one"
-msgstr ""
-
-#: lib/syli_atlas_web/controllers/recap_html/new.html.heex:8
-#, elixir-autogen, elixir-format
-msgid "For each country you choose: the rating decisions, the stock exchange and the currency of the week, and the IMF landmarks. Free, without an account."
-msgstr ""
-
-#: lib/syli_atlas_web/components/layouts.ex:454
+#: lib/syli_atlas_web/components/layouts.ex:486
 #, elixir-autogen, elixir-format
 msgid "For each country: the rating decisions, the stock exchange and the currency of the week, and the IMF landmarks."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:328
-#: lib/syli_atlas_web/components/layouts.ex:492
-#: lib/syli_atlas_web/controllers/recap_html/new.html.heex:31
+#: lib/syli_atlas_web/components/layouts.ex:524
+#: lib/syli_atlas_web/controllers/recap_html/new.html.heex:42
 #, elixir-autogen, elixir-format
 msgid "Get the recap"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:396
+#: lib/syli_atlas_web/components/layouts.ex:422
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:512
+#: lib/syli_atlas_web/components/layouts.ex:544
 #: lib/syli_atlas_web/controllers/recap_html/sent.html.heex:5
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Last step"
@@ -6375,29 +6365,29 @@ msgstr ""
 msgid "Nothing received? Check your spam, or"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:524
+#: lib/syli_atlas_web/components/layouts.ex:556
 #, elixir-autogen, elixir-format
 msgid "Nothing received? Check your spam. The link is valid for 7 days."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:488
-#: lib/syli_atlas_web/controllers/recap_html.ex:49
+#: lib/syli_atlas_web/components/layouts.ex:520
+#: lib/syli_atlas_web/controllers/recap_html.ex:101
 #, elixir-autogen, elixir-format, fuzzy
 msgid "On the 1st of each month"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:515
+#: lib/syli_atlas_web/components/layouts.ex:547
 #: lib/syli_atlas_web/controllers/recap_html/sent.html.heex:8
 #, elixir-autogen, elixir-format
 msgid "One click is enough: without it, no recap goes out."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_controller.ex:235
+#: lib/syli_atlas_web/controllers/recap_controller.ex:242
 #, elixir-autogen, elixir-format
 msgid "Recap"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_controller.ex:86
+#: lib/syli_atlas_web/controllers/recap_controller.ex:93
 #, elixir-autogen, elixir-format
 msgid "Recap confirmed"
 msgstr ""
@@ -6407,128 +6397,107 @@ msgstr ""
 msgid "Recap stopped"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:16
+#: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:19
 #, elixir-autogen, elixir-format
 msgid "Recap · confirmation"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_html/manage.html.heex:10
+#: lib/syli_atlas_web/controllers/recap_html/manage.html.heex:12
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Saved."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_controller.ex:143
-#: lib/syli_atlas_web/controllers/recap_controller.ex:163
-#: lib/syli_atlas_web/controllers/recap_controller.ex:181
-#: lib/syli_atlas_web/controllers/recap_html/manage.html.heex:16
-#: lib/syli_atlas_web/controllers/recap_html/stop.html.heex:11
-#: lib/syli_atlas_web/controllers/recap_html/stop.html.heex:18
+#: lib/syli_atlas_web/controllers/recap_controller.ex:150
+#: lib/syli_atlas_web/controllers/recap_controller.ex:170
+#: lib/syli_atlas_web/controllers/recap_controller.ex:188
+#: lib/syli_atlas_web/controllers/recap_html/manage.html.heex:18
+#: lib/syli_atlas_web/controllers/recap_html/stop.html.heex:15
+#: lib/syli_atlas_web/controllers/recap_html/stop.html.heex:21
 #, elixir-autogen, elixir-format
 msgid "Stop the recap"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_html/stop.html.heex:9
+#: lib/syli_atlas_web/controllers/recap_html/stop.html.heex:12
 #, elixir-autogen, elixir-format
 msgid "Subscribe again"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:358
+#: lib/syli_atlas_web/components/layouts.ex:384
 #, elixir-autogen, elixir-format
 msgid "The %{count} rankings"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:321
-#: lib/syli_atlas_web/components/layouts.ex:449
+#: lib/syli_atlas_web/components/layouts.ex:331
+#: lib/syli_atlas_web/components/layouts.ex:481
+#: lib/syli_atlas_web/controllers/recap_html/manage.html.heex:5
+#: lib/syli_atlas_web/controllers/recap_html/new.html.heex:5
 #, elixir-autogen, elixir-format
 msgid "The Monday recap"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_html/sent.html.heex:15
+#: lib/syli_atlas_web/controllers/recap_html/sent.html.heex:14
 #, elixir-autogen, elixir-format
 msgid "The link is valid for 7 days."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:362
+#: lib/syli_atlas_web/components/layouts.ex:388
 #, elixir-autogen, elixir-format
 msgid "The project"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/recap_html/invalid.html.heex:5
-#: lib/syli_atlas_web/controllers/recap_html/manage.html.heex:5
-#: lib/syli_atlas_web/controllers/recap_html/new.html.heex:5
 #: lib/syli_atlas_web/controllers/recap_html/stop.html.heex:5
 #, elixir-autogen, elixir-format, fuzzy
 msgid "The recap"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_controller.ex:259
+#: lib/syli_atlas_web/controllers/recap_controller.ex:267
 #, elixir-autogen, elixir-format
 msgid "The recap is not open yet: Syli Atlas cannot send emails for now."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_controller.ex:196
+#: lib/syli_atlas_web/controllers/recap_controller.ex:203
 #, elixir-autogen, elixir-format
 msgid "The recap of your countries"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_html/stop.html.heex:13
+#: lib/syli_atlas_web/controllers/recap_html/stop.html.heex:17
 #, elixir-autogen, elixir-format
 msgid "The recap sent to"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_controller.ex:256
+#: lib/syli_atlas_web/controllers/recap_controller.ex:264
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Too many requests for this address. Try again in an hour."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_html.ex:23
+#: lib/syli_atlas_web/controllers/recap_html.ex:65
 #, elixir-autogen, elixir-format
 msgid "Up to %{max}. The recap starts with those that had news."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_html/new.html.heex:34
-#, elixir-autogen, elixir-format
-msgid "We send one email to confirm the address: nothing goes out before you click its link. One click in each recap to stop it."
-msgstr ""
-
-#: lib/syli_atlas_web/components/layouts.ex:515
+#: lib/syli_atlas_web/components/layouts.ex:547
 #: lib/syli_atlas_web/controllers/recap_html/sent.html.heex:8
 #, elixir-autogen, elixir-format
 msgid "We sent a link to"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_html/new.html.heex:39
-#, elixir-autogen, elixir-format
-msgid "What we keep"
-msgstr ""
-
-#: lib/syli_atlas_web/components/layouts.ex:494
+#: lib/syli_atlas_web/components/layouts.ex:526
 #, elixir-autogen, elixir-format
 msgid "Without an account or password. One click in each email to stop."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_html/stop.html.heex:8
+#: lib/syli_atlas_web/controllers/recap_html/stop.html.heex:9
 #, elixir-autogen, elixir-format
 msgid "Your address is deleted: you will receive nothing more from the recap."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_html/new.html.heex:41
-#, elixir-autogen, elixir-format
-msgid "Your address, your countries, the frequency and the language, nothing else: no name, no IP address, no tracking of opens or clicks. Stopping the recap deletes the address; an address never confirmed is deleted after 7 days. The emails go out through Resend."
-msgstr ""
-
-#: lib/syli_atlas_web/components/layouts.ex:430
-#: lib/syli_atlas_web/controllers/recap_html.ex:22
+#: lib/syli_atlas_web/components/layouts.ex:456
 #, elixir-autogen, elixir-format
 msgid "Your countries"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_html/new.html.heex:6
-#, elixir-autogen, elixir-format
-msgid "Your countries, every Monday, in your inbox"
-msgstr ""
-
-#: lib/syli_atlas_web/components/layouts.ex:451
+#: lib/syli_atlas_web/components/layouts.ex:483
 #, elixir-autogen, elixir-format
 msgid "Your countries, every week, in your inbox"
 msgstr ""
@@ -6553,12 +6522,84 @@ msgstr ""
 msgid "on the 1st of each month"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_html/stop.html.heex:13
+#: lib/syli_atlas_web/controllers/recap_html/stop.html.heex:18
 #, elixir-autogen, elixir-format
 msgid "stops, and the address is deleted."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:13
+#: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:16
 #, elixir-autogen, elixir-format
 msgid "the same link is at the bottom of every recap."
+msgstr ""
+
+#: lib/syli_atlas_web/components/layouts.ex:348
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Choose my countries"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/recap_html.ex:78
+#, elixir-autogen, elixir-format
+msgid "Choose the rhythm"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/recap_html.ex:31
+#, elixir-autogen, elixir-format
+msgid "Choose your countries"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/recap_html.ex:117
+#: lib/syli_atlas_web/controllers/recap_html.ex:131
+#, elixir-autogen, elixir-format
+msgid "No country chosen yet"
+msgstr ""
+
+#: lib/syli_atlas_web/components/layouts.ex:333
+#, elixir-autogen, elixir-format
+msgid "Ratings, stock exchange, currency and IMF landmarks of your countries, every Monday."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/recap_html.ex:102
+#, elixir-autogen, elixir-format
+msgid "The past month, in brief"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/recap_html/new.html.heex:8
+#, elixir-autogen, elixir-format
+msgid "The rating decisions, the stock exchange, the currency and the IMF landmarks of the countries you choose. Free, without an account."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/recap_html/new.html.heex:35
+#, elixir-autogen, elixir-format
+msgid "We keep the address, the countries, the rhythm and the language, nothing else: no name, no IP address, no tracking of opens or clicks. One email to confirm, nothing goes out before; stopping the recap deletes the address, an address never confirmed is deleted after 7 days."
+msgstr ""
+
+#: lib/syli_atlas_web/components/layouts.ex:352
+#, elixir-autogen, elixir-format
+msgid "Without an account. The next step opens the choice of countries, the address already filled in."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/recap_html/new.html.heex:21
+#, elixir-autogen, elixir-format
+msgid "Your address"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/recap_html/new.html.heex:6
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Your countries, every Monday"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/recap_html.ex:122
+#, elixir-autogen, elixir-format
+msgid "of %{max} countries"
+msgstr ""
+
+#: lib/syli_atlas_web/components/layouts.ex:345
+#: lib/syli_atlas_web/controllers/recap_html/new.html.heex:30
+#, elixir-autogen, elixir-format
+msgid "you@example.com"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/recap_html.ex:91
+#, elixir-autogen, elixir-format
+msgid "The news of the past 7 days"
 msgstr ""

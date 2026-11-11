@@ -22,10 +22,14 @@ defmodule SyliAtlasWeb.RecapControllerTest do
     token
   end
 
-  test "the footer offers the recap: a link to its page and the dialog", %{conn: conn} do
+  test "the footer offers the recap: a form to its page and the dialog", %{conn: conn} do
     d = doc(conn, "/fr")
 
-    assert LazyHTML.query(d, ~s(#footer-recap a[href="/fr/recap"][data-recap-open]))
+    # Without JavaScript, the band's address goes to the recap page.
+    assert LazyHTML.query(
+             d,
+             ~s(#footer-recap form[action="/fr/recap"][method="get"] input[name="email"])
+           )
            |> Enum.count() == 1
 
     assert LazyHTML.query(d, ~s(#recap-dialog form[action="/fr/recap"])) |> Enum.count() == 1
@@ -37,8 +41,11 @@ defmodule SyliAtlasWeb.RecapControllerTest do
 
   test "the page works without JavaScript: a form, then « check your inbox »",
        %{conn: conn, email: email} do
-    d = doc(conn, "/fr/recap?pays=civ")
+    d = doc(conn, "/fr/recap?pays=civ&email=" <> email)
     assert LazyHTML.query(d, ~s(#recap-form input[value="CIV"][checked])) |> Enum.count() == 1
+    assert LazyHTML.query(d, ~s(#recap-email[value="#{email}"])) |> Enum.count() == 1
+    assert LazyHTML.text(LazyHTML.query(d, "[data-recap-names]")) == "Côte d'Ivoire"
+    assert LazyHTML.query(d, "#recap-form .recap-step") |> Enum.count() == 3
     assert LazyHTML.query(d, "#recap-form input[name='countries[]']") |> Enum.count() == 54
 
     html =

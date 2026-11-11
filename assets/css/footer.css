@@ -6,13 +6,22 @@
 .footer-sun { height: 3px; background: linear-gradient(90deg, #ffb547, #ff6b3d 22%, #f0347a 45%, #8a3ffc 70%, #3b6cff); }
 [data-theme="dark"] .footer-sun { opacity: .7; }
 
-.footer-top { display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-end; padding-top: 64px; padding-bottom: 48px; }
+.footer-top { display: flex; flex-wrap: wrap; gap: 32px; justify-content: space-between; align-items: flex-end; padding-top: 64px; padding-bottom: 40px; }
 .footer-about { display: flex; flex-direction: column; gap: 16px; max-width: 460px; }
 .footer-about .brand b { font-size: 26px; }
 .footer-claim { margin: 0; font-size: 22px; font-weight: 300; line-height: 1.35; letter-spacing: -.015em; }
-.footer-recap { display: flex; flex-direction: column; gap: 14px; max-width: 440px; padding: 24px 28px; border-radius: 12px; }
-.footer-recap p { margin: 0; }
-.footer-recap .btn { align-self: flex-start; }
+/* The recap band (canvas « Encart 2 »): a 2 px sunset frame around a white
+   card, the pitch on the left, the address and the button on the right. */
+.footer-recap { padding: 2px; border-radius: 14px; background: linear-gradient(90deg, #ffb547, #ff6b3d 22%, #f0347a 45%, #8a3ffc 70%, #3b6cff); margin-bottom: 48px; }
+.footer-recap-inner { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 400px), 1fr)); gap: 24px 32px; align-items: center; padding: 28px 32px; border-radius: 12px; background: var(--card); }
+.footer-recap-text { display: flex; flex-direction: column; gap: 8px; }
+.footer-recap-text p, .footer-recap-form p { margin: 0; }
+.footer-recap-text h2 { margin: 0; font-size: 28px; line-height: 1.2; font-weight: 300; letter-spacing: -.02em; }
+.footer-recap-form { display: flex; flex-direction: column; gap: 8px; }
+.footer-recap-form .eyebrow { font-size: 11px; }
+.footer-recap-row { display: flex; gap: 8px; }
+.footer-recap-row .input { flex: 1 1 auto; min-width: 0; min-height: 52px; }
+.footer-recap-row .btn { flex: none; }
 
 .footer-nav { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 32px; padding-top: 40px; padding-bottom: 8px; border-top: 1px solid var(--border); }
 .footer-col { display: flex; flex-direction: column; }
@@ -37,8 +46,11 @@
 @media (max-width: 39.99rem) {
   .footer-top { padding-top: 44px; padding-bottom: 32px; }
   .footer-claim { font-size: 20px; }
-  .footer-recap { padding: 20px; }
-  .footer-recap .btn { align-self: stretch; }
+  .footer-top { padding-bottom: 28px; }
+  .footer-recap { margin-bottom: 32px; }
+  .footer-recap-inner { padding: 22px 20px; }
+  .footer-recap-text h2 { font-size: 23px; }
+  .footer-recap-row { flex-direction: column; }
   .footer-nav { grid-template-columns: 1fr 1fr; gap: 28px 16px; }
   .footer-col a { min-height: 44px; }
   .footer-bottom { margin-top: 32px; }

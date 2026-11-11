@@ -1,7 +1,9 @@
-// The recap subscription dialog (Layouts.recap_dialog). The footer's
-// « Get the recap » link leads to the recap page; with this script it opens
-// the dialog instead, posts the same form as JSON and shows the second
-// step. The country of the page (its « Follow » star) comes pre-checked.
+// The recap subscription dialog (Layouts.recap_dialog). The footer's band
+// (an address and « Choose my countries ») leads to the recap page; with
+// this script it opens the dialog instead, the address filled in, posts the
+// same form as JSON and shows the second step. The country of the page (its
+// « Follow » star) comes pre-checked. The recap page's own form is enhanced
+// by initRecapPage below.
 
 export function initRecap() {
   const dialog = document.getElementById("recap-dialog")
@@ -50,14 +52,31 @@ export function initRecap() {
     error.hidden = !message
   }
 
-  document.querySelectorAll("[data-recap-open]").forEach((link) => {
+  const open = (email) => {
+    const star = document.querySelector('[data-favorite^="area:"]')
+    if (star) check(star.dataset.favorite.slice(5))
+    showError("")
+    step(1)
+    const field = form.querySelector("input[type=email]")
+    if (email) field.value = email
+    dialog.showModal()
+    // The address is there already: go on with the countries.
+    if (field.value) chips.querySelector("input")?.focus()
+    else field.focus()
+  }
+
+  // The footer band: its address goes into the dialog.
+  document.querySelectorAll("form[data-recap-start]").forEach((start) => {
+    start.addEventListener("submit", (event) => {
+      event.preventDefault()
+      open(start.querySelector("input[type=email]").value.trim())
+    })
+  })
+
+  document.querySelectorAll("a[data-recap-open]").forEach((link) => {
     link.addEventListener("click", (event) => {
       event.preventDefault()
-      const star = document.querySelector('[data-favorite^="area:"]')
-      if (star) check(star.dataset.favorite.slice(5))
-      showError("")
-      dialog.showModal()
-      if (!form.hidden) form.querySelector("input[type=email]").focus()
+      open("")
     })
   })
 
@@ -98,4 +117,42 @@ export function initRecap() {
       button.disabled = false
     }
   })
+}
+
+// The recap page and its « change » page (RecapHTML): the region tabs show
+// one region at a time, and the bottom bar follows what is chosen. Without
+// this script, every region shows and the bar says what the server saw.
+export function initRecapPage() {
+  const form = document.querySelector("form[data-recap-page]")
+  if (!form) return
+
+  const tabs = form.querySelector("[data-recap-tabs]")
+  const regions = form.querySelectorAll(".recap-region[data-region]")
+  if (tabs) {
+    tabs.hidden = false
+    tabs.addEventListener("click", (event) => {
+      const tab = event.target.closest("button[data-region]")
+      if (!tab) return
+      tabs.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b === tab)))
+      regions.forEach((r) => (r.hidden = tab.dataset.region !== "" && r.dataset.region !== tab.dataset.region))
+    })
+  }
+
+  const bar = form.querySelector("[data-recap-summary]")
+  if (!bar) return
+  const max = Number(bar.dataset.max)
+
+  const update = () => {
+    const picked = [...form.querySelectorAll("input[name='countries[]']:checked")]
+    bar.querySelector("[data-recap-names]").textContent =
+      picked.length ? picked.map((i) => i.nextElementSibling.textContent).join(", ") : bar.dataset.none
+    bar.querySelector("[data-recap-count]").textContent = picked.length
+    const frequency = form.querySelector("input[name=frequency]:checked")
+    if (frequency) bar.querySelector("[data-recap-frequency]").textContent = frequency.dataset.label
+    // Past the limit, the other countries wait: the server refuses more anyway.
+    form.querySelectorAll("input[name='countries[]']:not(:checked)").forEach((i) => (i.disabled = picked.length >= max))
+  }
+
+  form.addEventListener("change", update)
+  update()
 }
