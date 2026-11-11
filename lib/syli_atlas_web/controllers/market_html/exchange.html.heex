@@ -40,7 +40,7 @@
           class="pill pill-neutral no-dot"
           href={country_href(c, @locale)}
         >
-          {c["name"][@locale]}
+          {SyliAtlas.Locales.pick(c["name"], @locale)}
         </a>
       </:chips>
       <:kpi

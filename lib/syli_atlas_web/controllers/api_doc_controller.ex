@@ -32,7 +32,7 @@ defmodule SyliAtlasWeb.ApiDocController do
   end
 
   defp render_page(conn, locale, now) do
-    paths = %{"fr" => Paths.api("fr"), "en" => Paths.api("en")}
+    paths = SyliAtlas.Locales.each(fn l -> Paths.api(l) end)
     timings = ApiTimings.last_day(now)
     budget = ApiTimings.budget_us()
 

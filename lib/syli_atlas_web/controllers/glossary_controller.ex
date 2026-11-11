@@ -13,40 +13,45 @@ defmodule SyliAtlasWeb.GlossaryController do
 
   plug :put_layout, false
 
-  # {id, French slug, English slug}
+  # {id, French slug, English slug, Spanish slug, Portuguese slug}
   @terms [
-    {"gdp", "pib", "gdp"},
-    {"gdp_per_capita", "pib-par-habitant", "gdp-per-capita"},
-    {"ppp", "parite-de-pouvoir-d-achat", "purchasing-power-parity"},
-    {"real_growth", "croissance-reelle", "real-growth"},
-    {"inflation", "inflation", "inflation"},
-    {"public_debt", "dette-publique", "public-debt"},
-    {"fiscal_balance", "solde-budgetaire", "fiscal-balance"},
-    {"current_account", "balance-courante", "current-account"},
-    {"sovereign_rating", "notation-souveraine", "sovereign-rating"},
-    {"investment_grade", "categorie-investissement", "investment-grade"},
-    {"default", "defaut-souverain", "sovereign-default"},
-    {"debt_distress", "risque-de-surendettement", "risk-of-debt-distress"},
-    {"cfa_franc", "franc-cfa", "cfa-franc"},
-    {"imf_projections", "projections-du-fmi", "imf-projections"}
+    {"gdp", "pib", "gdp", "pib", "pib"},
+    {"gdp_per_capita", "pib-par-habitant", "gdp-per-capita", "pib-per-capita", "pib-per-capita"},
+    {"ppp", "parite-de-pouvoir-d-achat", "purchasing-power-parity",
+     "paridad-de-poder-adquisitivo", "paridade-do-poder-de-compra"},
+    {"real_growth", "croissance-reelle", "real-growth", "crecimiento-real", "crescimento-real"},
+    {"inflation", "inflation", "inflation", "inflacion", "inflacao"},
+    {"public_debt", "dette-publique", "public-debt", "deuda-publica", "divida-publica"},
+    {"fiscal_balance", "solde-budgetaire", "fiscal-balance", "saldo-presupuestario",
+     "saldo-orcamental"},
+    {"current_account", "balance-courante", "current-account", "cuenta-corriente",
+     "balanca-corrente"},
+    {"sovereign_rating", "notation-souveraine", "sovereign-rating", "calificacion-soberana",
+     "rating-soberano"},
+    {"investment_grade", "categorie-investissement", "investment-grade", "grado-de-inversion",
+     "grau-de-investimento"},
+    {"default", "defaut-souverain", "sovereign-default", "impago-soberano",
+     "incumprimento-soberano"},
+    {"debt_distress", "risque-de-surendettement", "risk-of-debt-distress",
+     "riesgo-de-sobreendeudamiento", "risco-de-sobre-endividamento"},
+    {"cfa_franc", "franc-cfa", "cfa-franc", "franco-cfa", "franco-cfa"},
+    {"imf_projections", "projections-du-fmi", "imf-projections", "proyecciones-del-fmi",
+     "projecoes-do-fmi"}
   ]
 
   def terms, do: Enum.map(@terms, &elem(&1, 0))
 
-  def index_path(locale),
-    do: "/#{locale}/" <> if(locale == "fr", do: "glossaire", else: "glossary")
+  def index_path(locale), do: "/#{locale}/" <> Paths.segment(locale, :glossary)
 
   def term_path(locale, id) do
-    {_, fr, en} = List.keyfind(@terms, id, 0)
-    index_path(locale) <> "/" <> if(locale == "fr", do: fr, else: en)
+    index_path(locale) <> "/" <> SyliAtlasWeb.Topics.slug_in(List.keyfind(@terms, id, 0), locale)
   end
 
-  defp term_id(slug),
-    do: Enum.find_value(@terms, fn {id, fr, en} -> if slug in [fr, en], do: id end)
+  defp term_id(slug), do: SyliAtlasWeb.Topics.id_of_slug(@terms, slug)
 
   def index(conn, _params) do
     locale = conn.assigns.locale
-    paths = %{"fr" => index_path("fr"), "en" => index_path("en")}
+    paths = SyliAtlas.Locales.each(fn l -> index_path(l) end)
     title = gettext("Glossary of African economies: GDP, debt, ratings, CFA franc")
     entries = for id <- terms(), do: {name(id), short(id), term_path(locale, id)}
 
@@ -78,7 +83,7 @@ defmodule SyliAtlasWeb.GlossaryController do
   def show(conn, %{"slug" => slug}) do
     locale = conn.assigns.locale
     id = term_id(slug) || raise NotFoundError
-    paths = %{"fr" => term_path("fr", id), "en" => term_path("en", id)}
+    paths = SyliAtlas.Locales.each(fn l -> term_path(l, id) end)
 
     if conn.request_path != paths[locale] do
       conn |> put_status(301) |> redirect(to: paths[locale])
@@ -394,7 +399,9 @@ defmodule SyliAtlasWeb.GlossaryController do
         count = fn band -> Enum.count(entries, &(&1["band"] == band)) end
 
         names = fn band ->
-          entries |> Enum.filter(&(&1["band"] == band)) |> Enum.map_join(", ", & &1["name"][l])
+          entries
+          |> Enum.filter(&(&1["band"] == band))
+          |> Enum.map_join(", ", &SyliAtlas.Locales.pick(&1["name"], l))
         end
 
         [
@@ -421,8 +428,9 @@ defmodule SyliAtlasWeb.GlossaryController do
     for code <- ~w(waemu cemac),
         c = Enum.find(SyliAtlas.Economy.Communities.all(), &(&1.code == code)),
         c do
-      {c.short[l] || c.short["en"], gettext("%{count} countries", count: length(c.members)),
-       Paths.community(l, c.slug[l] || c.slug["en"])}
+      {SyliAtlas.Locales.pick(c.short, l) || c.short["en"],
+       gettext("%{count} countries", count: length(c.members)),
+       Paths.community(l, SyliAtlas.Locales.pick(c.slug, l) || c.slug["en"])}
     end
   end
 

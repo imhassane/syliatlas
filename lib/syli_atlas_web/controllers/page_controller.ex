@@ -19,7 +19,7 @@ defmodule SyliAtlasWeb.PageController do
 
     case PublicData.home(locale) do
       %{"africa" => africa} = home when is_map(africa) ->
-        paths = %{"fr" => "/fr", "en" => "/en"}
+        paths = SyliAtlas.Locales.each(&"/#{&1}")
         map = home["map"] || %{"countries" => [], "from" => home["from"], "to" => home["to"]}
         map_countries = map["countries"]
 
@@ -71,7 +71,7 @@ defmodule SyliAtlasWeb.PageController do
   """
   def offline(conn, _params) do
     locale = conn.assigns.locale
-    paths = %{"fr" => Paths.offline("fr"), "en" => Paths.offline("en")}
+    paths = SyliAtlas.Locales.each(fn l -> Paths.offline(l) end)
 
     render(conn, :offline,
       page_title: gettext("Offline"),
@@ -87,11 +87,11 @@ defmodule SyliAtlasWeb.PageController do
   @doc "Who makes the site, where its figures come from, how to cite and reach it."
   def about(conn, _params) do
     locale = conn.assigns.locale
-    paths = %{"fr" => Paths.about("fr"), "en" => Paths.about("en")}
+    paths = SyliAtlas.Locales.each(fn l -> Paths.about(l) end)
     edition = Sources.published_edition("imf_weo")
     title = gettext("About Syli Atlas: sources, updates, how to cite")
 
-    render(conn, if(locale == "en", do: :about_en, else: :about_fr),
+    render(conn, String.to_existing_atom("about_" <> locale),
       page_title: title,
       seo:
         Seo.page(
@@ -124,7 +124,7 @@ defmodule SyliAtlasWeb.PageController do
 
   def method(conn, _params) do
     locale = conn.assigns.locale
-    paths = %{"fr" => Paths.method("fr"), "en" => Paths.method("en")}
+    paths = SyliAtlas.Locales.each(fn l -> Paths.method(l) end)
 
     render(conn, :method,
       page_title: gettext("Sources and method: IMF, World Bank, CEPII, rating agencies"),
@@ -172,9 +172,9 @@ defmodule SyliAtlasWeb.PageController do
 
   def accessibility(conn, _params) do
     locale = conn.assigns.locale
-    paths = %{"fr" => Paths.accessibility("fr"), "en" => Paths.accessibility("en")}
+    paths = SyliAtlas.Locales.each(fn l -> Paths.accessibility(l) end)
 
-    template = if locale == "en", do: :accessibility_en, else: :accessibility_fr
+    template = if locale == "fr", do: :accessibility_fr, else: :accessibility_en
 
     render(conn, template,
       page_title: gettext("Accessibility"),

@@ -51,9 +51,22 @@ defmodule SyliAtlas.Release do
             SyliAtlas.Imports.backfill_missing_indicators!()
         end
 
+        # Profiles without the names of every language of the site (built
+        # before a language was added): rebuild them, and the snapshots.
+        if SyliAtlas.Profiles.Queries.missing_locales?() do
+          IO.puts(
+            "profiles: rebuilding for the languages " <> Enum.join(SyliAtlas.Locales.all(), ", ")
+          )
+
+          SyliAtlas.Profiles.rebuild!(SyliAtlas.Sources.published_edition("imf_weo"))
+        end
+
         # Snapshots missing, or of an older format than the code: rebuild them.
-        if SyliAtlas.Profiles.Queries.snapshot_format("home:fr") !=
-             SyliAtlas.Profiles.HomeSnapshot.format() or
+        if SyliAtlas.Profiles.Queries.snapshot_format(
+             "home:" <> List.last(SyliAtlas.Locales.all())
+           ) == nil or
+             SyliAtlas.Profiles.Queries.snapshot_format("home:fr") !=
+               SyliAtlas.Profiles.HomeSnapshot.format() or
              SyliAtlas.Profiles.Queries.snapshot_format("regions:fr") !=
                SyliAtlas.Profiles.RegionsSnapshot.format() do
           SyliAtlas.Profiles.Queries.refresh_snapshots!()

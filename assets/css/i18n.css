@@ -1,0 +1,32 @@
+/* Languages of the site (SyliAtlas.Locales): the language menu, scripts
+   other than Latin, and Arabic read right to left. The layout uses logical
+   properties (margin-inline-start…), so most of it mirrors by itself; what
+   moves with JavaScript or draws data (charts, maps, the ticker's track)
+   keeps its left-to-right geometry. */
+
+.lang-menu { position: relative; }
+.lang-menu > summary { list-style: none; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+.lang-menu > summary::-webkit-details-marker { display: none; }
+.lang-menu ul { position: absolute; top: calc(100% + 6px); inset-inline-end: 0; z-index: 45; min-width: 180px; margin: 0; padding: 6px; list-style: none; border-radius: 12px; background: var(--card); box-shadow: var(--shadow-pop); display: flex; flex-direction: column; }
+.lang-menu-up ul { top: auto; bottom: calc(100% + 6px); inset-inline-end: auto; inset-inline-start: 0; }
+.lang-menu a { display: block; padding: 9px 12px; border-radius: 8px; color: var(--ink); text-decoration: none; font-size: 15px; }
+.lang-menu a:hover, .lang-menu a:focus-visible { background: var(--muted); }
+.lang-menu a[aria-current="true"] { font-weight: 600; color: var(--accent-text); }
+.footer-about .lang-menu > summary { padding-inline-start: 0; }
+
+/* Scripts the Latin fonts do not cover: the system's own, which read best. */
+:lang(ar) { --sans: "Noto Sans Arabic", "Segoe UI", Tahoma, "Geeza Pro", system-ui, sans-serif; }
+:lang(hi) { --sans: "Noto Sans Devanagari", "Nirmala UI", "Kohinoor Devanagari", system-ui, sans-serif; }
+:lang(zh-Hans) { --sans: "Inter Tight", "PingFang SC", "Microsoft YaHei", "Noto Sans SC", "Hiragino Sans GB", system-ui, sans-serif; }
+/* Upper case and letter spacing mean nothing in these scripts. */
+:lang(ar) .eyebrow, :lang(hi) .eyebrow, :lang(zh-Hans) .eyebrow { letter-spacing: 0; }
+:lang(ar) body { line-height: 1.7; }
+
+/* Right to left. */
+[dir="rtl"] .read-progress { transform-origin: right; }
+[dir="rtl"] .select { background-position: left 16px center; }
+[dir="rtl"] .site-ticker-list, [dir="rtl"] .chart, [dir="rtl"] svg, [dir="rtl"] .map, [dir="rtl"] .rt-gauge { direction: ltr; }
+/* Arrows that point forward. */
+[dir="rtl"] .arrow-forward, [dir="rtl"] .btn svg.forward { transform: scaleX(-1); }
+/* Figures, codes and addresses stay left to right inside Arabic text. */
+[dir="rtl"] span.mono, [dir="rtl"] code { unicode-bidi: isolate; direction: ltr; }

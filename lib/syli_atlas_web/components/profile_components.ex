@@ -212,9 +212,9 @@ defmodule SyliAtlasWeb.ProfileComponents do
         <a
           :for={c <- @ctx.communities}
           class="pill pill-neutral no-dot"
-          href={Paths.community(@locale, c.slug[@locale])}
+          href={Paths.community(@locale, SyliAtlas.Locales.pick(c.slug, @locale))}
         >
-          {c.short[@locale]}
+          {SyliAtlas.Locales.pick(c.short, @locale)}
         </a>
         <a
           :if={@ctx.currency}
@@ -688,12 +688,12 @@ defmodule SyliAtlasWeb.ProfileComponents do
             |> Enum.map(fn {name, slug} -> {label.(name), Paths.country_tab(l, slug, tab)} end),
           links != [] do
         %{
-          title: gettext("In %{community}", community: c.short[l]),
+          title: gettext("In %{community}", community: SyliAtlas.Locales.pick(c.short, l)),
           links:
             links ++
               [
-                {gettext("The %{community} page", community: c.short[l]),
-                 Paths.community(l, c.slug[l])}
+                {gettext("The %{community} page", community: SyliAtlas.Locales.pick(c.short, l)),
+                 Paths.community(l, SyliAtlas.Locales.pick(c.slug, l))}
               ]
         }
       end
@@ -809,7 +809,7 @@ defmodule SyliAtlasWeb.ProfileComponents do
   def area_siblings(assigns) do
     others =
       for %{type: :region} = e <- SyliAtlasWeb.Search.Index.get(), e.code != assigns.area.code do
-        {e.names[assigns.locale], e.path[assigns.locale], e.kind}
+        {SyliAtlas.Locales.pick(e.names, assigns.locale), e.path[assigns.locale], e.kind}
       end
       |> Enum.sort_by(fn {name, _, kind} -> {kind != "region", name} end)
 
@@ -830,7 +830,10 @@ defmodule SyliAtlasWeb.ProfileComponents do
             <p class="eyebrow">{gettext("Economic communities")}</p>
             <ul class="related-list">
               <li :for={c <- @communities}>
-                <a href={Paths.community(@locale, c.slug[@locale])}>{c.short[@locale]} · {c.name[
+                <a href={Paths.community(@locale, SyliAtlas.Locales.pick(c.slug, @locale))}>{SyliAtlas.Locales.pick(
+                  c.short,
+                  @locale
+                )} · {c.name[
                   @locale
                 ]}</a>
               </li>

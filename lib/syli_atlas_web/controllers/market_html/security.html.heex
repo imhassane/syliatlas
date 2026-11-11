@@ -36,7 +36,7 @@
           {if @row["kind"] == "etf", do: gettext("Exchange-traded fund"), else: gettext("Share")}
         </span>
         <a :if={@country} class="pill pill-neutral no-dot" href={country_href(@country, @locale)}>
-          {@country["name"][@locale]}
+          {SyliAtlas.Locales.pick(@country["name"], @locale)}
         </a>
         <a class="pill pill-neutral no-dot" href={Paths.exchange(@locale, @e["code"])}>
           {gettext("listed on the %{exchange}", exchange: @e["short_name"])}
@@ -146,7 +146,12 @@
             </tr>
             <tr :if={@country}>
               <th scope="row" class="l">{gettext("Country")}</th>
-              <td><a href={country_href(@country, @locale)}>{@country["name"][@locale]}</a></td>
+              <td>
+                <a href={country_href(@country, @locale)}>{SyliAtlas.Locales.pick(
+                  @country["name"],
+                  @locale
+                )}</a>
+              </td>
             </tr>
             <tr>
               <th scope="row" class="l">{gettext("Currency")}</th><td class="mono">

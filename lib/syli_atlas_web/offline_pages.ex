@@ -12,13 +12,13 @@ defmodule SyliAtlasWeb.OfflinePages do
   alias SyliAtlas.Geo.Area
   alias SyliAtlasWeb.Paths
 
-  def list(locale) when locale in ["fr", "en"], do: Enum.map(entries(locale), & &1.path)
+  def list(locale), do: Enum.map(entries(locale), & &1.path)
 
   @doc """
   The same pages with their names and kinds (`page`, `continent`, `region`,
   `country`), for the offline page, which shows those already saved.
   """
-  def entries(locale) when locale in ["fr", "en"] do
+  def entries(locale) do
     Gettext.put_locale(SyliAtlasWeb.Gettext, locale)
 
     main = [

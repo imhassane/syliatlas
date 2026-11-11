@@ -20,31 +20,33 @@ defmodule SyliAtlasWeb.Topics do
   # Thematic rankings
 
   @rankings [
-    {"gdp_usd_bn", "pib", "gdp"},
-    {"gdp_per_capita_usd", "pib-par-habitant", "gdp-per-capita"},
-    {"gdp_per_capita_ppp", "pib-par-habitant-ppa", "gdp-per-capita-ppp"},
-    {"real_gdp_growth", "croissance", "growth"},
-    {"inflation", "inflation", "inflation"},
-    {"public_debt_pct_gdp", "dette-publique", "public-debt"},
-    {"population_m", "population", "population"},
-    {"fiscal_balance_pct_gdp", "solde-budgetaire", "fiscal-balance"},
-    {"current_account_pct_gdp", "balance-courante", "current-account"},
-    {"unemployment", "chomage", "unemployment"}
+    {"gdp_usd_bn", "pib", "gdp", "pib", "pib"},
+    {"gdp_per_capita_usd", "pib-par-habitant", "gdp-per-capita", "pib-per-capita",
+     "pib-per-capita"},
+    {"gdp_per_capita_ppp", "pib-par-habitant-ppa", "gdp-per-capita-ppp", "pib-per-capita-ppa",
+     "pib-per-capita-ppc"},
+    {"real_gdp_growth", "croissance", "growth", "crecimiento", "crescimento"},
+    {"inflation", "inflation", "inflation", "inflacion", "inflacao"},
+    {"public_debt_pct_gdp", "dette-publique", "public-debt", "deuda-publica", "divida-publica"},
+    {"population_m", "population", "population", "poblacion", "populacao"},
+    {"fiscal_balance_pct_gdp", "solde-budgetaire", "fiscal-balance", "saldo-presupuestario",
+     "saldo-orcamental"},
+    {"current_account_pct_gdp", "balance-courante", "current-account", "cuenta-corriente",
+     "balanca-corrente"},
+    {"unemployment", "chomage", "unemployment", "desempleo", "desemprego"}
   ]
 
   @doc "The indicators that have a ranking page."
   def ranking_indicators, do: Enum.map(@rankings, &elem(&1, 0))
 
   @doc "The indicator of a ranking slug (either language), or nil."
-  def ranking_indicator(slug) do
-    Enum.find_value(@rankings, fn {key, fr, en} -> if slug in [fr, en], do: key end)
-  end
+  def ranking_indicator(slug), do: id_of_slug(@rankings, slug)
 
   @doc "The address of an indicator's ranking."
   def ranking_path(locale, indicator) do
     case List.keyfind(@rankings, indicator, 0) do
-      {_, fr, en} -> Paths.ranking(locale) <> "/" <> if(locale == "en", do: en, else: fr)
       nil -> Paths.ranking(locale)
+      entry -> Paths.ranking(locale) <> "/" <> slug_in(entry, locale)
     end
   end
 
@@ -139,37 +141,63 @@ defmodule SyliAtlasWeb.Topics do
   # Questions
 
   @questions [
-    {"richest", "pays-le-plus-riche-d-afrique", "richest-country-in-africa"},
-    {"largest", "plus-grandes-economies-d-afrique", "largest-economies-in-africa"},
+    {"richest", "pays-le-plus-riche-d-afrique", "richest-country-in-africa",
+     "pais-mas-rico-de-africa", "pais-mais-rico-de-africa"},
+    {"largest", "plus-grandes-economies-d-afrique", "largest-economies-in-africa",
+     "mayores-economias-de-africa", "maiores-economias-de-africa"},
     {"per_capita", "pays-africains-les-plus-riches-par-habitant",
-     "richest-african-countries-per-person"},
+     "richest-african-countries-per-person", "paises-africanos-mas-ricos-por-habitante",
+     "paises-africanos-mais-ricos-por-habitante"},
     {"fastest", "economies-africaines-qui-croissent-le-plus-vite",
-     "fastest-growing-african-economies"},
-    {"indebted", "pays-africains-les-plus-endettes", "most-indebted-african-countries"},
-    {"inflation", "inflation-la-plus-elevee-d-afrique", "highest-inflation-in-africa"},
-    {"populous", "pays-le-plus-peuple-d-afrique", "most-populous-country-in-africa"},
-    {"africa_gdp", "pib-de-l-afrique", "gdp-of-africa"},
+     "fastest-growing-african-economies", "economias-africanas-que-mas-crecen",
+     "economias-africanas-que-mais-crescem"},
+    {"indebted", "pays-africains-les-plus-endettes", "most-indebted-african-countries",
+     "paises-africanos-mas-endeudados", "paises-africanos-mais-endividados"},
+    {"inflation", "inflation-la-plus-elevee-d-afrique", "highest-inflation-in-africa",
+     "inflacion-mas-alta-de-africa", "inflacao-mais-alta-de-africa"},
+    {"populous", "pays-le-plus-peuple-d-afrique", "most-populous-country-in-africa",
+     "pais-mas-poblado-de-africa", "pais-mais-populoso-de-africa"},
+    {"africa_gdp", "pib-de-l-afrique", "gdp-of-africa", "pib-de-africa", "pib-de-africa"},
     {"fastest_region", "region-d-afrique-qui-croit-le-plus-vite",
-     "fastest-growing-region-of-africa"},
+     "fastest-growing-region-of-africa", "region-de-africa-que-mas-crece",
+     "regiao-de-africa-que-mais-cresce"},
     {"investment_grade", "pays-africains-en-categorie-investissement",
-     "investment-grade-african-countries"},
-    {"best_rating", "meilleure-note-souveraine-d-afrique", "best-credit-rating-in-africa"},
+     "investment-grade-african-countries", "paises-africanos-con-grado-de-inversion",
+     "paises-africanos-com-grau-de-investimento"},
+    {"best_rating", "meilleure-note-souveraine-d-afrique", "best-credit-rating-in-africa",
+     "mejor-calificacion-soberana-de-africa", "melhor-rating-soberano-de-africa"},
     {"largest_community", "plus-grande-communaute-economique-d-afrique",
-     "largest-economic-community-in-africa"}
+     "largest-economic-community-in-africa", "mayor-comunidad-economica-de-africa",
+     "maior-comunidade-economica-de-africa"}
   ]
 
   @doc "The questions, as ids."
   def questions, do: Enum.map(@questions, &elem(&1, 0))
 
   @doc "The question id of a slug (either language), or nil."
-  def question(slug),
-    do: Enum.find_value(@questions, fn {id, fr, en} -> if slug in [fr, en], do: id end)
+  def question(slug), do: id_of_slug(@questions, slug)
 
-  def questions_path(locale), do: "/#{locale}/questions"
+  def questions_path(locale), do: "/#{locale}/" <> Paths.segment(locale, :questions)
 
-  def question_path(locale, id) do
-    {_, fr, en} = List.keyfind(@questions, id, 0)
-    questions_path(locale) <> "/" <> if(locale == "en", do: en, else: fr)
+  def question_path(locale, id),
+    do: questions_path(locale) <> "/" <> slug_in(List.keyfind(@questions, id, 0), locale)
+
+  # ---------------------------------------------------------------------------
+  # Slug tables: {id, French, English, Spanish, Portuguese}
+
+  @doc "The slug of a table entry in a language (Arabic, Hindi, Chinese: English)."
+  def slug_in({_id, fr, en, es, pt}, locale) do
+    case SyliAtlas.Locales.base(locale) do
+      "fr" -> fr
+      "es" -> es
+      "pt" -> pt
+      _ -> en
+    end
+  end
+
+  @doc "The id of a slug in any language of a table, or nil."
+  def id_of_slug(table, slug) do
+    Enum.find_value(table, fn {id, fr, en, es, pt} -> if slug in [fr, en, es, pt], do: id end)
   end
 
   @doc "The question itself, as people ask it."
@@ -199,7 +227,7 @@ defmodule SyliAtlasWeb.Topics do
 
   @doc "Pages of this module for the sitemap: %{\"fr\" => path, \"en\" => path}."
   def sitemap_pages do
-    both = fn fun -> %{"fr" => fun.("fr"), "en" => fun.("en")} end
+    both = &SyliAtlas.Locales.each/1
 
     for(i <- ranking_indicators(), do: both.(&ranking_path(&1, i))) ++
       [both.(&questions_path/1)] ++

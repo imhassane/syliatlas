@@ -180,7 +180,11 @@
                         length(x["exchange"]["countries"])
                       ),
                     else:
-                      Enum.map_join(x["exchange"]["country_names"], ", ", & &1["name"][@locale])}
+                      Enum.map_join(
+                        x["exchange"]["country_names"],
+                        ", ",
+                        &SyliAtlas.Locales.pick(&1["name"], @locale)
+                      )}
                 </span>
               </th>
               <td class="l muted" data-label={gettext("Main index")}>

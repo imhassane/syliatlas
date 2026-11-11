@@ -121,7 +121,10 @@
   </.card>
 
   <div class="row gap-2">
-    <a class="btn btn-primary" href={Paths.compare(@locale, [@profile["slug"][@locale]])}>{gettext(
+    <a
+      class="btn btn-primary"
+      href={Paths.compare(@locale, [SyliAtlas.Locales.pick(@profile["slug"], @locale)])}
+    >{gettext(
       "Compare %{name}",
       name: @name
     )} →</a>

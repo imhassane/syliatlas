@@ -85,6 +85,11 @@ defmodule SyliAtlasWeb.Router do
     plug SyliAtlasWeb.Plugs.Locale, "en"
   end
 
+  # Public pages: the language is the first segment of the path.
+  pipeline :page_locale do
+    plug SyliAtlasWeb.Plugs.Locale, :from_path
+  end
+
   scope "/", SyliAtlasWeb do
     get "/health", HealthController, :show
     get "/sitemap.xml", SitemapController, :sitemap
@@ -184,81 +189,50 @@ defmodule SyliAtlasWeb.Router do
     delete "/", AccountController, :delete_account
   end
 
-  # The API page shows hourly measures: its own cache headers (ApiDocController).
-  scope "/fr", SyliAtlasWeb do
-    pipe_through [:public, :fr]
-    get "/api", ApiDocController, :show
-  end
+  # The public pages, in every language of the site (SyliAtlas.Locales);
+  # path segments from SyliAtlasWeb.Paths, so /fr/pays, /es/paises,
+  # /ar/countries.
+  for locale <- SyliAtlas.Locales.all() do
+    seg = &SyliAtlasWeb.Paths.segment(locale, &1)
 
-  scope "/en", SyliAtlasWeb do
-    pipe_through [:public, :en]
-    get "/api", ApiDocController, :show
-  end
+    # The API page shows hourly measures: its own cache headers (ApiDocController).
+    scope "/#{locale}", SyliAtlasWeb do
+      pipe_through [:public, :page_locale]
+      get "/api", ApiDocController, :show
+    end
 
-  scope "/fr", SyliAtlasWeb do
-    pipe_through [:public, :fr, :public_cache]
+    scope "/#{locale}", SyliAtlasWeb do
+      pipe_through [:public, :page_locale, :public_cache]
 
-    get "/", PageController, :home
-    get "/methode", PageController, :method
-    get "/a-propos", PageController, :about
-    get "/glossaire", GlossaryController, :index
-    get "/glossaire/:slug", GlossaryController, :show
-    get "/questions", QuestionsController, :index
-    get "/questions/:slug", QuestionsController, :show
-    get "/accessibilite", PageController, :accessibility
-    get "/hors-ligne", PageController, :offline
-    get "/classement", RankingController, :index
-    get "/classement/:topic", RankingController, :topic
-    get "/recherche", SearchController, :index
-    get "/pays/:slug", AreaController, :show
-    get "/pays/:slug/questions", CountryQuestionsController, :show
-    get "/pays/:slug/:tab", AreaController, :show
-    get "/regions", RegionsController, :index
-    get "/regions/:slug", AreaController, :show
-    get "/comparer", CompareController, :show
-    get "/comparer/*slugs", CompareController, :show
-    get "/notations", RatingsController, :index
-    get "/dette", DebtController, :index
-    get "/communautes", CommunityController, :index
-    get "/communautes/:slug", CommunityController, :show
-    get "/notations/:slug", RatingsController, :show
-    get "/bourses", MarketController, :index
-    get "/bourses/etf", MarketController, :etfs
-    get "/bourses/:exchange", MarketController, :exchange
-    get "/bourses/:exchange/:ticker", MarketController, :security
-  end
-
-  scope "/en", SyliAtlasWeb do
-    pipe_through [:public, :en, :public_cache]
-
-    get "/", PageController, :home
-    get "/method", PageController, :method
-    get "/about", PageController, :about
-    get "/glossary", GlossaryController, :index
-    get "/glossary/:slug", GlossaryController, :show
-    get "/questions", QuestionsController, :index
-    get "/questions/:slug", QuestionsController, :show
-    get "/accessibility", PageController, :accessibility
-    get "/offline", PageController, :offline
-    get "/ranking", RankingController, :index
-    get "/ranking/:topic", RankingController, :topic
-    get "/search", SearchController, :index
-    get "/countries/:slug", AreaController, :show
-    get "/countries/:slug/questions", CountryQuestionsController, :show
-    get "/countries/:slug/:tab", AreaController, :show
-    get "/regions", RegionsController, :index
-    get "/regions/:slug", AreaController, :show
-    get "/compare", CompareController, :show
-    get "/compare/*slugs", CompareController, :show
-    get "/credit-ratings", RatingsController, :index
-    get "/debt", DebtController, :index
-    get "/economic-communities", CommunityController, :index
-    get "/economic-communities/:slug", CommunityController, :show
-    get "/credit-ratings/:slug", RatingsController, :show
-    get "/stock-exchanges", MarketController, :index
-    get "/stock-exchanges/etf", MarketController, :etfs
-    get "/stock-exchanges/:exchange", MarketController, :exchange
-    get "/stock-exchanges/:exchange/:ticker", MarketController, :security
+      get "/", PageController, :home
+      get "/#{seg.(:method)}", PageController, :method
+      get "/#{seg.(:about)}", PageController, :about
+      get "/#{seg.(:glossary)}", GlossaryController, :index
+      get "/#{seg.(:glossary)}/:slug", GlossaryController, :show
+      get "/#{seg.(:questions)}", QuestionsController, :index
+      get "/#{seg.(:questions)}/:slug", QuestionsController, :show
+      get "/#{seg.(:accessibility)}", PageController, :accessibility
+      get "/#{seg.(:offline)}", PageController, :offline
+      get "/#{seg.(:ranking)}", RankingController, :index
+      get "/#{seg.(:ranking)}/:topic", RankingController, :topic
+      get "/#{seg.(:search)}", SearchController, :index
+      get "/#{seg.(:country)}/:slug", AreaController, :show
+      get "/#{seg.(:country)}/:slug/#{seg.(:questions)}", CountryQuestionsController, :show
+      get "/#{seg.(:country)}/:slug/:tab", AreaController, :show
+      get "/#{seg.(:regions)}", RegionsController, :index
+      get "/#{seg.(:regions)}/:slug", AreaController, :show
+      get "/#{seg.(:compare)}", CompareController, :show
+      get "/#{seg.(:compare)}/*slugs", CompareController, :show
+      get "/#{seg.(:ratings)}", RatingsController, :index
+      get "/#{seg.(:debt)}", DebtController, :index
+      get "/#{seg.(:communities)}", CommunityController, :index
+      get "/#{seg.(:communities)}/:slug", CommunityController, :show
+      get "/#{seg.(:ratings)}/:slug", RatingsController, :show
+      get "/#{seg.(:markets)}", MarketController, :index
+      get "/#{seg.(:markets)}/etf", MarketController, :etfs
+      get "/#{seg.(:markets)}/:exchange", MarketController, :exchange
+      get "/#{seg.(:markets)}/:exchange/:ticker", MarketController, :security
+    end
   end
 
   # Validation of the ratings (and, later, other data entered by hand).

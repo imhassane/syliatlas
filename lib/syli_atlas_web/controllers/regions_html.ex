@@ -35,7 +35,7 @@ defmodule SyliAtlasWeb.RegionsHTML do
 
       %{
         id: p["code"],
-        name: p["name"][locale],
+        name: SyliAtlas.Locales.pick(p["name"], locale),
         color: color(p["code"]),
         values: values,
         strong: p["code"] == "africa" or p["code"] == focus
@@ -56,8 +56,8 @@ defmodule SyliAtlasWeb.RegionsHTML do
 
       %{
         "code" => p["code"],
-        "name" => p["name"][locale],
-        "slug" => p["slug"][locale],
+        "name" => SyliAtlas.Locales.pick(p["name"], locale),
+        "slug" => SyliAtlas.Locales.pick(p["slug"], locale),
         "kind" => p["kind"],
         "value" => value
       }

@@ -94,9 +94,10 @@ defmodule SyliAtlasWeb.MarketHTML do
   def issue_text(%{"detail" => d}, _locale), do: d
 
   def country_name(nil, _locale), do: nil
-  def country_name(c, locale), do: c["name"][locale]
+  def country_name(c, locale), do: SyliAtlas.Locales.pick(c["name"], locale)
 
-  def country_href(c, locale), do: Paths.area(locale, "country", c["slug"][locale])
+  def country_href(c, locale),
+    do: Paths.area(locale, "country", SyliAtlas.Locales.pick(c["slug"], locale))
 
   def etf_tag(%{"name" => name}) do
     n = String.downcase(name || "")

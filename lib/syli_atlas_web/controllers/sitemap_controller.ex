@@ -1,7 +1,8 @@
 defmodule SyliAtlasWeb.SitemapController do
   @moduledoc """
-  `/sitemap.xml` and `/robots.txt`. Each page is listed once, in French,
-  with its English twin as an hreflang alternate. Rebuilt on every request:
+  `/sitemap.xml` and `/robots.txt`. Each page is listed in every language
+  of the site, each address with all its twins as hreflang alternates
+  (x-default: English). Rebuilt on every request:
   the list follows the data, so a new rating or exchange appears at once.
   """
   use SyliAtlasWeb, :controller
@@ -115,6 +116,7 @@ defmodule SyliAtlasWeb.SitemapController do
     ## En français
 
     Le site existe aussi en français : [accueil](#{Seo.url("/fr")}), [classements](#{Seo.url(SyliAtlasWeb.Topics.ranking_path("fr", "gdp_usd_bn"))}), [questions](#{Seo.url(SyliAtlasWeb.Topics.questions_path("fr"))}), [notations souveraines](#{Seo.url(Paths.ratings("fr"))}), [dette](#{Seo.url(Paths.debt("fr"))}), [méthode et sources](#{Seo.url(Paths.method("fr"))}). Chaque fiche pays a son adresse française (lien FR ci-dessous).
+    Also in Spanish, Portuguese, Arabic, Hindi and Chinese: [Español](#{Seo.url("/es")}), [Português](#{Seo.url("/pt")}), [العربية](#{Seo.url("/ar")}), [हिन्दी](#{Seo.url("/hi")}), [中文](#{Seo.url("/zh")}). Every page has its address in each language (hreflang alternates in the sitemap).
 
     ## Data
 
@@ -313,21 +315,19 @@ defmodule SyliAtlasWeb.SitemapController do
     end
   end
 
-  defp both(fun), do: %{"fr" => fun.("fr"), "en" => fun.("en")}
+  defp both(fun), do: SyliAtlas.Locales.each(fn l -> fun.(l) end)
 
   defp xml(pages) do
     urls =
       Enum.map(pages, fn {paths, lastmod} ->
-        [
-          "<url><loc>",
-          esc(Seo.url(paths["fr"])),
-          "</loc>",
-          if(lastmod, do: ["<lastmod>", esc(lastmod), "</lastmod>"], else: []),
-          for {lang, path} <- [
-                {"fr", paths["fr"]},
-                {"en", paths["en"]},
-                {"x-default", paths["fr"]}
-              ] do
+        links =
+          for {lang, path} <-
+                for(
+                  l <- SyliAtlas.Locales.all(),
+                  paths[l],
+                  do: {SyliAtlas.Locales.tag(l), paths[l]}
+                ) ++
+                  [{"x-default", paths["en"] || paths["fr"]}] do
             [
               ~s(<xhtml:link rel="alternate" hreflang="),
               lang,
@@ -335,9 +335,13 @@ defmodule SyliAtlasWeb.SitemapController do
               esc(Seo.url(path)),
               ~s("/>)
             ]
-          end,
-          "</url>\n"
-        ]
+          end
+
+        modified = if(lastmod, do: ["<lastmod>", esc(lastmod), "</lastmod>"], else: [])
+
+        for l <- SyliAtlas.Locales.all(), paths[l] do
+          ["<url><loc>", esc(Seo.url(paths[l])), "</loc>", modified, links, "</url>\n"]
+        end
       end)
 
     IO.iodata_to_binary([

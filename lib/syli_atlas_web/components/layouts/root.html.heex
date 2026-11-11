@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<html lang={assigns[:locale] || "fr"} data-theme="light">
+<html
+  lang={SyliAtlas.Locales.tag(assigns[:locale] || "fr")}
+  dir={SyliAtlas.Locales.dir(assigns[:locale] || "fr")}
+  data-theme="light"
+>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,10 +23,11 @@
     <meta property="og:site_name" content="Syli Atlas" />
     <meta property="og:type" content="website" />
     <meta :if={assigns[:seo][:canonical]} property="og:url" content={@seo[:canonical]} />
-    <meta property="og:locale" content={if(assigns[:locale] == "en", do: "en_US", else: "fr_FR")} />
+    <meta property="og:locale" content={SyliAtlas.Locales.og(assigns[:locale] || "fr")} />
     <meta
+      :for={l <- SyliAtlas.Locales.all() -- [assigns[:locale] || "fr"]}
       property="og:locale:alternate"
-      content={if(assigns[:locale] == "en", do: "fr_FR", else: "en_US")}
+      content={SyliAtlas.Locales.og(l)}
     />
     <meta :if={assigns[:page_title]} property="og:title" content={@page_title} />
     <meta

@@ -16,7 +16,7 @@ defmodule SyliAtlasWeb.DebtController do
 
   def index(conn, params) do
     locale = conn.assigns.locale
-    paths = %{"fr" => Paths.debt("fr"), "en" => Paths.debt("en")}
+    paths = SyliAtlas.Locales.each(fn l -> Paths.debt(l) end)
     regions = Geo.list_regions()
     region = Enum.find(regions, &(&1.code == params["region"]))
     sort = if params["sort"] in @sorts, do: params["sort"], else: "debt"

@@ -39,10 +39,10 @@
 .recap-bar-text { display: flex; flex-direction: column; min-width: 0; }
 .recap-bar-text b { font-weight: 500; overflow-wrap: anywhere; }
 .recap-bar-text > span { font-size: 13px; color: var(--ink-subtle); }
-.recap-bar-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; margin-left: auto; }
+.recap-bar-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: flex-end; margin-inline-start: auto; }
 @media (max-width: 39.99rem) {
   .recap-hero { padding: 48px 0 28px; }
-    .recap-bar { margin: 0 -20px; padding-left: 20px; padding-right: 20px; }
+    .recap-bar { margin: 0 -20px; padding-inline-start: 20px; padding-inline-end: 20px; }
   .recap-bar-actions, .recap-bar-actions .btn { width: 100%; }
 }
 

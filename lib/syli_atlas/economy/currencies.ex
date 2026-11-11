@@ -88,6 +88,13 @@ defmodule SyliAtlas.Economy.Currencies do
     "cma" => ~w(ZAF LSO NAM SWZ)
   }
 
+  @external_resource "priv/data/currency_names.json"
+  @names "priv/data/currency_names.json" |> File.read!() |> Jason.decode!() |> Map.delete("_note")
+
+  defp name(_code, fr, _en, "fr"), do: fr
+  defp name(_code, _fr, en, "en"), do: en
+  defp name(code, _fr, en, locale), do: get_in(@names, [code, locale]) || en
+
   @doc """
   The currency of a country, or nil:
   `%{code, name, peg: nil | %{anchor, rate}, zone: nil | "uemoa" | "cemac" | "cma", partners}`.
@@ -99,7 +106,7 @@ defmodule SyliAtlas.Economy.Currencies do
 
         %{
           code: code,
-          name: if(locale == "en", do: en, else: fr),
+          name: name(code, fr, en, locale),
           peg:
             case Map.fetch(@pegs, code) do
               {:ok, {anchor, rate}} -> %{anchor: anchor, rate: rate}

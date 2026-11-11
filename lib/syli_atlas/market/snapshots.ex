@@ -21,7 +21,7 @@ defmodule SyliAtlas.Market.Snapshots do
     Security
   }
 
-  @format 2
+  @format 3
   @history 260
 
   def format, do: @format
@@ -144,8 +144,8 @@ defmodule SyliAtlas.Market.Snapshots do
       for code <- e.country_codes, a = areas[code], a != nil do
         %{
           "code" => code,
-          "name" => %{"fr" => a.name_fr, "en" => a.name_en},
-          "slug" => %{"fr" => a.slug_fr, "en" => a.slug_en}
+          "name" => SyliAtlas.Geo.Area.names(a),
+          "slug" => SyliAtlas.Geo.Area.slugs(a)
         }
       end
 

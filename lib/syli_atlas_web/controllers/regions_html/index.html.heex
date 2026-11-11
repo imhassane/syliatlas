@@ -124,7 +124,7 @@
             class="row-dot"
             style={"--dot: var(#{color(a["profile"]["code"])})"}
           >
-            <i aria-hidden="true"></i>{a["profile"]["name"][@locale]}
+            <i aria-hidden="true"></i>{SyliAtlas.Locales.pick(a["profile"]["name"], @locale)}
           </a>
         </:head>
         <:col :let={a} label={gettext("GDP")}>
@@ -252,17 +252,17 @@
       <a
         :for={c <- @communities}
         class="card pad stack gap-2 community-card"
-        href={Paths.community(@locale, c.community.slug[@locale])}
+        href={Paths.community(@locale, SyliAtlas.Locales.pick(c.community.slug, @locale))}
         id={"community-#{c.community.code}"}
       >
         <p class="eyebrow">
-          {c.community.short[@locale]} · {ngettext(
+          {SyliAtlas.Locales.pick(c.community.short, @locale)} · {ngettext(
             "1 country",
             "%{count} countries",
             length(c.community.members)
           )}
         </p>
-        <b>{c.community.name[@locale]}</b>
+        <b>{SyliAtlas.Locales.pick(c.community.name, @locale)}</b>
         <div class="carry-row small">
           <span class="muted">{gettext("GDP %{year}", year: 2025)}</span>
           <b class="num">{value(c.gdp, "gdp_usd_bn", @locale)}</b>

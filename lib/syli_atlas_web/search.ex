@@ -205,12 +205,13 @@ defmodule SyliAtlasWeb.Search do
   end
 
   defp result(%{type: :country} = e, {tab, _}, locale) do
-    tab_path = Paths.country_tab(locale, e.slug[locale], tab)
+    tab_path = Paths.country_tab(locale, SyliAtlas.Locales.pick(e.slug, locale), tab)
 
     base(e, locale)
     |> Map.merge(%{
       "path" => tab_path,
-      "label" => "#{e.names[locale]} · #{SyliAtlasWeb.ProfileComponents.tab_label(tab)}",
+      "label" =>
+        "#{SyliAtlas.Locales.pick(e.names, locale)} · #{SyliAtlasWeb.ProfileComponents.tab_label(tab)}",
       "profile" => e.path[locale]
     })
   end
@@ -221,7 +222,7 @@ defmodule SyliAtlasWeb.Search do
     %{
       "type" => Atom.to_string(e.type),
       "code" => e.code,
-      "label" => e.names[locale],
+      "label" => SyliAtlas.Locales.pick(e.names, locale),
       "kind" => kind_label(e.type),
       "path" => e.path[locale]
     }
@@ -256,13 +257,18 @@ defmodule SyliAtlasWeb.Search do
 
       path =
         case {type, topic} do
-          {:country, {tab, _}} -> Paths.country_tab(locale, e.slug[locale], tab)
-          {:country, nil} -> Paths.country_tab(locale, e.slug[locale], :economy)
-          _ -> e.path[locale]
+          {:country, {tab, _}} ->
+            Paths.country_tab(locale, SyliAtlas.Locales.pick(e.slug, locale), tab)
+
+          {:country, nil} ->
+            Paths.country_tab(locale, SyliAtlas.Locales.pick(e.slug, locale), :economy)
+
+          _ ->
+            e.path[locale]
         end
 
       %{
-        "name" => e.names[locale],
+        "name" => SyliAtlas.Locales.pick(e.names, locale),
         "indicator" => indicator,
         "label" => SyliAtlasWeb.PageComponents.indicator_label(indicator),
         "value" => Format.value(v, indicator, locale),

@@ -282,7 +282,9 @@ defmodule SyliAtlasWeb.OgImage do
 
   defp body(%{layout: :text} = s) do
     title_lines = wrap(s.title, 30) |> Enum.take(3)
-    lines = wrap(s[:text] || "", 62) |> Enum.take(4)
+    # As many lines as fit above the footer (y 520).
+    room = div(520 - (250 + length(title_lines) * 66), 38) + 1
+    lines = wrap(s[:text] || "", 62) |> Enum.take(min(4, room))
 
     [
       for {line, i} <- Enum.with_index(title_lines) do
@@ -300,17 +302,22 @@ defmodule SyliAtlasWeb.OgImage do
   defp pills(pills, x, y) do
     {out, _x} =
       Enum.reduce(Enum.take(pills, 2), {[], x}, fn {label, dot?}, {acc, px} ->
-        w = round(String.length(label) * 13 + if(dot?, do: 76, else: 52))
+        per_char = if script(label) == :arabic, do: 10.5, else: 13
+        w = round(vlen(label) * per_char + if(dot?, do: 76, else: 52))
 
-        piece = [
-          ~s|<g transform="translate(#{px} #{y})">|,
-          rect(0, 0, w, 56, @card, 28),
-          if(dot?, do: ~s(<circle cx="30" cy="28" r="7" fill="#{@orange}"/>), else: []),
-          text(if(dot?, do: 50, else: 26), 37, label, size: 23),
-          "</g>"
-        ]
+        # A pill that would run under the curve card is left out.
+        piece =
+          if px + w > 684 and px > x,
+            do: [],
+            else: [
+              ~s|<g transform="translate(#{px} #{y})">|,
+              rect(0, 0, w, 56, @card, 28),
+              if(dot?, do: ~s(<circle cx="30" cy="28" r="7" fill="#{@orange}"/>), else: []),
+              text(if(dot?, do: 50, else: 26), 37, label, size: 23),
+              "</g>"
+            ]
 
-        {[acc, piece], px + w + 16}
+        {[acc, piece], if(piece == [], do: px, else: px + w + 16)}
       end)
 
     out
@@ -371,12 +378,46 @@ defmodule SyliAtlasWeb.OgImage do
     {lo - pad, hi + pad}
   end
 
+  defp script(content) do
+    text = to_string(content)
+
+    cond do
+      text =~ ~r/[\x{0600}-\x{06FF}]/u -> :arabic
+      text =~ ~r/[\x{3000}-\x{9FFF}]/u -> :han
+      true -> :latin
+    end
+  end
+
+  # Width of a text in Latin characters: a Chinese character is about two.
+  defp vlen(text) do
+    text
+    |> to_string()
+    |> String.graphemes()
+    |> Enum.reduce(0, fn g, n ->
+      if g =~ ~r/^[\x{3000}-\x{9FFF}\x{FF00}-\x{FFEF}]/u, do: n + 1.8, else: n + 1
+    end)
+  end
+
   defp rect(x, y, w, h, fill, radius),
     do:
       ~s(<rect x="#{r(x)}" y="#{r(y)}" width="#{r(w)}" height="#{r(h)}" rx="#{radius}" fill="#{fill}"/>)
 
   defp text(x, y, content, opts) do
-    family = if opts[:mono], do: "JetBrains Mono", else: "Inter Tight"
+    # Text in Arabic or Chinese is drawn with its own Noto font
+    # (priv/og/fonts, which also covers Latin), so the whole run is shaped
+    # by one font. Hindi pages share their English twin's image
+    # (SyliAtlasWeb.Seo): resvg does not shape Devanagari correctly.
+    script = script(content)
+
+    family =
+      case script do
+        :arabic -> "Noto Sans Arabic, Inter Tight"
+        :han -> "Noto Sans SC, Inter Tight"
+        :latin -> if(opts[:mono], do: "JetBrains Mono", else: "Inter Tight")
+      end
+
+    # Arabic text in a left-to-right layout: starts at x like the others.
+    content = if script == :arabic, do: "\u200E" <> to_string(content), else: content
 
     attrs =
       [
@@ -386,7 +427,11 @@ defmodule SyliAtlasWeb.OgImage do
         ~s(font-weight="#{opts[:weight] || if(opts[:mono], do: 500, else: 400)}"),
         ~s(fill="#{opts[:fill] || @ink}"),
         if(opts[:anchor], do: ~s(text-anchor="#{opts[:anchor]}"), else: nil),
-        if(opts[:spacing], do: ~s(letter-spacing="#{opts[:spacing]}"), else: nil)
+        # Letter spacing would break the joined letters of Arabic and Devanagari.
+        if(opts[:spacing] && script == :latin,
+          do: ~s(letter-spacing="#{opts[:spacing]}"),
+          else: nil
+        )
       ]
       |> Enum.reject(&is_nil/1)
       |> Enum.join(" ")

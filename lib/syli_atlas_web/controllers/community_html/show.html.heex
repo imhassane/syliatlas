@@ -7,7 +7,7 @@
         {@name, nil}
       ]}
       title={@name}
-      subtitle={@community.name[@locale]}
+      subtitle={SyliAtlas.Locales.pick(@community.name, @locale)}
       kpis_id="community-kpis"
       class="community-head"
     >
@@ -115,8 +115,8 @@
         <a
           :for={o <- @others}
           class="btn btn-secondary"
-          href={Paths.community(@locale, o.slug[@locale])}
-        >{o.short[@locale]}</a>
+          href={Paths.community(@locale, SyliAtlas.Locales.pick(o.slug, @locale))}
+        >{SyliAtlas.Locales.pick(o.short, @locale)}</a>
       </div>
     </nav>
   </.section>

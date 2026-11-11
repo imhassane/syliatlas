@@ -25,10 +25,10 @@
         wide
       >
         <:head :let={r} label={gettext("Community")}>
-          <a href={Paths.community(@locale, r.community.slug[@locale])}><b>{r.community.short[
+          <a href={Paths.community(@locale, SyliAtlas.Locales.pick(r.community.slug, @locale))}><b>{r.community.short[
             @locale
           ]}</b></a>
-          <span class="small subtle">{r.community.name[@locale]}</span>
+          <span class="small subtle">{SyliAtlas.Locales.pick(r.community.name, @locale)}</span>
         </:head>
         <:col :let={r} label={gettext("Members")}>{length(r.community.members)}</:col>
         <:col :let={r} label={gettext("GDP %{year}", year: @year)}>

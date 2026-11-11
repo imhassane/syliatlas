@@ -37,7 +37,7 @@ defmodule SyliAtlasWeb.Layouts do
       assign(
         assigns,
         :other_lang,
-        Enum.find(assigns.alternates, fn {l, _} -> l in ["fr", "en"] and l != assigns.locale end)
+        if(length(assigns.alternates) > 1, do: assigns.alternates)
       )
 
     ~H"""
@@ -77,7 +77,13 @@ defmodule SyliAtlasWeb.Layouts do
           <button type="button" class="btn btn-quiet hide-mobile" data-install>{gettext(
             "Install the app"
           )}</button>
-          <.lang_link :if={@other_lang} lang={@other_lang} class="btn btn-quiet hide-mobile" />
+          <.lang_link
+            :if={@other_lang}
+            langs={@other_lang}
+            locale={@locale}
+            id="lang-header"
+            class="btn btn-quiet hide-mobile"
+          />
           <.theme_button />
           <.account_link
             user={@current_user}
@@ -297,7 +303,9 @@ defmodule SyliAtlasWeb.Layouts do
       |> assign(:countries, @top_countries |> Enum.map(&areas[&1]) |> Enum.reject(&is_nil/1))
       |> assign(
         :all_countries,
-        areas |> Map.values() |> Enum.sort_by(&String.normalize(&1.names[locale], :nfd))
+        areas
+        |> Map.values()
+        |> Enum.sort_by(&String.normalize(SyliAtlas.Locales.pick(&1.names, locale), :nfd))
       )
       |> assign(:exchanges, meta.exchanges)
       |> assign(:themes, themes(locale))
@@ -362,7 +370,7 @@ defmodule SyliAtlasWeb.Layouts do
       <nav aria-label={gettext("Footer")} class="wrap footer-nav">
         <div class="footer-col">
           <h2>{gettext("Countries")}</h2>
-          <a :for={c <- @countries} href={c.path[@locale]}>{c.names[@locale]}</a>
+          <a :for={c <- @countries} href={c.path[@locale]}>{SyliAtlas.Locales.pick(c.names, @locale)}</a>
           <a class="footer-more" href={SyliAtlasWeb.Topics.ranking_path(@locale, "gdp_usd_bn")}>
             {gettext("All 54 countries")} →
           </a>
@@ -424,17 +432,14 @@ defmodule SyliAtlasWeb.Layouts do
             </p>
           </div>
           <div class="footer-settings">
-            <div :if={@other_lang} class="lang-switch" role="group" aria-label={gettext("Language")}>
-              <span aria-current="true">{String.upcase(@locale)}</span>
-              <a
-                href={elem(@other_lang, 1)}
-                hreflang={elem(@other_lang, 0)}
-                lang={elem(@other_lang, 0)}
-                aria-label={if elem(@other_lang, 0) == "en", do: "English", else: "Français"}
-              >
-                {String.upcase(elem(@other_lang, 0))}
-              </a>
-            </div>
+            <.lang_link
+              :if={@other_lang}
+              langs={@other_lang}
+              locale={@locale}
+              id="lang-footer"
+              class="btn btn-quiet"
+              up
+            />
             <.theme_button />
           </div>
         </div>
@@ -503,7 +508,10 @@ defmodule SyliAtlasWeb.Layouts do
             <div class="recap-chips" data-recap-chips>
               <label :for={c <- @countries} class="recap-chip">
                 <input type="checkbox" name="countries[]" value={c.code} />
-                <span><.flag code={c.code} size="sm" sprite />{c.names[@locale]}</span>
+                <span><.flag code={c.code} size="sm" sprite />{SyliAtlas.Locales.pick(
+                  c.names,
+                  @locale
+                )}</span>
               </label>
             </div>
             <label class="field recap-add">
@@ -515,7 +523,7 @@ defmodule SyliAtlasWeb.Layouts do
                   value={c.code}
                   data-flag={SyliAtlasWeb.Flags.sprite_href(c.code)}
                 >
-                  {c.names[@locale]}
+                  {SyliAtlas.Locales.pick(c.names, @locale)}
                 </option>
               </select>
             </label>
@@ -572,14 +580,41 @@ defmodule SyliAtlasWeb.Layouts do
     """
   end
 
-  attr :lang, :any, required: true
+  attr :langs, :list, required: true, doc: "[{locale, path}] of this page in every language"
+  attr :locale, :string, required: true
+  attr :id, :string, required: true
   attr :class, :string, default: nil
+  attr :up, :boolean, default: false, doc: "opens above the button (footer, drawer)"
 
+  # The language menu: this page in the other languages, each named in itself.
   defp lang_link(assigns) do
     ~H"""
-    <a class={@class} href={elem(@lang, 1)} hreflang={elem(@lang, 0)} lang={elem(@lang, 0)}>
-      {if elem(@lang, 0) == "en", do: "English", else: "Français"}
-    </a>
+    <details class={["lang-menu", @up && "lang-menu-up"]} id={@id}>
+      <summary class={@class} aria-label={gettext("Language")}>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          aria-hidden="true"
+        ><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z">
+        </path></svg>
+        <span>{SyliAtlas.Locales.native(@locale)}</span>
+      </summary>
+      <ul role="list">
+        <li :for={{l, href} <- @langs}>
+          <a
+            href={href}
+            hreflang={SyliAtlas.Locales.tag(l)}
+            lang={SyliAtlas.Locales.tag(l)}
+            dir={SyliAtlas.Locales.dir(l)}
+            aria-current={l == @locale && "true"}
+          >{SyliAtlas.Locales.native(l)}</a>
+        </li>
+      </ul>
+    </details>
     """
   end
 
@@ -665,7 +700,14 @@ defmodule SyliAtlasWeb.Layouts do
           </p>
           <div class="drawer-foot stack gap-2">
             <button type="button" class="btn btn-secondary" data-install>{gettext("Install the app")}</button>
-            <.lang_link :if={@other_lang} lang={@other_lang} class="btn btn-secondary" />
+            <.lang_link
+              :if={@other_lang}
+              langs={@other_lang}
+              locale={@locale}
+              id="lang-drawer"
+              class="btn btn-secondary"
+              up
+            />
             <.account_link user={@current_user} locale={@locale} class="btn btn-primary" />
           </div>
         </div>

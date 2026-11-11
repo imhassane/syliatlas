@@ -47,7 +47,10 @@ defmodule SyliAtlas.Workers.OgWarmWorker do
         a.kind in ["country", "region", "continent"],
         do: Paths.area(locale, a)
       ) ++
-      for(c <- SyliAtlas.Economy.Communities.all(), do: Paths.community(locale, c.slug[locale])) ++
+      for(
+        c <- SyliAtlas.Economy.Communities.all(),
+        do: Paths.community(locale, SyliAtlas.Locales.pick(c.slug, locale))
+      ) ++
       exchanges
   end
 end
