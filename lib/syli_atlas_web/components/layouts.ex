@@ -480,6 +480,15 @@ defmodule SyliAtlasWeb.Layouts do
     """
   end
 
+  @doc "The flash messages (info, error) as the toasts of assets/js/ui/toasts.js expect them."
+  def flash_toasts(flash) when is_map(flash) do
+    [:info, :error]
+    |> Enum.map(&%{kind: &1, message: Phoenix.Flash.get(flash, &1)})
+    |> Enum.filter(&(is_binary(&1.message) and &1.message != ""))
+  end
+
+  def flash_toasts(_), do: []
+
   @doc "Texts of the notifications drawn by assets/js (toasts), in the page's language."
   def ui_strings do
     %{
@@ -544,8 +553,14 @@ defmodule SyliAtlasWeb.Layouts do
   def flash_group(assigns) do
     ~H"""
     <div id={@id} aria-live="polite">
-      <.flash kind={:info} flash={@flash} />
-      <.flash kind={:error} flash={@flash} />
+      <%!-- The flash messages become toasts (FlashToasts hook, assets/js/live.js). --%>
+      <div
+        id={"#{@id}-toasts"}
+        phx-hook="FlashToasts"
+        data-flash={Phoenix.json_library().encode!(flash_toasts(@flash))}
+        hidden
+      >
+      </div>
 
       <.flash
         id="client-error"

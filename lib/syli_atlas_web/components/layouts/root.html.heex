@@ -184,6 +184,16 @@
     {@inner_content}
     <section id="toasts" class="toasts" aria-label={gettext("Notifications")} aria-live="polite">
     </section>
+    <%!-- The flash messages, drawn as toasts by assets/js/ui/toasts.js. --%>
+    <script
+      :if={!assigns[:live_js] && SyliAtlasWeb.Layouts.flash_toasts(assigns[:flash]) != []}
+      type="application/json"
+      id="flash-toasts"
+    >
+      <%= Phoenix.HTML.raw(SyliAtlasWeb.MapComponents.json_for_script(
+        SyliAtlasWeb.Layouts.flash_toasts(assigns[:flash])
+      )) %>
+    </script>
     <script type="application/json" id="ui-strings">
       <%= Phoenix.HTML.raw(SyliAtlasWeb.MapComponents.json_for_script(SyliAtlasWeb.Layouts.ui_strings())) %>
     </script>
