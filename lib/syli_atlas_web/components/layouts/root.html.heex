@@ -8,6 +8,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta :if={!assigns[:public]} name="csrf-token" content={get_csrf_token()} />
+    <%!-- Site ownership for Yandex Webmaster. --%>
+    <meta name="yandex-verification" content="b1d5b3859cfe52ef" />
     <.live_title default="Syli Atlas" suffix=" · Syli Atlas" phx-no-format>{assigns[:page_title]}</.live_title>
     <meta :if={assigns[:seo][:description]} name="description" content={@seo[:description]} />
     <link :if={assigns[:seo][:canonical]} rel="canonical" href={@seo[:canonical]} />
