@@ -62,7 +62,9 @@ defmodule SyliAtlas.MixProject do
       # Passkeys (WebAuthn): signature, origin and challenge checks.
       {:wax_, "~> 0.7.0"},
       # SMTP to Mailpit outside production (Resend in production).
-      {:gen_smtp, "~> 1.2"}
+      {:gen_smtp, "~> 1.2"},
+      # Share images (Open Graph): SVG drawn from the data, rendered to PNG.
+      {:resvg, "~> 0.6"}
     ]
   end
 

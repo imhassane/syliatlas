@@ -77,6 +77,7 @@ defmodule SyliAtlasWeb.Router do
     get "/sitemap.xml", SitemapController, :sitemap
     get "/robots.txt", SitemapController, :robots
     get "/llms.txt", SitemapController, :llms
+    get "/og/:version/*path", OgImageController, :show
   end
 
   scope "/", SyliAtlasWeb do

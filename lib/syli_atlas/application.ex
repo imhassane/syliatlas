@@ -26,7 +26,15 @@ defmodule SyliAtlas.Application do
     # for other strategies and supported options
     opts = [strategy: :one_for_one, name: SyliAtlas.Supervisor]
     SyliAtlas.Mailer.log_service()
-    Supervisor.start_link(children, opts)
+
+    with {:ok, _pid} = ok <- Supervisor.start_link(children, opts) do
+      # A deploy changes the address of every share image: draw the main
+      # ones again (SyliAtlas.Workers.OgWarmWorker).
+      if Application.get_env(:syli_atlas, :og_warm_on_boot, false),
+        do: SyliAtlas.Workers.OgWarmWorker.enqueue(60)
+
+      ok
+    end
   end
 
   # Tell Phoenix to update the endpoint configuration
