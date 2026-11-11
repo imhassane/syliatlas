@@ -54,30 +54,49 @@
         if (!navigator.onLine) document.documentElement.classList.add("is-offline");
       })();
     </script>
-    <%!-- Page arrival. The browser does no transition between pages (it would
-         freeze the band in a still image): the new page is shown at once and
-         moves itself, live, before its first paint.
-         - Most pages: the content rises 14 px.
-         - A tab of a country profile: the tab bar stays where the reader left
-           it (or stuck under the band), its underline slides from the old tab,
-           the content comes in from the tab's side.
-         - A filter or sort of a table: the table stays in place, each row
-           slides from its old position, new rows rise.
-         The old page writes where things were when its link was clicked
-         (assets/js/ui/transitions.js). Nothing moves with reduced motion. --%>
+    <%!-- Page arrival after a tab of a country profile or a table filter or sort
+         (the old page wrote where things were when the link was clicked:
+         assets/js/ui/transitions.js). The new page is shown at once and moves
+         itself, live, before its first paint: the tab bar stays where the
+         reader left it (or stuck under the band), its underline slides from the
+         old tab, the content comes in from the tab's side; or the table stays
+         in place and each row slides from its old position.
+         Only then does the first paint wait for the content it measures (a
+         rel="expect" added here, while the head is parsed); every other page
+         paints as soon as its first bytes arrive, and does not move. --%>
     <script>
       (function () {
         var EASE = "cubic-bezier(.22, 1, .36, 1)";
-        var arrive = function () {
-          var saved = null;
-          try { saved = JSON.parse(sessionStorage.getItem("arrival")); sessionStorage.removeItem("arrival"); } catch (x) {}
-          if (saved && saved.to !== location.href) saved = null;
-          var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
-          var stickyTop = document.getElementById("site-ticker") ? document.getElementById("site-ticker").offsetHeight : 0;
-          var move = function (el, from, ms) {
-            if (!still && el && el.animate) el.animate([{transform: from}, {transform: "none"}], {duration: ms || 360, easing: EASE});
-          };
+        var read = function () {
+          try {
+            var saved = JSON.parse(sessionStorage.getItem("arrival"));
+            if (saved && saved.to === location.href) { sessionStorage.removeItem("arrival"); return saved; }
+          } catch (x) {}
+          return null;
+        };
+        var early = read();
+        if (early) {
+          var expect = document.createElement("link");
+          expect.rel = "expect";
+          expect.href = early.kind === "tab" ? "#tab-panel" : "#vt-ready";
+          expect.setAttribute("blocking", "render");
+          document.head.appendChild(expect);
+        }
+        // The band keeps its place from page to page: its loop position follows
+        // the clock (assets/css/ticker.css, mod()).
+        document.documentElement.style.setProperty("--now", Date.now() / 1000 + "s");
 
+        var arrive = function () {
+          // A page prepared in advance read nothing while it was being prepared.
+          var saved = early || read();
+          early = null;
+          if (!saved) return;
+          var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+          var band = document.getElementById("site-ticker");
+          var stickyTop = band ? band.offsetHeight : 0;
+          var move = function (el, from, ms) {
+            if (!still && el && el.animate) el.animate([{transform: from}, {transform: "none"}], {duration: ms || 320, easing: EASE});
+          };
           // Same place as on the old page, also when the link carried an anchor
           // (the anchor would scroll once more at the end of parsing).
           var keep = function (y) {
@@ -87,44 +106,32 @@
               document.addEventListener("DOMContentLoaded", function () { scrollTo({top: y, behavior: "instant"}); }, {once: true});
           };
 
-          if (saved && saved.kind === "tab") {
-            var bar = document.querySelector(".tab-bar"), panel = document.querySelector(".tab-panel");
-            if (bar && panel) {
-              var natural = panel.getBoundingClientRect().top + scrollY - bar.offsetHeight;
-              keep(natural - Math.max(saved.top, stickyTop));
-              // Near the top of a page whose hero is shorter, the bar cannot stay:
-              // it glides to its new place instead of jumping.
-              var gap = Math.max(saved.top, stickyTop) - bar.getBoundingClientRect().top;
-              if (Math.abs(gap) > 1) move(bar, "translateY(" + gap + "px)");
-              var ind = bar.querySelector(".tab-indicator");
-              if (ind && saved.ind) {
-                var r = ind.getBoundingClientRect();
-                move(ind, "translateX(" + (saved.ind.left - r.left) + "px) scaleX(" + saved.ind.width / r.width + ")");
-              }
-              move(panel, "translateX(" + 40 * saved.dir + "px)");
-              return;
+          if (saved.kind === "tab") {
+            var bar = document.querySelector(".tab-bar"), panel = document.getElementById("tab-panel");
+            if (!bar || !panel) return;
+            keep(panel.getBoundingClientRect().top + scrollY - bar.offsetHeight - Math.max(saved.top, stickyTop));
+            // Near the top of a page whose hero is shorter, the bar cannot stay:
+            // it glides to its new place instead of jumping.
+            var gap = Math.max(saved.top, stickyTop) - bar.getBoundingClientRect().top;
+            if (Math.abs(gap) > 1) move(bar, "translateY(" + gap + "px)");
+            var ind = bar.querySelector(".tab-indicator");
+            if (ind && saved.ind) {
+              var r = ind.getBoundingClientRect();
+              move(ind, "translateX(" + (saved.ind.left - r.left) + "px) scaleX(" + saved.ind.width / r.width + ")");
             }
-          }
-
-          if (saved && saved.kind === "reorder") {
+            move(panel, "translateX(" + 32 * saved.dir + "px)");
+          } else if (saved.kind === "reorder") {
             var box = document.querySelector("[data-keep-place]");
-            if (box) {
-              keep(scrollY + box.getBoundingClientRect().top - Math.max(saved.top, stickyTop));
-              var top0 = box.getBoundingClientRect().top;
-              Array.prototype.forEach.call(document.querySelectorAll("[data-reorder] > [id]"), function (row) {
-                var was = saved.rows[row.id];
-                var now = row.getBoundingClientRect().top - top0;
-                if (was == null) move(row, "translateY(14px)");
-                else if (Math.abs(was - now) > 1) move(row, "translateY(" + (was - now) + "px)", 420);
-              });
-              return;
-            }
+            if (!box) return;
+            keep(scrollY + box.getBoundingClientRect().top - Math.max(saved.top, stickyTop));
+            var top0 = box.getBoundingClientRect().top;
+            Array.prototype.forEach.call(document.querySelectorAll("[data-reorder] > [id]"), function (row) {
+              var was = saved.rows[row.id];
+              var now = row.getBoundingClientRect().top - top0;
+              if (was == null) move(row, "translateY(12px)");
+              else if (Math.abs(was - now) > 1) move(row, "translateY(" + (was - now) + "px)", 380);
+            });
           }
-
-          var nav = performance.getEntriesByType("navigation")[0];
-          var fromSite = false;
-          try { fromSite = new URL(document.referrer).origin === location.origin; } catch (x) {}
-          if (fromSite && (!nav || nav.type === "navigate")) move(document.getElementById("main"), "translateY(14px)");
         };
         if ("onpagereveal" in window) addEventListener("pagereveal", arrive);
         else document.addEventListener("DOMContentLoaded", arrive);
@@ -149,9 +156,9 @@
       crossorigin
     />
     <link phx-track-static rel="stylesheet" href={~p"/assets/js/app.css"} />
-    <%!-- Wait for the content (the end of <main>, so the tab bar and the tables
-         are there) before the first paint: the page arrival above needs them. --%>
-    <link rel="expect" href="#vt-ready" blocking="render" />
+    <%!-- Paint as soon as the top of the content is there (a page arrival after a
+         tab or a table filter waits longer: see « page arrival » above). --%>
+    <link rel="expect" href="#main" blocking="render" />
     <%!-- Prepare the next page on hover (prerender) so a click shows it at once.
          Only public pages: never the API, sign-in, the member space, discussions or admin. --%>
     <script :if={assigns[:public]} type="speculationrules">

@@ -62,7 +62,7 @@
   </div>
 
   <%!-- What changes from tab to tab: it slides in from the side of the tab. --%>
-  <div class="tab-panel">
+  <div class="tab-panel" id="tab-panel">
     <%= if @area.kind != "country" do %>
       <.economy {assigns} />
       <EconomyComponents.finances_section
