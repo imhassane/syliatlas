@@ -76,6 +76,17 @@ defmodule SyliAtlasWeb.SitemapController do
   end
 
   def robots(conn, _params) do
+    if SyliAtlasWeb.Plugs.CanonicalHost.noindex?() do
+      # Development copy of the site: nothing to index, no sitemap.
+      conn
+      |> put_resp_content_type("text/plain")
+      |> send_resp(200, "User-agent: *\nDisallow: /\n")
+    else
+      public_robots(conn)
+    end
+  end
+
+  defp public_robots(conn) do
     conn
     |> put_resp_content_type("text/plain")
     |> send_resp(200, """
@@ -96,7 +107,7 @@ defmodule SyliAtlasWeb.SitemapController do
     as_of = ratings && ratings["as_of"]
 
     static =
-      for fun <- [:home, :ranking, :regions, :method, :debt, :communities] do
+      for fun <- [:home, :ranking, :regions, :method, :accessibility, :debt, :communities] do
         {both(&apply(Paths, fun, [&1])), nil}
       end
 

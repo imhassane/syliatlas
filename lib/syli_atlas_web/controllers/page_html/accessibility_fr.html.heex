@@ -1,0 +1,110 @@
+<Layouts.public locale={@locale} current={:accessibility} alternates={@alternates}>
+  <.section>
+    <div class="prose stack gap-4" id="accessibility-statement">
+      <p class="eyebrow">Accessibilité</p>
+      <h1 class="h1">Déclaration d'accessibilité</h1>
+      <p class="lead">
+        Syli Atlas s'engage, dans une démarche volontaire, à rendre son site accessible à toutes et à tous, conformément au
+        référentiel général d'amélioration de l'accessibilité (RGAA), version {@a11y.rgaa}.
+      </p>
+      <p>
+        Cette déclaration s'applique au site <b>syliatlas.com</b>
+        (pages publiques, connexion et espace membre).
+      </p>
+
+      <h2 class="h2" id="etat">État de conformité</h2>
+      <p :if={@a11y.status == :none} id="accessibility-status">
+        Syli Atlas est <b>non conforme</b>
+        avec le RGAA {@a11y.rgaa} : aucun audit complet n'a encore été mené. Un audit sur un échantillon de pages est prévu ; cette déclaration sera mise à jour avec ses résultats.
+      </p>
+      <p :if={@a11y.status == :partial} id="accessibility-status">
+        Syli Atlas est <b>partiellement conforme</b>
+        avec le RGAA {@a11y.rgaa}, en raison des non-conformités listées ci-dessous.
+      </p>
+      <p :if={@a11y.status == :full} id="accessibility-status">
+        Syli Atlas est <b>totalement conforme</b> avec le RGAA {@a11y.rgaa}.
+      </p>
+
+      <h2 class="h2">Résultats des tests</h2>
+      <p :if={@a11y.rate}>
+        L'audit de conformité réalisé le {Calendar.strftime(@a11y.audited_on, "%d/%m/%Y")} révèle que {@a11y.rate} % des critères du RGAA {@a11y.rgaa} sont respectés.
+      </p>
+      <p :if={!@a11y.rate}>
+        Pas encore d'audit complet. Les pages principales sont contrôlées automatiquement avec axe-core (règles WCAG 2.1 et 2.2, niveaux A et AA), en thème clair et en thème sombre, et vérifiées à 320 pixels de large. Un contrôle automatique ne couvre qu'une partie des critères : il ne remplace pas l'audit.
+      </p>
+
+      <h2 class="h2">Ce qui est fait pour l'accessibilité</h2>
+      <ul>
+        <li>
+          Pages rendues côté serveur, lisibles sans JavaScript ; lien d'évitement « Aller au contenu ».
+        </li>
+        <li>
+          Chaque graphique est accompagné du tableau de ses valeurs (« Données du graphique en tableau »).
+        </li>
+        <li>
+          La carte de l'Afrique : chaque pays est un lien qui donne son nom et sa valeur ; les mêmes chiffres existent en tableau dans le classement des 54 pays.
+        </li>
+        <li>
+          Le bandeau défilant se met en pause (bouton, survol, focus) et s'arrête si le système demande moins d'animations.
+        </li>
+        <li>Thème clair et sombre, tous deux contrôlés pour les contrastes.</li>
+        <li>
+          Connexion sans mot de passe : code à six chiffres ou clé d'accès, sans test visuel ni CAPTCHA.
+        </li>
+      </ul>
+
+      <h2 class="h2">Contenus non accessibles connus</h2>
+      <p>
+        En attendant l'audit, les points suivants restent à vérifier ou à améliorer :
+      </p>
+      <ul>
+        <li>
+          la discussion de chaque fiche (mise à jour en direct) n'a pas encore été testée avec des lecteurs d'écran ;
+        </li>
+        <li>
+          les pages de l'espace membre et de l'administration n'ont pas encore été contrôlées ;
+        </li>
+        <li>
+          les e-mails envoyés par le site (codes, alertes, récapitulatif) ne sont pas couverts par cette déclaration.
+        </li>
+      </ul>
+
+      <h2 class="h2">Établissement de cette déclaration</h2>
+      <p>Cette déclaration a été établie le {Calendar.strftime(@a11y.stated_on, "%d/%m/%Y")}.</p>
+      <p>
+        Technologies utilisées : HTML, CSS, JavaScript, SVG, WAI-ARIA.
+        Outils : axe-core, inspecteur du navigateur, lecteurs d'écran NVDA et VoiceOver.
+      </p>
+
+      <h2 class="h2">Retour d'information et contact</h2>
+      <p>
+        Si vous n'arrivez pas à accéder à un contenu ou à un service, contactez-nous : nous vous orienterons vers une alternative accessible ou vous transmettrons le contenu sous une autre forme.
+      </p>
+      <p :if={@contact_email}>
+        Écrivez à <a href={"mailto:" <> @contact_email}>{@contact_email}</a>, en précisant la page concernée et le problème rencontré.
+      </p>
+
+      <h2 class="h2">Voies de recours</h2>
+      <p>
+        Si vous nous avez signalé un défaut d'accessibilité qui vous empêche d'accéder à un contenu ou à un service et que vous n'avez pas obtenu de réponse satisfaisante, vous pouvez :
+      </p>
+      <ul>
+        <li>
+          écrire au Défenseur des droits par le
+          <a href="https://formulaire.defenseurdesdroits.fr/" rel="noopener">formulaire en ligne</a>
+          ;
+        </li>
+        <li>
+          contacter le délégué du Défenseur des droits dans votre région (<a
+            href="https://www.defenseurdesdroits.fr/saisir/delegues"
+            rel="noopener"
+          >liste des délégués</a>) ;
+        </li>
+        <li>appeler le 09 69 39 00 00 ;</li>
+        <li>
+          envoyer un courrier, gratuit, sans timbre : Défenseur des droits, Libre réponse 71120, 75342 Paris CEDEX 07.
+        </li>
+      </ul>
+    </div>
+  </.section>
+</Layouts.public>

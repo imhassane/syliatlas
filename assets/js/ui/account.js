@@ -31,8 +31,16 @@ export async function initAccount() {
       star.setAttribute("aria-pressed", String(on))
       star.querySelector("span").textContent = on ? star.dataset.labelOn : star.dataset.labelOff
     }
-    render()
+    // A link that becomes a toggle: a button for assistive technologies,
+    // and Space presses it as it presses a button.
     star.setAttribute("role", "button")
+    render()
+    star.addEventListener("keydown", (event) => {
+      if (event.key === " ") {
+        event.preventDefault()
+        star.click()
+      }
+    })
     star.addEventListener("click", async (event) => {
       event.preventDefault()
       const [kind, ...rest] = star.dataset.favorite.split(":")

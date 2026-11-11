@@ -28,6 +28,7 @@ export function initMap() {
       if (!c) return
       a.classList.forEach(cls => cls.startsWith("q-") && a.classList.remove(cls))
       a.classList.add(c.classes[key])
+      a.setAttribute("aria-label", `${a.dataset.name} : ${c.values[key]}`)
     })
     root.querySelectorAll("[data-map-indicator]").forEach(link => {
       if (link.dataset.mapIndicator === key) link.setAttribute("aria-current", "true")
@@ -66,6 +67,8 @@ export function initMap() {
     for (const key of ["gdppc", "growth", "inflation", "debt"]) field(key).textContent = c.text[key]
     fillRating(c.rating)
     field("href").href = c.href
+    field("name-vh").textContent = ` : ${c.name}`
+    field("name-vh-compare").textContent = ` : ${c.name}`
     field("compare").href = c.compare
     fillIndicatorPill()
     drawSpark(c.series)

@@ -15,6 +15,9 @@ defmodule SyliAtlasWeb.Endpoint do
     websocket: [connect_info: [session: @session_options]],
     longpoll: [connect_info: [session: @session_options]]
 
+  # One host for the whole site (production) and noindex (development).
+  plug SyliAtlasWeb.Plugs.CanonicalHost
+
   # Serve at "/" the static files from "priv/static" directory.
   #
   # When code reloading is disabled (e.g., in production),

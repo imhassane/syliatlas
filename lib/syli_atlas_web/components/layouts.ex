@@ -322,6 +322,9 @@ defmodule SyliAtlasWeb.Layouts do
           <div class="stack gap-1">
             <b>{gettext("Data")}</b>
             <a href={Paths.method(@locale)}>{gettext("Method and sources")}</a>
+            <a href={Paths.accessibility(@locale)} id="footer-accessibility">
+              {accessibility_mention()}
+            </a>
             <a href="/api/v1/areas">{gettext("Public API")}</a>
             <a href="/llms.txt">llms.txt</a>
             <a href="/sitemap.xml">{gettext("Site map")}</a>
@@ -575,5 +578,16 @@ defmodule SyliAtlasWeb.Layouts do
       </.flash>
     </div>
     """
+  end
+
+  # RGAA: the compliance status, on every page, linked to the statement.
+  defp accessibility_mention do
+    mentions = %{
+      full: gettext("Accessibility: fully compliant"),
+      partial: gettext("Accessibility: partially compliant"),
+      none: gettext("Accessibility: not compliant")
+    }
+
+    Map.get(mentions, SyliAtlasWeb.PageController.accessibility_status(), mentions.none)
   end
 end

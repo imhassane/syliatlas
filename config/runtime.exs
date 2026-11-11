@@ -231,6 +231,18 @@ if config_env() == :prod do
 
   host = System.get_env("PHX_HOST") || "example.com"
 
+  # Search engines and the public address (SyliAtlasWeb.Plugs.CanonicalHost).
+  # Other hosts are redirected to PHX_HOST, unless PHX_HOST is itself the
+  # Railway address (the site would then redirect its own domain away).
+  # SITE_NOINDEX=true keeps an environment (development) out of search engines.
+  config :syli_atlas, :site,
+    canonical_redirect:
+      System.get_env("CANONICAL_REDIRECT", "true") == "true" and
+        not String.ends_with?(host, ".up.railway.app") and host != "example.com",
+    noindex: System.get_env("SITE_NOINDEX") == "true",
+    # Shown on the accessibility statement: where to report a barrier.
+    contact_email: System.get_env("CONTACT_EMAIL")
+
   # Passkeys belong to the site's host: changing PHX_HOST makes existing ones unusable.
   config :syli_atlas, SyliAtlas.Accounts.Passkeys,
     origin: "https://" <> host,

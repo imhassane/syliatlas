@@ -77,7 +77,10 @@ defmodule SyliAtlasWeb.ProfileComponents do
                 <dd class="num">{v}</dd>
               </div>
             </dl>
-            <span class="overview-more">{gettext("See the details")} →</span>
+            <span class="overview-more">
+              {gettext("See the details")}<span class="vh"> : {c.title}</span>
+              <span aria-hidden="true">→</span>
+            </span>
           </a>
         </div>
         <p class="src">{sources_line(@ctx)}</p>

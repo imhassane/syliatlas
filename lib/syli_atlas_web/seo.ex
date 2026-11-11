@@ -20,6 +20,42 @@ defmodule SyliAtlasWeb.Seo do
     )
   end
 
+  @doc """
+  The site and its publisher (home page): `WebSite` with its search box and
+  `Organization`, so search engines name the site and link its pages together.
+  """
+  def site(locale) do
+    home = url("/" <> locale)
+
+    [
+      %{
+        "@context" => "https://schema.org",
+        "@type" => "WebSite",
+        "@id" => url("/#website"),
+        "name" => "Syli Atlas",
+        "url" => home,
+        "inLanguage" => locale,
+        "publisher" => %{"@id" => url("/#organization")},
+        "potentialAction" => %{
+          "@type" => "SearchAction",
+          "target" => %{
+            "@type" => "EntryPoint",
+            "urlTemplate" => url(SyliAtlasWeb.Paths.search(locale)) <> "?q={search_term_string}"
+          },
+          "query-input" => "required name=search_term_string"
+        }
+      },
+      %{
+        "@context" => "https://schema.org",
+        "@type" => "Organization",
+        "@id" => url("/#organization"),
+        "name" => "Syli Atlas",
+        "url" => url("/"),
+        "logo" => url("/images/apple-touch-icon.png")
+      }
+    ]
+  end
+
   def alternates_for_header(paths), do: [{"fr", paths["fr"]}, {"en", paths["en"]}]
 
   def breadcrumbs(items) do

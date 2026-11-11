@@ -36,7 +36,8 @@ defmodule SyliAtlasWeb.PageController do
               paths,
               gettext(
                 "Growth, living standards, debt and inflation for every African country, from 2015 to the IMF projections for 2030."
-              )
+              ),
+              %{json_ld: Seo.site(locale)}
             ),
           alternates: Seo.alternates_for_header(paths),
           from: home["from"],
@@ -98,6 +99,42 @@ defmodule SyliAtlasWeb.PageController do
       alternates: Seo.alternates_for_header(paths),
       edition: Sources.published_edition("imf_weo"),
       data_sources: data_sources(Sources.published_edition("imf_weo"))
+    )
+  end
+
+  # The accessibility statement (RGAA). Update after each audit made in Ara
+  # (https://ara.numerique.gouv.fr): status :none | :partial | :full, the
+  # rate it gives, the date, and the pages left non-compliant.
+  @accessibility %{
+    status: :none,
+    rate: nil,
+    audited_on: nil,
+    stated_on: ~D[2026-11-11],
+    rgaa: "4.1.2"
+  }
+
+  @doc "The accessibility status, for the footer mention."
+  def accessibility_status, do: @accessibility.status
+
+  def accessibility(conn, _params) do
+    locale = conn.assigns.locale
+    paths = %{"fr" => Paths.accessibility("fr"), "en" => Paths.accessibility("en")}
+
+    template = if locale == "en", do: :accessibility_en, else: :accessibility_fr
+
+    render(conn, template,
+      page_title: gettext("Accessibility"),
+      seo:
+        Seo.page(
+          locale,
+          paths,
+          gettext(
+            "Accessibility statement of Syli Atlas: compliance with the RGAA, known barriers and how to report one."
+          )
+        ),
+      alternates: Seo.alternates_for_header(paths),
+      a11y: @accessibility,
+      contact_email: Application.get_env(:syli_atlas, :site, [])[:contact_email]
     )
   end
 
