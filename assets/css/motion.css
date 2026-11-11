@@ -1,9 +1,9 @@
 /* Motion. Transforms only — never fade text, so contrast checks stay right
-   at every frame. One curve for the site. Everything stops when the device
+   at every frame; figures never count or roll. One curve for the site. Everything stops when the device
    asks for reduced motion; pages already seen this session (html.revisit)
    do not replay their entrance. */
 
-:root { --ease: cubic-bezier(.2, .8, .2, 1); }
+:root { --ease: cubic-bezier(.22, 1, .36, 1); }
 
 @keyframes rise { from { transform: translateY(10px) scale(.985); } to { transform: none; } }
 @keyframes slide-in { from { transform: translateX(24px); } to { transform: none; } }
@@ -37,11 +37,45 @@ a.card:hover, .qcard:hover { transform: translateY(-2px); box-shadow: var(--shad
 .btn { transition: transform .15s var(--ease); }
 .btn:active { transform: scale(.97); }
 
-/* Between pages: the browser's own transitions; the country name travels. */
+/* Between pages: the browser's own transitions (cross-document view
+   transitions). The header and its band stay put (moved only if they were
+   hidden), the old page is replaced at once and the new one rises 14 px:
+   no fade on text. The country name travels into the title.
+   Two kinds of move are named by the page script (root layout and
+   assets/js/ui/transitions.js), which also marks the elements involved:
+   - tab-forward / tab-back (a tab of a country profile): the page does not
+     move, the underline slides to the new tab, the content comes in from
+     the side of the tab;
+   - reorder (a filter or sort of a table): each row slides to its place,
+     new rows rise, rows that leave are gone at once. */
 @media (prefers-reduced-motion: no-preference) {
   @view-transition { navigation: auto; }
+  .site-top { view-transition-name: site-top; }
 }
 .area-title { view-transition-name: area-title; }
+
+@keyframes vt-rise { from { transform: translateY(14px); } }
+@keyframes vt-from-right { from { transform: translateX(40px); } }
+@keyframes vt-from-left { from { transform: translateX(-40px); } }
+
+::view-transition-group(*) { animation-duration: .36s; animation-timing-function: var(--ease); }
+::view-transition-old(root) { animation: none; }
+::view-transition-new(root) { animation: vt-rise .36s var(--ease) both; }
+::view-transition-old(site-top), ::view-transition-new(site-top) { animation: none; }
+
+html:active-view-transition-type(tab-forward, tab-back, reorder)::view-transition-new(root) { animation: none; }
+/* Only the new tab bar shows (its labels change weight): no doubled text. */
+::view-transition-old(profile-tabs) { animation: none; opacity: 0; }
+::view-transition-new(profile-tabs) { animation: none; }
+::view-transition-group(tab-panel) { animation: none; }
+::view-transition-old(tab-panel) { animation: none; opacity: 0; }
+::view-transition-new(tab-panel) { animation: vt-from-right .36s var(--ease) both; }
+html:active-view-transition-type(tab-back)::view-transition-new(tab-panel) { animation-name: vt-from-left; }
+/* A row is shown as its new self only, flying from its old place: column
+   widths change with the rows shown, so a crossfade would double the text. */
+html:active-view-transition-type(reorder)::view-transition-old(*) { animation: none; opacity: 0; }
+html:active-view-transition-type(reorder)::view-transition-new(*) { animation: none; }
+html:active-view-transition-type(reorder)::view-transition-new(*):only-child { animation: vt-rise .36s var(--ease) both; }
 
 html.revisit .reveal .cty, html.revisit .draw, html.revisit .bar-fill, html.revisit .spark-dot, html.revisit .chart .end-dot { animation: none; }
 
@@ -54,16 +88,74 @@ html.revisit .reveal .cty, html.revisit .draw, html.revisit .bar-fill, html.revi
    scroll-driven animations where supported (entry range only, so nothing
    moves once in place); elsewhere (Firefox) assets/js/ui/motion.js sets
    .reveal-pending on blocks below the fold and removes it as they arrive.
-   Transforms only: the content is always readable. */
+   A block holding a grid of cards does not move as one: its other children
+   rise, and the cards rise one after the other (--i, by column).
+   Transforms only: the content is always readable. Figures never animate. */
+:is(.grid, .overview-grid, .related-grid) > :nth-child(4n+2) { --i: 1; }
+:is(.grid, .overview-grid, .related-grid) > :nth-child(4n+3) { --i: 2; }
+:is(.grid, .overview-grid, .related-grid) > :nth-child(4n+4) { --i: 3; }
 @media (prefers-reduced-motion: no-preference) {
   @supports ((animation-timeline: view()) and (animation-range: entry)) {
     @keyframes scroll-rise { from { transform: translateY(32px); } }
-    .section > .wrap > * {
+    .section > .wrap > *,
+    .section > .wrap > :has(:is(.grid, .overview-grid, .related-grid)) > :not(:is(.grid, .overview-grid, .related-grid)),
+    :is(.grid, .overview-grid, .related-grid) > * {
       animation: scroll-rise linear both;
       animation-timeline: view();
       animation-range: entry 0% entry 60%;
     }
+    :is(.grid, .overview-grid, .related-grid) > * {
+      animation-range: entry calc(var(--i, 0) * 7%) entry calc(55% + var(--i, 0) * 7%);
+    }
+    .section > .wrap > :is(.grid, .overview-grid, .related-grid),
+    .section > .wrap > :has(:is(.grid, .overview-grid, .related-grid)) { animation: none; }
   }
   .reveal-pending { transform: translateY(32px); }
-  .reveal-arrive { transition: transform .6s var(--ease); }
+  .reveal-arrive { transition: transform .6s var(--ease); transition-delay: calc(var(--i, 0) * 70ms); }
+}
+
+/* Header and band: stuck to the top, hidden while reading down, back as soon
+   as the reader scrolls up (assets/js/ui/header.js); a shadow once the page
+   has moved under them. A thin bar shows how far the page is read. */
+.site-top { position: sticky; top: 0; z-index: 30; background: var(--page); transition: transform .32s var(--ease), box-shadow .2s var(--ease); }
+.site-top.is-scrolled { box-shadow: 0 10px 28px -20px rgba(11, 26, 51, .45); }
+.site-top.is-hidden:not(:focus-within) { transform: translateY(-100%); box-shadow: none; }
+.read-progress { position: fixed; top: 0; left: 0; right: 0; z-index: 31; height: 2px; transform: scaleX(0); transform-origin: left; background: linear-gradient(90deg, var(--accent), #ff6b3d); pointer-events: none; }
+@keyframes read-progress { to { transform: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    .read-progress { animation: read-progress linear both; animation-timeline: scroll(root); }
+  }
+}
+
+/* Back to top: shown far down a page (header.js). */
+.to-top { position: fixed; right: 24px; bottom: 24px; z-index: 29; display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; padding: 0; border: 1px solid var(--border); border-radius: 50%; background: var(--card); color: var(--ink); box-shadow: var(--shadow-pop); cursor: pointer; transform: scale(0); transition: transform .26s var(--ease); }
+.to-top[hidden] { display: none; }
+html.is-far .to-top { transform: none; }
+.to-top:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Main menu: a pill follows the pointer from item to item (header.js). */
+.nav-desktop { position: relative; }
+.nav-desktop > a, .nav-desktop > .nav-menu { position: relative; z-index: 1; }
+.nav-pill { position: absolute; top: 0; left: 0; z-index: 0; border-radius: 999px; background: var(--muted); pointer-events: none; opacity: 0; transition: transform .3s var(--ease), width .3s var(--ease), height .3s var(--ease), opacity .15s; }
+.nav-pill.is-on { opacity: 1; }
+
+/* Tabs of a country profile: the underline is its own element so that it can
+   slide from tab to tab between pages. */
+.tab-nav a { position: relative; transition: color .2s var(--ease); }
+.tab-nav a[aria-current="page"] { border-bottom-color: transparent; }
+.tab-indicator { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; border-radius: 2px; background: var(--accent); }
+
+/* Themes menu and phone drawer: the panel unfolds, its entries follow. */
+@keyframes menu-in { from { transform: translateY(-6px) scale(.98); } }
+@keyframes item-in { from { transform: translateY(6px); } }
+@keyframes link-in { from { transform: translateX(24px); } }
+.drawer-nav > :nth-child(2) { --i: 1; } .drawer-nav > :nth-child(3) { --i: 2; } .drawer-nav > :nth-child(4) { --i: 3; }
+.drawer-nav > :nth-child(5) { --i: 4; } .drawer-nav > :nth-child(6) { --i: 5; } .drawer-nav > :nth-child(7) { --i: 6; }
+.drawer-nav > :nth-child(8) { --i: 7; } .drawer-nav > :nth-child(n+9) { --i: 8; }
+.nav-mega-item:nth-child(2) { --i: 1; } .nav-mega-item:nth-child(3) { --i: 2; } .nav-mega-item:nth-child(n+4) { --i: 3; }
+@media (prefers-reduced-motion: no-preference) {
+  .nav-menu[open] .nav-menu-pop { transform-origin: top left; animation: menu-in .22s var(--ease) both; }
+  .nav-menu[open] .nav-mega-item { animation: item-in .3s var(--ease) both; animation-delay: calc(var(--i, 0) * 40ms); }
+  .drawer:popover-open .drawer-nav > * { animation: link-in .4s var(--ease) both; animation-delay: calc(80ms + var(--i, 0) * 30ms); }
 }
