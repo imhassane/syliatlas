@@ -3,66 +3,70 @@
     <%= raw(embedded_json(@profile)) %>
   </script>
 
-  <.section tight={:bottom} class="profile-head">
-    <.area_header
-      area={@area}
-      region={@region}
-      name={@name}
-      title={@heading}
-      tab={@tab != :overview && @tab_name}
-      locale={@locale}
-    />
-    <SyliAtlasWeb.AccountComponents.follow
-      kind="area"
-      ref={@area.code}
-      locale={@locale}
-      path={@path}
-      alert_area={@area.kind == "country" && @area.code}
-    />
-    <.filter_sheet
-      :if={
-        @tab in [:overview, :economy, :finances] and
-          (@tab != :overview or @area.kind != "country")
-      }
-      id="period-sheet"
-      title={gettext("Period")}
-      summary={"#{@from} → #{@to}"}
-    >
-      <.period_form action={@path} from={@from} to={@to} />
-    </.filter_sheet>
-    <%!-- On the theme tabs the section itself opens with this answer. --%>
-    <p :if={@tab in [:overview, :economy] or @area.kind != "country"} class="lead" data-answer>
-      {@answer}
-    </p>
-    <.source_line
-      :if={@tab in [:overview, :economy, :finances]}
-      edition={@profile["edition"]}
-      locale={@locale}
-    />
-    <RatingComponents.rating_pill
-      :if={@rating && @tab == :overview}
-      entry={@rating}
-      rated={@rated}
-      href={Paths.area_tab(@locale, @area, :markets) <> "#notation"}
-    />
-  </.section>
-
-  <%!-- Sticky under the band: a direct child of <main>, so it can stay up all
-       along the page. --%>
-  <div :if={@area.kind == "country"} class="tab-bar" data-sticky-filters>
-    <div class="wrap">
-      <ProfileComponents.tab_nav
-        area={@area}
-        tabs={@tabs}
-        current={@tab}
-        locale={@locale}
-        query={@ctx.period_query}
+  <%= if @area.kind == "country" do %>
+    <.section tight={:bottom} class="profile-head">
+      <ProfileComponents.country_head
+        ctx={@ctx}
+        region={@region}
+        heading={@heading}
+        tab_name={@tab != :overview && @tab_name}
+        path={@path}
       />
+    </.section>
+
+    <%!-- Sticky under the band: a direct child of <main>, so it can stay up all
+         along the page. The period sits in it, on the tabs that use one. --%>
+    <div class="tab-bar" data-sticky-filters>
+      <div class="wrap tab-bar-row">
+        <ProfileComponents.tab_nav
+          area={@area}
+          tabs={@tabs}
+          current={@tab}
+          locale={@locale}
+          query={@ctx.period_query}
+        />
+        <div :if={@tab in [:overview, :economy, :finances]} class="tab-bar-period">
+          <.filter_sheet id="period-sheet" title={gettext("Period")} summary={"#{@from} → #{@to}"}>
+            <.period_form action={@path} from={@from} to={@to} />
+          </.filter_sheet>
+        </div>
+      </div>
     </div>
-  </div>
+  <% else %>
+    <.section tight={:bottom} class="profile-head">
+      <.area_header
+        area={@area}
+        region={@region}
+        name={@name}
+        title={@heading}
+        tab={@tab != :overview && @tab_name}
+        locale={@locale}
+      />
+      <SyliAtlasWeb.AccountComponents.follow
+        kind="area"
+        ref={@area.code}
+        locale={@locale}
+        path={@path}
+      />
+      <.filter_sheet id="period-sheet" title={gettext("Period")} summary={"#{@from} → #{@to}"}>
+        <.period_form action={@path} from={@from} to={@to} />
+      </.filter_sheet>
+      <p class="lead" data-answer>{@answer}</p>
+      <.source_line edition={@profile["edition"]} locale={@locale} />
+    </.section>
+  <% end %>
 
   <%!-- What changes from tab to tab: it slides in from the side of the tab. --%>
   <div class="tab-panel" id="tab-panel">
+    <section
+      :if={@area.kind == "country" and @tab in [:overview, :economy, :finances]}
+      class="section tab-intro"
+    >
+      <div class="wrap stack gap-1">
+        <p :if={@tab in [:overview, :economy]} class="lead" data-answer>{@answer}</p>
+        <.source_line edition={@profile["edition"]} locale={@locale} />
+      </div>
+    </section>
     <%= if @area.kind != "country" do %>
       <.economy {assigns} />
       <EconomyComponents.finances_section

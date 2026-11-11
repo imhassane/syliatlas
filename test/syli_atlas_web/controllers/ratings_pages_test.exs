@@ -30,7 +30,8 @@ defmodule SyliAtlasWeb.RatingsPagesTest do
   test "a country page shows its rating and verdict", %{conn: conn} do
     path = SyliAtlasWeb.Paths.area("fr", "country", "cote-d-ivoire")
     overview = conn |> get(path) |> html_response(200)
-    assert overview =~ ~s(id="rating-pill")
+    # The header's key figures carry the rating, linked to its section.
+    assert overview =~ ~s(id="kpi-rating")
     assert overview =~ ~s(href="/fr/pays/cote-d-ivoire/marches#notation")
     html = build_conn() |> get(path <> "/marches") |> html_response(200)
     assert html =~ ~s(id="notation")
