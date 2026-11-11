@@ -49,11 +49,10 @@ defmodule SyliAtlasWeb.ApiDocController do
         Seo.page(
           locale,
           paths,
-          if(locale == "fr",
-            do:
-              "L'API publique de Syli Atlas : indicateurs économiques des 54 pays africains en JSON et CSV, gratuitement, sans clé, avec la source de chaque chiffre.",
-            else:
-              "The Syli Atlas public API: economic indicators of the 54 African countries in JSON and CSV, free, without a key, with the source of every figure."
+          SyliAtlasWeb.ApiDocHTML.tr(
+            locale,
+            "L'API publique de Syli Atlas : indicateurs économiques des 54 pays africains en JSON et CSV, gratuitement, sans clé, avec la source de chaque chiffre.",
+            "The Syli Atlas public API: economic indicators of the 54 African countries in JSON and CSV, free, without a key, with the source of every figure."
           )
         ),
       alternates: Seo.alternates_for_header(paths),

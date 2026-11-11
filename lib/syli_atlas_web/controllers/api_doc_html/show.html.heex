@@ -380,10 +380,14 @@
           <section class="api-section" id={tr(@locale, "citer", "cite")}>
             <h2 class="api-h2">{tr(@locale, "Citer la source", "Cite the source")}</h2>
             <p class="api-text">
-              {tr(
-                @locale,
-                "Les chiffres gardent la licence de leur source. Pour les données du FMI, citez : « Source : Fonds monétaire international, Perspectives de l'économie mondiale (#{edition_label(@edition, @locale)}) », avec le lien, puis « via Syli Atlas ». La ligne 1 de chaque CSV et la page Méthode donnent la source exacte. Ce que Syli Atlas calcule (totaux, rangs, évolutions) est sous licence CC BY 4.0 : réutilisation libre, y compris commerciale, en citant Syli Atlas.",
-                "Figures keep the licence of their source. For IMF data, cite: “Source: International Monetary Fund, World Economic Outlook (#{edition_label(@edition, @locale)})”, with the link, then “via Syli Atlas”. Line 1 of each CSV and the Method page give the exact source. What Syli Atlas computes (totals, ranks, changes) is under CC BY 4.0: free reuse, commercial included, with credit to Syli Atlas."
+              {String.replace(
+                tr(
+                  @locale,
+                  "Les chiffres gardent la licence de leur source. Pour les données du FMI, citez : « Source : Fonds monétaire international, Perspectives de l'économie mondiale (%{edition}) », avec le lien, puis « via Syli Atlas ». La ligne 1 de chaque CSV et la page Méthode donnent la source exacte. Ce que Syli Atlas calcule (totaux, rangs, évolutions) est sous licence CC BY 4.0 : réutilisation libre, y compris commerciale, en citant Syli Atlas.",
+                  "Figures keep the licence of their source. For IMF data, cite: “Source: International Monetary Fund, World Economic Outlook (%{edition})”, with the link, then “via Syli Atlas”. Line 1 of each CSV and the Method page give the exact source. What Syli Atlas computes (totals, ranks, changes) is under CC BY 4.0: free reuse, commercial included, with credit to Syli Atlas."
+                ),
+                "%{edition}",
+                edition_label(@edition, @locale)
               )}
             </p>
             <p class="small">
