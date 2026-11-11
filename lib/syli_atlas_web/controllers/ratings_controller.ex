@@ -5,7 +5,7 @@ defmodule SyliAtlasWeb.RatingsController do
   alias SyliAtlas.Ratings
   alias SyliAtlas.Ratings.Scale
   alias SyliAtlasWeb.{NotFoundError, Paths, RatingComponents, Seo}
-  import SyliAtlasWeb.Format, only: [names: 1]
+  import SyliAtlasWeb.Format, only: [names: 1, names: 2]
 
   plug :put_layout, false
 
@@ -86,7 +86,7 @@ defmodule SyliAtlasWeb.RatingsController do
     description = description(entry, name)
 
     render(conn, :show,
-      page_title: gettext("Credit rating of %{name}: S&P, Moody's, Fitch", name: name),
+      page_title: title(entry, name),
       seo:
         Seo.page(locale, paths, description, %{
           # A country without any rating has nothing to say beyond the main page.
@@ -108,6 +108,17 @@ defmodule SyliAtlasWeb.RatingsController do
       faq: faq
     )
   end
+
+  # « Note souveraine du Sénégal : S&P CC, Moody's Ca »: the ratings
+  # themselves are what people look for.
+  defp title(%{"band" => nil}, name),
+    do: gettext("Credit rating of %{name}: not rated by S&P, Moody's or Fitch", names(name))
+
+  defp title(entry, name),
+    do:
+      gettext("Credit rating of %{name}: %{agencies}",
+        names(name, agencies: entry |> RatingComponents.agencies_text() |> String.replace(" · ", ", "))
+      )
 
   defp description(%{"band" => nil}, name),
     do: gettext("%{name} is not rated by S&P, Moody's or Fitch.", names(name))

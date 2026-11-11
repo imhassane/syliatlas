@@ -29,7 +29,7 @@ defmodule SyliAtlasWeb.PageController do
             List.first(map_countries)
 
         render(conn, :home,
-          page_title: gettext("African economies, country by country"),
+          page_title: gettext("Economic data of the 54 African countries: GDP, debt, inflation"),
           seo:
             Seo.page(
               locale,
@@ -89,7 +89,7 @@ defmodule SyliAtlasWeb.PageController do
     paths = %{"fr" => Paths.method("fr"), "en" => Paths.method("en")}
 
     render(conn, :method,
-      page_title: gettext("Method and sources"),
+      page_title: gettext("Sources and method: IMF, World Bank, CEPII, rating agencies"),
       seo:
         Seo.page(
           locale,

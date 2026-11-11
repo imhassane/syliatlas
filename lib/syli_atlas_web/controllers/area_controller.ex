@@ -131,10 +131,7 @@ defmodule SyliAtlasWeb.AreaController do
       slugs: country_slugs(locale)
     }
 
-    title =
-      if tab == :overview,
-        do: name <> " · " <> gettext("economy %{from}–%{to}", from: from, to: to),
-        else: name <> " · " <> tab_name
+    title = title(tab, area, name, to, SyliAtlas.Trade.document())
 
     crumbs =
       breadcrumbs(area, region, locale) ++
@@ -196,6 +193,51 @@ defmodule SyliAtlasWeb.AreaController do
       trade: trade,
       trade_doc: SyliAtlas.Trade.document()
     )
+  end
+
+  # Titles name what people search: the subject, the measure, the year, the
+  # source. A country also searched under another name has it in brackets
+  # (Cabo Verde, Cap-Vert).
+  defp title(:overview, area, name, to, _trade) do
+    if area.kind == "country",
+      do: gettext("%{name}: GDP, growth, debt and inflation %{year} (IMF)", name: usual(name), year: to),
+      else: gettext("%{name}: economy %{year}, GDP and growth (IMF)", name: name, year: to)
+  end
+
+  defp title(:economy, _area, name, _to, _trade),
+    do: gettext("GDP of %{name} 2015–2030: growth and GDP per capita", title_names(name))
+
+  defp title(:finances, _area, name, to, _trade),
+    do: gettext("Public debt of %{name}: level, creditors and risk (%{year})", title_names(name, year: to))
+
+  defp title(:trade, _area, name, _to, trade),
+    do:
+      gettext("Exports of %{name}: products and main buyers (%{year})",
+        title_names(name, year: (trade && trade["year"]) || "")
+      )
+
+  defp title(:society, _area, name, _to, _trade),
+    do: gettext("%{name}: poverty, jobs and access to electricity", title_names(name))
+
+  defp title(:markets, _area, name, _to, _trade),
+    do: gettext("%{name}: credit rating, stock exchange and business climate", title_names(name))
+
+  defp title_names(name, extra \\ []) do
+    full = usual(name)
+
+    for {k, v} <- names(name, extra) do
+      if k in [:name, :of_name, :in_name, :the_name, :The_name],
+        do: {k, String.replace(v, name, full)},
+        else: {k, v}
+    end
+  end
+
+  defp usual(name) do
+    case Gettext.get_locale(SyliAtlasWeb.Gettext) == "fr" &&
+           SyliAtlas.Geo.French.usual_name(name) do
+      other when is_binary(other) -> "#{name} (#{other})"
+      _ -> name
+    end
   end
 
   # Tabs with something to show, in page order. A tab without data has no page.
@@ -300,10 +342,30 @@ defmodule SyliAtlasWeb.AreaController do
     end
   end
 
+  defp tab_answer(:economy, name, data, _from, to, locale, _wb, _trade, _r, _rs) do
+    s = data["profile"]["series"]
+
+    gettext(
+      "GDP of %{name}: %{gdp} in %{to}, %{per_capita} per person (%{ppp} in purchasing power parity). Real growth of %{growth} in %{to} (IMF).",
+      names(name,
+        gdp: value(PublicData.at(s["gdp_usd_bn"], to), "gdp_usd_bn", locale),
+        per_capita: value(PublicData.at(s["gdp_per_capita_usd"], to), "gdp_per_capita_usd", locale),
+        ppp: value(PublicData.at(s["gdp_per_capita_ppp"], to), "gdp_per_capita_ppp", locale),
+        growth: rate(PublicData.at(s["real_gdp_growth"], to), locale),
+        to: to
+      )
+    )
+  end
+
   defp tab_answer(_tab, name, data, from, to, locale, _wb, _trade, _r, _rs),
     do: answer(name, data, from, to, locale)
 
   defp pct(v, locale), do: SyliAtlasWeb.Format.number(v, 1, locale) <> " %"
+
+  # A growth rate in a sentence: « 6,7 % », « −1,2 % », without the plus sign
+  # of the tables.
+  defp rate(nil, locale), do: SyliAtlasWeb.Format.number(nil, 1, locale)
+  defp rate(v, locale), do: pct(v, locale)
 
   # The line drawn next to a country (its region) or a region (Africa).
   defp comparison(area, region, from, to, locale) do
@@ -387,20 +449,66 @@ defmodule SyliAtlasWeb.AreaController do
 
   defp members(_, _, _, _), do: []
 
-  @doc false
+  @doc """
+  The lead sentence of a profile: real growth first (what the economy did),
+  then the size and rank. GDP in current dollars comes last, and only when it
+  tells another story than real growth (a currency that fell, as the naira
+  since 2020): said alone, « −51.5 % » reads as a collapse.
+  """
   def answer(name, data, from, to, locale) do
     s = data["profile"]["series"]
     ch = data["period"]["changes"]
+    growth = rate(PublicData.at(s["real_gdp_growth"], to), locale)
+    real = change(ch["real_gdp_index"], "real_gdp_index", locale)
+    gdp = value(PublicData.at(s["gdp_usd_bn"], to), "gdp_usd_bn", locale)
 
-    gettext(
-      "%{name}: GDP of %{gdp} in %{to} (IMF), %{change} since %{from} in current dollars. Growth in %{to}: %{growth}.",
-      name: name,
-      gdp: value(PublicData.at(s["gdp_usd_bn"], to), "gdp_usd_bn", locale),
-      to: to,
-      from: from,
-      change: change(ch["gdp_usd_bn"], "gdp_usd_bn", locale),
-      growth: value(PublicData.at(s["real_gdp_growth"], to), "real_gdp_growth", locale)
-    )
+    lead =
+      case gdp_rank(data, to) do
+        {rank, _of} ->
+          gettext(
+            "%{name}: growth of %{growth} in %{to}, real GDP %{real} since %{from} (IMF). GDP of %{gdp}, no. %{rank} in Africa.",
+            name: name,
+            growth: growth,
+            to: to,
+            real: real,
+            from: from,
+            gdp: gdp,
+            rank: rank
+          )
+
+        nil ->
+          gettext(
+            "%{name}: growth of %{growth} in %{to}, real GDP %{real} since %{from} (IMF). GDP of %{gdp}.",
+            name: name,
+            growth: growth,
+            to: to,
+            real: real,
+            from: from,
+            gdp: gdp
+          )
+      end
+
+    lead <> dollar_note(data, from, locale)
+  end
+
+  # GDP in current dollars, when it fell 20 points or more below real growth:
+  # the gap is the exchange rate, said as such.
+  defp dollar_note(data, from, locale) do
+    ch = data["period"]["changes"]
+    usd = ch["gdp_usd_bn"]
+    real = ch["real_gdp_index"]
+
+    with true <- is_number(usd) and is_number(real) and real - usd >= 20,
+         %{name: currency} <- Currencies.for_country(data["profile"]["code"], locale) do
+      " " <>
+        gettext("In current dollars: %{change} since %{from}, as the %{currency} fell.",
+          change: change(usd, "gdp_usd_bn", locale),
+          from: from,
+          currency: currency
+        )
+    else
+      _ -> ""
+    end
   end
 
   defp faq(name, data, from, to, locale) do

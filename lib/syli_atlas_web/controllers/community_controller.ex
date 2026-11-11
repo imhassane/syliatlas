@@ -78,7 +78,12 @@ defmodule SyliAtlasWeb.CommunityController do
       answer = community_answer(community, s, locale)
 
       render(conn, :show,
-        page_title: "#{name} · " <> community.name[locale],
+        page_title:
+          gettext("%{name}: GDP, growth and debt of the %{count} member countries (%{year})",
+            name: name,
+            count: length(s.members),
+            year: @year
+          ),
         seo:
           Seo.page(locale, paths, answer, %{
             json_ld: [

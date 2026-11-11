@@ -27,7 +27,7 @@ defmodule SyliAtlasWeb.RegionsController do
 
     render(conn, :index,
       communities: SyliAtlasWeb.CommunityController.summaries(),
-      page_title: gettext("The regions of Africa compared"),
+      page_title: gettext("Regions of Africa compared: GDP, growth, inflation and debt"),
       seo:
         Seo.page(
           locale,

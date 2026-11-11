@@ -37,7 +37,10 @@ defmodule SyliAtlasWeb.ProfileTabsTest do
              "http://localhost:4000/en/countries/cote-d-ivoire/trade"
            ]
 
-    assert doc |> LazyHTML.query("title") |> LazyHTML.text() =~ "Commerce"
+    # The title names what people search, with the article French needs.
+    assert doc |> LazyHTML.query("title") |> LazyHTML.text() =~
+             "Exportations de la Côte d'Ivoire\u202f: produits et premiers clients"
+
     assert doc |> LazyHTML.query(".crumbs") |> LazyHTML.text() =~ "Commerce"
     refute LazyHTML.text(LazyHTML.query(doc, ~s(script[type="application/ld+json"]))) =~ "FAQPage"
   end

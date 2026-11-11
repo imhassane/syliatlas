@@ -297,7 +297,7 @@ defmodule SyliAtlasWeb.RatingComponents do
             <p class="eyebrow">{gettext("Sovereign rating")}</p>
             <.dynamic_tag tag_name={if @page, do: "h1", else: "h2"} class="h1 rt-title">
               {if @page,
-                do: gettext("%{name}: %{headline}", name: @name, headline: headline(@entry, @name)),
+                do: gettext("Credit rating of %{name} · %{headline}", names(@name, headline: headline(@entry, @name))),
                 else: headline(@entry, @name)}
             </.dynamic_tag>
             <p class="lead rt-lead">

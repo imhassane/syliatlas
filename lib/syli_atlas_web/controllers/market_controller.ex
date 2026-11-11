@@ -42,7 +42,7 @@ defmodule SyliAtlasWeb.MarketController do
     filtered? = q != "" or region != nil or params["sort"] != nil
 
     render(conn, :index,
-      page_title: gettext("African stock exchanges"),
+      page_title: gettext("African stock exchanges: indices, prices and latest session"),
       seo:
         Seo.page(
           locale,
@@ -76,7 +76,7 @@ defmodule SyliAtlasWeb.MarketController do
     page = Pagination.paginate(doc["securities"], params["page"], 20)
 
     render(conn, :exchange,
-      page_title: e["short_name"] <> " · " <> gettext("stock exchange"),
+      page_title: exchange_title(e, doc),
       seo:
         Seo.page(locale, paths, answer(doc, locale), %{
           json_ld: [
@@ -121,7 +121,12 @@ defmodule SyliAtlasWeb.MarketController do
            do: row["value"] / session_value * 100
 
       render(conn, :security,
-        page_title: row["name"] <> " (" <> row["ticker"] <> ") · " <> e["short_name"],
+        page_title:
+          gettext("%{name} (%{ticker}): price on the %{exchange} and history",
+            name: row["name"],
+            ticker: row["ticker"],
+            exchange: e["short_name"]
+          ),
         seo:
           Seo.page(locale, paths, security_answer(row, e, locale), %{
             json_ld: [
@@ -152,7 +157,7 @@ defmodule SyliAtlasWeb.MarketController do
     paths = %{"fr" => Paths.etfs("fr"), "en" => Paths.etfs("en")}
 
     render(conn, :etfs,
-      page_title: gettext("Funds exposed to Africa (ETF)"),
+      page_title: gettext("Funds exposed to Africa (ETF): prices and daily change"),
       seo:
         Seo.page(
           locale,
@@ -168,6 +173,23 @@ defmodule SyliAtlasWeb.MarketController do
   end
 
   # ---------------------------------------------------------------------------
+
+  defp exchange_title(e, doc) do
+    count = length(doc["securities"] || [])
+
+    if e["index_name"],
+      do:
+        gettext("%{name}: %{index} index and prices of the %{count} listed securities",
+          name: e["short_name"],
+          index: e["index_name"],
+          count: count
+        ),
+      else:
+        gettext("%{name}: prices of the %{count} listed securities",
+          name: e["short_name"],
+          count: count
+        )
+  end
 
   defp ensure_public(conn, _opts) do
     if Market.public?(), do: conn, else: raise(NotFoundError)

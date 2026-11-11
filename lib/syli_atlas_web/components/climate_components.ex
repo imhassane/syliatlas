@@ -64,7 +64,7 @@ defmodule SyliAtlasWeb.ClimateComponents do
       end
 
     [
-      {gettext("Is %{name} business friendly?", name: name),
+      {gettext("Is %{name} business friendly?", names(name)),
        headline(entry["position"]["tier"], name) <>
          ". " <> position_text(entry["position"]) <> bready}
     ]
