@@ -45,14 +45,15 @@
       rated={@rated}
       href={Paths.area_tab(@locale, @area, :markets) <> "#notation"}
     />
-    <ProfileComponents.tab_nav
-      :if={@area.kind == "country"}
-      area={@area}
-      tabs={@tabs}
-      current={@tab}
-      locale={@locale}
-    />
   </.section>
+
+  <%!-- Sticky under the band: a direct child of <main>, so it can stay up all
+       along the page. --%>
+  <div :if={@area.kind == "country"} class="tab-bar" data-sticky-filters>
+    <div class="wrap">
+      <ProfileComponents.tab_nav area={@area} tabs={@tabs} current={@tab} locale={@locale} />
+    </div>
+  </div>
 
   <%!-- What changes from tab to tab: it slides in from the side of the tab. --%>
   <div class="tab-panel">
