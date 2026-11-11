@@ -205,6 +205,11 @@ defmodule SyliAtlasWeb.Topics do
       [both.(&questions_path/1)] ++
       for(q <- questions(), do: both.(&question_path(&1, q))) ++
       for(p <- pairs(), do: both.(&pair_path(&1, p))) ++
-      [both.(&Paths.about/1)]
+      [both.(&Paths.about/1)] ++
+      [both.(&SyliAtlasWeb.GlossaryController.index_path/1)] ++
+      for(
+        t <- SyliAtlasWeb.GlossaryController.terms(),
+        do: both.(&SyliAtlasWeb.GlossaryController.term_path(&1, t))
+      )
   end
 end

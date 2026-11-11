@@ -3,6 +3,13 @@
     <div class="stack gap-4">
       <h2 class="h1">{gettext("Questions")}</h2>
       <.faq items={@faq} />
+      <a
+        :if={@area.kind == "country"}
+        href={SyliAtlasWeb.CountryQuestionsController.questions_path(@locale, @area)}
+        id="all-questions"
+      >
+        {gettext("All questions on the economy of %{name}", names(@name, []))} →
+      </a>
     </div>
     <div class="stack gap-4">
       <%!-- Discussions are not open yet (no /discussion page): no link to a

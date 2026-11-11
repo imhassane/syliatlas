@@ -1,0 +1,28 @@
+<Layouts.public locale={@locale} current={:countries} alternates={@alternates}>
+  <.section>
+    <nav aria-label={gettext("Breadcrumb")}>
+      <ol class="crumbs">
+        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+        <li><a href={Paths.area(@locale, @area)}>{@name}</a></li>
+        <li aria-current="page">{gettext("Questions")}</li>
+      </ol>
+    </nav>
+    <div class="row gap-3" style="align-items: center">
+      <SyliAtlasWeb.UI.flag code={@area.code} size="lg" />
+      <.section_head level={1} eyebrow={gettext("Questions")} title={@heading} />
+    </div>
+    <ol class="stack gap-4" id="country-questions">
+      <li :for={q <- @items} class="card pad stack gap-2" id={"q-" <> q.id}>
+        <h2 class="h2">{q.question}</h2>
+        <p data-answer>{q.answer}</p>
+        <a href={q.href} class="small">{gettext("Details and sources")} →</a>
+      </li>
+    </ol>
+    <p class="src">
+      {gettext(
+        "Answers written from the latest figures of the IMF, the World Bank, CEPII, the rating agencies and the IMF-World Bank debt analyses."
+      )}
+      <a href={Paths.method(@locale)}>{gettext("Method and sources")}</a>
+    </p>
+  </.section>
+</Layouts.public>

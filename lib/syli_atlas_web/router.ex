@@ -167,6 +167,8 @@ defmodule SyliAtlasWeb.Router do
     get "/", PageController, :home
     get "/methode", PageController, :method
     get "/a-propos", PageController, :about
+    get "/glossaire", GlossaryController, :index
+    get "/glossaire/:slug", GlossaryController, :show
     get "/questions", QuestionsController, :index
     get "/questions/:slug", QuestionsController, :show
     get "/accessibilite", PageController, :accessibility
@@ -175,6 +177,7 @@ defmodule SyliAtlasWeb.Router do
     get "/classement/:topic", RankingController, :topic
     get "/recherche", SearchController, :index
     get "/pays/:slug", AreaController, :show
+    get "/pays/:slug/questions", CountryQuestionsController, :show
     get "/pays/:slug/:tab", AreaController, :show
     get "/regions", RegionsController, :index
     get "/regions/:slug", AreaController, :show
@@ -197,6 +200,8 @@ defmodule SyliAtlasWeb.Router do
     get "/", PageController, :home
     get "/method", PageController, :method
     get "/about", PageController, :about
+    get "/glossary", GlossaryController, :index
+    get "/glossary/:slug", GlossaryController, :show
     get "/questions", QuestionsController, :index
     get "/questions/:slug", QuestionsController, :show
     get "/accessibility", PageController, :accessibility
@@ -205,6 +210,7 @@ defmodule SyliAtlasWeb.Router do
     get "/ranking/:topic", RankingController, :topic
     get "/search", SearchController, :index
     get "/countries/:slug", AreaController, :show
+    get "/countries/:slug/questions", CountryQuestionsController, :show
     get "/countries/:slug/:tab", AreaController, :show
     get "/regions", RegionsController, :index
     get "/regions/:slug", AreaController, :show
