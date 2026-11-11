@@ -50,6 +50,21 @@ defmodule SyliAtlasWeb.MotionTest do
     assert count(html, "main > .tab-panel") == 1
   end
 
+  test "a period chosen on a profile follows the reader from tab to tab" do
+    hrefs = fn path ->
+      doc(path)
+      |> LazyHTML.query("#profile-tabs a")
+      |> Enum.map(&LazyHTML.attribute(&1, "href"))
+      |> List.flatten()
+    end
+
+    chosen = hrefs.("/fr/pays/cote-d-ivoire/economie?from=2015&to=2025")
+    assert length(chosen) > 1
+    assert Enum.all?(chosen, &String.ends_with?(&1, "?from=2015&to=2025"))
+    # The default period stays out of the address.
+    refute Enum.any?(hrefs.("/fr/pays/cote-d-ivoire/economie"), &String.contains?(&1, "?"))
+  end
+
   test "tables that filter and sort mark their rows and their place" do
     html = doc("/fr/bourses")
     assert count(html, "#market-table[data-keep-place]") == 1

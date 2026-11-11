@@ -101,7 +101,12 @@ defmodule SyliAtlasWeb.AreaController do
     tab_name = ProfileComponents.tab_label(tab)
     answer = tab_answer(tab, name, data, from, to, locale, world_bank, trade, rating, ratings)
 
+    # A period chosen by the reader follows them from tab to tab (the default
+    # one stays out of the address, which stays canonical).
+    period_query = if params["from"] || params["to"], do: "?from=#{from}&to=#{to}", else: ""
+
     ctx = %{
+      period_query: period_query,
       locale: locale,
       area: area,
       name: name,

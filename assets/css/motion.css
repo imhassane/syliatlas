@@ -80,6 +80,8 @@ a.card:hover, .qcard:hover { transform: translateY(-2px); box-shadow: var(--shad
    --filters-h, and marks what is stuck (a shadow). A thin bar shows how far
    the page is read. */
 :root { --sticky-top: 0px; --filters-h: 0px; }
+/* Above the band: the Themes panel opens over it, not under. */
+.site-header { z-index: 40; }
 .site-ticker { position: sticky; top: 0; z-index: 30; transition: box-shadow .2s var(--ease); }
 [data-sticky-filters] { position: sticky; top: var(--sticky-top); z-index: 20; transition: box-shadow .2s var(--ease); }
 .site-ticker.is-stuck, [data-sticky-filters].is-stuck { box-shadow: 0 10px 24px -20px rgba(11, 26, 51, .5); }

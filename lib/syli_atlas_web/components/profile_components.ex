@@ -23,13 +23,14 @@ defmodule SyliAtlasWeb.ProfileComponents do
   attr :tabs, :list, required: true
   attr :current, :atom, required: true
   attr :locale, :string, required: true
+  attr :query, :string, default: "", doc: "the chosen period (?from=&to=), kept from tab to tab"
 
   def tab_nav(assigns) do
     ~H"""
     <nav class="tab-nav" aria-label={gettext("Sections of this profile")} id="profile-tabs">
       <a
         :for={t <- @tabs}
-        href={Paths.area_tab(@locale, @area, t)}
+        href={Paths.area_tab(@locale, @area, t) <> @query}
         aria-current={t == @current && "page"}
         id={"tab-#{t}"}
       >
@@ -60,7 +61,7 @@ defmodule SyliAtlasWeb.ProfileComponents do
           <a
             :if={@ctx.currency}
             class="pill pill-neutral no-dot"
-            href={Paths.area_tab(@ctx.locale, @ctx.area, :finances) <> "#monnaie"}
+            href={Paths.area_tab(@ctx.locale, @ctx.area, :finances) <> @ctx.period_query <> "#monnaie"}
           >
             {@ctx.currency.name} ({@ctx.currency.code})
           </a>
@@ -94,7 +95,7 @@ defmodule SyliAtlasWeb.ProfileComponents do
     economy = %{
       id: "economy",
       title: tab_label(:economy),
-      href: Paths.area_tab(l, ctx.area, :economy),
+      href: Paths.area_tab(l, ctx.area, :economy) <> ctx.period_query,
       value: change(ch["real_gdp_index"], "real_gdp_index", l),
       tone: SyliAtlasWeb.Format.tone(ch["real_gdp_index"], "real_gdp_index"),
       caption: gettext("real GDP, %{from} → %{to} (IMF)", from: ctx.from, to: to),
@@ -111,7 +112,7 @@ defmodule SyliAtlasWeb.ProfileComponents do
     finances = %{
       id: "finances",
       title: tab_label(:finances),
-      href: Paths.area_tab(l, ctx.area, :finances),
+      href: Paths.area_tab(l, ctx.area, :finances) <> ctx.period_query,
       value: value(PublicData.at(s["public_debt_pct_gdp"], to), "public_debt_pct_gdp", l),
       tone: nil,
       caption: gettext("public debt, % of GDP, %{year} (IMF)", year: to),
@@ -292,7 +293,7 @@ defmodule SyliAtlasWeb.ProfileComponents do
       title: gettext("%{name}, elsewhere", name: ctx.name),
       links:
         for t <- ctx.tabs, t != tab do
-          {tab_label(t), Paths.area_tab(l, ctx.area, t)}
+          {tab_label(t), Paths.area_tab(l, ctx.area, t) <> ctx.period_query}
         end ++
           if(ctx.rating,
             do: [
