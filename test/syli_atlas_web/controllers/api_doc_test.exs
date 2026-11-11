@@ -40,6 +40,15 @@ defmodule SyliAtlasWeb.ApiDocTest do
     assert LazyHTML.query(page, "#route-csv") |> LazyHTML.text() =~ "year,status"
   end
 
+  test "code lines carry no stray space or line break", %{conn: conn} do
+    html = conn |> get(~p"/fr/api") |> html_response(200)
+    assert html =~ ~s(<li><span class="tok-)
+    refute html =~ ~r/<li>\s+<span class="tok-/
+    refute html =~ ~r/<\/span>\s+<span class="tok-/
+    # Text is escaped.
+    assert html =~ "&quot;CIV&quot;" or html =~ "&#34;CIV&#34;"
+  end
+
   test "server time: empty before the first hour, then per route", %{conn: conn} do
     html = conn |> get(~p"/fr/api") |> html_response(200)
     assert html =~ "Mesures en cours"
