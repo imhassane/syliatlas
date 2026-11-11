@@ -66,7 +66,7 @@
     />
     <div class="grid grid-3">
       <.question_card
-        href={Paths.ranking(@locale)}
+        href={Paths.ranking(@locale) <> "?mode=change"}
         eyebrow={gettext("Growth")}
         title={gettext("Which African countries grew the most since %{year}?", year: @from)}
         subtitle={gettext("GDP in current dollars, %{from} → %{to}", from: @from, to: @to)}
@@ -94,7 +94,7 @@
         />
       </.question_card>
       <.question_card
-        href={Paths.ranking(@locale) <> "?order=asc"}
+        href={Paths.ranking(@locale) <> "?mode=change&order=asc"}
         eyebrow={gettext("Weakest")}
         title={gettext("Which economies grew the least since %{year}?", year: @from)}
         subtitle={gettext("GDP in current dollars, %{from} → %{to}", from: @from, to: @to)}

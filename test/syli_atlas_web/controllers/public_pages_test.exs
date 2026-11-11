@@ -168,6 +168,36 @@ defmodule SyliAtlasWeb.PublicPagesTest do
     assert html =~ "+63,8"
   end
 
+  test "the ranking shows the value in the arrival year by default", %{conn: conn} do
+    doc = conn |> get("/fr/classement") |> html_response(200) |> LazyHTML.from_document()
+
+    assert doc
+           |> LazyHTML.query(~s(select[name=mode] option[value=value][selected]))
+           |> Enum.count() == 1
+
+    # Amounts, not changes: the first row reads in dollars.
+    assert doc |> LazyHTML.query("#ranking .rank-list li b") |> Enum.at(0) |> LazyHTML.text() =~
+             "$"
+
+    doc =
+      build_conn()
+      |> get("/fr/classement?mode=change")
+      |> html_response(200)
+      |> LazyHTML.from_document()
+
+    assert doc
+           |> LazyHTML.query(~s(select[name=mode] option[value=change][selected]))
+           |> Enum.count() == 1
+
+    assert doc |> LazyHTML.query("#ranking .rank-list li b") |> Enum.at(0) |> LazyHTML.text() =~
+             "%"
+
+    # The home page questions about growth still open the changes.
+    home = build_conn() |> get("/fr") |> html_response(200)
+    assert home =~ ~s(href="/fr/classement?mode=change")
+    assert home =~ ~s(href="/fr/classement?mode=change&amp;order=asc")
+  end
+
   test "lists show 10 rows, then pages", %{conn: conn} do
     html = conn |> get("/fr/classement") |> html_response(200)
     doc = LazyHTML.from_document(html)
@@ -249,7 +279,9 @@ defmodule SyliAtlasWeb.PublicPagesTest do
   end
 
   test "ranking and search", %{conn: conn} do
-    assert conn |> get("/fr/classement?region=west_africa") |> html_response(200) =~ "Cabo Verde"
+    assert conn |> get("/fr/classement?region=west_africa&mode=change") |> html_response(200) =~
+             "Cabo Verde"
+
     assert redirected_to(build_conn() |> get("/fr/recherche?q=senegal")) == "/fr/pays/senegal"
     assert build_conn() |> get("/fr/methode") |> html_response(200)
   end
