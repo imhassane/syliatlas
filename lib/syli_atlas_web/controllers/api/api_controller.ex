@@ -119,7 +119,9 @@ defmodule SyliAtlasWeb.Api.ApiController do
           [["year", "status" | keys] | rows]
           |> Enum.map_join("\n", fn row -> Enum.map_join(row, ",", &csv_cell/1) end)
 
-        source = "# Source: IMF #{profile["edition"]["label"]}, via Syli Atlas\n"
+        source =
+          "# Source: IMF #{profile["edition"]["label"]}, via Syli Atlas" <>
+            " · Syli Atlas calculations: CC BY 4.0 (#{SyliAtlasWeb.Seo.license_url()})\n"
 
         conn
         |> put_resp_content_type("text/csv")

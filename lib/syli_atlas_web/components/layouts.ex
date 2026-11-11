@@ -360,6 +360,9 @@ defmodule SyliAtlasWeb.Layouts do
           {gettext(
             "Information, not investment advice. Figures are those of the sources; totals and rankings are Syli Atlas calculations."
           )}
+          <a href={Paths.method(@locale) <> "#reuse"} rel="license">{gettext(
+            "Syli Atlas calculations: CC BY 4.0"
+          )}</a>
         </p>
       </div>
     </footer>
