@@ -8,18 +8,37 @@ defmodule SyliAtlasWeb.Admin.MembersController do
 
   alias SyliAtlas.Accounts
 
+  @filters %{
+    "admins" => [role: "admin"],
+    "cle" => [only: :with_passkey],
+    "desactives" => [only: :deactivated]
+  }
+
   def index(conn, params) do
-    role = if params["role"] in ["admin", "member"], do: params["role"]
+    filter = if Map.has_key?(@filters, params["filtre"]), do: params["filtre"], else: "tous"
 
     render(conn, :index,
       page_title: "Admin · Membres",
-      users: Accounts.list_users(search: params["q"], role: role),
+      users: Accounts.list_users([search: params["q"]] ++ Map.get(@filters, filter, [])),
       passkey_counts: passkey_counts(),
+      activity: Accounts.activity(),
       stats: Accounts.stats(),
+      admins: Accounts.count_admins(),
+      email_failures: SyliAtlas.Admin.Emails.failures(7),
       mail: SyliAtlas.Mailer.service(),
       q: params["q"] || "",
-      role: role
+      filter: filter,
+      me: conn.assigns.current_user.id
     )
+  end
+
+  def close_sessions(conn, %{"id" => id}) do
+    user = Accounts.get_user!(id)
+    count = Accounts.close_sessions(user)
+
+    conn
+    |> put_flash(:info, "#{count} session(s) fermée(s) pour #{user.email}.")
+    |> back()
   end
 
   def role(conn, %{"id" => id, "role" => role}) when role in ["admin", "member"] do

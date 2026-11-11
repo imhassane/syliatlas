@@ -21,6 +21,8 @@ defmodule SyliAtlas.Market.Quality do
   @stale_business_days 2
 
   @index_rules ~w(index_missing stale suspect_change)
+  # Rules about one session's figure, not a lasting state.
+  @event_rules ~w(suspect_change abnormal_change invalid_price)
   @security_rules ~w(invalid_price stale abnormal_change no_trade)
 
   @doc "Checks an index record: {verdict, [issue]}."
@@ -92,20 +94,30 @@ defmodule SyliAtlas.Market.Quality do
   def sync!(subject_type, subject_id, trade_date, issues, checked_rules) do
     now = DateTime.utc_now() |> DateTime.truncate(:second)
 
-    open =
+    existing =
       Repo.all(
         from q in QualityIssue,
           where:
             q.subject_type == ^subject_type and q.subject_id == ^subject_id and
-              q.status == "open"
+              q.status in ["open", "accepted", "ignored"],
+          order_by: q.id
       )
-      |> Map.new(&{&1.rule, &1})
+
+    open = for(q <- existing, q.status == "open", into: %{}, do: {q.rule, q})
+    # Decided in the admin (accepted or ignored): not reopened while the
+    # same problem lasts. An event (a price jump) on another session is a
+    # new problem.
+    dismissed = for(q <- existing, q.status != "open", into: %{}, do: {q.rule, q})
 
     found = MapSet.new(issues, & &1.rule)
 
     for i <- issues do
-      case open[i.rule] do
-        nil ->
+      case {open[i.rule], dismissed[i.rule]} do
+        {nil, %QualityIssue{} = d}
+        when i.rule not in @event_rules or d.trade_date == trade_date ->
+          :ok
+
+        {nil, _} ->
           Repo.insert!(%QualityIssue{
             rule: i.rule,
             severity: i.severity,
@@ -118,7 +130,7 @@ defmodule SyliAtlas.Market.Quality do
             detected_at: now
           })
 
-        existing ->
+        {existing, _} ->
           existing
           |> Ecto.Changeset.change(detail: i.detail, data: i.data, trade_date: trade_date)
           |> Repo.update!()
@@ -127,6 +139,11 @@ defmodule SyliAtlas.Market.Quality do
 
     for {rule, existing} <- open, rule in checked_rules, not MapSet.member?(found, rule) do
       existing |> Ecto.Changeset.change(status: "resolved", resolved_at: now) |> Repo.update!()
+    end
+
+    # A decided problem that went away no longer holds back a new one.
+    for {rule, d} <- dismissed, rule in checked_rules, not MapSet.member?(found, rule) do
+      d |> Ecto.Changeset.change(status: "resolved") |> Repo.update!()
     end
 
     :ok
