@@ -83,7 +83,7 @@ defmodule SyliAtlas.Geo.French do
   }
 
   # Names people search under, besides the one shown (titles, JSON-LD).
-  @usual %{"Cabo Verde" => "Cap-Vert", "Centrafrique" => "République centrafricaine"}
+  @usual %{"Cabo Verde" => "Cap-Vert"}
 
   @doc "Every name the site shows with an article."
   def known, do: Map.keys(@articles)

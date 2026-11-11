@@ -506,7 +506,7 @@ defmodule SyliAtlasWeb.OgImage.Specs do
       eyebrow: gettext("Stock exchange") <> " · " <> gettext("end of day"),
       title: e["short_name"],
       subtitle: OgImage.fit(e["name"] || "", 64),
-      figure: (i["value"] && M.price(i["value"], locale)) || to_string(e["listed"] || ""),
+      figure: (i["value"] && M.price(i["value"], locale)) || to_string(listed(e, doc)),
       change:
         i["change_pct"] && M.pct(i["change_pct"], locale) |> String.replace(~r/^[▲▼]\s*/u, ""),
       direction: direction(change),
@@ -517,13 +517,20 @@ defmodule SyliAtlasWeb.OgImage.Specs do
         ),
       facts:
         [
-          {gettext("Listed securities"),
-           to_string(e["listed"] || length(doc["securities"] || []))},
+          {gettext("Listed securities"), to_string(listed(e, doc))},
           i["ytd_pct"] && {gettext("Since 1 January"), M.ytd(i["ytd_pct"], locale)}
         ]
         |> Enum.filter(& &1),
       source: "Data by MansaAPI · " <> gettext("close, not live")
     }
+  end
+
+  # The securities of the document; the referential count when it has none.
+  defp listed(e, doc) do
+    case length(doc["securities"] || []) do
+      0 -> e["listed"] || 0
+      n -> n
+    end
   end
 
   defp direction(n) when is_number(n) and n > 0, do: :up
