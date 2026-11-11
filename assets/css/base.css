@@ -201,7 +201,6 @@ p { margin: 0; }
 /* discussion */
 .avatar { width: 36px; height: 36px; flex: none; border-radius: 50%; display: grid; place-items: center; font-weight: 600; font-size: 14px; background: var(--accent-bg); color: var(--accent-text); }
 .reply { margin-left: 24px; padding: 14px 0 0 20px; border-left: 2px solid var(--border); }
-.flash { position: fixed; right: 24px; bottom: 24px; z-index: 60; max-width: 360px; padding: 16px 44px 16px 16px; border-radius: 12px; background: var(--ink); color: var(--page); box-shadow: 0 8px 24px rgba(11, 26, 51, .24); }
 
 /* offline and install */
 .offline-banner { display: none; padding: 10px 24px; background: var(--warning-bg); color: var(--warning-ink); font-size: 14px; text-align: center; }

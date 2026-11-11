@@ -110,7 +110,7 @@ defmodule SyliAtlasWeb.SessionController do
   defp render_new(conn, error, email) do
     render(conn, :new,
       page_title: gettext("Sign in"),
-      error: error || Phoenix.Flash.get(conn.assigns.flash, :error),
+      error: error,
       email: email,
       mail?: SyliAtlas.Accounts.Emails.configured?(),
       seo: %{noindex: true}

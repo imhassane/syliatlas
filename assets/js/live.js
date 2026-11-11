@@ -5,13 +5,26 @@ import {Socket} from "phoenix"
 import {LiveSocket} from "phoenix_live_view"
 import {hooks as colocatedHooks} from "phoenix-colocated/syli_atlas"
 import topbar from "../vendor/topbar"
+import {showFlash} from "./ui/toasts"
+
+// The LiveView flash (Layouts.flash_group) drawn as toasts, then cleared.
+const FlashToasts = {
+  mounted() { this.show() },
+  updated() { this.show() },
+  show() {
+    const flashes = JSON.parse(this.el.dataset.flash || "[]")
+    if (!flashes.length) return
+    showFlash(flashes)
+    for (const {kind} of flashes) this.pushEvent("lv:clear-flash", {key: kind})
+  },
+}
 
 // LiveView pages carry a CSRF token (public pages, cached, carry none).
 const csrfToken = document.querySelector("meta[name='csrf-token']")?.getAttribute("content")
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
   params: {_csrf_token: csrfToken},
-  hooks: {...colocatedHooks},
+  hooks: {...colocatedHooks, FlashToasts},
 })
 
 // Show progress bar on live navigation and form submits
