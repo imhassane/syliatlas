@@ -14,6 +14,8 @@ defmodule SyliAtlasWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json", "csv"]
+    plug SyliAtlasWeb.Plugs.ApiRateLimit
+    plug SyliAtlasWeb.Plugs.ApiTiming
   end
 
   pipeline :public_cache do
@@ -148,6 +150,17 @@ defmodule SyliAtlasWeb.Router do
     delete "/", AccountController, :delete_account
   end
 
+  # The API page shows hourly measures: its own cache headers (ApiDocController).
+  scope "/fr", SyliAtlasWeb do
+    pipe_through [:public, :fr]
+    get "/api", ApiDocController, :show
+  end
+
+  scope "/en", SyliAtlasWeb do
+    pipe_through [:public, :en]
+    get "/api", ApiDocController, :show
+  end
+
   scope "/fr", SyliAtlasWeb do
     pipe_through [:public, :fr, :public_cache]
 
@@ -253,6 +266,8 @@ defmodule SyliAtlasWeb.Router do
     get "/search", ApiController, :search
     get "/offline-pack", ApiController, :offline_pack
     get "/offline-pages", ApiController, :offline_pages
+    get "/", ApiController, :index
+    get "/*path", ApiController, :not_found
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

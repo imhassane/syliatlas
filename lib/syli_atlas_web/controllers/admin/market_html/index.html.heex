@@ -25,9 +25,6 @@
     </div>
   </header>
 
-  <p :if={msg = Phoenix.Flash.get(@flash, :info)} class="adm-flash ok" role="status">{msg}</p>
-  <p :if={msg = Phoenix.Flash.get(@flash, :error)} class="adm-flash err" role="alert">{msg}</p>
-
   <div :if={!@public?} class="card adm-banner" role="alert" id="market-blocked">
     <p>
       <b>Affichage public bloqué.</b>

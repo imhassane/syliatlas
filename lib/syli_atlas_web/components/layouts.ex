@@ -342,7 +342,7 @@ defmodule SyliAtlasWeb.Layouts do
             <a href={Paths.accessibility(@locale)} id="footer-accessibility">
               {accessibility_mention()}
             </a>
-            <a href="/api/v1/areas">{gettext("Public API")}</a>
+            <a href={Paths.api(@locale)}>{gettext("Public API")}</a>
             <a href="/llms.txt">llms.txt</a>
             <a href="/sitemap.xml">{gettext("Site map")}</a>
           </div>
@@ -455,7 +455,7 @@ defmodule SyliAtlasWeb.Layouts do
           <.main_nav locale={@locale} current={@current} id="drawer-nav" class="drawer-nav" flat />
           <p class="drawer-links small">
             <a href={Paths.method(@locale)}>{gettext("Method and sources")}</a>
-            · <a href="/api/v1/areas">{gettext("Open data")}</a>
+            · <a href={Paths.api(@locale)}>{gettext("Open data")}</a>
           </p>
           <div class="drawer-foot stack gap-2">
             <button type="button" class="btn btn-secondary" data-install>{gettext("Install the app")}</button>
@@ -496,6 +496,15 @@ defmodule SyliAtlasWeb.Layouts do
     </a>
     """
   end
+
+  @doc "The flash messages (info, error) as the toasts of assets/js/ui/toasts.js expect them."
+  def flash_toasts(flash) when is_map(flash) do
+    [:info, :error]
+    |> Enum.map(&%{kind: &1, message: Phoenix.Flash.get(flash, &1)})
+    |> Enum.filter(&(is_binary(&1.message) and &1.message != ""))
+  end
+
+  def flash_toasts(_), do: []
 
   @doc "Texts of the notifications drawn by assets/js (toasts), in the page's language."
   def ui_strings do
@@ -561,8 +570,14 @@ defmodule SyliAtlasWeb.Layouts do
   def flash_group(assigns) do
     ~H"""
     <div id={@id} aria-live="polite">
-      <.flash kind={:info} flash={@flash} />
-      <.flash kind={:error} flash={@flash} />
+      <%!-- The flash messages become toasts (FlashToasts hook, assets/js/live.js). --%>
+      <div
+        id={"#{@id}-toasts"}
+        phx-hook="FlashToasts"
+        data-flash={Phoenix.json_library().encode!(flash_toasts(@flash))}
+        hidden
+      >
+      </div>
 
       <.flash
         id="client-error"

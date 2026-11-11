@@ -24,6 +24,7 @@ import {initAccount} from "./ui/account"
 import {initTicker} from "./ui/ticker"
 import {initHeader} from "./ui/header"
 import {initTransitions} from "./ui/transitions"
+import {initFlashToasts} from "./ui/toasts"
 
 initTheme()
 initDrawer()
@@ -42,6 +43,7 @@ initAccount()
 initTicker()
 initHeader()
 initTransitions()
+initFlashToasts()
 
 // The lines below enable quality of life phoenix_live_reload
 // development features:

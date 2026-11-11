@@ -64,6 +64,30 @@ if config_env() != :test do
        end)
 end
 
+# Cloudflare: after each publication, the API answers are dropped from its
+# cache (SyliAtlas.Cdn). CLOUDFLARE_ZONE_ID and CLOUDFLARE_API_TOKEN (a token
+# with the single permission Zone > Cache Purge). Without them, no purge.
+# RATE_LIMIT_PER_MINUTE changes the public API limit (60 by default).
+if config_env() != :test do
+  env = fn name ->
+    case System.get_env(name) do
+      v when v in [nil, ""] -> nil
+      v -> String.trim(v)
+    end
+  end
+
+  config :syli_atlas, SyliAtlas.Cdn,
+    zone_id: env.("CLOUDFLARE_ZONE_ID"),
+    api_token: env.("CLOUDFLARE_API_TOKEN")
+
+  if limit = env.("RATE_LIMIT_PER_MINUTE") do
+    config :syli_atlas, SyliAtlasWeb.Plugs.ApiRateLimit,
+      enabled: true,
+      public: String.to_integer(limit),
+      internal: 240
+  end
+end
+
 # Emails (sign-in codes, alerts, digests). MAILER_ADAPTER chooses, else
 # the variables present do:
 #

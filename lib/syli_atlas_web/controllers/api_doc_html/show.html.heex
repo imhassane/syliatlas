@@ -1,0 +1,377 @@
+<Layouts.public locale={@locale} current={:api} alternates={@alternates}>
+  <div class="api-doc">
+    <section class="api-hero" id="intro">
+      <div class="wrap stack gap-4">
+        <p class="api-kicker">
+          {tr(@locale, "API publique · lecture seule", "Public API · read only")}
+        </p>
+        <h1 class="api-title">Syli Atlas API</h1>
+        <p class="lead">
+          {tr(
+            @locale,
+            "Les indicateurs économiques des 54 pays africains, des 5 régions et du continent, de 2015 à 2030, en JSON ou en CSV. Gratuit, sans inscription, et chaque réponse cite sa source.",
+            "Economic indicators of the 54 African countries, the 5 regions and the continent, from 2015 to 2030, in JSON or CSV. Free, without signing up, and every answer cites its source."
+          )}
+        </p>
+        <div class="api-base">
+          <span class="api-base-label">{tr(@locale, "URL de base", "Base URL")}</span>
+          <code id="api-base-url">{@base_url}</code>
+        </div>
+        <dl class="api-facts">
+          <div>
+            <dt>{tr(@locale, "Authentification", "Authentication")}</dt>
+            <dd>{tr(@locale, "aucune", "none")}</dd>
+          </div>
+          <div>
+            <dt>Formats</dt>
+            <dd>json · csv</dd>
+          </div>
+          <div>
+            <dt>{tr(@locale, "Limite", "Limit")}</dt>
+            <dd>{@rate_limit} req/min · IP</dd>
+          </div>
+          <div>
+            <dt>{tr(@locale, "Données", "Data")}</dt>
+            <dd>imf_weo · {(@edition && @edition.code) || "—"}</dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <div class="wrap api-layout">
+      <nav class="api-nav" aria-label={tr(@locale, "Documentation de l'API", "API documentation")}>
+        <p class="api-nav-head">{tr(@locale, "Démarrer", "Start")}</p>
+        <a href="#intro">{tr(@locale, "Introduction", "Introduction")}</a>
+        <a href={"#" <> tr(@locale, "limites", "limits")}>{tr(
+          @locale,
+          "Limites et cache",
+          "Limits and cache"
+        )}</a>
+        <a href={"#" <> tr(@locale, "erreurs", "errors")}>{tr(@locale, "Erreurs", "Errors")}</a>
+        <a href={"#" <> tr(@locale, "citer", "cite")}>{tr(
+          @locale,
+          "Citer la source",
+          "Cite the source"
+        )}</a>
+
+        <p class="api-nav-head">Routes</p>
+        <a :for={r <- @routes} href={"#route-" <> r.id} class="api-nav-route">
+          <span class="api-get">GET</span>
+          <span class="api-nav-path">{String.replace_prefix(r.path, "/api/v1", "")}</span>
+          <span :if={r.perf} class={["api-nav-ms", !r.perf.ok? && "over"]}>{ms(
+            r.perf.p50,
+            @locale
+          )}</span>
+        </a>
+
+        <p class="api-nav-head">{tr(@locale, "Ressources", "Resources")}</p>
+        <a href="/api/v1" class="mono">/api/v1</a>
+        <a href="#performance">Performance</a>
+        <a href={"#" <> tr(@locale, "hors-perimetre", "out-of-scope")}>{tr(
+          @locale,
+          "Hors périmètre",
+          "Out of scope"
+        )}</a>
+      </nav>
+
+      <div class="api-main">
+        <section :for={r <- @routes} class="api-route" id={"route-" <> r.id}>
+          <div class="api-route-doc">
+            <h2 class="api-route-title">
+              <span class="api-get">GET</span> <code>{r.path}</code>
+            </h2>
+            <p class="api-desc">{r.desc}</p>
+
+            <div :if={r.perf} class="api-perf-strip">
+              <span class={["api-dot", !r.perf.ok? && "over"]} aria-hidden="true"></span>
+              <span class="api-perf-label">{tr(@locale, "temps serveur", "server time")}</span>
+              <span><span class="muted">p50</span> {ms(r.perf.p50, @locale)}</span>
+              <span><span class="muted">p99</span> {ms(r.perf.p99, @locale)}</span>
+              <.sparkline
+                perf={r.perf}
+                label={
+                  tr(
+                    @locale,
+                    "Temps serveur heure par heure, sur 24 heures",
+                    "Server time hour by hour, over 24 hours"
+                  )
+                }
+              />
+            </div>
+
+            <h3 class="api-label">{tr(@locale, "Paramètres", "Parameters")}</h3>
+            <p :if={r.params == []} class="api-row muted small">
+              {tr(@locale, "Aucun paramètre.", "No parameter.")}
+            </p>
+            <div :for={p <- r.params} class="api-row api-param">
+              <p class="api-param-head">
+                <code class="api-param-name">{p.name}</code>
+                <span class="api-param-type">{p.type}</span>
+                <span class="api-param-type">{p.where}</span>
+                <span :if={p.required} class="api-required">{tr(@locale, "requis", "required")}</span>
+              </p>
+              <p class="small">{p.role}</p>
+              <p class="api-param-values">
+                {tr(@locale, "valeurs", "values")} : {p.values} · {tr(
+                  @locale,
+                  "défaut",
+                  "default"
+                )} : {p.default}
+              </p>
+            </div>
+
+            <h3 class="api-label">{tr(@locale, "Réponses", "Answers")}</h3>
+            <p class="api-row api-status"><span class="api-code-ok">200</span> {r.ok}</p>
+            <p :for={{status, code, text} <- r.errors} class="api-row api-status">
+              <span class="api-code-err">{status}</span> <code>{code}</code>
+              <span class="muted">{text}</span>
+            </p>
+            <p class="api-row api-status">
+              <span class="api-code-err">429</span> <code>rate_limited</code>
+              <span class="muted">{tr(@locale, "au-delà de", "beyond")} {@rate_limit} {tr(
+                @locale,
+                "requêtes par minute",
+                "requests a minute"
+              )}</span>
+            </p>
+          </div>
+
+          <div class="api-route-code">
+            <.code_tabs route={r} locale={@locale} />
+            <div class="code-card">
+              <p class="code-status">
+                <span>{tr(@locale, "Réponse", "Answer")}</span>
+                <span class="code-ok">200 OK</span>
+                <span>{if r.format == :csv, do: "text/csv", else: "application/json"}</span>
+                <span class="code-status-end">max-age=3600</span>
+              </p>
+              <.code_block
+                lines={r.response}
+                label={tr(@locale, "Exemple de réponse", "Example answer")}
+              />
+            </div>
+            <p class="api-note">
+              {tr(
+                @locale,
+                "Réponse réelle des données en ligne, raccourcie (…).",
+                "Real answer from the data online, shortened (…)."
+              )}
+            </p>
+          </div>
+        </section>
+
+        <section class="api-section" id="performance">
+          <h2 class="api-h2">
+            <a href="#performance" aria-hidden="true" tabindex="-1">#</a> Performance
+          </h2>
+          <p class="api-text">
+            {tr(
+              @locale,
+              "Temps passé dans le serveur pour chaque route, de l'arrivée de la requête à l'envoi de la réponse, hors réseau. Mesuré sur chaque requête et par une sonde toutes les heures, pour qu'une route peu utilisée ait aussi sa mesure. Budget : #{@budget_ms} ms au 99e centile. Chaque réponse donne aussi son propre temps dans l'en-tête Server-Timing.",
+              "Time spent in the server for each route, from the request's arrival to the answer being sent, without the network. Measured on every request and by an hourly probe, so that a route seldom called still has its measure. Budget: #{@budget_ms} ms at the 99th percentile. Every answer also gives its own time in the Server-Timing header."
+            )}
+          </p>
+
+          <p :if={!@measured?} class="api-empty">
+            {tr(
+              @locale,
+              "Mesures en cours : les premières valeurs apparaissent ici après la première heure complète.",
+              "Measuring: the first values appear here after the first full hour."
+            )}
+          </p>
+
+          <div
+            :if={@measured?}
+            class="api-table"
+            role="table"
+            aria-label={tr(@locale, "Temps serveur par route", "Server time per route")}
+          >
+            <div class="api-table-row api-table-head" role="row">
+              <span role="columnheader">Route</span>
+              <span role="columnheader" class="num">p50</span>
+              <span role="columnheader" class="num">p95</span>
+              <span role="columnheader" class="num">p99</span>
+              <span role="columnheader">{tr(
+                @locale,
+                "24 dernières heures (p95)",
+                "Last 24 hours (p95)"
+              )}</span>
+              <span role="columnheader">Budget</span>
+            </div>
+            <div :for={r <- @routes} :if={r.perf} class="api-table-row" role="row">
+              <span role="cell"><span class="api-get">GET</span> <code>{r.path}</code></span>
+              <span role="cell" class="num">{ms(r.perf.p50, @locale)}</span>
+              <span role="cell" class="num">{ms(r.perf.p95, @locale)}</span>
+              <span role="cell" class="num">{ms(r.perf.p99, @locale)}</span>
+              <span role="cell">
+                <.sparkline
+                  perf={r.perf}
+                  label={tr(@locale, "p95 heure par heure", "p95 hour by hour")}
+                  class="wide"
+                />
+              </span>
+              <span role="cell" class="api-verdict">
+                <span class={["api-dot", !r.perf.ok? && "over"]} aria-hidden="true"></span>
+                {if r.perf.ok?,
+                  do: tr(@locale, "dans le budget", "within budget"),
+                  else: tr(@locale, "au-dessus du budget", "over budget")}
+              </span>
+            </div>
+          </div>
+          <p :if={@last_measure} class="api-note">
+            {tr(@locale, "dernière heure mesurée", "last hour measured")} : {Calendar.strftime(
+              @last_measure,
+              "%Y-%m-%d %H:00"
+            )} UTC
+          </p>
+
+          <h3 class="api-h3" id={tr(@locale, "temps-selon-le-pays", "time-by-country")}>
+            {tr(
+              @locale,
+              "Temps total : ça dépend du pays",
+              "Total time: it depends on the country"
+            )}
+          </h3>
+          <p class="api-text">
+            {tr(
+              @locale,
+              "Temps total = aller-retour réseau + temps serveur. Le serveur est aux Pays-Bas. Les réponses sont gardées en cache par Cloudflare, qui a des points de présence dans de nombreuses villes africaines : quand la réponse y est déjà, elle part de la ville la plus proche et le trajet jusqu'en Europe disparaît. Le cache est vidé à chaque publication de nouvelles données.",
+              "Total time = network round trip + server time. The server is in the Netherlands. Answers are cached by Cloudflare, which has points of presence in many African cities: when the answer is already there, it leaves from the nearest city and the trip to Europe is gone. The cache is emptied whenever new data is published."
+            )}
+          </p>
+          <div
+            class="api-table api-table-net"
+            role="table"
+            aria-label={
+              tr(
+                @locale,
+                "Aller-retour réseau typique selon la région",
+                "Typical network round trip by region"
+              )
+            }
+          >
+            <div class="api-table-row api-table-head" role="row">
+              <span role="columnheader">{tr(@locale, "Depuis", "From")}</span>
+              <span role="columnheader">{tr(
+                @locale,
+                "Sans cache (vers l'Europe)",
+                "Without cache (to Europe)"
+              )}</span>
+              <span role="columnheader">{tr(
+                @locale,
+                "Avec le cache Cloudflare",
+                "With Cloudflare's cache"
+              )}</span>
+            </div>
+            <div
+              :for={{region, rtt, cities} <- latency_rows(@locale)}
+              class="api-table-row"
+              role="row"
+            >
+              <span role="cell">{region}</span>
+              <span role="cell" class="mono small">{rtt}</span>
+              <span role="cell" class="muted small">{cities}</span>
+            </div>
+          </div>
+          <p class="api-note">
+            {tr(
+              @locale,
+              "Ordres de grandeur publiés (Cloudflare, Hats Network, OpenMetal) ; ils varient selon l'opérateur. Un pays sans point de présence passe par la ville la plus proche.",
+              "Published orders of magnitude (Cloudflare, Hats Network, OpenMetal); they vary with the operator. A country without a point of presence goes through the nearest city."
+            )}
+          </p>
+        </section>
+
+        <div class="api-grid">
+          <section class="api-section" id={tr(@locale, "citer", "cite")}>
+            <h2 class="api-h2">{tr(@locale, "Citer la source", "Cite the source")}</h2>
+            <p class="api-text">
+              {tr(
+                @locale,
+                "Les chiffres gardent la licence de leur source. Pour les données du FMI, citez : « Source : Fonds monétaire international, Perspectives de l'économie mondiale (#{edition_label(@edition, @locale)}) », avec le lien, puis « via Syli Atlas ». La ligne 1 de chaque CSV et la page Méthode donnent la source exacte.",
+                "Figures keep the licence of their source. For IMF data, cite: “Source: International Monetary Fund, World Economic Outlook (#{edition_label(@edition, @locale)})”, with the link, then “via Syli Atlas”. Line 1 of each CSV and the Method page give the exact source."
+              )}
+            </p>
+            <p class="small">
+              <a href={SyliAtlasWeb.Paths.method(@locale)}>{tr(
+                @locale,
+                "Méthode et sources",
+                "Method and sources"
+              )} →</a>
+            </p>
+          </section>
+
+          <section class="api-section" id={tr(@locale, "erreurs", "errors")}>
+            <h2 class="api-h2">{tr(@locale, "Erreurs", "Errors")}</h2>
+            <p class="api-text">
+              {tr(
+                @locale,
+                "Toujours le même format, avec un code stable à tester dans vos programmes.",
+                "Always the same shape, with a stable code to test in your programs."
+              )}
+            </p>
+            <div class="code-card">
+              <.code_block
+                lines={@error_example}
+                label={tr(@locale, "Exemple d'erreur", "Example error")}
+              />
+            </div>
+          </section>
+
+          <section class="api-section" id={tr(@locale, "limites", "limits")}>
+            <h2 class="api-h2">{tr(@locale, "Limites et cache", "Limits and cache")}</h2>
+            <dl class="api-kv">
+              <div>
+                <dt>
+                  {tr(
+                    @locale,
+                    "Requêtes par minute et par adresse IP",
+                    "Requests a minute per IP address"
+                  )}
+                </dt><dd>{@rate_limit}</dd>
+              </div>
+              <div>
+                <dt>{tr(@locale, "Quota restant", "Quota left")}</dt><dd>
+                  ratelimit-limit · ratelimit-remaining
+                </dd>
+              </div>
+              <div>
+                <dt>{tr(@locale, "Dépassement", "Over the limit")}</dt><dd>429 · retry-after</dd>
+              </div>
+              <div>
+                <dt>Cache</dt><dd>max-age=3600 · etag</dd>
+              </div>
+              <div>
+                <dt>{tr(@locale, "Temps serveur", "Server time")}</dt><dd>server-timing</dd>
+              </div>
+            </dl>
+            <p class="api-text small">
+              {tr(
+                @locale,
+                "Les données changent au plus une fois par jour : envoyez If-None-Match, une réponse 304 ne coûte presque rien.",
+                "The data changes at most once a day: send If-None-Match, a 304 answer costs almost nothing."
+              )}
+            </p>
+          </section>
+
+          <section class="api-section" id={tr(@locale, "hors-perimetre", "out-of-scope")}>
+            <h2 class="api-h2">{tr(@locale, "Hors périmètre", "Out of scope")}</h2>
+            <p class="api-callout">
+              <b>{tr(@locale, "Pas de cours de bourse.", "No stock prices.")}</b>
+              {tr(
+                @locale,
+                "Ils viennent de MansaAPI, dont la licence autorise l'affichage sur le site mais pas la rediffusion. Ils restent sur les pages Bourses et entreront dans l'API place par place, quand une source officielle l'autorisera.",
+                "They come from MansaAPI, whose licence allows display on the site but not redistribution. They stay on the stock exchange pages and will join the API exchange by exchange, once an official source allows it."
+              )}
+              <a href={SyliAtlasWeb.Paths.markets(@locale)}>{tr(
+                @locale,
+                "Voir les bourses",
+                "See the exchanges"
+              )}</a>
+            </p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layouts.public>

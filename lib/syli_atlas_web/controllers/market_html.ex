@@ -1,7 +1,7 @@
 defmodule SyliAtlasWeb.MarketHTML do
   use SyliAtlasWeb, :html
   import SyliAtlasWeb.MarketComponents
-  alias SyliAtlasWeb.Pagination
+  alias SyliAtlasWeb.{Pagination, ProfileComponents}
 
   embed_templates "market_html/*"
 

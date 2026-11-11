@@ -27,7 +27,9 @@ defmodule SyliAtlas.Admin.Jobs do
     "SyliAtlas.Workers.AlertEventWorker" => "Évaluer les alertes",
     "SyliAtlas.Workers.AlertEmailWorker" => "E-mail d'alerte",
     "SyliAtlas.Workers.DigestWorker" => "Choisir les récaps du jour",
-    "SyliAtlas.Workers.DigestEmailWorker" => "E-mail de récap"
+    "SyliAtlas.Workers.DigestEmailWorker" => "E-mail de récap",
+    "SyliAtlas.Workers.ApiTimingWorker" => "Mesure horaire de l'API",
+    "SyliAtlas.Workers.CachePurgeWorker" => "Vider le cache Cloudflare de l'API"
   }
 
   def worker_label(worker),

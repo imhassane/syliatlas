@@ -1,6 +1,5 @@
 defmodule SyliAtlasWeb.AreaHTML do
   use SyliAtlasWeb, :html
-  alias SyliAtlas.Geo.Area
 
   alias SyliAtlasWeb.{
     Charts,
@@ -12,41 +11,6 @@ defmodule SyliAtlasWeb.AreaHTML do
   }
 
   embed_templates "area_html/*"
-
-  def kind_label("country"), do: gettext("Country")
-  def kind_label("region"), do: gettext("Region")
-  def kind_label("continent"), do: gettext("Continent")
-  def kind_label(_), do: gettext("Area")
-
-  attr :area, :map, required: true
-  attr :region, :map, default: nil
-  attr :name, :string, required: true
-  attr :title, :string, default: nil, doc: "the H1; the area's name by default"
-  attr :tab, :any, default: nil, doc: "label of the open tab, for the breadcrumb"
-  attr :locale, :string, required: true
-
-  def area_header(assigns) do
-    ~H"""
-    <div class="stack gap-3">
-      <nav aria-label={gettext("Breadcrumb")}>
-        <ol class="crumbs">
-          <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
-          <li :if={@region}>
-            <a href={Paths.area(@locale, @region)}>{Area.name(@region, @locale)}</a>
-          </li>
-          <%= if @tab do %>
-            <li><a href={Paths.area(@locale, @area)}>{@name}</a></li>
-            <li aria-current="page">{@tab}</li>
-          <% else %>
-            <li aria-current="page">{@name}</li>
-          <% end %>
-        </ol>
-      </nav>
-      <p class="eyebrow">{kind_label(@area.kind)} · {@area.code}</p>
-      <h1 class={["display area-title", @tab && "area-title-tab"]}>{@title || @name}</h1>
-    </div>
-    """
-  end
 
   attr :kpis, :list, required: true
   attr :data, :map, required: true

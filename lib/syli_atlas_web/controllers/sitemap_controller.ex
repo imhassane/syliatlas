@@ -116,6 +116,7 @@ defmodule SyliAtlasWeb.SitemapController do
 
     - [Every lead sentence in plain text, French and English](#{Seo.url("/llms-full.txt")})
     - [About, how to cite](#{Seo.url(Paths.about("en"))})
+    - [Public API documentation](#{Seo.url(Paths.api("en"))}): routes, parameters, examples, limits, server time
     - [Public JSON API, list of areas](#{Seo.url("/api/v1/areas")})
     - [Search API](#{Seo.url("/api/v1/search?q=debt+senegal&locale=en")})
     - [Sitemap](#{Seo.url("/sitemap.xml")})
@@ -233,7 +234,7 @@ defmodule SyliAtlasWeb.SitemapController do
     imf = imf_date()
 
     static =
-      for fun <- [:home, :regions, :method, :accessibility, :debt, :communities] do
+      for fun <- [:home, :regions, :method, :accessibility, :debt, :communities, :api] do
         {both(&apply(Paths, fun, [&1])), imf}
       end ++
         for(p <- SyliAtlasWeb.Topics.sitemap_pages(), do: {p, imf})
