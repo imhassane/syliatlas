@@ -334,6 +334,7 @@ defmodule SyliAtlasWeb.Layouts do
               {SyliAtlasWeb.PageComponents.indicator_label(i)}
             </a>
             <a href={SyliAtlasWeb.Topics.questions_path(@locale)}>{gettext("Questions")} →</a>
+            <a href={SyliAtlasWeb.GlossaryController.index_path(@locale)}>{gettext("Glossary")} →</a>
           </div>
           <div class="stack gap-1">
             <b>{gettext("Data")}</b>

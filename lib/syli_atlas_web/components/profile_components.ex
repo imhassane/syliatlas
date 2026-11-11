@@ -8,7 +8,7 @@ defmodule SyliAtlasWeb.ProfileComponents do
   use Phoenix.Component
   use Gettext, backend: SyliAtlasWeb.Gettext
 
-  import SyliAtlasWeb.Format, only: [value: 3, change: 3, number: 3]
+  import SyliAtlasWeb.Format, only: [value: 3, change: 3, number: 3, names: 2]
   alias SyliAtlasWeb.{Paths, PublicData, WorldBankComponents, TradeComponents}
   alias SyliAtlas.Economy.Communities
 
@@ -724,6 +724,10 @@ defmodule SyliAtlasWeb.ProfileComponents do
         for t <- ctx.tabs, t != tab do
           {tab_label(t), Paths.area_tab(l, ctx.area, t) <> ctx.period_query}
         end ++
+          [
+            {gettext("All questions on the economy of %{name}", names(ctx.name, [])),
+             SyliAtlasWeb.CountryQuestionsController.questions_path(l, ctx.area)}
+          ] ++
           if(ctx.rating,
             do: [
               {gettext("Rating history of %{name}", name: ctx.name),

@@ -249,7 +249,10 @@ defmodule SyliAtlasWeb.SitemapController do
     areas =
       for area <- Geo.list_areas(), tab <- SyliAtlasWeb.AreaController.tabs_for(area) do
         {both(&Paths.area_tab(&1, area, tab)), imf}
-      end
+      end ++
+        for area <- Geo.list_countries() do
+          {both(&SyliAtlasWeb.CountryQuestionsController.questions_path(&1, area)), imf}
+        end
 
     communities =
       for c <- SyliAtlas.Economy.Communities.all() do

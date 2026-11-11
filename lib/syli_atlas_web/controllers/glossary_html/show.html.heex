@@ -1,0 +1,52 @@
+<Layouts.public locale={@locale} current={:themes} alternates={@alternates}>
+  <.section>
+    <nav aria-label={gettext("Breadcrumb")}>
+      <ol class="crumbs">
+        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+        <li>
+          <a href={SyliAtlasWeb.GlossaryController.index_path(@locale)}>{gettext("Glossary")}</a>
+        </li>
+        <li aria-current="page">{@name}</li>
+      </ol>
+    </nav>
+    <div class="prose stack gap-4" id="term">
+      <p class="eyebrow">{gettext("Glossary")}</p>
+      <h1 class="h1">{@name}</h1>
+      <p class="lead" data-answer id="definition">{@short}</p>
+      <p>{@long}</p>
+    </div>
+  </.section>
+
+  <.section :if={@figures != []} tight={:top}>
+    <.card id="term-figures">
+      <div class="pad">
+        <h2 class="h2">{gettext("In figures, in Africa")}</h2>
+      </div>
+      <.data_table
+        id="term-figures-table"
+        caption={gettext("In figures, in Africa")}
+        rows={@figures}
+      >
+        <:head :let={{label, _v, href}} label={gettext("Name")}><a href={href}>{label}</a></:head>
+        <:col :let={{_l, v, _h}} label={gettext("Value")}>{v}</:col>
+      </.data_table>
+    </.card>
+  </.section>
+
+  <.section tight={:top}>
+    <div class="grid grid-2">
+      <nav class="card pad stack gap-2" aria-label={gettext("Where to see it")}>
+        <p class="eyebrow">{gettext("Where to see it")}</p>
+        <ul class="related-list">
+          <li :for={{label, href} <- @links}><a href={href}>{label}</a></li>
+        </ul>
+      </nav>
+      <nav class="card pad stack gap-2" aria-label={gettext("Other notions")}>
+        <p class="eyebrow">{gettext("Other notions")}</p>
+        <ul class="related-list">
+          <li :for={{label, href} <- @others}><a href={href}>{label}</a></li>
+        </ul>
+      </nav>
+    </div>
+  </.section>
+</Layouts.public>
