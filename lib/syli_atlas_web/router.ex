@@ -252,22 +252,40 @@ defmodule SyliAtlasWeb.Router do
     post "/membres/:id/actif", MembersController, :active
   end
 
+  # The public API, v1: described in /api/v1/openapi.json, documented at /fr/api.
   scope "/api/v1", SyliAtlasWeb.Api do
     pipe_through :api
 
-    get "/version", ApiController, :version
+    # Old addresses of the site's own calls, for service workers installed
+    # before they moved to /api/internal. To remove after 15 December 2026.
+    get "/version", InternalController, :version
 
     pipe_through :public_cache
+    get "/search", InternalController, :search
+    get "/offline-pack", InternalController, :offline_pack
+    get "/offline-pages", InternalController, :offline_pages
+
+    get "/", ApiController, :index
+    get "/openapi.json", ApiController, :openapi
     get "/areas", ApiController, :areas
     get "/areas/:code", ApiController, :area
     get "/areas/:code/csv", ApiController, :csv
     get "/compare", ApiController, :compare
     get "/ranking", ApiController, :ranking
-    get "/search", ApiController, :search
-    get "/offline-pack", ApiController, :offline_pack
-    get "/offline-pages", ApiController, :offline_pages
-    get "/", ApiController, :index
+    get "/indicators", ApiController, :indicators
     get "/*path", ApiController, :not_found
+  end
+
+  # What the site itself calls: not part of the public API.
+  scope "/api/internal", SyliAtlasWeb.Api do
+    pipe_through :api
+
+    get "/version", InternalController, :version
+
+    pipe_through :public_cache
+    get "/search", InternalController, :search
+    get "/offline-pack", InternalController, :offline_pack
+    get "/offline-pages", InternalController, :offline_pages
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

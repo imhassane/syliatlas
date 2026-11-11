@@ -71,10 +71,12 @@ defmodule SyliAtlasWeb.SearchTest do
   end
 
   test "the JSON API, used by the suggestions" do
-    body = build_conn() |> get("/api/v1/search?q=dette+senegal&locale=fr") |> json_response(200)
+    body =
+      build_conn() |> get("/api/internal/search?q=dette+senegal&locale=fr") |> json_response(200)
+
     assert hd(body["results"])["path"] == "/fr/pays/senegal/finances-et-dette"
     assert body["answer"]["source"] =~ "FMI"
-    en = build_conn() |> get("/api/v1/search?q=nigeria&locale=en") |> json_response(200)
+    en = build_conn() |> get("/api/internal/search?q=nigeria&locale=en") |> json_response(200)
     assert hd(en["results"])["path"] == "/en/countries/nigeria"
     assert hd(en["results"])["kind"] == "Country"
   end

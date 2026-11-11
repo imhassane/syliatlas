@@ -1,5 +1,5 @@
 // New versions: the page knows what it was built from (<meta name="syli-version">:
-// code and data). The service worker installs each deploy, and /api/v1/version
+// code and data). The service worker installs each deploy, and /api/internal/version
 // is checked when the tab comes back and every 15 minutes. When something
 // changed, a toast offers to refresh; refreshing never needs Ctrl+R.
 //
@@ -45,7 +45,7 @@ async function checkVersion() {
   const current = document.querySelector('meta[name="syli-version"]')?.content
   if (!current || !navigator.onLine) return
   try {
-    const res = await fetch("/api/v1/version", {cache: "no-store"})
+    const res = await fetch("/api/internal/version", {cache: "no-store"})
     if (!res.ok) return
     const {page_version: latest, build} = await res.json()
     if (latest && latest !== current) offer(current.split(".")[0] === build ? "data" : "code", latest)

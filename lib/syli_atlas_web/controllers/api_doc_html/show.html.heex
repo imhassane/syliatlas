@@ -64,7 +64,19 @@
           )}</span>
         </a>
 
-        <p class="api-nav-head">{tr(@locale, "Ressources", "Resources")}</p>
+        <p class="api-nav-head">{tr(@locale, "Référence", "Reference")}</p>
+        <a href={"#" <> tr(@locale, "indicateurs", "indicators")}>{tr(
+          @locale,
+          "Indicateurs",
+          "Indicators"
+        )}</a>
+        <a href={"#" <> tr(@locale, "valeurs", "values")}>{tr(
+          @locale,
+          "Valeurs possibles",
+          "Possible values"
+        )}</a>
+        <a href="#schemas">{tr(@locale, "Schémas communs", "Shared schemas")}</a>
+        <a href="/api/v1/openapi.json" class="mono">openapi.json</a>
         <a href="/api/v1" class="mono">/api/v1</a>
         <a href="#performance">Performance</a>
         <a href={"#" <> tr(@locale, "hors-perimetre", "out-of-scope")}>{tr(
@@ -80,6 +92,7 @@
             <h2 class="api-route-title">
               <span class="api-get">GET</span> <code>{r.path}</code>
             </h2>
+            <p class="api-summary">{r.summary}</p>
             <p class="api-desc">{r.desc}</p>
 
             <div :if={r.perf} class="api-perf-strip">
@@ -111,20 +124,21 @@
                 <span :if={p.required} class="api-required">{tr(@locale, "requis", "required")}</span>
               </p>
               <p class="small">{p.role}</p>
-              <p class="api-param-values">
-                {tr(@locale, "valeurs", "values")} : {p.values} · {tr(
-                  @locale,
-                  "défaut",
-                  "default"
-                )} : {p.default}
+              <p :if={p.values || p.default} class="api-param-values">
+                <span :if={p.values}>{tr(@locale, "valeurs", "values")} : {p.values}</span>
+                <span :if={p.values && p.default}> · </span>
+                <span :if={p.default}>{tr(@locale, "défaut", "default")} : {p.default}</span>
               </p>
             </div>
 
             <h3 class="api-label">{tr(@locale, "Réponses", "Answers")}</h3>
-            <p class="api-row api-status"><span class="api-code-ok">200</span> {r.ok}</p>
-            <p :for={{status, code, text} <- r.errors} class="api-row api-status">
+            <p class="api-row api-status">
+              <span class="api-code-ok">200</span>
+              <span>{if r.format == :csv, do: "text/csv", else: "application/json · {data, meta}"}</span>
+            </p>
+            <p :for={{status, code} <- r.errors} class="api-row api-status">
               <span class="api-code-err">{status}</span> <code>{code}</code>
-              <span class="muted">{text}</span>
+              <span class="muted">{error_text(code, @locale)}</span>
             </p>
             <p class="api-row api-status">
               <span class="api-code-err">429</span> <code>rate_limited</code>
@@ -158,6 +172,86 @@
               )}
             </p>
           </div>
+          <details :if={r.fields != []} class="api-fields" id={"fields-" <> r.id}>
+            <summary>
+              {tr(@locale, "Schéma de la réponse", "Answer schema")}
+              <span class="muted">· {length(r.fields)} {tr(@locale, "champs", "fields")}</span>
+            </summary>
+            <.fields_table fields={r.fields} locale={@locale} />
+          </details>
+        </section>
+
+        <section class="api-section" id={tr(@locale, "indicateurs", "indicators")}>
+          <h2 class="api-h2">{tr(@locale, "Indicateurs", "Indicators")}</h2>
+          <p class="api-text">
+            {tr(
+              @locale,
+              "Chaque clé de series, change_percent et change_points, avec son unité. Les taux changent en points de pourcentage, les niveaux et l'indice en pourcentage. Même liste dans GET /api/v1/indicators.",
+              "Every key of series, change_percent and change_points, with its unit. Rates change in percentage points, levels and the index in percent. Same list in GET /api/v1/indicators."
+            )}
+          </p>
+          <div
+            class="api-table api-table-ind"
+            role="table"
+            aria-label={tr(@locale, "Indicateurs", "Indicators")}
+          >
+            <div class="api-table-row api-table-head" role="row">
+              <span role="columnheader">{tr(@locale, "Clé", "Key")}</span>
+              <span role="columnheader">{tr(@locale, "Indicateur", "Indicator")}</span>
+              <span role="columnheader">{tr(@locale, "Unité", "Unit")}</span>
+              <span role="columnheader">{tr(@locale, "Variation", "Change")}</span>
+              <span role="columnheader">{tr(@locale, "Code FMI", "IMF code")}</span>
+            </div>
+            <div :for={i <- @indicators} class="api-table-row" role="row">
+              <span role="cell"><code>{i.key}</code></span>
+              <span role="cell"><b>{i.name}</b><br /><span class="muted small">{i.description}</span></span>
+              <span role="cell" class="small">{i.unit}<br /><code class="muted">{i.unit_code}</code></span>
+              <span role="cell"><code>{i.change_unit}</code></span>
+              <span role="cell"><code>{i.imf_code || "—"}</code></span>
+            </div>
+          </div>
+        </section>
+
+        <section class="api-section" id={tr(@locale, "valeurs", "values")}>
+          <h2 class="api-h2">{tr(@locale, "Valeurs possibles", "Possible values")}</h2>
+          <p class="api-text">
+            {tr(
+              @locale,
+              "Toutes les listes fermées de l'API. Les mêmes, avec leurs libellés, dans GET /api/v1 (values).",
+              "Every closed list of the API. The same, with their labels, in GET /api/v1 (values)."
+            )}
+          </p>
+          <div class="api-values">
+            <dl
+              :for={list <- @value_lists}
+              class="api-kv"
+              id={"values-" <> String.replace(list.name, ".", "-")}
+            >
+              <div class="api-kv-head">
+                <dt><code>{list.name}</code></dt>
+              </div>
+              <div :for={v <- list.values}>
+                <dt><code>{v.code}</code></dt>
+                <dd class="api-kv-text">{v.label}</dd>
+              </div>
+            </dl>
+          </div>
+        </section>
+
+        <section class="api-section" id="schemas">
+          <h2 class="api-h2">{tr(@locale, "Schémas communs", "Shared schemas")}</h2>
+          <p class="api-text">
+            {tr(
+              @locale,
+              "Les objets qui reviennent dans plusieurs réponses. Description complète, lisible par une machine : ",
+              "Objects found in several answers. Complete, machine-readable description: "
+            )}<a href="/api/v1/openapi.json">/api/v1/openapi.json</a>
+            (OpenAPI 3.1).
+          </p>
+          <details :for={sc <- @shared_schemas} class="api-fields" id={"schema-" <> sc.name}>
+            <summary><code>{sc.name}</code> <span class="muted">· {sc.desc}</span></summary>
+            <.fields_table fields={sc.fields} locale={@locale} />
+          </details>
         </section>
 
         <section class="api-section" id="performance">

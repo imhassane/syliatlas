@@ -13,7 +13,7 @@
 // Offline reading: each page lists the files it loaded ({type: "save-assets"}),
 // and once a page asks ({type: "save-pages", locale}), the
 // worker saves every country, region and main page of that language that
-// it does not hold yet (list from /api/v1/offline-pages), one at a time,
+// it does not hold yet (list from /api/internal/offline-pages), one at a time,
 // and stops at the first network failure.
 const VERSION = new URL(self.location).searchParams.get("v") || "dev"
 const PAGES = "pages-" + VERSION
@@ -61,7 +61,7 @@ async function savePages(locale) {
   const cache = await caches.open(PAGES)
   let paths
   try {
-    const res = await fetch(`/api/v1/offline-pages?locale=${locale}`)
+    const res = await fetch(`/api/internal/offline-pages?locale=${locale}`)
     if (!res.ok) return
     paths = (await res.json()).pages
   } catch (_) { return }
@@ -115,7 +115,7 @@ self.addEventListener("fetch", event => {
   if (url.origin === location.origin) {
     if (url.pathname.startsWith("/live") || url.pathname.startsWith("/phoenix") || url.pathname.startsWith("/admin")) return
     if (request.mode === "navigate") return event.respondWith(networkFirst(request, PAGES))
-    if (url.pathname.startsWith("/api/v1/version")) return
+    if (url.pathname.startsWith("/api/internal/version") || url.pathname.startsWith("/api/v1/version")) return
     if (url.pathname.startsWith("/api/")) return event.respondWith(networkFirst(request, API))
     if (/^\/(assets|images|fonts)\//.test(url.pathname)) return event.respondWith(cacheFirst(request))
   }

@@ -13,7 +13,7 @@ defmodule SyliAtlasWeb.ApiDocTest do
     html = conn |> get(~p"/fr/api") |> html_response(200)
     page = doc(html)
 
-    for id <- ~w(areas area compare ranking csv) do
+    for id <- ~w(areas area compare ranking indicators csv) do
       assert LazyHTML.query(page, "#route-#{id}") |> Enum.count() == 1
     end
 
@@ -36,6 +36,7 @@ defmodule SyliAtlasWeb.ApiDocTest do
     assert area |> LazyHTML.query("input[type=radio][checked]") |> Enum.count() == 1
     text = LazyHTML.text(area)
     assert text =~ "\"CIV\""
+    assert text =~ "\"change_percent\""
     assert area |> LazyHTML.query(".tok-key") |> Enum.count() > 5
     assert LazyHTML.query(page, "#route-csv") |> LazyHTML.text() =~ "year,status"
   end
@@ -64,6 +65,23 @@ defmodule SyliAtlasWeb.ApiDocTest do
     assert perf =~ "dans le budget"
     assert perf =~ "au-dessus du budget"
     assert LazyHTML.query(page, "#performance svg.api-spark") |> Enum.count() == 2
+  end
+
+  test "every field of every answer is in the page, with the closed lists", %{conn: conn} do
+    page = conn |> get(~p"/fr/api") |> html_response(200) |> doc()
+
+    fields = page |> LazyHTML.query("#fields-area .api-fpath") |> Enum.map(&LazyHTML.text/1)
+    assert "data.kind" in fields and "data.period" in fields and "meta.sources" in fields
+
+    kind = page |> LazyHTML.query("#values-kind") |> LazyHTML.text()
+    for v <- ~w(country region continent imf_aggregate), do: assert(kind =~ v)
+
+    assert page |> LazyHTML.query("#schema-Series .api-fpath") |> Enum.count() == 11
+    indicators = page |> LazyHTML.query("#indicateurs") |> LazyHTML.text()
+    assert indicators =~ "public_debt_pct_gdp" and indicators =~ "% du PIB"
+
+    en = build_conn() |> get(~p"/en/api") |> html_response(200) |> doc()
+    assert en |> LazyHTML.query("#indicators") |> LazyHTML.text() =~ "% of GDP"
   end
 
   test "the page answers 304 while nothing changed", %{conn: conn} do

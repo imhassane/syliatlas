@@ -47,7 +47,7 @@ defmodule SyliAtlasWeb.ApiLimitsTest do
 
     assert ip |> from() |> get(~p"/api/v1/areas") |> json_response(200)
     assert ip |> from() |> get(~p"/api/v1/areas") |> json_response(429)
-    assert ip |> from() |> get(~p"/api/v1/search?q=senegal") |> json_response(200)
+    assert ip |> from() |> get(~p"/api/internal/search?q=senegal") |> json_response(200)
   end
 
   test "errors have a stable code", %{conn: conn} do
@@ -73,7 +73,11 @@ defmodule SyliAtlasWeb.ApiLimitsTest do
     body = conn |> get(~p"/api/v1") |> json_response(200)
     assert body["docs"]["fr"] =~ "/fr/api"
     assert body["routes"]["area"] == "/api/v1/areas/{code}?from=&to="
-    assert body["data"]["edition"] == "2026-10"
+    assert body["openapi"] =~ "/api/v1/openapi.json"
+
+    assert Enum.map(body["values"]["kind"], & &1["code"]) ==
+             ~w(country region continent imf_aggregate)
+
     assert body["limits"]["requests_per_minute"] > 0
   end
 

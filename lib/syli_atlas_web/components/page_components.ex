@@ -107,7 +107,7 @@ defmodule SyliAtlasWeb.PageComponents do
 
   @doc """
   Search form. Without JavaScript it submits to the search page; with it,
-  `assets/js/ui/search.js` shows suggestions from `/api/v1/search` under the
+  `assets/js/ui/search.js` shows suggestions from `/api/internal/search` under the
   field (combobox, arrows, Enter, Escape).
   """
   def search_form(assigns) do

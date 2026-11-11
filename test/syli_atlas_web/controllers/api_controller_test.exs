@@ -8,7 +8,9 @@ defmodule SyliAtlasWeb.ApiControllerTest do
 
   test "area profile with a reference year", %{conn: conn} do
     body = conn |> get(~p"/api/v1/areas/CIV?from=2015&to=2025") |> json_response(200)
-    assert body["period"]["changes"]["real_gdp_index"] == 77.8
+    assert body["data"]["period"]["change_percent"]["real_gdp_index"] == 77.8
+    assert body["data"]["period"]["from"] == 2015
+    assert [%{"id" => "imf_weo", "edition" => "2026-10"}] = body["meta"]["sources"]
   end
 
   test "rejects an impossible period", %{conn: conn} do
@@ -19,14 +21,16 @@ defmodule SyliAtlasWeb.ApiControllerTest do
   end
 
   test "pages to save for offline reading, in the asked language", %{conn: conn} do
-    %{"pages" => fr} = conn |> get(~p"/api/v1/offline-pages?locale=fr") |> json_response(200)
+    %{"pages" => fr} =
+      conn |> get(~p"/api/internal/offline-pages?locale=fr") |> json_response(200)
+
     assert "/fr/regions" in fr and "/fr/classement/pib" in fr
     assert "/fr/pays/cote-d-ivoire" in fr and "/fr/regions/afrique" in fr
     assert Enum.count(fr, &String.starts_with?(&1, "/fr/pays/")) == 54
     assert fr == Enum.uniq(fr)
 
     %{"pages" => en} =
-      build_conn() |> get(~p"/api/v1/offline-pages?locale=en") |> json_response(200)
+      build_conn() |> get(~p"/api/internal/offline-pages?locale=en") |> json_response(200)
 
     assert "/en/countries/cote-d-ivoire" in en and Enum.all?(en, &String.starts_with?(&1, "/en/"))
 
@@ -40,11 +44,13 @@ defmodule SyliAtlasWeb.ApiControllerTest do
   end
 
   test "compare and ranking", %{conn: conn} do
-    assert [%{"code" => "CIV"}, %{"code" => "GHA"}] =
+    assert %{"data" => [%{"code" => "CIV"}, %{"code" => "GHA"}]} =
              conn |> get(~p"/api/v1/compare?codes=CIV,GHA") |> json_response(200)
 
-    assert [%{"code" => "CPV"} | _] =
-             conn |> get(~p"/api/v1/ranking?region=west_africa") |> json_response(200)
+    assert %{"data" => [%{"code" => "CPV", "position" => 1} | _], "meta" => meta} =
+             build_conn() |> get(~p"/api/v1/ranking?region=west_africa") |> json_response(200)
+
+    assert meta["unit"] == "percent" and meta["region"] == "west_africa"
   end
 
   test "cache headers and 304", %{conn: conn} do
@@ -67,6 +73,9 @@ defmodule SyliAtlasWeb.ApiControllerTest do
 
   test "version for the service worker", %{conn: conn} do
     assert %{"edition" => %{"id" => "2026-10"}} =
-             conn |> get(~p"/api/v1/version") |> json_response(200)
+             conn |> get(~p"/api/internal/version") |> json_response(200)
+
+    # The old address answers until the service workers have moved.
+    assert build_conn() |> get(~p"/api/v1/version") |> json_response(200)
   end
 end

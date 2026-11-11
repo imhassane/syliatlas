@@ -27,8 +27,11 @@ defmodule SyliAtlasWeb.Plugs.ApiTiming do
   @doc "The measured route of an answered request, named after its action."
   def route(conn) do
     case conn.private[:phoenix_action] do
-      action when action in [:areas, :area, :csv, :compare, :ranking] -> Atom.to_string(action)
-      _ -> nil
+      action when action in [:areas, :area, :csv, :compare, :ranking, :indicators] ->
+        Atom.to_string(action)
+
+      _ ->
+        nil
     end
   end
 end
