@@ -46,7 +46,8 @@ defmodule SyliAtlasWeb.CountryHeadTest do
   test "a region: the same header, a globe instead of a flag, sections and period in the bar" do
     html = doc("/fr/regions/afrique-de-l-ouest")
     assert count(html, ".region-head .entity-mark svg") == 1
-    assert count(html, ".flag") == 0
+    # No flag on the page (the recap dialog of the footer has its own).
+    assert count(html, "main .flag") == 0
     assert text(html, "h1.entity-name") =~ "Afrique de l'Ouest"
     assert count(html, "#region-kpis li") == 6
     # Every member counts, not only the first six of the comparison query.
