@@ -1,5 +1,9 @@
 <!DOCTYPE html>
-<html lang={assigns[:locale] || "fr"} data-theme="light">
+<html
+  lang={SyliAtlas.Locales.tag(assigns[:locale] || "fr")}
+  dir={SyliAtlas.Locales.dir(assigns[:locale] || "fr")}
+  data-theme="light"
+>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -14,17 +18,38 @@
       href={href}
     />
     <meta :if={assigns[:seo][:noindex]} name="robots" content="noindex" />
+    <%!-- Shared links: title, description and an image drawn from the page's
+         own figures (SyliAtlasWeb.OgImageController), in the page's language. --%>
     <meta property="og:site_name" content="Syli Atlas" />
+    <meta property="og:type" content="website" />
+    <meta :if={assigns[:seo][:canonical]} property="og:url" content={@seo[:canonical]} />
+    <meta property="og:locale" content={SyliAtlas.Locales.og(assigns[:locale] || "fr")} />
+    <meta
+      :for={l <- SyliAtlas.Locales.all() -- [assigns[:locale] || "fr"]}
+      property="og:locale:alternate"
+      content={SyliAtlas.Locales.og(l)}
+    />
     <meta :if={assigns[:page_title]} property="og:title" content={@page_title} />
     <meta
       :if={assigns[:seo][:description]}
       property="og:description"
       content={@seo[:description]}
     />
-    <meta :if={assigns[:seo][:image]} property="og:image" content={@seo[:image]} />
+    <%= if assigns[:seo][:image] do %>
+      <meta property="og:image" content={@seo[:image]} />
+      <meta property="og:image:type" content="image/png" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta
+        :if={assigns[:seo][:description]}
+        property="og:image:alt"
+        content={@seo[:description]}
+      />
+      <meta name="twitter:image" content={@seo[:image]} />
+    <% end %>
     <meta name="twitter:card" content="summary_large_image" />
     <script :for={ld <- assigns[:seo][:json_ld] || []} type="application/ld+json">
-      <%= Phoenix.HTML.raw(Jason.encode!(ld)) %>
+      <%= Phoenix.HTML.raw(Jason.encode!(ld, escape: :html_safe)) %>
     </script>
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="syli-version" content={SyliAtlasWeb.Build.version()} />
@@ -40,13 +65,101 @@
           document.documentElement.dataset.theme = t;
         } catch (e) {}
         document.documentElement.classList.add("js");
-        // Entrance animations play once per page and session.
-        try {
-          var seen = JSON.parse(sessionStorage.getItem("seen") || "[]");
-          if (seen.indexOf(location.pathname) >= 0) document.documentElement.classList.add("revisit");
-          else sessionStorage.setItem("seen", JSON.stringify(seen.concat(location.pathname).slice(-50)));
-        } catch (e) {}
+        // Entrance animations play once per page and session. A page prepared in
+        // advance (speculation rules below) counts as seen only once shown.
+        var markSeen = function () {
+          try {
+            var seen = JSON.parse(sessionStorage.getItem("seen") || "[]");
+            if (seen.indexOf(location.pathname) >= 0) document.documentElement.classList.add("revisit");
+            else sessionStorage.setItem("seen", JSON.stringify(seen.concat(location.pathname).slice(-50)));
+          } catch (e) {}
+        };
+        if (document.prerendering) document.addEventListener("prerenderingchange", markSeen, {once: true});
+        else markSeen();
         if (!navigator.onLine) document.documentElement.classList.add("is-offline");
+      })();
+    </script>
+    <%!-- Page arrival after a tab of a country profile or a table filter or sort
+         (the old page wrote where things were when the link was clicked:
+         assets/js/ui/transitions.js). The new page is shown at once and moves
+         itself, live, before its first paint: the tab bar stays where the
+         reader left it (or stuck under the band), its underline slides from the
+         old tab, the content comes in from the tab's side; or the table stays
+         in place and each row slides from its old position.
+         Only then does the first paint wait for the content it measures (a
+         rel="expect" added here, while the head is parsed); every other page
+         paints as soon as its first bytes arrive, and does not move. --%>
+    <script>
+      (function () {
+        var EASE = "cubic-bezier(.22, 1, .36, 1)";
+        var read = function () {
+          try {
+            var saved = JSON.parse(sessionStorage.getItem("arrival"));
+            if (saved && saved.to === location.href) { sessionStorage.removeItem("arrival"); return saved; }
+          } catch (x) {}
+          return null;
+        };
+        var early = read();
+        if (early) {
+          var expect = document.createElement("link");
+          expect.rel = "expect";
+          expect.href = early.kind === "tab" ? "#tab-panel" : "#vt-ready";
+          expect.setAttribute("blocking", "render");
+          document.head.appendChild(expect);
+        }
+        // The band keeps its place from page to page: its loop position follows
+        // the clock (assets/css/ticker.css, mod()).
+        document.documentElement.style.setProperty("--now", Date.now() / 1000 + "s");
+
+        var arrive = function () {
+          // A page prepared in advance read nothing while it was being prepared.
+          var saved = early || read();
+          early = null;
+          if (!saved) return;
+          var still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+          var band = document.getElementById("site-ticker");
+          var stickyTop = band ? band.offsetHeight : 0;
+          var move = function (el, from, ms) {
+            if (!still && el && el.animate) el.animate([{transform: from}, {transform: "none"}], {duration: ms || 320, easing: EASE});
+          };
+          // Same place as on the old page, also when the link carried an anchor
+          // (the anchor would scroll once more at the end of parsing).
+          var keep = function (y) {
+            if (location.hash) history.replaceState(history.state, "", location.pathname + location.search);
+            scrollTo({top: y, behavior: "instant"});
+            if (document.readyState === "loading")
+              document.addEventListener("DOMContentLoaded", function () { scrollTo({top: y, behavior: "instant"}); }, {once: true});
+          };
+
+          if (saved.kind === "tab") {
+            var bar = document.querySelector(".tab-bar"), panel = document.getElementById("tab-panel");
+            if (!bar || !panel) return;
+            keep(panel.getBoundingClientRect().top + scrollY - bar.offsetHeight - Math.max(saved.top, stickyTop));
+            // Near the top of a page whose hero is shorter, the bar cannot stay:
+            // it glides to its new place instead of jumping.
+            var gap = Math.max(saved.top, stickyTop) - bar.getBoundingClientRect().top;
+            if (Math.abs(gap) > 1) move(bar, "translateY(" + gap + "px)");
+            var ind = bar.querySelector(".tab-indicator");
+            if (ind && saved.ind) {
+              var r = ind.getBoundingClientRect();
+              move(ind, "translateX(" + (saved.ind.left - r.left) + "px) scaleX(" + saved.ind.width / r.width + ")");
+            }
+            move(panel, "translateX(" + 32 * saved.dir + "px)");
+          } else if (saved.kind === "reorder") {
+            var box = document.querySelector("[data-keep-place]");
+            if (!box) return;
+            keep(scrollY + box.getBoundingClientRect().top - Math.max(saved.top, stickyTop));
+            var top0 = box.getBoundingClientRect().top;
+            Array.prototype.forEach.call(document.querySelectorAll("[data-reorder] > [id]"), function (row) {
+              var was = saved.rows[row.id];
+              var now = row.getBoundingClientRect().top - top0;
+              if (was == null) move(row, "translateY(12px)");
+              else if (Math.abs(was - now) > 1) move(row, "translateY(" + (was - now) + "px)", 380);
+            });
+          }
+        };
+        if ("onpagereveal" in window) addEventListener("pagereveal", arrive);
+        else document.addEventListener("DOMContentLoaded", arrive);
       })();
     </script>
     <%!-- Fonts are served by the site (assets/css/fonts.css): nothing blocks the
@@ -68,19 +181,16 @@
       crossorigin
     />
     <link phx-track-static rel="stylesheet" href={~p"/assets/js/app.css"} />
-    <%!-- Cross-document view transitions: wait for the visible content before animating. --%>
+    <%!-- Paint as soon as the top of the content is there (a page arrival after a
+         tab or a table filter waits longer: see « page arrival » above). --%>
     <link rel="expect" href="#main" blocking="render" />
     <%!-- Prepare the next page on hover (prerender) so a click shows it at once.
-         Only public pages: never the API, sign-in, discussions or admin. --%>
+         Only public pages: never the API, sign-in, the member space, discussions or admin. --%>
     <script :if={assigns[:public]} type="speculationrules">
       {"prerender": [{"where": {"and": [
         {"href_matches": "/*"},
-        {"not": {"href_matches": "/api/*"}},
-        {"not": {"href_matches": "/*/connexion"}},
-        {"not": {"href_matches": "/*/sign-in"}},
-        {"not": {"href_matches": "/*/discussion"}},
-        {"not": {"href_matches": "/admin/*"}},
-        {"not": {"selector_matches": "[rel~=nofollow], [download]"}}
+        {"not": {"href_matches": ["/admin/*", "/admin", "/api/*", "/*/mon-espace*", "/*/my-space*", "/*/connexion*", "/*/sign-in*", "/unsubscribe/*", "/*/discussion*"]}},
+        {"not": {"selector_matches": "[data-method], [download], [rel~=nofollow], [target]"}}
       ]}, "eagerness": "moderate"}]}
     </script>
     <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
@@ -99,6 +209,16 @@
     {@inner_content}
     <section id="toasts" class="toasts" aria-label={gettext("Notifications")} aria-live="polite">
     </section>
+    <%!-- The flash messages, drawn as toasts by assets/js/ui/toasts.js. --%>
+    <script
+      :if={!assigns[:live_js] && SyliAtlasWeb.Layouts.flash_toasts(assigns[:flash]) != []}
+      type="application/json"
+      id="flash-toasts"
+    >
+      <%= Phoenix.HTML.raw(SyliAtlasWeb.MapComponents.json_for_script(
+        SyliAtlasWeb.Layouts.flash_toasts(assigns[:flash])
+      )) %>
+    </script>
     <script type="application/json" id="ui-strings">
       <%= Phoenix.HTML.raw(SyliAtlasWeb.MapComponents.json_for_script(SyliAtlasWeb.Layouts.ui_strings())) %>
     </script>

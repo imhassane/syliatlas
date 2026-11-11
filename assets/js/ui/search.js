@@ -110,7 +110,7 @@ function setup(form) {
     if (controller) controller.abort()
     controller = new AbortController()
     try {
-      const url = `/api/v1/search?locale=${encodeURIComponent(locale)}&q=${encodeURIComponent(q)}`
+      const url = `/api/internal/search?locale=${encodeURIComponent(locale)}&q=${encodeURIComponent(q)}`
       const res = await fetch(url, {signal: controller.signal, headers: {accept: "application/json"}})
       if (!res.ok) return
       const data = await res.json()

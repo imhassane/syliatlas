@@ -3,159 +3,179 @@
     <%= raw(embedded_json(@profile)) %>
   </script>
 
-  <.section tight={:bottom} class="profile-head">
-    <.area_header
-      area={@area}
-      region={@region}
-      name={@name}
-      title={@heading}
-      tab={@tab != :overview && @tab_name}
-      locale={@locale}
-    />
-    <SyliAtlasWeb.AccountComponents.follow
-      kind="area"
-      ref={@area.code}
-      locale={@locale}
-      path={@path}
-      alert_area={@area.kind == "country" && @area.code}
-    />
-    <.filter_sheet
-      :if={
-        @tab in [:overview, :economy, :finances] and
-          (@tab != :overview or @area.kind != "country")
-      }
-      id="period-sheet"
-      title={gettext("Period")}
-      summary={"#{@from} → #{@to}"}
-    >
-      <.period_form action={@path} from={@from} to={@to} />
-    </.filter_sheet>
-    <%!-- On the theme tabs the section itself opens with this answer. --%>
-    <p :if={@tab in [:overview, :economy] or @area.kind != "country"} class="lead" data-answer>
-      {@answer}
-    </p>
-    <.source_line
-      :if={@tab in [:overview, :economy, :finances]}
-      edition={@profile["edition"]}
-      locale={@locale}
-    />
-    <RatingComponents.rating_pill
-      :if={@rating && @tab == :overview}
-      entry={@rating}
-      rated={@rated}
-      href={Paths.area_tab(@locale, @area, :markets) <> "#notation"}
-    />
-    <ProfileComponents.tab_nav
-      :if={@area.kind == "country"}
-      area={@area}
-      tabs={@tabs}
-      current={@tab}
-      locale={@locale}
-    />
-  </.section>
+  <%= if @area.kind == "country" do %>
+    <.section tight={:bottom} class="profile-head">
+      <ProfileComponents.country_head
+        ctx={@ctx}
+        region={@region}
+        heading={@heading}
+        tab_name={@tab != :overview && @tab_name}
+        path={@path}
+      />
+    </.section>
 
-  <%= if @area.kind != "country" do %>
-    <.economy {assigns} />
-    <EconomyComponents.finances_section
-      profile={@profile}
-      data={@data}
-      name={@name}
-      comparison={@comparison}
-      from={@from}
-      to={@to}
-      locale={@locale}
-    />
-    <.questions {assigns} />
-    <ProfileComponents.area_siblings area={@area} locale={@locale} />
+    <%!-- Sticky under the band: a direct child of <main>, so it can stay up all
+         along the page. The period sits in it, on the tabs that use one. --%>
+    <div class="tab-bar" data-sticky-filters>
+      <div class="wrap tab-bar-row">
+        <ProfileComponents.tab_nav
+          area={@area}
+          tabs={@tabs}
+          current={@tab}
+          locale={@locale}
+          query={@ctx.period_query}
+        />
+        <div :if={@tab in [:overview, :economy, :finances]} class="tab-bar-period">
+          <.filter_sheet id="period-sheet" title={gettext("Period")} summary={"#{@from} → #{@to}"}>
+            <.period_form action={@path} from={@from} to={@to} />
+          </.filter_sheet>
+        </div>
+      </div>
+    </div>
   <% else %>
-    <%= case @tab do %>
-      <% :overview -> %>
-        <ProfileComponents.overview_cards ctx={@ctx} />
-        <ProfileComponents.related_links ctx={@ctx} />
-        <.questions {assigns} />
-      <% :economy -> %>
-        <.economy {assigns} />
-        <ProfileComponents.related_links ctx={@ctx} />
-      <% :finances -> %>
-        <EconomyComponents.finances_section
-          profile={@profile}
-          data={@data}
-          name={@name}
-          comparison={@comparison}
-          convergence={@convergence || nil}
-          from={@from}
-          to={@to}
-          locale={@locale}
-        />
-        <EconomyComponents.money_section
-          :if={@currency}
-          currency={@currency}
-          fx={@fx}
-          profile={@profile}
-          name={@name}
-          to={@to}
-          locale={@locale}
-        />
-        <WorldBankComponents.debt_section
-          :if={@world_bank}
-          entry={@world_bank}
-          doc={@world_bank_doc}
-          name={@name}
-          debt_pct={PublicData.at(@profile["series"]["public_debt_pct_gdp"], @to)}
-          debt_year={@to}
-          distress={SyliAtlas.DebtDistress.for_country(@area.code)}
-          distress_doc={SyliAtlas.DebtDistress.document()}
-          locale={@locale}
-        />
-        <ProfileComponents.related_links ctx={@ctx} />
-      <% :trade -> %>
-        <TradeComponents.trade_section
-          entry={@trade}
-          doc={@trade_doc}
-          name={@name}
-          locale={@locale}
-        />
-        <ProfileComponents.related_links ctx={@ctx} />
-      <% :society -> %>
-        <WorldBankComponents.flows_section
-          entry={@world_bank}
-          doc={@world_bank_doc}
-          name={@name}
-          locale={@locale}
-        />
-        <WorldBankComponents.jobs_section
-          entry={@world_bank}
-          doc={@world_bank_doc}
-          locale={@locale}
-        />
-        <WorldBankComponents.living_section
-          entry={@world_bank}
-          doc={@world_bank_doc}
-          name={@name}
-          locale={@locale}
-        />
-        <ProfileComponents.related_links ctx={@ctx} />
-      <% :markets -> %>
-        <RatingComponents.rating_section
-          :if={@rating}
-          entry={@rating}
-          name={@name}
-          rated={@rated}
-          locale={@locale}
-        />
-        <SyliAtlasWeb.ClimateComponents.climate_section
-          :if={@climate}
-          entry={@climate}
-          name={@name}
-          doc={SyliAtlas.Climate.document()}
-        />
-        <SyliAtlasWeb.MarketComponents.country_market
-          :if={@market != []}
-          exchanges={@market}
-          name={@name}
-          locale={@locale}
-        />
-        <ProfileComponents.related_links ctx={@ctx} />
-    <% end %>
+    <.section tight={:bottom} class="profile-head">
+      <ProfileComponents.region_head
+        ctx={@ctx}
+        region={@region}
+        members={@members.total}
+        path={@path}
+      />
+    </.section>
+
+    <%!-- Same sticky bar as a country's: the sections of the page, the period. --%>
+    <div class="tab-bar" data-sticky-filters>
+      <div class="wrap tab-bar-row">
+        <nav class="tab-nav" aria-label={gettext("Sections of this page")} id="region-sections">
+          <a href="#economie">{gettext("Economy")}</a>
+          <a href="#finances">{gettext("Finances and debt")}</a>
+          <a :if={@members.total > 0} href="#members">{gettext("Members")}</a>
+          <a href="#questions">{gettext("Questions")}</a>
+        </nav>
+        <div class="tab-bar-period">
+          <.filter_sheet id="period-sheet" title={gettext("Period")} summary={"#{@from} → #{@to}"}>
+            <.period_form action={@path} from={@from} to={@to} />
+          </.filter_sheet>
+        </div>
+      </div>
+    </div>
   <% end %>
+
+  <%!-- What changes from tab to tab: it slides in from the side of the tab. --%>
+  <div class="tab-panel" id="tab-panel">
+    <section
+      :if={@area.kind != "country" or @tab in [:overview, :economy, :finances]}
+      class="section tab-intro"
+    >
+      <div class="wrap stack gap-1">
+        <p :if={@area.kind != "country" or @tab in [:overview, :economy]} class="lead" data-answer>
+          {@answer}
+        </p>
+        <.source_line edition={@profile["edition"]} locale={@locale} />
+      </div>
+    </section>
+    <%= if @area.kind != "country" do %>
+      <.economy {assigns} />
+      <EconomyComponents.finances_section
+        profile={@profile}
+        data={@data}
+        name={@name}
+        comparison={@comparison}
+        from={@from}
+        to={@to}
+        locale={@locale}
+      />
+      <.questions {assigns} />
+      <ProfileComponents.area_siblings area={@area} locale={@locale} />
+    <% else %>
+      <%= case @tab do %>
+        <% :overview -> %>
+          <ProfileComponents.overview_cards ctx={@ctx} />
+          <ProfileComponents.related_links ctx={@ctx} />
+          <.questions {assigns} />
+        <% :economy -> %>
+          <.economy {assigns} />
+          <ProfileComponents.related_links ctx={@ctx} />
+        <% :finances -> %>
+          <EconomyComponents.finances_section
+            profile={@profile}
+            data={@data}
+            name={@name}
+            comparison={@comparison}
+            convergence={@convergence || nil}
+            from={@from}
+            to={@to}
+            locale={@locale}
+          />
+          <EconomyComponents.money_section
+            :if={@currency}
+            currency={@currency}
+            fx={@fx}
+            profile={@profile}
+            name={@name}
+            to={@to}
+            locale={@locale}
+          />
+          <WorldBankComponents.debt_section
+            :if={@world_bank}
+            entry={@world_bank}
+            doc={@world_bank_doc}
+            name={@name}
+            debt_pct={PublicData.at(@profile["series"]["public_debt_pct_gdp"], @to)}
+            debt_year={@to}
+            distress={SyliAtlas.DebtDistress.for_country(@area.code)}
+            distress_doc={SyliAtlas.DebtDistress.document()}
+            locale={@locale}
+          />
+          <ProfileComponents.related_links ctx={@ctx} />
+        <% :trade -> %>
+          <TradeComponents.trade_section
+            entry={@trade}
+            doc={@trade_doc}
+            name={@name}
+            locale={@locale}
+          />
+          <ProfileComponents.related_links ctx={@ctx} />
+        <% :society -> %>
+          <WorldBankComponents.flows_section
+            entry={@world_bank}
+            doc={@world_bank_doc}
+            name={@name}
+            locale={@locale}
+          />
+          <WorldBankComponents.jobs_section
+            entry={@world_bank}
+            doc={@world_bank_doc}
+            locale={@locale}
+          />
+          <WorldBankComponents.living_section
+            entry={@world_bank}
+            doc={@world_bank_doc}
+            name={@name}
+            locale={@locale}
+          />
+          <ProfileComponents.related_links ctx={@ctx} />
+        <% :markets -> %>
+          <RatingComponents.rating_section
+            :if={@rating}
+            entry={@rating}
+            name={@name}
+            rated={@rated}
+            locale={@locale}
+          />
+          <SyliAtlasWeb.ClimateComponents.climate_section
+            :if={@climate}
+            entry={@climate}
+            name={@name}
+            doc={SyliAtlas.Climate.document()}
+          />
+          <SyliAtlasWeb.MarketComponents.country_market
+            :if={@market != []}
+            exchanges={@market}
+            name={@name}
+            locale={@locale}
+          />
+          <ProfileComponents.related_links ctx={@ctx} />
+      <% end %>
+    <% end %>
+  </div>
 </Layouts.public>

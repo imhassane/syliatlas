@@ -3,10 +3,11 @@
     <.section_head
       level={1}
       eyebrow={gettext("Ranking")}
-      title={gettext("African economies, ranked.")}
+      title={@heading}
     >
       <:intro>{indicator_help(@indicator)}</:intro>
     </.section_head>
+    <p class="lead" data-answer id="ranking-answer">{@answer}</p>
     <.filter_sheet
       id="ranking-filters"
       title={gettext("Filters")}
@@ -26,8 +27,8 @@
           <.select
             name="mode"
             options={[
-              {"change", gettext("Change over the period")},
-              {"value", gettext("Value in the arrival year")}
+              {"value", gettext("Value in the arrival year")},
+              {"change", gettext("Change over the period")}
             ]}
             selected={@mode}
           />
@@ -65,6 +66,7 @@
         }
         start={@page.offset}
         bars
+        flags
       />
       <.list_pager page={@page} href={@page_href} />
     </.card>

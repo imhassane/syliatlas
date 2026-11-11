@@ -16,7 +16,7 @@ defmodule SyliAtlasWeb.DebtController do
 
   def index(conn, params) do
     locale = conn.assigns.locale
-    paths = %{"fr" => Paths.debt("fr"), "en" => Paths.debt("en")}
+    paths = SyliAtlas.Locales.each(fn l -> Paths.debt(l) end)
     regions = Geo.list_regions()
     region = Enum.find(regions, &(&1.code == params["region"]))
     sort = if params["sort"] in @sorts, do: params["sort"], else: "debt"
@@ -41,7 +41,24 @@ defmodule SyliAtlasWeb.DebtController do
             Seo.breadcrumbs([
               {"Syli Atlas", Paths.home(locale)},
               {gettext("Debt"), paths[locale]}
-            ])
+            ]),
+            Seo.item_list(
+              gettext("African countries ranked by public debt, % of GDP (%{year})", year: @year),
+              for(r <- all, do: {r.name, Paths.area(locale, "country", r.slug)})
+            ),
+            Seo.dataset(
+              name: gettext("Debt of the 54 African countries"),
+              description:
+                gettext(
+                  "Public debt in % of GDP (IMF), risk of debt distress (IMF and World Bank), external debt, share owed to China and to bondholders, debt service in % of exports (World Bank, International Debt Statistics), for each African country."
+                ),
+              path: paths[locale],
+              locale: locale,
+              area: %{name: gettext("Africa")},
+              based_on:
+                {"IMF, World Economic Outlook; World Bank, International Debt Statistics", nil},
+              modified: wb && wb["as_of"]
+            )
           ]
         }),
       alternates: Seo.alternates_for_header(paths),

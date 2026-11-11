@@ -28,11 +28,22 @@ defmodule SyliAtlasWeb.CommunityPagesTest do
     assert "/fr/pays/senegal" in links
   end
 
+  test "a community: the header of the profiles, its full name and four key figures" do
+    doc = doc("/fr/communautes/uemoa")
+    assert doc |> LazyHTML.query(".community-head h1.entity-name") |> LazyHTML.text() =~ "UEMOA"
+    assert doc |> LazyHTML.query(".entity-subtitle") |> LazyHTML.text() =~ "Union économique"
+    assert doc |> LazyHTML.query("#community-kpis li") |> Enum.count() == 4
+    assert doc |> LazyHTML.query(~s(.entity-chips a[href="#members"])) |> Enum.count() == 1
+  end
+
   test "ECOWAS without the AES members; slugs across languages redirect; 404" do
     doc = doc("/fr/communautes/cedeao")
     assert doc |> LazyHTML.query("#members-table tbody tr") |> Enum.count() == 12
     refute LazyHTML.text(LazyHTML.query(doc, "#members-table")) =~ "Mali"
-    assert redirected_to(get(build_conn(), "/fr/communautes/ecowas")) == "/fr/communautes/cedeao"
+
+    assert redirected_to(get(build_conn(), "/fr/communautes/ecowas"), 301) ==
+             "/fr/communautes/cedeao"
+
     assert_error_sent 404, fn -> get(build_conn(), "/fr/communautes/atlantide") end
   end
 end

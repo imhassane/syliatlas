@@ -30,7 +30,7 @@ export function initOfflinePages() {
 
   if (!navigator.onLine || !connectionAllows()) return
   const build = document.querySelector('meta[name="syli-build"]')?.content
-  const locale = document.documentElement.lang?.startsWith("en") ? "en" : "fr"
+  const locale = location.pathname.split("/")[1] || "fr"
   const mark = `${build}:${locale}`
   try { if (localStorage.getItem(KEY) === mark) return } catch (_) {}
 

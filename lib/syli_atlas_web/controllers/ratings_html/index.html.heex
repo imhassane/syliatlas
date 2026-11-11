@@ -1,28 +1,4 @@
 <Layouts.public locale={@locale} current={:ratings} alternates={@alternates}>
-  <div
-    :if={@doc["recent"] != []}
-    class="ticker"
-    role="region"
-    aria-label={gettext("Latest rating decisions")}
-  >
-    <div class="ticker-track">
-      <ul :for={hidden <- [false, true]} class="ticker-list" aria-hidden={hidden && "true"}>
-        <li :for={r <- @doc["recent"]}>
-          <a
-            href={Paths.country_tab(@locale, @doc["countries"][r["code"]]["slug"][@locale], :markets) <> "#notation"}
-            tabindex={hidden && "-1"}
-          >
-            <b>{@doc["countries"][r["code"]]["name"][@locale]}</b>
-            <span class="muted">{agency_name(r["agency"])} · {date_text(r["action_date"], @locale)}</span>
-            <span class={if(r["action_type"] == "upgrade", do: "up", else: "down")}>
-              {if(r["action_type"] == "upgrade", do: "▲", else: "▼")} {Scale.display(r["rating"])}
-            </span>
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
-
   <.section id="ratings-list" tight={:top} class="rt-page">
     <nav aria-label={gettext("Breadcrumb")}>
       <ol class="crumbs">
@@ -31,58 +7,70 @@
       </ol>
     </nav>
 
-    <div class="card market-table" id="ratings-table">
-      <div class="market-toolbar">
-        <div class="market-toolbar-title">
-          <h1 class="market-h1 rt-h1">
-            {gettext("Sovereign ratings of African countries")}
-            <span class="small muted num">
-              {gettext("%{rated} rated · %{unrated} without a rating",
-                rated: @doc["rated"],
-                unrated: length(@unrated)
+    <div class="card market-table" id="ratings-table" data-keep-place>
+      <div class="market-filters" data-sticky-filters>
+        <div class="market-toolbar">
+          <div class="market-toolbar-title">
+            <h1 class="market-h1 rt-h1">
+              {gettext("Sovereign ratings of African countries")}
+              <span class="small muted num">
+                {gettext("%{rated} rated · %{unrated} without a rating",
+                  rated: @doc["rated"],
+                  unrated: length(@unrated)
+                )}
+              </span>
+            </h1>
+            <p class="src">
+              {gettext(
+                "S&P, Moody's, Fitch · long-term foreign-currency ratings · each rating links to its source"
               )}
-            </span>
-          </h1>
-          <p class="src">
-            {gettext(
-              "S&P, Moody's, Fitch · long-term foreign-currency ratings · each rating links to its source"
-            )}
-          </p>
+            </p>
+          </div>
+          <form
+            class="market-search"
+            action={Paths.ratings(@locale)}
+            method="get"
+            role="search"
+            aria-label={gettext("Search the ratings")}
+          >
+            <input :if={@verdict} type="hidden" name="verdict" value={@verdict} />
+            <label for="ratings-q" class="vh">{gettext("Search a country or a rating")}</label>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              aria-hidden="true"
+            ><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+            <input
+              id="ratings-q"
+              name="q"
+              type="search"
+              value={@q}
+              placeholder={gettext("Country, rating (BB, Caa1…)")}
+              autocomplete="off"
+            />
+            <button type="submit" class="vh">{gettext("Search")}</button>
+          </form>
         </div>
-        <form class="market-search" action={Paths.ratings(@locale)} method="get" role="search">
-          <input :if={@verdict} type="hidden" name="verdict" value={@verdict} />
-          <label for="ratings-q" class="vh">{gettext("Search a country or a rating")}</label>
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            aria-hidden="true"
-          ><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
-          <input
-            id="ratings-q"
-            name="q"
-            type="search"
-            value={@q}
-            placeholder={gettext("Country, rating (BB, Caa1…)")}
-            autocomplete="off"
-          />
-          <button type="submit" class="vh">{gettext("Search")}</button>
-        </form>
+        <nav class="market-tabs" aria-label={gettext("Filter by verdict")}>
+          <a
+            :for={t <- @tabs}
+            href={tab_href(@locale, t, @q) <> "#ratings-list"}
+            aria-current={@verdict == t && "true"}
+          >
+            <i
+              :if={t not in [nil, "unrated"]}
+              class={["rt-dot", band_class(t)]}
+              aria-hidden="true"
+            ></i>
+            {tab_label(t)}<span class="market-tab-count">{@counts[t] || 0}</span>
+          </a>
+        </nav>
       </div>
-      <nav class="market-tabs" aria-label={gettext("Filter by verdict")}>
-        <a
-          :for={t <- @tabs}
-          href={tab_href(@locale, t, @q) <> "#ratings-list"}
-          aria-current={@verdict == t && "true"}
-        >
-          <i :if={t not in [nil, "unrated"]} class={["rt-dot", band_class(t)]} aria-hidden="true"></i>
-          {tab_label(t)}<span class="market-tab-count">{@counts[t] || 0}</span>
-        </a>
-      </nav>
 
       <div class="table-box">
         <table class="table table-stack table-wide" id="ratings-rows">
@@ -98,11 +86,19 @@
               <th scope="col" class="l">{gettext("Verdict")}</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody data-reorder>
             <tr :for={e <- @rows} id={"rating-#{e["code"]}"}>
               <td class="l mono subtle" data-label="#">{e["rank"] || "—"}</td>
               <th scope="row" class="l">
-                <a href={Paths.rating(@locale, e["slug"][@locale])}>{e["name"][@locale]}</a>
+                <a
+                  href={Paths.rating(@locale, SyliAtlas.Locales.pick(e["slug"], @locale))}
+                  class="rank-flagged"
+                >
+                  <.flag code={e["code"]} size="sm" sprite />{SyliAtlas.Locales.pick(
+                    e["name"],
+                    @locale
+                  )}
+                </a>
               </th>
               <td :for={code <- ~w(sp moodys fitch)} class="l" data-label={agency_name(code)}>
                 <%= if a = agency(e, code) do %>
@@ -174,7 +170,7 @@
           </h2>
           <p>
             <%= for {e, i} <- Enum.with_index(@unrated) do %>
-              <a href={Paths.area(@locale, "country", e["slug"][@locale])}>{e["name"][@locale]}</a>{if(
+              <a href={Paths.area(@locale, "country", SyliAtlas.Locales.pick(e["slug"], @locale))}>{SyliAtlas.Locales.pick(e["name"], @locale)}</a>{if(
                 i < length(@unrated) - 1,
                 do: ", ",
                 else: "."

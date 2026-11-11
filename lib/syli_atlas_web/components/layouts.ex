@@ -14,12 +14,17 @@ defmodule SyliAtlasWeb.Layouts do
   alias SyliAtlasWeb.Paths
 
   @doc """
-  Public site layout: header, offline banner, content, footer. Public pages
+  Public site layout: offline banner, header, the band (sticky: it stays at
+  the top with the filters of the page under it), content, footer. Public pages
   carry no session, so they can be cached by the CDN and the service worker.
   """
   attr :locale, :string, required: true
   attr :current, :atom, default: nil
   attr :alternates, :list, default: []
+
+  attr :ticker, :boolean,
+    default: true,
+    doc: "the band of indices and ratings under the header (off on account pages)"
 
   attr :current_user, :any,
     default: nil,
@@ -32,7 +37,7 @@ defmodule SyliAtlasWeb.Layouts do
       assign(
         assigns,
         :other_lang,
-        Enum.find(assigns.alternates, fn {l, _} -> l in ["fr", "en"] and l != assigns.locale end)
+        if(length(assigns.alternates) > 1, do: assigns.alternates)
       )
 
     ~H"""
@@ -40,6 +45,7 @@ defmodule SyliAtlasWeb.Layouts do
     <div class="offline-banner" role="status">
       {gettext("You are offline. Figures shown are the ones saved on this device.")}
     </div>
+    <div class="read-progress" aria-hidden="true"></div>
     <header class="site-header">
       <div class="wrap">
         <a class="brand" href={Paths.home(@locale)} aria-label="Syli Atlas">
@@ -71,9 +77,19 @@ defmodule SyliAtlasWeb.Layouts do
           <button type="button" class="btn btn-quiet hide-mobile" data-install>{gettext(
             "Install the app"
           )}</button>
-          <.lang_link :if={@other_lang} lang={@other_lang} class="btn btn-quiet hide-mobile" />
+          <.lang_link
+            :if={@other_lang}
+            langs={@other_lang}
+            locale={@locale}
+            id="lang-header"
+            class="btn btn-quiet hide-mobile"
+          />
           <.theme_button />
-          <.account_link user={@current_user} locale={@locale} class="btn btn-secondary hide-mobile" />
+          <.account_link
+            user={@current_user}
+            locale={@locale}
+            class="btn btn-secondary hide-mobile"
+          />
           <button
             type="button"
             id="drawer-open"
@@ -96,6 +112,7 @@ defmodule SyliAtlasWeb.Layouts do
         </div>
       </div>
     </header>
+    <SyliAtlasWeb.TickerComponents.site_ticker :if={@ticker} locale={@locale} />
     <.nav_drawer
       locale={@locale}
       current={@current}
@@ -104,8 +121,31 @@ defmodule SyliAtlasWeb.Layouts do
     />
     <main id="main">
       {render_slot(@inner_block)}
+      <%!-- After a table filter or sort, the first paint waits for this mark (root
+           layout, « page arrival »), so the rows are there to be measured. --%>
+      <span id="vt-ready" hidden></span>
     </main>
     <.site_footer locale={@locale} other_lang={@other_lang} />
+    <button
+      type="button"
+      class="to-top"
+      id="to-top"
+      aria-label={gettext("Back to top")}
+      data-to-top
+      hidden
+    >
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      ><path d="M12 19V5M6 11l6-6 6 6"></path></svg>
+    </button>
     """
   end
 
@@ -129,7 +169,10 @@ defmodule SyliAtlasWeb.Layouts do
     ~H"""
     <nav id={@id} class={@class} aria-label={gettext("Main")}>
       <%= if @flat do %>
-        <a href={Paths.ranking(@locale)} aria-current={@current in [:ranking, :countries] && "page"}>
+        <a
+          href={SyliAtlasWeb.Topics.ranking_path(@locale, "gdp_usd_bn")}
+          aria-current={@current in [:ranking, :countries] && "page"}
+        >
           <span>{gettext("Countries")}</span><span class="drawer-meta">→</span>
         </a>
         <a
@@ -157,9 +200,10 @@ defmodule SyliAtlasWeb.Layouts do
           "Compare"
         )}</a>
       <% else %>
-        <a href={Paths.ranking(@locale)} aria-current={@current in [:ranking, :countries] && "page"}>{gettext(
-          "Countries"
-        )}</a>
+        <a
+          href={SyliAtlasWeb.Topics.ranking_path(@locale, "gdp_usd_bn")}
+          aria-current={@current in [:ranking, :countries] && "page"}
+        >{gettext("Countries")}</a>
         <a
           :if={SyliAtlas.Market.public?()}
           href={Paths.markets(@locale)}
@@ -241,85 +285,336 @@ defmodule SyliAtlasWeb.Layouts do
   @top_countries ~w(NGA ZAF EGY DZA ETH MAR KEN CIV)
 
   @doc """
-  Footer: the largest economies, the exchanges, the themes, the data and the
-  project, then one line that credits every source with its edition.
+  Footer (canvas « Syli Atlas — pistes de footer », piste A): the brand and
+  the recap card, five columns of links, then the sources, the language and
+  the theme. The recap card opens the subscription dialog when JavaScript
+  runs (`assets/js/ui/recap.js`); otherwise it leads to the recap page.
   """
   def site_footer(assigns) do
     # From the in-memory search index: no query per page.
-    areas =
-      for %{type: :country} = e <- SyliAtlasWeb.Search.Index.get(), into: %{}, do: {e.code, e}
+    entries = SyliAtlasWeb.Search.Index.get()
+    areas = for %{type: :country} = e <- entries, into: %{}, do: {e.code, e}
 
     meta = SyliAtlasWeb.Search.Index.meta()
+    locale = assigns.locale
 
     assigns =
       assigns
       |> assign(:countries, @top_countries |> Enum.map(&areas[&1]) |> Enum.reject(&is_nil/1))
+      |> assign(
+        :all_countries,
+        areas
+        |> Map.values()
+        |> Enum.sort_by(&String.normalize(SyliAtlas.Locales.pick(&1.names, locale), :nfd))
+      )
       |> assign(:exchanges, meta.exchanges)
-      |> assign(:themes, themes(assigns.locale))
+      |> assign(:themes, themes(locale))
+      |> assign(:rankings, SyliAtlasWeb.Topics.ranking_indicators())
       |> assign(:edition, meta.edition)
 
     ~H"""
     <footer class="site-footer">
-      <div class="wrap footer-grid">
-        <div class="stack gap-1 footer-about">
-          <a class="brand" href={Paths.home(@locale)}><b>syli <span>atlas</span></b></a>
-          <p class="muted small">
-            {gettext("African economies in verifiable figures. Free, open, in French and English.")}
+      <div class="footer-sun" aria-hidden="true"></div>
+      <div class="wrap footer-top">
+        <div class="footer-about">
+          <a class="brand" href={Paths.home(@locale)} aria-label="Syli Atlas">
+            <.logo size={30} />
+            <b>syli <span>atlas</span></b>
+          </a>
+          <p class="footer-claim">
+            {gettext("African economies in verifiable figures. Every figure cites its source.")}
           </p>
-          <.lang_link :if={@other_lang} lang={@other_lang} class="btn btn-quiet" />
         </div>
-        <nav aria-label={gettext("Footer")} class="footer-nav">
-          <div class="stack gap-1">
-            <b>{gettext("Countries")}</b>
-            <a :for={c <- @countries} href={c.path[@locale]}>{c.names[@locale]}</a>
-            <a href={Paths.ranking(@locale)}>{gettext("All 54 countries")} →</a>
-          </div>
-          <div :if={@exchanges != []} class="stack gap-1">
-            <b>{gettext("Stock exchanges")}</b>
-            <a :for={e <- Enum.take(@exchanges, 7)} href={e.path[@locale]}>{e.short_name}</a>
-            <a href={Paths.markets(@locale)}>{gettext("All exchanges")} →</a>
-          </div>
-          <div class="stack gap-1">
-            <b>{gettext("Themes")}</b>
-            <a :for={t <- @themes} href={t.href}>{t.label}</a>
-            <a href={Paths.communities(@locale)}>{gettext("Economic communities")}</a>
-            <a href={Paths.compare(@locale, [])}>{gettext("Compare")}</a>
-          </div>
-          <div class="stack gap-1">
-            <b>{gettext("Data")}</b>
-            <a href={Paths.method(@locale)}>{gettext("Method and sources")}</a>
-            <a href="/api/v1/areas">{gettext("Public API")}</a>
-            <a href="/llms.txt">llms.txt</a>
-            <a href="/sitemap.xml">{gettext("Site map")}</a>
-          </div>
-        </nav>
       </div>
-      <div class="wrap footer-credits">
-        <p class="small muted">
-          {gettext("Sources:")} {gettext("IMF")}<span :if={@edition}> ({@edition})</span>
-          · {gettext("World Bank (CC BY 4.0)")} · CEPII, BACI · {gettext(
-            "IMF debt sustainability analyses"
-          )} · {gettext("rating agencies")}<span :if={@exchanges != []}> · Data by MansaAPI</span>.
-          <a href={Paths.method(@locale)}>{gettext("Terms of each source")}</a>
-        </p>
-        <p class="small muted">
-          {gettext(
-            "Information, not investment advice. Figures are those of the sources; totals and rankings are Syli Atlas calculations."
-          )}
-        </p>
+      <div class="wrap">
+        <div class="footer-recap" id="footer-recap">
+          <form
+            class="footer-recap-inner"
+            method="get"
+            action={Paths.recap(@locale)}
+            data-recap-start
+            aria-labelledby="footer-recap-title"
+          >
+            <div class="footer-recap-text">
+              <p class="eyebrow">{gettext("The Monday recap")}</p>
+              <h2 id="footer-recap-title">
+                {gettext(
+                  "Ratings, stock exchange, currency and IMF landmarks of your countries, every Monday."
+                )}
+              </h2>
+            </div>
+            <div class="footer-recap-form">
+              <label class="eyebrow" for="footer-recap-email">{gettext("Email address")}</label>
+              <div class="footer-recap-row">
+                <input
+                  class="input"
+                  type="email"
+                  name="email"
+                  id="footer-recap-email"
+                  autocomplete="email"
+                  placeholder={gettext("you@example.com")}
+                />
+                <button class="btn btn-primary btn-lg" type="submit">
+                  {gettext("Choose my countries")} →
+                </button>
+              </div>
+              <p class="small muted">
+                {gettext(
+                  "Without an account. The next step opens the choice of countries, the address already filled in."
+                )}
+              </p>
+            </div>
+          </form>
+        </div>
       </div>
+      <nav aria-label={gettext("Footer")} class="wrap footer-nav">
+        <div class="footer-col">
+          <h2>{gettext("Countries")}</h2>
+          <a :for={c <- @countries} href={c.path[@locale]}>{SyliAtlas.Locales.pick(c.names, @locale)}</a>
+          <a class="footer-more" href={SyliAtlasWeb.Topics.ranking_path(@locale, "gdp_usd_bn")}>
+            {gettext("All 54 countries")} →
+          </a>
+        </div>
+        <div :if={@exchanges != []} class="footer-col">
+          <h2>{gettext("Stock exchanges")}</h2>
+          <a :for={e <- Enum.take(@exchanges, 7)} href={e.path[@locale]}>{e.short_name}</a>
+          <a class="footer-more" href={Paths.markets(@locale)}>{gettext("All exchanges")} →</a>
+        </div>
+        <div class="footer-col">
+          <h2>{gettext("Explore")}</h2>
+          <a :for={t <- @themes} href={t.href}>{t.label}</a>
+          <a href={Paths.communities(@locale)}>{gettext("Economic communities")}</a>
+          <a href={Paths.compare(@locale, [])}>{gettext("Compare")}</a>
+          <a href={SyliAtlasWeb.Topics.questions_path(@locale)}>{gettext("Questions")}</a>
+          <a href={SyliAtlasWeb.GlossaryController.index_path(@locale)}>{gettext("Glossary")}</a>
+        </div>
+        <div class="footer-col" id="footer-rankings">
+          <h2>{gettext("Rankings")}</h2>
+          <a :for={i <- Enum.take(@rankings, 6)} href={SyliAtlasWeb.Topics.ranking_path(@locale, i)}>
+            {SyliAtlasWeb.PageComponents.indicator_label(i)}
+          </a>
+          <a class="footer-more" href={Paths.ranking(@locale)}>
+            {gettext("The %{count} rankings", count: length(@rankings))} →
+          </a>
+        </div>
+        <div class="footer-col">
+          <h2>{gettext("The project")}</h2>
+          <a href={Paths.about(@locale)}>{gettext("About")}</a>
+          <a href={Paths.method(@locale)}>{gettext("Method and sources")}</a>
+          <a href={Paths.api(@locale)}>{gettext("Public API")}</a>
+          <a href={Paths.accessibility(@locale)} id="footer-accessibility">
+            {accessibility_mention()}
+          </a>
+          <a href="/sitemap.xml">{gettext("Site map")}</a>
+          <a href="/llms.txt" class="mono">llms.txt</a>
+        </div>
+      </nav>
+      <div class="footer-bottom">
+        <div class="wrap footer-bottom-row">
+          <div class="footer-credits">
+            <p class="mono">
+              {gettext("Sources:")} {gettext("IMF")}<span :if={@edition}> ({@edition})</span>
+              · {gettext("World Bank (CC BY 4.0)")} · CEPII, BACI · {gettext(
+                "IMF debt sustainability analyses"
+              )} · {gettext("rating agencies")}<span :if={@exchanges != []}> · <a
+                  href={SyliAtlas.Market.Catalog.url("mansa")}
+                  rel="noopener"
+                >{SyliAtlas.Market.Catalog.attribution("mansa")}</a></span>.
+            </p>
+            <p>
+              {gettext(
+                "Information, not investment advice. Figures are those of the sources; totals and rankings are Syli Atlas calculations."
+              )}
+              <a href={Paths.method(@locale) <> "#reuse"} rel="license">{gettext(
+                "Syli Atlas calculations: CC BY 4.0"
+              )}</a>
+              · <a href={Paths.method(@locale)}>{gettext("Terms of each source")}</a>
+            </p>
+          </div>
+          <div class="footer-settings">
+            <.lang_link
+              :if={@other_lang}
+              langs={@other_lang}
+              locale={@locale}
+              id="lang-footer"
+              class="btn btn-quiet"
+              up
+            />
+            <.theme_button />
+          </div>
+        </div>
+      </div>
+      <.recap_dialog locale={@locale} countries={@countries} all_countries={@all_countries} />
     </footer>
     """
   end
 
-  attr :lang, :any, required: true
-  attr :class, :string, default: nil
+  attr :locale, :string, required: true
+  attr :countries, :list, required: true
+  attr :all_countries, :list, required: true
 
+  # The recap subscription as a dialog (canvas « Fenêtre Recevoir le récap »).
+  # Same form and same endpoint as the recap page; the script posts it as
+  # JSON and shows the second step. Closed, it is never painted.
+  defp recap_dialog(assigns) do
+    ~H"""
+    <dialog class="recap-dialog" id="recap-dialog" aria-labelledby="recap-dialog-title">
+      <div class="recap-dialog-sun" aria-hidden="true"></div>
+      <div class="recap-dialog-body">
+        <div class="recap-dialog-head">
+          <ol class="auth-steps" aria-label={gettext("Steps")}>
+            <li data-recap-step="1" aria-current="step"><span>1</span>{gettext("Your countries")}</li>
+            <li data-recap-step="2"><span>2</span>{gettext("Confirmation")}</li>
+          </ol>
+          <button type="button" class="icon-btn" data-recap-close aria-label={gettext("Close")}>
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              aria-hidden="true"
+            ><path d="M6 6l12 12M18 6L6 18"></path></svg>
+          </button>
+        </div>
+
+        <form
+          method="post"
+          action={Paths.recap(@locale)}
+          class="stack gap-4"
+          id="recap-dialog-form"
+          data-recap-form
+        >
+          <div class="stack gap-1">
+            <p class="eyebrow">{gettext("The Monday recap")}</p>
+            <h2 class="recap-dialog-title" id="recap-dialog-title">
+              {gettext("Your countries, every week, in your inbox")}
+            </h2>
+            <p class="muted">
+              {gettext(
+                "For each country: the rating decisions, the stock exchange and the currency of the week, and the IMF landmarks."
+              )}
+            </p>
+          </div>
+          <p class="adm-flash err" role="alert" id="recap-dialog-error" hidden></p>
+          <label class="field">
+            <span class="eyebrow">{gettext("Email address")}</span>
+            <input class="input" type="email" name="email" autocomplete="email" required />
+          </label>
+          <fieldset class="recap-picker">
+            <legend>{gettext("Countries of the recap")}</legend>
+            <div class="recap-chips" data-recap-chips>
+              <label :for={c <- @countries} class="recap-chip">
+                <input type="checkbox" name="countries[]" value={c.code} />
+                <span><.flag code={c.code} size="sm" sprite />{SyliAtlas.Locales.pick(
+                  c.names,
+                  @locale
+                )}</span>
+              </label>
+            </div>
+            <label class="field recap-add">
+              <span class="vh">{gettext("Add a country")}</span>
+              <select class="select" data-recap-add>
+                <option value="">{gettext("+ Another country")}</option>
+                <option
+                  :for={c <- @all_countries}
+                  value={c.code}
+                  data-flag={SyliAtlasWeb.Flags.sprite_href(c.code)}
+                >
+                  {SyliAtlas.Locales.pick(c.names, @locale)}
+                </option>
+              </select>
+            </label>
+          </fieldset>
+          <fieldset class="recap-frequency">
+            <legend>{gettext("Frequency")}</legend>
+            <label class="recap-radio">
+              <input type="radio" name="frequency" value="weekly" checked />
+              {gettext("Every Monday")}
+            </label>
+            <label class="recap-radio">
+              <input type="radio" name="frequency" value="monthly" />
+              {gettext("On the 1st of each month")}
+            </label>
+          </fieldset>
+          <div class="stack gap-1">
+            <button class="btn btn-primary btn-lg" type="submit">{gettext("Get the recap")} →</button>
+            <p class="small muted center">
+              {gettext("Without an account or password. One click in each email to stop.")}
+            </p>
+          </div>
+        </form>
+
+        <div class="stack gap-3" id="recap-dialog-sent" hidden>
+          <div class="recap-dialog-icon" aria-hidden="true">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            ><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="M3 7l9 6 9-6"></path></svg>
+          </div>
+          <p class="eyebrow">{gettext("Last step")}</p>
+          <h2 class="recap-dialog-title" tabindex="-1">{gettext("Confirm in your inbox")}</h2>
+          <p class="muted">
+            {gettext("We sent a link to")} <b dir="ltr" data-recap-email></b>. {gettext(
+              "One click is enough: without it, no recap goes out."
+            )}
+          </p>
+          <div class="recap-dialog-actions">
+            <button type="button" class="btn btn-quiet" data-recap-again>{gettext("Change address")}</button>
+            <button type="button" class="btn btn-primary" data-recap-close>{gettext("Close")}</button>
+          </div>
+          <p class="small muted">
+            {gettext("Nothing received? Check your spam. The link is valid for 7 days.")}
+          </p>
+        </div>
+      </div>
+    </dialog>
+    """
+  end
+
+  attr :langs, :list, required: true, doc: "[{locale, path}] of this page in every language"
+  attr :locale, :string, required: true
+  attr :id, :string, required: true
+  attr :class, :string, default: nil
+  attr :up, :boolean, default: false, doc: "opens above the button (footer, drawer)"
+
+  # The language menu: this page in the other languages, each named in itself.
   defp lang_link(assigns) do
     ~H"""
-    <a class={@class} href={elem(@lang, 1)} hreflang={elem(@lang, 0)} lang={elem(@lang, 0)}>
-      {if elem(@lang, 0) == "en", do: "English", else: "Français"}
-    </a>
+    <details class={["lang-menu", @up && "lang-menu-up"]} id={@id}>
+      <summary class={@class} aria-label={gettext("Language")}>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          aria-hidden="true"
+        ><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z">
+        </path></svg>
+        <span>{SyliAtlas.Locales.native(@locale)}</span>
+      </summary>
+      <ul role="list">
+        <li :for={{l, href} <- @langs}>
+          <a
+            href={href}
+            hreflang={SyliAtlas.Locales.tag(l)}
+            lang={SyliAtlas.Locales.tag(l)}
+            dir={SyliAtlas.Locales.dir(l)}
+            aria-current={l == @locale && "true"}
+          >{SyliAtlas.Locales.native(l)}</a>
+        </li>
+      </ul>
+    </details>
     """
   end
 
@@ -401,11 +696,18 @@ defmodule SyliAtlasWeb.Layouts do
           <.main_nav locale={@locale} current={@current} id="drawer-nav" class="drawer-nav" flat />
           <p class="drawer-links small">
             <a href={Paths.method(@locale)}>{gettext("Method and sources")}</a>
-            · <a href="/api/v1/areas">{gettext("Open data")}</a>
+            · <a href={Paths.api(@locale)}>{gettext("Open data")}</a>
           </p>
           <div class="drawer-foot stack gap-2">
             <button type="button" class="btn btn-secondary" data-install>{gettext("Install the app")}</button>
-            <.lang_link :if={@other_lang} lang={@other_lang} class="btn btn-secondary" />
+            <.lang_link
+              :if={@other_lang}
+              langs={@other_lang}
+              locale={@locale}
+              id="lang-drawer"
+              class="btn btn-secondary"
+              up
+            />
             <.account_link user={@current_user} locale={@locale} class="btn btn-primary" />
           </div>
         </div>
@@ -442,6 +744,15 @@ defmodule SyliAtlasWeb.Layouts do
     </a>
     """
   end
+
+  @doc "The flash messages (info, error) as the toasts of assets/js/ui/toasts.js expect them."
+  def flash_toasts(flash) when is_map(flash) do
+    [:info, :error]
+    |> Enum.map(&%{kind: &1, message: Phoenix.Flash.get(flash, &1)})
+    |> Enum.filter(&(is_binary(&1.message) and &1.message != ""))
+  end
+
+  def flash_toasts(_), do: []
 
   @doc "Texts of the notifications drawn by assets/js (toasts), in the page's language."
   def ui_strings do
@@ -507,8 +818,14 @@ defmodule SyliAtlasWeb.Layouts do
   def flash_group(assigns) do
     ~H"""
     <div id={@id} aria-live="polite">
-      <.flash kind={:info} flash={@flash} />
-      <.flash kind={:error} flash={@flash} />
+      <%!-- The flash messages become toasts (FlashToasts hook, assets/js/live.js). --%>
+      <div
+        id={"#{@id}-toasts"}
+        phx-hook="FlashToasts"
+        data-flash={Phoenix.json_library().encode!(flash_toasts(@flash))}
+        hidden
+      >
+      </div>
 
       <.flash
         id="client-error"
@@ -541,5 +858,16 @@ defmodule SyliAtlasWeb.Layouts do
       </.flash>
     </div>
     """
+  end
+
+  # RGAA: the compliance status, on every page, linked to the statement.
+  defp accessibility_mention do
+    mentions = %{
+      full: gettext("Accessibility: fully compliant"),
+      partial: gettext("Accessibility: partially compliant"),
+      none: gettext("Accessibility: not compliant")
+    }
+
+    Map.get(mentions, SyliAtlasWeb.PageController.accessibility_status(), mentions.none)
   end
 end

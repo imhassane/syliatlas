@@ -1,6 +1,4 @@
 <Layouts.public locale={@locale} current={:markets} alternates={@alternates}>
-  <.ticker_band :if={@imported} exchanges={@exchanges} locale={@locale} />
-
   <section class="section-alt market-hero" id="market-hero">
     <div class="wrap market-hero-wrap">
       <nav aria-label={gettext("Breadcrumb")}>
@@ -56,57 +54,65 @@
       </p>
     </div>
 
-    <div :if={@imported} class="card market-table" id="market-table">
-      <div class="market-toolbar">
-        <div class="market-toolbar-title">
-          <h2 class="h2">{gettext("All exchanges")}</h2>
-          <span
-            class="small muted"
-            id="market-count"
-            data-all={ngettext("%{count} exchange", "%{count} exchanges", length(@exchanges))}
-            data-one={count_template(1)}
-            data-many={count_template(2)}
-            aria-live="polite"
+    <div :if={@imported} class="card market-table" id="market-table" data-keep-place>
+      <div class="market-filters" data-sticky-filters>
+        <div class="market-toolbar">
+          <div class="market-toolbar-title">
+            <h2 class="h2">{gettext("All exchanges")}</h2>
+            <span
+              class="small muted"
+              id="market-count"
+              data-all={ngettext("%{count} exchange", "%{count} exchanges", length(@exchanges))}
+              data-one={count_template(1)}
+              data-many={count_template(2)}
+              aria-live="polite"
+            >
+              {count_text(@rows, @q, @locale)}
+            </span>
+          </div>
+          <form
+            class="market-search"
+            action={Paths.markets(@locale)}
+            method="get"
+            role="search"
+            aria-label={gettext("Search the exchanges")}
           >
-            {count_text(@rows, @q, @locale)}
-          </span>
+            <input :if={@region} type="hidden" name="region" value={@region} />
+            <label for="market-q" class="vh">
+              {gettext("Search an exchange, a country, an index or a currency")}
+            </label>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              aria-hidden="true"
+            ><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+            <input
+              id="market-q"
+              name="q"
+              type="search"
+              value={@q}
+              placeholder={gettext("Exchange, country, currency…")}
+              autocomplete="off"
+              data-market-search
+            />
+            <button type="submit" class="vh">{gettext("Search")}</button>
+          </form>
         </div>
-        <form class="market-search" action={Paths.markets(@locale)} method="get" role="search">
-          <input :if={@region} type="hidden" name="region" value={@region} />
-          <label for="market-q" class="vh">
-            {gettext("Search an exchange, a country, an index or a currency")}
-          </label>
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            aria-hidden="true"
-          ><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
-          <input
-            id="market-q"
-            name="q"
-            type="search"
-            value={@q}
-            placeholder={gettext("Exchange, country, currency…")}
-            autocomplete="off"
-            data-market-search
-          />
-          <button type="submit" class="vh">{gettext("Search")}</button>
-        </form>
+        <nav class="market-tabs" aria-label={gettext("Filter by region")}>
+          <a
+            :for={r <- [nil | @regions]}
+            href={list_href(@locale, @kept, "region", r) <> "#exchanges"}
+            aria-current={@region == r && "true"}
+          >
+            {region_tab(r)}<span class="market-tab-count">{@counts[r]}</span>
+          </a>
+        </nav>
       </div>
-      <nav class="market-tabs" aria-label={gettext("Filter by region")}>
-        <a
-          :for={r <- [nil | @regions]}
-          href={list_href(@locale, @kept, "region", r) <> "#exchanges"}
-          aria-current={@region == r && "true"}
-        >
-          {region_tab(r)}<span class="market-tab-count">{@counts[r]}</span>
-        </a>
-      </nav>
 
       <div class="table-box">
         <table class="table table-stack table-wide market-list" id="market-list">
@@ -154,7 +160,7 @@
               <th scope="col" class="l">{gettext("Source")}</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody data-reorder>
             <tr
               :for={x <- @rows}
               id={"exchange-#{x["exchange"]["code"]}"}
@@ -174,7 +180,11 @@
                         length(x["exchange"]["countries"])
                       ),
                     else:
-                      Enum.map_join(x["exchange"]["country_names"], ", ", & &1["name"][@locale])}
+                      Enum.map_join(
+                        x["exchange"]["country_names"],
+                        ", ",
+                        &SyliAtlas.Locales.pick(&1["name"], @locale)
+                      )}
                 </span>
               </th>
               <td class="l muted" data-label={gettext("Main index")}>

@@ -4,7 +4,7 @@
 // unfolds. Information closes by itself after `duration`, paused while
 // pointed at, focused or the tab is hidden; a toast with an action stays.
 //
-//   toast({id, kind: "info"|"success"|"warning", message, description,
+//   toast({id, kind: "info"|"success"|"warning"|"error", message, description,
 //          action: {label, onClick}, cancel: {label, onClick}, duration})
 //
 // A toast with the same id replaces the previous one.
@@ -13,6 +13,7 @@ const ICONS = {
   info: '<circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 8h.01"></path>',
   success: '<circle cx="12" cy="12" r="9"></circle><path d="M8 12.5l2.5 2.5L16 9.5"></path>',
   warning: '<path d="M12 3l9.5 17h-19z"></path><path d="M12 10v4M12 17h.01"></path>',
+  error: '<circle cx="12" cy="12" r="9"></circle><path d="M12 7.5v5.5M12 16.5h.01"></path>',
   update: '<path d="M20 12a8 8 0 1 1-2.3-5.6"></path><path d="M20 4v5h-5"></path>',
   install: '<rect x="6" y="2.5" width="12" height="19" rx="2.5"></rect><path d="M12 7v7M9 11l3 3 3-3"></path>',
 }
@@ -52,7 +53,7 @@ export function toast({id, kind = "info", icon, message, description, action, ca
   el.className = "toast"
   el.dataset.kind = kind
   if (id) el.dataset.toastId = id
-  el.setAttribute("role", "status")
+  el.setAttribute("role", kind === "error" ? "alert" : "status")
   el.innerHTML = `
     <span class="toast-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${ICONS[icon || kind] || ICONS.info}</svg></span>
     <div class="toast-text"><p class="toast-message"></p>${description ? '<p class="toast-description"></p>' : ""}</div>
@@ -80,4 +81,21 @@ export function toast({id, kind = "info", icon, message, description, action, ca
     timers.set(el, t)
   }
   return el
+}
+
+// The server's flash messages (put_flash in the controllers), handed over by
+// the root layout as JSON in #flash-toasts: each becomes a toast. Errors stay
+// on screen longer than information.
+export function showFlash(flashes) {
+  for (const {kind, message} of flashes || []) {
+    if (!message) continue
+    toast({id: `flash-${kind}`, kind: kind === "error" ? "error" : "success", message, duration: kind === "error" ? 10000 : 6000})
+  }
+}
+
+export function initFlashToasts() {
+  const data = document.getElementById("flash-toasts")
+  if (!data) return
+  showFlash(JSON.parse(data.textContent || "[]"))
+  data.remove()
 }

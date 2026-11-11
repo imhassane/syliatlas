@@ -1,0 +1,64 @@
+<Layouts.public locale={@locale} current={:method} alternates={@alternates}>
+  <.section>
+    <div class="prose stack gap-4" id="about">
+      <nav aria-label="Fil d'Ariane">
+        <ol class="crumbs">
+          <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+          <li aria-current="page">À propos</li>
+        </ol>
+      </nav>
+      <p class="eyebrow">À propos</p>
+      <h1 class="h1">Syli Atlas, les économies africaines en chiffres vérifiables.</h1>
+      <p class="lead">
+        Syli Atlas rassemble les chiffres économiques des 54 pays africains : croissance, PIB, dette, inflation, commerce, conditions de vie, notations souveraines et bourses, en sept langues. Le site est gratuit, non commercial, et se lit sans compte.
+      </p>
+
+      <h2 class="h2">Chaque chiffre nomme sa source</h2>
+      <p>
+        Les séries viennent d'abord des Perspectives de l'économie mondiale du FMI ({@edition_label}), puis de la Banque mondiale, du CEPII (base BACI), des analyses de viabilité de la dette du FMI et de la Banque mondiale, des agences de notation et, pour les bourses, de MansaAPI. La source, son édition et sa date sont écrites sous chaque série ; leurs conditions de réutilisation sont sur la page <a href={
+          Paths.method(@locale)
+        }>Méthode et sources</a>.
+      </p>
+      <p>
+        Syli Atlas calcule lui-même les totaux régionaux, les rangs et les évolutions sur une période, et les présente comme tels. Il ne modifie pas les chiffres des sources.
+      </p>
+
+      <h2 class="h2">Mises à jour</h2>
+      <p>
+        Les sources sont vérifiées chaque jour. Une nouvelle édition du FMI est importée, contrôlée puis publiée ; les bourses sont mises à jour après chaque clôture (cours de fin de journée, pas de temps réel). Les notes souveraines sont relevées dans les communiqués des agences.
+      </p>
+
+      <h2 class="h2" id="citer">Citer Syli Atlas</h2>
+      <p>Citez la source d'origine et la page, avec la date de consultation :</p>
+      <p class="small mono cite">
+        Syli Atlas, d'après FMI, {@edition_label}, {SyliAtlasWeb.Seo.url("/fr/pays/senegal")}, consulté le {Calendar.strftime(
+          Date.utc_today(),
+          "%d/%m/%Y"
+        )}.
+      </p>
+      <p>
+        Ce que Syli Atlas calcule et écrit (totaux, rangs, évolutions, phrases, graphiques et images) est sous licence
+        <a href={SyliAtlasWeb.Seo.license_url()} rel="license">Creative Commons Attribution 4.0 (CC BY 4.0)</a>
+        : réutilisation libre, y compris commerciale, en citant Syli Atlas avec le lien de la page. Les chiffres des sources gardent leurs propres conditions (<a href={Paths.method(@locale) <> "#reuse"}>détail</a>).
+      </p>
+      <p>
+        Chaque fiche se télécharge en CSV et s'interroge par l'<a href={Paths.api(@locale)}>API JSON</a>. Les cours de bourse restent affichés sur le site seulement : la licence de leur source n'en permet pas la rediffusion.
+      </p>
+
+      <h2 class="h2">Information, pas conseil</h2>
+      <p>
+        Syli Atlas informe ; il ne donne pas de conseil en investissement. Les projections sont celles du FMI et changent à chaque édition.
+      </p>
+
+      <h2 class="h2">Nous écrire</h2>
+      <p :if={@contact_email}>
+        Une erreur, une source à ajouter, une question : <a href={"mailto:" <> @contact_email}>{@contact_email}</a>.
+      </p>
+      <p :if={!@contact_email}>
+        Une erreur ou une source à ajouter : la page
+        <a href={Paths.accessibility(@locale)}>Accessibilité</a>
+        indique aussi comment nous joindre.
+      </p>
+    </div>
+  </.section>
+</Layouts.public>

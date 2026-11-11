@@ -1,97 +1,172 @@
-<main id="main" class="adm">
-  <div class="wrap stack gap-4">
-    <header class="adm-head">
-      <div>
-        <p class="eyebrow">Admin Syli Atlas · communauté</p>
-        <h1 class="h1">Membres</h1>
-        <p class="small muted">
-          Le premier compte créé est administrateur. Un membre promu entre dans l'administration avec le code e-mail puis une clé d'accès, qu'il enregistre à sa première connexion admin.
-        </p>
-      </div>
-      <a class="btn btn-secondary" href={~p"/admin/notations"}>Notations</a>
-    </header>
+<.admin_shell current={:members} counts={@admin_counts} until={@admin_until} key={@admin_key}>
+  <header class="adm-head">
+    <div class="adm-intro">
+      <p class="eyebrow">Communauté</p>
+      <h1 class="adm-title">Membres</h1>
+      <p class="muted">
+        Le premier compte créé est administrateur. Un membre promu entre dans l'administration avec le code e-mail puis une clé d'accès, qu'il enregistre à sa première connexion admin.
+      </p>
+    </div>
+  </header>
 
-    <p :if={msg = Phoenix.Flash.get(@flash, :info)} class="adm-flash ok" role="status">{msg}</p>
-    <p :if={msg = Phoenix.Flash.get(@flash, :error)} class="adm-flash err" role="alert">{msg}</p>
+  <dl class="stats" id="members-stats">
+    <div>
+      <dt>Membres</dt>
+      <dd class="big num adm-big-sm">{int(@stats.users)}</dd>
+      <dd class="small muted">dont {@admins} admin{if @admins > 1, do: "s"}</dd>
+    </div>
+    <div>
+      <dt>Avec clé d'accès</dt>
+      <dd class="big num adm-big-sm">
+        {if @stats.users > 0,
+          do: "#{round(@stats.with_passkey * 100 / @stats.users)} %",
+          else: "—"}
+      </dd>
+      <dd class="small muted">
+        {@stats.with_passkey} compte{if @stats.with_passkey > 1, do: "s"}
+      </dd>
+    </div>
+    <div>
+      <dt>Alertes actives</dt>
+      <dd class="big num adm-big-sm">{int(@stats.alerts)}</dd>
+      <dd class="small muted"><a href={~p"/admin/emails"}>voir les e-mails envoyés</a></dd>
+    </div>
+    <div>
+      <dt>E-mails en échec · 7 j</dt>
+      <dd class="big num adm-big-sm">{@email_failures}</dd>
+      <dd class="small muted">{mail_label(@mail)}</dd>
+    </div>
+  </dl>
 
-    <dl class="stats" id="members-stats">
-      <div>
-        <dt>Comptes</dt><dd class="big num">{@stats.users}</dd>
-      </div>
-      <div>
-        <dt>Avec clé d'accès</dt><dd class="big num">{@stats.with_passkey}</dd>
-      </div>
-      <div>
-        <dt>Alertes actives</dt><dd class="big num">{@stats.alerts}</dd>
-      </div>
-    </dl>
-
-    <form class="row gap-2" method="get" action={~p"/admin/membres"} id="members-filter">
+  <div class="adm-toolbar">
+    <nav class="seg" aria-label="Filtre" id="members-filter">
+      <a
+        :for={
+          {key, label} <- [
+            {"tous", "Tous"},
+            {"admins", "Admins · #{@admins}"},
+            {"cle", "Avec clé"},
+            {"desactives", "Désactivés"}
+          ]
+        }
+        href={
+          if key == "tous",
+            do: ~p"/admin/membres?q=#{@q}",
+            else: ~p"/admin/membres?filtre=#{key}&q=#{@q}"
+        }
+        aria-current={if(key == @filter, do: "page")}
+      >
+        {label}
+      </a>
+    </nav>
+    <form method="get" action={~p"/admin/membres"} id="members-search" class="adm-search">
+      <input :if={@filter != "tous"} type="hidden" name="filtre" value={@filter} />
       <input
-        class="input"
         type="search"
         name="q"
         value={@q}
         placeholder="Chercher une adresse"
         aria-label="Chercher une adresse"
       />
-      <select class="select" name="role" aria-label="Rôle">
-        <option value="" selected={@role == nil}>Tous</option>
-        <option value="admin" selected={@role == "admin"}>Admins</option>
-        <option value="member" selected={@role == "member"}>Membres</option>
-      </select>
-      <button class="btn btn-secondary" type="submit">Filtrer</button>
     </form>
+  </div>
 
-    <div class="card table-wrap">
-      <table class="table" id="members">
+  <section class="card adm-list">
+    <p :if={@users.total == 0} class="adm-empty muted">Aucun compte.</p>
+    <div :if={@users.total > 0} class="table-wrap">
+      <table class="table adm-table" id="members">
         <thead>
           <tr>
-            <th>Adresse</th><th>Rôle</th><th>Clés</th><th>Inscrit</th><th>Dernière connexion</th><th>
-            </th>
+            <th class="l">Membre</th>
+            <th class="l">Rôle</th>
+            <th class="l">Connexion</th>
+            <th class="l">Dernière visite</th>
+            <th>Alertes</th>
+            <th><span class="vh">Actions</span></th>
           </tr>
         </thead>
         <tbody>
-          <tr :for={u <- @users} id={"member-#{u.id}"}>
-            <td dir="ltr">
-              {u.email}<span :if={u.deactivated_at} class="pill pill-warn">désactivé</span>
+          <tr :for={u <- @users.entries} id={"member-#{u.id}"}>
+            <% act = Map.get(@activity, u.id, %{last: nil, open: 0, alerts: 0}) %>
+            <% keys = Map.get(@passkey_counts, u.id, 0) %>
+            <td class="l" dir="ltr">
+              <b class="adm-strong">{u.email}</b>
+              <div class="subtle small">inscrit le {date(u.inserted_at)}</div>
             </td>
-            <td>
-              <span class={["pill", if(u.role == "admin", do: "pill-info", else: "pill-neutral")]}>{if u.role ==
-                                                                                                         "admin",
-                                                                                                       do:
-                                                                                                         "admin",
-                                                                                                       else:
-                                                                                                         "membre"}</span>
+            <td class="l">
+              <div class="adm-inline">
+                <span class={[
+                  "pill",
+                  if(u.role == "admin", do: "pill-info", else: "pill-neutral")
+                ]}>
+                  {if u.role == "admin", do: "admin", else: "membre"}
+                </span>
+                <span :if={keys > 0} class="pill pill-ok">
+                  {keys} clé{if keys > 1, do: "s"}
+                </span>
+                <span :if={u.deactivated_at} class="pill pill-warn">désactivé</span>
+              </div>
             </td>
-            <td class="num">{Map.get(@passkey_counts, u.id, 0)}</td>
-            <td>{date(u.inserted_at)}</td>
-            <td>{date(u.last_sign_in_at)}</td>
-            <td class="row gap-1">
-              <.form for={%{}} action={~p"/admin/membres/#{u.id}/role"} id={"member-role-#{u.id}"}>
-                <input
-                  type="hidden"
-                  name="role"
-                  value={if u.role == "admin", do: "member", else: "admin"}
-                />
-                <button class="btn btn-quiet btn-sm" type="submit">{if u.role == "admin",
-                  do: "Retirer admin",
-                  else: "Promouvoir admin"}</button>
-              </.form>
-              <.form
-                for={%{}}
-                action={~p"/admin/membres/#{u.id}/actif"}
-                id={"member-active-#{u.id}"}
-              >
-                <input type="hidden" name="active" value={to_string(u.deactivated_at != nil)} />
-                <button class="btn btn-quiet btn-sm" type="submit">{if u.deactivated_at,
-                  do: "Réactiver",
-                  else: "Désactiver"}</button>
-              </.form>
+            <td class="l muted">
+              {cond do
+                keys > 0 and u.role == "admin" -> "code + clé"
+                keys > 0 -> "code ou clé d'accès"
+                true -> "code e-mail"
+              end}
+              <div class="subtle small">
+                {act.open} session{if act.open > 1, do: "s"} ouverte{if act.open > 1, do: "s"}
+              </div>
+            </td>
+            <td class="l muted">{date(act.last || u.last_sign_in_at)}</td>
+            <td class="num">{act.alerts}</td>
+            <td class="adm-actions-cell">
+              <details class="adm-menu" id={"member-menu-#{u.id}"}>
+                <summary class="btn btn-quiet btn-sm" aria-label={"Actions pour #{u.email}"}>
+                  •••
+                </summary>
+                <div class="card adm-menu-pop">
+                  <.form
+                    for={%{}}
+                    action={~p"/admin/membres/#{u.id}/role"}
+                    id={"member-role-#{u.id}"}
+                  >
+                    <input
+                      type="hidden"
+                      name="role"
+                      value={if u.role == "admin", do: "member", else: "admin"}
+                    />
+                    <button type="submit">
+                      {if u.role == "admin", do: "Retirer le rôle admin", else: "Promouvoir admin"}
+                    </button>
+                  </.form>
+                  <.form
+                    :if={u.id != @me && act.open > 0}
+                    for={%{}}
+                    action={~p"/admin/membres/#{u.id}/sessions"}
+                    id={"member-sessions-#{u.id}"}
+                  >
+                    <button type="submit">Fermer les sessions ({act.open})</button>
+                  </.form>
+                  <.form
+                    for={%{}}
+                    action={~p"/admin/membres/#{u.id}/actif"}
+                    id={"member-active-#{u.id}"}
+                  >
+                    <input type="hidden" name="active" value={to_string(u.deactivated_at != nil)} />
+                    <button type="submit">
+                      {if u.deactivated_at, do: "Réactiver", else: "Désactiver"}
+                    </button>
+                  </.form>
+                </div>
+              </details>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-  </div>
-</main>
+    <.admin_pager page={@users} path={~p"/admin/membres"} params={@params} key="page" />
+  </section>
+  <p class="subtle small">
+    Le dernier administrateur ne peut être ni rétrogradé ni désactivé. Désactiver un compte ferme aussi ses sessions.
+  </p>
+</.admin_shell>

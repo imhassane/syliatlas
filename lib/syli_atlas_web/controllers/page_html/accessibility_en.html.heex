@@ -1,0 +1,108 @@
+<Layouts.public locale={@locale} current={:accessibility} alternates={@alternates}>
+  <.section>
+    <div class="prose stack gap-4" id="accessibility-statement">
+      <p class="eyebrow">Accessibility</p>
+      <h1 class="h1">Accessibility statement</h1>
+      <p class="lead">
+        Syli Atlas is committed, voluntarily, to making its site accessible to everyone, following the French
+        accessibility standard (RGAA), version {@a11y.rgaa}, which builds on WCAG 2.1 level AA.
+      </p>
+      <p>
+        This statement covers <b>syliatlas.com</b> (public pages, sign-in and member space).
+      </p>
+
+      <h2 class="h2" id="status">Compliance status</h2>
+      <p :if={@a11y.status == :none} id="accessibility-status">
+        Syli Atlas is <b>not compliant</b>
+        with RGAA {@a11y.rgaa}: no full audit has been carried out yet. An audit of a sample of pages is planned; this statement will be updated with its results.
+      </p>
+      <p :if={@a11y.status == :partial} id="accessibility-status">
+        Syli Atlas is <b>partially compliant</b>
+        with RGAA {@a11y.rgaa}, because of the issues listed below.
+      </p>
+      <p :if={@a11y.status == :full} id="accessibility-status">
+        Syli Atlas is <b>fully compliant</b> with RGAA {@a11y.rgaa}.
+      </p>
+
+      <h2 class="h2">Test results</h2>
+      <p :if={@a11y.rate}>
+        The compliance audit of {Calendar.strftime(@a11y.audited_on, "%Y-%m-%d")} found that {@a11y.rate}% of the RGAA {@a11y.rgaa} criteria are met.
+      </p>
+      <p :if={!@a11y.rate}>
+        No full audit yet. The main pages are checked automatically with axe-core (WCAG 2.1 and 2.2 rules, levels A and AA), in the light and dark themes, and checked at 320 pixels wide. An automatic check covers only part of the criteria: it does not replace an audit.
+      </p>
+
+      <h2 class="h2">What is done for accessibility</h2>
+      <ul>
+        <li>
+          Pages rendered on the server, readable without JavaScript; a “Skip to content” link.
+        </li>
+        <li>Every chart comes with the table of its values (“Chart data as a table”).</li>
+        <li>
+          The map of Africa: each country is a link giving its name and value; the same figures are available as a table in the ranking of the 54 countries.
+        </li>
+        <li>
+          The scrolling band pauses (button, hover, focus) and stops when the system asks for reduced motion.
+        </li>
+        <li>Light and dark themes, both checked for contrast.</li>
+        <li>
+          Password-free sign-in: a six-digit code or a passkey, with no visual test or CAPTCHA.
+        </li>
+      </ul>
+
+      <h2 class="h2">Known non-accessible content</h2>
+      <p>Until the audit, these points remain to be checked or improved:</p>
+      <ul>
+        <li>
+          the discussion of each profile (live updates) has not yet been tested with screen readers;
+        </li>
+        <li>the member space and the administration pages have not yet been checked;</li>
+        <li>
+          emails sent by the site (codes, alerts, digest) are not covered by this statement.
+        </li>
+      </ul>
+
+      <h2 class="h2">Preparation of this statement</h2>
+      <p>This statement was prepared on {Calendar.strftime(@a11y.stated_on, "%Y-%m-%d")}.</p>
+      <p>
+        Technologies: HTML, CSS, JavaScript, SVG, WAI-ARIA.
+        Tools: axe-core, browser inspector, NVDA and VoiceOver screen readers.
+      </p>
+
+      <h2 class="h2">Feedback and contact</h2>
+      <p>
+        If you cannot access a piece of content or a service, contact us: we will point you to an accessible alternative or send you the content in another form.
+      </p>
+      <p :if={@contact_email}>
+        Name the page and the problem you met. Address:
+        <!--email_off-->
+        <a href={"mailto:" <> @contact_email}>{@contact_email}</a>
+        <!--/email_off-->
+      </p>
+
+      <h2 class="h2">Remedies</h2>
+      <p>
+        If you reported an accessibility barrier that prevents you from accessing content or a service and did not get a satisfactory answer, you can contact the French Defender of Rights (Défenseur des droits):
+      </p>
+      <ul>
+        <li>
+          through the <a
+            href="https://formulaire.defenseurdesdroits.fr/"
+            rel="noopener"
+            hreflang="fr"
+          >online form</a>;
+        </li>
+        <li>
+          through the delegate in your region (<a
+            href="https://www.defenseurdesdroits.fr/saisir/delegues"
+            rel="noopener"
+          >list of delegates</a>);
+        </li>
+        <li>by phone: +33 9 69 39 00 00;</li>
+        <li>
+          by post, free of charge, without a stamp: <span lang="fr">Défenseur des droits, Libre réponse 71120, 75342 Paris CEDEX 07</span>.
+        </li>
+      </ul>
+    </div>
+  </.section>
+</Layouts.public>

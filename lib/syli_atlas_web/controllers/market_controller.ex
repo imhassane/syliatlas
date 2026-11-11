@@ -37,12 +37,12 @@ defmodule SyliAtlasWeb.MarketController do
           into: %{nil => length(all)},
           do: {r, Enum.count(all, &(&1["exchange"]["region"] == r))}
 
-    paths = %{"fr" => Paths.markets("fr"), "en" => Paths.markets("en")}
+    paths = SyliAtlas.Locales.each(fn l -> Paths.markets(l) end)
     kept = %{"q" => q, "region" => region, "sort" => sort, "dir" => dir}
     filtered? = q != "" or region != nil or params["sort"] != nil
 
     render(conn, :index,
-      page_title: gettext("African stock exchanges"),
+      page_title: gettext("African stock exchanges: indices, prices and latest session"),
       seo:
         Seo.page(
           locale,
@@ -50,7 +50,22 @@ defmodule SyliAtlasWeb.MarketController do
           gettext(
             "Every African stock exchange followed by Syli Atlas: main index, daily change, number of listed securities, with the source and date of each figure."
           ),
-          %{noindex: filtered?}
+          %{
+            noindex: filtered?,
+            json_ld: [
+              Seo.breadcrumbs([
+                {"Syli Atlas", Paths.home(locale)},
+                {gettext("Stock exchanges"), paths[locale]}
+              ]),
+              Seo.item_list(
+                gettext("African stock exchanges"),
+                for(
+                  x <- all,
+                  do: {x["exchange"]["name"], Paths.exchange(locale, x["exchange"]["code"])}
+                )
+              )
+            ]
+          }
         ),
       alternates: Seo.alternates_for_header(paths),
       overview: overview,
@@ -72,11 +87,11 @@ defmodule SyliAtlasWeb.MarketController do
     locale = conn.assigns.locale
     doc = Market.exchange(code) || raise NotFoundError
     e = doc["exchange"]
-    paths = %{"fr" => Paths.exchange("fr", code), "en" => Paths.exchange("en", code)}
+    paths = SyliAtlas.Locales.each(fn l -> Paths.exchange(l, code) end)
     page = Pagination.paginate(doc["securities"], params["page"], 20)
 
     render(conn, :exchange,
-      page_title: e["short_name"] <> " · " <> gettext("stock exchange"),
+      page_title: exchange_title(e, doc),
       seo:
         Seo.page(locale, paths, answer(doc, locale), %{
           json_ld: [
@@ -84,7 +99,18 @@ defmodule SyliAtlasWeb.MarketController do
               {"Syli Atlas", Paths.home(locale)},
               {gettext("Stock exchanges"), Paths.markets(locale)},
               {e["short_name"], paths[locale]}
-            ])
+            ]),
+            # Prices are shown here under the source's licence, not handed out:
+            # the dataset has no download.
+            Seo.dataset(
+              name: exchange_title(e, doc),
+              description: answer(doc, locale),
+              path: paths[locale],
+              locale: locale,
+              area: %{name: e["name"]},
+              based_on: {SyliAtlas.Market.Catalog.name(doc["index"]["source"] || "mansa"), nil},
+              modified: doc["index"]["date"] || doc["as_of"]
+            )
           ],
           noindex: params["page"] not in [nil, "1"]
         }),
@@ -93,6 +119,15 @@ defmodule SyliAtlasWeb.MarketController do
       e: e,
       fx: Market.fx(),
       answer: answer(doc, locale),
+      # The other exchanges of the region: the small ones are reached from
+      # their neighbours, not only from the list.
+      neighbours:
+        for(
+          x <- (Market.overview() || %{})["exchanges"] || [],
+          x["exchange"]["code"] != code,
+          x["exchange"]["region"] == e["region"],
+          do: x
+        ),
       page: page,
       page_href: &Pagination.href(paths[locale], %{}, "page", &1, "securities")
     )
@@ -103,13 +138,10 @@ defmodule SyliAtlasWeb.MarketController do
     {doc, row} = Market.security(code, String.downcase(ticker)) || raise NotFoundError
     e = doc["exchange"]
 
-    paths = %{
-      "fr" => Paths.security("fr", code, row["ticker"]),
-      "en" => Paths.security("en", code, row["ticker"])
-    }
+    paths = SyliAtlas.Locales.each(fn l -> Paths.security(l, code, row["ticker"]) end)
 
     if conn.request_path != paths[locale] do
-      redirect(conn, to: paths[locale])
+      conn |> put_status(301) |> redirect(to: paths[locale])
     else
       history = Market.security_history(row["id"])
       fx = Market.fx()
@@ -121,7 +153,12 @@ defmodule SyliAtlasWeb.MarketController do
            do: row["value"] / session_value * 100
 
       render(conn, :security,
-        page_title: row["name"] <> " (" <> row["ticker"] <> ") · " <> e["short_name"],
+        page_title:
+          gettext("%{name} (%{ticker}): price on the %{exchange} and history",
+            name: row["name"],
+            ticker: row["ticker"],
+            exchange: e["short_name"]
+          ),
         seo:
           Seo.page(locale, paths, security_answer(row, e, locale), %{
             json_ld: [
@@ -130,7 +167,8 @@ defmodule SyliAtlasWeb.MarketController do
                 {gettext("Stock exchanges"), Paths.markets(locale)},
                 {e["short_name"], Paths.exchange(locale, code)},
                 {row["name"], paths[locale]}
-              ])
+              ]),
+              Seo.corporation(row["name"], row["ticker"], e["short_name"], paths[locale])
             ]
           }),
         alternates: Seo.alternates_for_header(paths),
@@ -149,17 +187,26 @@ defmodule SyliAtlasWeb.MarketController do
   def etfs(conn, _params) do
     locale = conn.assigns.locale
     doc = Market.etfs() || %{"etfs" => [], "sources" => [], "date" => nil, "value" => nil}
-    paths = %{"fr" => Paths.etfs("fr"), "en" => Paths.etfs("en")}
+    paths = SyliAtlas.Locales.each(fn l -> Paths.etfs(l) end)
 
     render(conn, :etfs,
-      page_title: gettext("Funds exposed to Africa (ETF)"),
+      page_title: gettext("Funds exposed to Africa (ETF): prices and daily change"),
       seo:
         Seo.page(
           locale,
           paths,
           gettext(
             "Exchange-traded funds listed in Africa: price, daily change, volume and issuer."
-          )
+          ),
+          %{
+            json_ld: [
+              Seo.breadcrumbs([
+                {"Syli Atlas", Paths.home(locale)},
+                {gettext("Stock exchanges"), Paths.markets(locale)},
+                {"ETF", paths[locale]}
+              ])
+            ]
+          }
         ),
       alternates: Seo.alternates_for_header(paths),
       doc: doc,
@@ -168,6 +215,23 @@ defmodule SyliAtlasWeb.MarketController do
   end
 
   # ---------------------------------------------------------------------------
+
+  defp exchange_title(e, doc) do
+    count = length(doc["securities"] || [])
+
+    if e["index_name"],
+      do:
+        gettext("%{name}: %{index} index and prices of the %{count} listed securities",
+          name: e["short_name"],
+          index: e["index_name"],
+          count: count
+        ),
+      else:
+        gettext("%{name}: prices of the %{count} listed securities",
+          name: e["short_name"],
+          count: count
+        )
+  end
 
   defp ensure_public(conn, _opts) do
     if Market.public?(), do: conn, else: raise(NotFoundError)

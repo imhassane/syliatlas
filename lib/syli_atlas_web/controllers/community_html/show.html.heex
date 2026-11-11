@@ -1,47 +1,64 @@
 <Layouts.public locale={@locale} current={:themes} alternates={@alternates}>
-  <.section>
-    <nav aria-label={gettext("Breadcrumb")}>
-      <ol class="crumbs">
-        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
-        <li><a href={Paths.communities(@locale)}>{gettext("Economic communities")}</a></li>
-        <li aria-current="page">{@name}</li>
-      </ol>
-    </nav>
-    <.section_head level={1} eyebrow={@community.name[@locale]} title={@name}>
-      <:intro>{@answer}</:intro>
-    </.section_head>
-
-    <.stat_grid>
-      <:stat
+  <.section tight={:bottom} class="profile-head">
+    <ProfileComponents.entity_head
+      crumbs={[
+        {"Syli Atlas", Paths.home(@locale)},
+        {gettext("Economic communities"), Paths.communities(@locale)},
+        {@name, nil}
+      ]}
+      title={@name}
+      subtitle={SyliAtlas.Locales.pick(@community.name, @locale)}
+      kpis_id="community-kpis"
+      class="community-head"
+    >
+      <:mark><ProfileComponents.community_mark /></:mark>
+      <:chips>
+        <span class="pill pill-neutral no-dot">
+          {if @community[:zone],
+            do: gettext("Economic and monetary union"),
+            else: gettext("Regional economic community")}
+        </span>
+        <a class="pill pill-neutral no-dot" href="#members">
+          {ngettext("%{count} country", "%{count} countries", length(@community.members))}
+        </a>
+      </:chips>
+      <:kpi
         id="gdp"
         label={gettext("GDP %{year}", year: @year)}
         value={value(@summary.gdp, "gdp_usd_bn", @locale)}
       >
         {gettext("sum of the members")}
-      </:stat>
-      <:stat
+      </:kpi>
+      <:kpi
         id="population"
         label={gettext("Population %{year}", year: @year)}
         value={value(@summary.population, "population_m", @locale)}
       >
         {gettext("%{n} countries", n: length(@community.members))}
-      </:stat>
-      <:stat
+      </:kpi>
+      <:kpi
         id="growth"
         label={gettext("Growth %{year}", year: @year)}
         value={value(@summary.growth, "real_gdp_growth", @locale)}
+        tone={tone(@summary.growth, "real_gdp_growth")}
       >
         {gettext("weighted by GDP in PPP")}
-      </:stat>
-      <:stat
+      </:kpi>
+      <:kpi
         id="debt"
         label={gettext("Public debt %{year}", year: @year)}
         value={value(@summary.debt, "public_debt_pct_gdp", @locale)}
       >
         {gettext("of GDP, weighted by GDP in dollars")}
-      </:stat>
-    </.stat_grid>
+      </:kpi>
+    </ProfileComponents.entity_head>
+  </.section>
 
+  <.section class="tab-intro">
+    <p class="lead" data-answer>{@answer}</p>
+  </.section>
+
+  <.section>
     <.card id="members">
       <div class="pad">
         <.card_head
@@ -98,8 +115,8 @@
         <a
           :for={o <- @others}
           class="btn btn-secondary"
-          href={Paths.community(@locale, o.slug[@locale])}
-        >{o.short[@locale]}</a>
+          href={Paths.community(@locale, SyliAtlas.Locales.pick(o.slug, @locale))}
+        >{SyliAtlas.Locales.pick(o.short, @locale)}</a>
       </div>
     </nav>
   </.section>

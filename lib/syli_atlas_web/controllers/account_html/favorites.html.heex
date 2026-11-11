@@ -1,5 +1,5 @@
-<Layouts.public locale={@locale} current={:account} current_user={@current_user}>
-  <.space locale={@locale} user={@current_user} tab={@tab} flash={@flash}>
+<Layouts.public ticker={false} locale={@locale} current={:account} current_user={@current_user}>
+  <.space locale={@locale} user={@current_user} tab={@tab}>
     <header class="stack gap-1">
       <p class="eyebrow">{gettext("My space")}</p>
       <h1 class="h1">{gettext("Favourites")}</h1>
@@ -13,7 +13,7 @@
         )}
       </p>
       <p>
-        <a class="btn btn-secondary" href={Paths.ranking(@locale)}>{gettext(
+        <a class="btn btn-secondary" href={Paths.ranking_main(@locale)}>{gettext(
           "Browse the countries"
         )}</a>
       </p>

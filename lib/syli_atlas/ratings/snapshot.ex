@@ -72,8 +72,8 @@ defmodule SyliAtlas.Ratings.Snapshot do
 
     base = %{
       "code" => area.code,
-      "name" => %{"fr" => area.name_fr, "en" => area.name_en},
-      "slug" => %{"fr" => area.slug_fr, "en" => area.slug_en},
+      "name" => SyliAtlas.Geo.Area.names(area),
+      "slug" => SyliAtlas.Geo.Area.slugs(area),
       "region" => area.region_code,
       "agencies" => agencies
     }

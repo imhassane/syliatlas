@@ -100,5 +100,59 @@ defmodule SyliAtlas.Sources do
     end)
   end
 
+  @doc "The edition of the same source imported just before this one, with values, or nil."
+  def previous_edition(%Edition{id: id, source_id: source_id}) do
+    from(e in Edition,
+      as: :e,
+      where:
+        e.source_id == ^source_id and e.id < ^id and
+          e.status in ["published", "superseded"] and
+          exists(from o in Observation, where: o.edition_id == parent_as(:e).id, select: 1),
+      order_by: [desc: e.id],
+      limit: 1
+    )
+    |> Repo.one()
+  end
+
+  @doc """
+  Values that moved between two editions: `{area, indicator, year, before,
+  after, change}`. Rates change in points, levels in percent; only changes
+  of at least `min` (points or percent) are kept, largest first.
+  """
+  def revisions(%Edition{id: new_id}, %Edition{id: old_id}, min \\ 1.0, limit \\ 200) do
+    rates = SyliAtlas.Sources.Indicators.rate_keys()
+
+    from(n in Observation,
+      join: o in Observation,
+      on:
+        o.edition_id == ^old_id and o.area_code == n.area_code and o.indicator == n.indicator and
+          o.year == n.year,
+      where: n.edition_id == ^new_id and not is_nil(n.value) and not is_nil(o.value),
+      select: {n.area_code, n.indicator, n.year, o.value, n.value}
+    )
+    |> Repo.all()
+    |> Enum.map(fn {area, ind, year, before, now} ->
+      change =
+        cond do
+          ind in rates -> now - before
+          before == 0 -> 0.0
+          true -> (now / before - 1) * 100
+        end
+
+      %{
+        area: area,
+        indicator: ind,
+        year: year,
+        before: before,
+        after: now,
+        change: change,
+        rate?: ind in rates
+      }
+    end)
+    |> Enum.filter(&(abs(&1.change) >= min))
+    |> Enum.sort_by(&(-abs(&1.change)))
+    |> Enum.take(limit)
+  end
+
   defp now, do: DateTime.utc_now() |> DateTime.truncate(:second)
 end

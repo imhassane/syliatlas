@@ -1,0 +1,919 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: pt\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: lib/syli_atlas/accounts/emails.ex:67
+#, elixir-autogen, elixir-format
+msgid "%{code} is your Syli Atlas code"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:143
+#, elixir-autogen, elixir-format
+msgid "A passkey was added to your account"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:149
+#, elixir-autogen, elixir-format
+msgid "A passkey was just registered on your account. It signs in without a code."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:115
+#, elixir-autogen, elixir-format
+msgid "Administration"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:50
+#, elixir-autogen, elixir-format
+msgid "Administrator account: after this code, Syli Atlas will ask for your passkey (fingerprint, face or device PIN). Without it, the administration stays closed."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:98
+#, elixir-autogen, elixir-format
+msgid "Alerts"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:184
+#, elixir-autogen, elixir-format
+msgid "Browser"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:165
+#, elixir-autogen, elixir-format
+msgid "Check my passkeys"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:156
+#, elixir-autogen, elixir-format
+msgid "Device"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:60
+#, elixir-autogen, elixir-format
+msgid "Did not ask for it? Ignore this email: nobody can sign in without this code."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:182
+#, elixir-autogen, elixir-format
+msgid "Email code"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:41
+#, elixir-autogen, elixir-format
+msgid "Enter this code on the Syli Atlas sign-in page. It is valid for 10 minutes and works once."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:96
+#, elixir-autogen, elixir-format
+msgid "Favourites"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:155
+#, elixir-autogen, elixir-format
+msgid "Name"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:146
+#, elixir-autogen, elixir-format
+msgid "New passkey added"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:177
+#, elixir-autogen, elixir-format
+msgid "New sign-in to the administration"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:187
+#, elixir-autogen, elixir-format
+msgid "Not you? Close every session and remove the passkey from « Security »."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:159
+#, elixir-autogen, elixir-format
+msgid "Not you? Remove this passkey now from « Security »: every session opened with it will be closed."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:114
+#, elixir-autogen, elixir-format
+msgid "One last step: register your passkey."
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:290
+#: lib/syli_atlas/accounts/emails.ex:104
+#, elixir-autogen, elixir-format
+msgid "Open my space"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:100
+#: lib/syli_atlas/accounts/emails.ex:183
+#, elixir-autogen, elixir-format
+msgid "Passkey"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:134
+#, elixir-autogen, elixir-format
+msgid "Register my passkey"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:145
+#, elixir-autogen, elixir-format
+msgid "Security"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:176
+#, elixir-autogen, elixir-format
+msgid "Security · administration"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:193
+#, elixir-autogen, elixir-format
+msgid "See open sessions"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:72
+#, elixir-autogen, elixir-format
+msgid "Sign-in"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:174
+#, elixir-autogen, elixir-format
+msgid "Sign-in to the Syli Atlas administration"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:71
+#, elixir-autogen, elixir-format
+msgid "Sign-in · administration"
+msgstr ""
+
+#: lib/syli_atlas/accounts/email_layout.ex:71
+#: lib/syli_atlas/accounts/email_layout.ex:98
+#, elixir-autogen, elixir-format
+msgid "Syli Atlas · African economies, every figure sourced."
+msgstr ""
+
+#: lib/syli_atlas/accounts/email_layout.ex:72
+#, elixir-autogen, elixir-format
+msgid "This email was sent automatically: replies are not read."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:129
+#, elixir-autogen, elixir-format
+msgid "Tip: register a second passkey on another device, so you are never locked out."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:124
+#, elixir-autogen, elixir-format
+msgid "To protect the administration, every admin sign-in asks for two proofs: the code received by email, then your passkey (fingerprint, face or device PIN). Register it now, from the device you will use."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:45
+#, elixir-autogen, elixir-format
+msgid "Valid for 10 minutes"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:68
+#, elixir-autogen, elixir-format
+msgid "Valid for 10 minutes, it works once."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:86
+#, elixir-autogen, elixir-format
+msgid "Welcome"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:84
+#, elixir-autogen, elixir-format
+msgid "Welcome to Syli Atlas"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:116
+#, elixir-autogen, elixir-format
+msgid "You are the administrator"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:113
+#, elixir-autogen, elixir-format
+msgid "You are the administrator of Syli Atlas"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:90
+#, elixir-autogen, elixir-format
+msgid "You can now follow the countries, exchanges and securities you care about, and be told when something changes."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:119
+#, elixir-autogen, elixir-format
+msgid "Your account is the first one created on Syli Atlas: it is the administrator. The following accounts will be members."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:179
+#, elixir-autogen, elixir-format
+msgid "Your administrator account just opened a session."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:85
+#, elixir-autogen, elixir-format
+msgid "Your favourites and alerts are waiting in your space."
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:74
+#, elixir-autogen, elixir-format
+msgid "Your sign-in code"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:87
+#, elixir-autogen, elixir-format
+msgid "Your space is ready"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:99
+#, elixir-autogen, elixir-format
+msgid "a threshold, a new rating, a new IMF edition"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:101
+#, elixir-autogen, elixir-format
+msgid "sign in with your fingerprint or face"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:97
+#, elixir-autogen, elixir-format
+msgid "the star at the top of each page"
+msgstr ""
+
+#: lib/syli_atlas/accounts/emails.ex:182
+#, elixir-autogen, elixir-format
+msgid "verified"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:55
+#, elixir-autogen, elixir-format
+msgid "%{agency} on %{country}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:46
+#, elixir-autogen, elixir-format
+msgid "%{country}: %{agency} %{action} the rating, %{rating}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:118
+#, elixir-autogen, elixir-format
+msgid "%{country}: %{indicator} goes above %{threshold}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:112
+#, elixir-autogen, elixir-format
+msgid "%{country}: %{indicator} goes below %{threshold}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:220
+#: lib/syli_atlas/recaps/emails.ex:68
+#, elixir-autogen, elixir-format
+msgid "%{from} to %{to}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:358
+#, elixir-autogen, elixir-format
+msgid "%{year} is an IMF estimate: the next edition may revise it."
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:352
+#, elixir-autogen, elixir-format
+msgid "%{year} is an IMF projection: the next edition may revise it."
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:269
+#, elixir-autogen, elixir-format
+msgid "1 alert set off"
+msgid_plural "%{count} alerts set off"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:127
+#, elixir-autogen, elixir-format
+msgid "Alert · indicator"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:83
+#, elixir-autogen, elixir-format
+msgid "Alert · new IMF edition"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:54
+#, elixir-autogen, elixir-format
+msgid "Alert · sovereign rating"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:138
+#, elixir-autogen, elixir-format
+msgid "Before (%{year})"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:292
+#, elixir-autogen, elixir-format
+msgid "Change the digest"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:70
+#: lib/syli_atlas/accounts/alert_emails.ex:205
+#, elixir-autogen, elixir-format
+msgid "Date"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:53
+#, elixir-autogen, elixir-format
+msgid "Decision of %{date} on a country you follow."
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:287
+#: lib/syli_atlas/recaps/emails.ex:85
+#, elixir-autogen, elixir-format
+msgid "Digest · %{period}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:230
+#, elixir-autogen, elixir-format
+msgid "Followed countries · IMF, %{year} (%{status})"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:59
+#, elixir-autogen, elixir-format
+msgid "Followed country: %{country}. %{agency} %{action} its long-term foreign-currency rating."
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:346
+#, elixir-autogen, elixir-format
+msgid "GDP per capita (US$)"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:96
+#, elixir-autogen, elixir-format
+msgid "Inflation %{year}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:74
+#: lib/syli_atlas/recaps/emails.ex:327
+#, elixir-autogen, elixir-format
+msgid "Information, not investment advice."
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:30
+#, elixir-autogen, elixir-format
+msgid "Manage my alerts"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:126
+#, elixir-autogen, elixir-format
+msgid "New IMF edition: your threshold is crossed."
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:81
+#: lib/syli_atlas/accounts/alert_emails.ex:84
+#, elixir-autogen, elixir-format
+msgid "New IMF figures for %{country}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:140
+#, elixir-autogen, elixir-format
+msgid "Now (%{year})"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:69
+#, elixir-autogen, elixir-format
+msgid "Outlook"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:68
+#: lib/syli_atlas/recaps/emails.ex:212
+#, elixir-autogen, elixir-format
+msgid "Rating"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:252
+#, elixir-autogen, elixir-format
+msgid "Rating decisions"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:94
+#, elixir-autogen, elixir-format
+msgid "Real GDP growth %{year}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:75
+#: lib/syli_atlas/accounts/alert_emails.ex:100
+#: lib/syli_atlas/accounts/alert_emails.ex:145
+#, elixir-autogen, elixir-format
+msgid "See %{country}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:362
+#, elixir-autogen, elixir-format
+msgid "Source: IMF, World Economic Outlook."
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:369
+#, elixir-autogen, elixir-format
+msgid "Source: the agency's release, %{url}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:294
+#, elixir-autogen, elixir-format
+msgid "Stop the digest"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:31
+#, elixir-autogen, elixir-format
+msgid "Stop this alert"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:87
+#, elixir-autogen, elixir-format
+msgid "The IMF published a new edition (%{edition}); Syli Atlas has it online."
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:131
+#, elixir-autogen, elixir-format
+msgid "The new IMF edition (%{edition}) crosses the threshold of your alert."
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:32
+#, elixir-autogen, elixir-format
+msgid "Unsubscribe from every email"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:288
+#, elixir-autogen, elixir-format
+msgid "What moved in your favourites"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:279
+#, elixir-autogen, elixir-format
+msgid "Your month on Syli Atlas"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:141
+#, elixir-autogen, elixir-format
+msgid "Your threshold"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:280
+#, elixir-autogen, elixir-format
+msgid "Your week on Syli Atlas"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:366
+#: lib/syli_atlas/recaps/emails.ex:363
+#, elixir-autogen, elixir-format
+msgid "actual"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:332
+#, elixir-autogen, elixir-format
+msgid "affirms"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:344
+#, elixir-autogen, elixir-format
+msgid "budget balance (% of GDP)"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:345
+#, elixir-autogen, elixir-format
+msgid "current account (% of GDP)"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:329
+#, elixir-autogen, elixir-format
+msgid "declares a default on"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:338
+#, elixir-autogen, elixir-format
+msgid "developing"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:328
+#, elixir-autogen, elixir-format
+msgid "downgrades"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:365
+#: lib/syli_atlas/recaps/emails.ex:362
+#, elixir-autogen, elixir-format
+msgid "estimate"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:237
+#, elixir-autogen, elixir-format
+msgid "growth %{growth}, inflation %{inflation}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:342
+#, elixir-autogen, elixir-format
+msgid "inflation"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:331
+#, elixir-autogen, elixir-format
+msgid "lowers the outlook of"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:336
+#, elixir-autogen, elixir-format
+msgid "negative"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:311
+#, elixir-autogen, elixir-format
+msgid "new IMF figures (%{edition})"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:335
+#, elixir-autogen, elixir-format
+msgid "positive"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:364
+#: lib/syli_atlas/recaps/emails.ex:361
+#, elixir-autogen, elixir-format
+msgid "projection"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:343
+#, elixir-autogen, elixir-format
+msgid "public debt (% of GDP)"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:330
+#, elixir-autogen, elixir-format
+msgid "raises the outlook of"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:341
+#, elixir-autogen, elixir-format
+msgid "real GDP growth"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:337
+#, elixir-autogen, elixir-format
+msgid "stable"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:347
+#, elixir-autogen, elixir-format
+msgid "unemployment"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:327
+#, elixir-autogen, elixir-format
+msgid "upgrades"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:163
+#, elixir-autogen, elixir-format
+msgid "%{name} goes above %{price}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:169
+#, elixir-autogen, elixir-format
+msgid "%{name} goes below %{price}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:157
+#, elixir-autogen, elixir-format
+msgid "%{name}: %{change} on the session"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:196
+#, elixir-autogen, elixir-format
+msgid "Alert · stock exchange"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:202
+#, elixir-autogen, elixir-format
+msgid "Close"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:192
+#, elixir-autogen, elixir-format
+msgid "Close of %{date}, %{exchange}."
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:210
+#, elixir-autogen, elixir-format
+msgid "Closing prices, not real time. Information, not investment advice."
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:202
+#, elixir-autogen, elixir-format
+msgid "Index"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:212
+#, elixir-autogen, elixir-format
+msgid "See %{name}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:204
+#, elixir-autogen, elixir-format
+msgid "Session"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:199
+#, elixir-autogen, elixir-format
+msgid "Your alert: %{name} %{rule}."
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:183
+#, elixir-autogen, elixir-format
+msgid "closes above %{price}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:186
+#, elixir-autogen, elixir-format
+msgid "closes below %{price}"
+msgstr ""
+
+#: lib/syli_atlas/accounts/alert_emails.ex:178
+#, elixir-autogen, elixir-format
+msgid "moves more than %{threshold} in a session"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:192
+#, elixir-autogen, elixir-format
+msgid "%{agency} %{action} its rating: %{rating}, outlook %{outlook} · %{date}"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:124
+#, elixir-autogen, elixir-format
+msgid "%{countries}: your month"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:125
+#, elixir-autogen, elixir-format
+msgid "%{countries}: your week"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:156
+#, elixir-autogen, elixir-format
+msgid "%{count} decision"
+msgid_plural "%{count} decisions"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/syli_atlas/recaps/emails.ex:132
+#, elixir-autogen, elixir-format
+msgid "%{count} rating decision"
+msgid_plural "%{count} rating decisions"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/syli_atlas/recaps/emails.ex:232
+#, elixir-autogen, elixir-format
+msgid "%{index}: %{change} %{over} · close of %{date}"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:249
+#, elixir-autogen, elixir-format
+msgid "%{name}, fixed peg: 1 %{anchor} = %{rate} %{code}"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:180
+#, elixir-autogen, elixir-format
+msgid "%{up} up, %{down} down"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:260
+#, elixir-autogen, elixir-format
+msgid "1 USD = %{rate} %{code}"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:106
+#, elixir-autogen, elixir-format
+msgid "Change my countries"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:55
+#, elixir-autogen, elixir-format
+msgid "Confirm my recap"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:36
+#, elixir-autogen, elixir-format
+msgid "Confirm your Syli Atlas recap"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:39
+#, elixir-autogen, elixir-format
+msgid "Confirm your subscription"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:44
+#, elixir-autogen, elixir-format
+msgid "Countries"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:248
+#: lib/syli_atlas/recaps/emails.ex:259
+#, elixir-autogen, elixir-format
+msgid "Currency"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:231
+#, elixir-autogen, elixir-format
+msgid "Exchange"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:179
+#, elixir-autogen, elixir-format
+msgid "Exchanges"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:45
+#, elixir-autogen, elixir-format
+msgid "Frequency"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:280
+#, elixir-autogen, elixir-format
+msgid "Growth"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:183
+#, elixir-autogen, elixir-format
+msgid "IMF"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:275
+#, elixir-autogen, elixir-format
+msgid "IMF landmarks, %{year} (%{status})"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:300
+#, elixir-autogen, elixir-format
+msgid "IMF, World Economic Outlook"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:303
+#, elixir-autogen, elixir-format
+msgid "IMF, World Economic Outlook (%{label})"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:281
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Inflation"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:213
+#, elixir-autogen, elixir-format
+msgid "No decision · %{current}"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:48
+#, elixir-autogen, elixir-format
+msgid "Not you? Do nothing: without a click, nothing is sent and an address never confirmed is deleted within %{count} day."
+msgid_plural "Not you? Do nothing: without a click, nothing is sent and an address never confirmed is deleted within %{count} days."
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/syli_atlas/recaps/emails.ex:37
+#, elixir-autogen, elixir-format
+msgid "One click, and the recap starts."
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:282
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Public debt, % of GDP"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:176
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Ratings"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:38
+#, elixir-autogen, elixir-format
+msgid "Recap · confirmation"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:288
+#, elixir-autogen, elixir-format
+msgid "See the profile"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:30
+#, elixir-autogen, elixir-format
+msgid "Someone, most likely you, asked for the Syli Atlas recap at this address:"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:322
+#, elixir-autogen, elixir-format
+msgid "Sources:"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:107
+#, elixir-autogen, elixir-format
+msgid "Stop the recap"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:146
+#, elixir-autogen, elixir-format
+msgid "The landmarks of your countries."
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:25
+#, elixir-autogen, elixir-format
+msgid "This address already receives the Syli Atlas recap. Confirm to replace its countries and frequency with these:"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:76
+#, elixir-autogen, elixir-format
+msgid "You receive this recap because you asked for it on Syli Atlas, without an account. Alerts on a threshold or a share price need a free space."
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:121
+#, elixir-autogen, elixir-format
+msgid "Your %{count} countries"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:89
+#, elixir-autogen, elixir-format
+msgid "Your country this month"
+msgid_plural "Your %{count} countries this month"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/syli_atlas/recaps/emails.ex:96
+#, elixir-autogen, elixir-format
+msgid "Your country this week"
+msgid_plural "Your %{count} countries this week"
+msgstr[0] ""
+msgstr[1] ""
+
+#: lib/syli_atlas/recaps/emails.ex:359
+#, elixir-autogen, elixir-format
+msgid "every Monday"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:315
+#, elixir-autogen, elixir-format
+msgid "exchanges and exchange rates: %{credit}, closing prices, not real time"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:140
+#, elixir-autogen, elixir-format
+msgid "exchanges: %{up} up, %{down} down"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:142
+#, elixir-autogen, elixir-format, fuzzy
+msgid "new IMF figures"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:165
+#, elixir-autogen, elixir-format
+msgid "new edition: %{label}"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:154
+#, elixir-autogen, elixir-format
+msgid "no decision"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:170
+#, elixir-autogen, elixir-format
+msgid "no new edition (latest: %{label})"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:207
+#, elixir-autogen, elixir-format
+msgid "not rated"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:358
+#, elixir-autogen, elixir-format
+msgid "on the 1st of each month"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:227
+#, elixir-autogen, elixir-format
+msgid "over the month"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:228
+#, elixir-autogen, elixir-format
+msgid "over the week"
+msgstr ""
+
+#: lib/syli_atlas/recaps/emails.ex:326
+#, elixir-autogen, elixir-format
+msgid "rating agencies"
+msgstr ""

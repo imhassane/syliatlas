@@ -21,6 +21,13 @@ defmodule SyliAtlas.Market do
 
   def config, do: Application.get_env(:syli_atlas, __MODULE__, [])
 
+  @doc """
+  Whether the market figures come from `SyliAtlas.Market.Sources.MansaFake`
+  (development, `MANSA_FAKE=true`): every credit then says they are
+  fictitious.
+  """
+  def fake?, do: Keyword.get(config(), :fake, false)
+
   def seed!, do: Reference.seed!()
 
   def overview, do: Snapshots.read("market:overview")

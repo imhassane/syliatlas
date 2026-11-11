@@ -3,7 +3,7 @@ defmodule SyliAtlasWeb.AreaController do
 
   alias SyliAtlas.Geo
   alias SyliAtlas.Geo.Area
-  import SyliAtlasWeb.Format, only: [change: 3, value: 3]
+  import SyliAtlasWeb.Format, only: [change: 3, value: 3, names: 1, names: 2]
 
   alias SyliAtlasWeb.{
     NotFoundError,
@@ -31,14 +31,12 @@ defmodule SyliAtlasWeb.AreaController do
     {from, to} = PageComponents.period(params)
     data = PublicData.area(area.code, from, to) || raise NotFoundError
 
-    paths = %{
-      "fr" => Paths.area_tab("fr", area, tab),
-      "en" => Paths.area_tab("en", area, tab)
-    }
+    paths = SyliAtlas.Locales.each(fn l -> Paths.area_tab(l, area, tab) end)
 
     # Old or foreign slug or tab name: send to the canonical URL.
     if conn.request_path != paths[locale] do
-      redirect(conn, to: paths[locale] <> query(conn))
+      # Permanent: the old address passes its links on to the canonical one.
+      conn |> put_status(301) |> redirect(to: paths[locale] <> query(conn))
     else
       render_profile(conn, params, area, tab, data, from, to, paths)
     end
@@ -65,8 +63,8 @@ defmodule SyliAtlasWeb.AreaController do
         |> Enum.map(fn r ->
           %{
             "code" => r["profile"]["code"],
-            "name" => r["profile"]["name"][locale],
-            "slug" => r["profile"]["slug"][locale],
+            "name" => SyliAtlas.Locales.pick(r["profile"]["name"], locale),
+            "slug" => SyliAtlas.Locales.pick(r["profile"]["slug"], locale),
             "kind" => r["profile"]["kind"],
             "value" => r["period"]["changes"]["gdp_usd_bn"]
           }
@@ -101,7 +99,13 @@ defmodule SyliAtlasWeb.AreaController do
     tab_name = ProfileComponents.tab_label(tab)
     answer = tab_answer(tab, name, data, from, to, locale, world_bank, trade, rating, ratings)
 
+    # A period chosen by the reader follows them from tab to tab (the default
+    # one stays out of the address, which stays canonical).
+    period_query = if params["from"] || params["to"], do: "?from=#{from}&to=#{to}", else: ""
+
     ctx = %{
+      period_query: period_query,
+      rated: (ratings && ratings["rated"]) || 0,
       locale: locale,
       area: area,
       name: name,
@@ -125,10 +129,7 @@ defmodule SyliAtlasWeb.AreaController do
       slugs: country_slugs(locale)
     }
 
-    title =
-      if tab == :overview,
-        do: name <> " · " <> gettext("economy %{from}–%{to}", from: from, to: to),
-        else: name <> " · " <> tab_name
+    title = title(tab, area, name, to, SyliAtlas.Trade.document())
 
     crumbs =
       breadcrumbs(area, region, locale) ++
@@ -139,18 +140,9 @@ defmodule SyliAtlasWeb.AreaController do
       seo:
         Seo.page(locale, paths, answer, %{
           json_ld:
-            [
-              Seo.breadcrumbs(crumbs),
-              Seo.dataset(
-                if(tab == :overview,
-                  do: gettext("Economy of %{name}, 2015–2030", name: name),
-                  else: name <> " · " <> tab_name
-                ),
-                name,
-                "/api/v1/areas/#{area.code}",
-                profile["edition"]
-              )
-            ] ++ if(tab == :overview, do: [Seo.faq(faq)], else: [])
+            [Seo.breadcrumbs(crumbs)] ++
+              datasets(tab, area, name, paths[locale], profile, trade, world_bank, locale) ++
+              if(tab == :overview, do: [Seo.faq(faq)], else: [])
         }),
       alternates: Seo.alternates_for_header(paths),
       area: area,
@@ -190,6 +182,155 @@ defmodule SyliAtlasWeb.AreaController do
       trade: trade,
       trade_doc: SyliAtlas.Trade.document()
     )
+  end
+
+  # One Dataset per source, on the page that shows it: the IMF series on the
+  # overview, CEPII on Trade, the World Bank on Society. The other tabs show
+  # the same IMF series again and carry none, so each dataset has one page.
+  defp datasets(:overview, area, name, path, profile, _trade, _wb, locale) do
+    edition = profile["edition"]
+    to = edition_estimate_year(profile)
+
+    [
+      Seo.dataset(
+        name: gettext("Economy of %{name}: GDP, growth, debt, inflation 2015–2030", names(name)),
+        description:
+          gettext(
+            "Macroeconomic indicators of %{name} from 2015 to 2030: GDP in current dollars and in purchasing power parity, real growth, GDP per capita, inflation, public debt, fiscal balance, current account, population. Source: IMF, %{edition}. %{year} is an estimate, later years are projections.",
+            names(name, edition: edition["label"], year: to)
+          ),
+        path: path,
+        locale: locale,
+        area: %{
+          name: name,
+          code: area.kind == "country" && area.code,
+          alternate: SyliAtlas.Geo.French.usual_name(name)
+        },
+        keywords:
+          for(
+            k <- [gettext("GDP"), gettext("growth"), gettext("public debt"), gettext("inflation")],
+            do: k <> " " <> name
+          ),
+        variables: [
+          {gettext("GDP, current dollars"), gettext("billion USD")},
+          {gettext("Real GDP growth"), "%"},
+          {gettext("GDP per capita"), "USD"},
+          {gettext("Inflation, annual average"), "%"},
+          {gettext("Gross public debt"), gettext("% of GDP")},
+          {gettext("Fiscal balance"), gettext("% of GDP")},
+          {gettext("Current account balance"), gettext("% of GDP")}
+        ],
+        downloads: [
+          {"text/csv", "/api/v1/areas/#{area.code}/csv"},
+          {"application/json", "/api/v1/areas/#{area.code}"}
+        ],
+        based_on: {"IMF, " <> edition["label"], "https://www.imf.org/en/Publications/WEO"},
+        modified: edition["fetched_at"],
+        temporal: "2015/2030"
+      )
+    ]
+  end
+
+  defp datasets(:trade, area, name, path, _profile, trade, _wb, locale) when is_map(trade) do
+    src = SyliAtlas.Trade.document()["source"]
+    year = SyliAtlas.Trade.document()["year"]
+
+    [
+      Seo.dataset(
+        name: gettext("Exports of %{name}: products and clients", names(name)),
+        description:
+          gettext(
+            "Goods exported by %{name} in %{year}: share of each product chapter (HS) and of each client country. Source: %{source}, version %{version}.",
+            names(name, year: year, source: src["name"], version: src["version"])
+          ),
+        path: path,
+        locale: locale,
+        area: %{name: name, code: area.code},
+        based_on: {src["name"], src["url"]},
+        modified: SyliAtlas.Trade.document()["as_of"],
+        temporal: to_string(year)
+      )
+    ]
+  end
+
+  defp datasets(:society, area, name, path, _profile, _trade, wb, locale) when is_map(wb) do
+    doc = SyliAtlas.WorldBank.document()
+    src = doc["sources"]["wdi"]
+
+    [
+      Seo.dataset(
+        name: gettext("Living conditions in %{name}: poverty, jobs, electricity", names(name)),
+        description:
+          gettext(
+            "Social indicators of %{name}: poverty, unemployment, access to electricity and the internet, remittances, foreign investment, value added and jobs by sector. Source: %{source}.",
+            names(name, source: src["name"])
+          ),
+        path: path,
+        locale: locale,
+        area: %{name: name, code: area.code},
+        based_on: {src["name"], src["url"]},
+        modified: doc["as_of"]
+      )
+    ]
+  end
+
+  defp datasets(_tab, _area, _name, _path, _profile, _trade, _wb, _locale), do: []
+
+  # The last year the IMF gives as an estimate (the default arrival year).
+  defp edition_estimate_year(_profile), do: elem(SyliAtlas.Profiles.Builder.default_period(), 1)
+
+  # Titles name what people search: the subject, the measure, the year, the
+  # source. A country also searched under another name has it in brackets
+  # (Cabo Verde, Cap-Vert).
+  defp title(:overview, area, name, to, _trade) do
+    if area.kind == "country",
+      do:
+        gettext("%{name}: GDP, growth, debt and inflation %{year} (IMF)",
+          name: usual(name),
+          year: to
+        ),
+      else: gettext("%{name}: economy %{year}, GDP and growth (IMF)", name: name, year: to)
+  end
+
+  defp title(:economy, _area, name, _to, _trade),
+    do: gettext("GDP of %{name} 2015–2030: growth and GDP per capita", title_names(name))
+
+  defp title(:finances, _area, name, to, _trade),
+    do:
+      gettext(
+        "Public debt of %{name}: level, creditors and risk (%{year})",
+        title_names(name, year: to)
+      )
+
+  defp title(:trade, _area, name, _to, trade),
+    do:
+      gettext(
+        "Exports of %{name}: products and main buyers (%{year})",
+        title_names(name, year: (trade && trade["year"]) || "")
+      )
+
+  defp title(:society, _area, name, _to, _trade),
+    do: gettext("%{name}: poverty, jobs and access to electricity", title_names(name))
+
+  defp title(:markets, _area, name, _to, _trade),
+    do: gettext("%{name}: credit rating, stock exchange and business climate", title_names(name))
+
+  defp title_names(name, extra \\ []) do
+    full = usual(name)
+
+    for {k, v} <- names(name, extra) do
+      if k in [:name, :of_name, :in_name, :the_name, :The_name],
+        do: {k, String.replace(v, name, full)},
+        else: {k, v}
+    end
+  end
+
+  defp usual(name) do
+    case Gettext.get_locale(SyliAtlasWeb.Gettext) == "fr" &&
+           SyliAtlas.Geo.French.usual_name(name) do
+      other when is_binary(other) -> "#{name} (#{other})"
+      _ -> name
+    end
   end
 
   # Tabs with something to show, in page order. A tab without data has no page.
@@ -294,10 +435,31 @@ defmodule SyliAtlasWeb.AreaController do
     end
   end
 
+  defp tab_answer(:economy, name, data, _from, to, locale, _wb, _trade, _r, _rs) do
+    s = data["profile"]["series"]
+
+    gettext(
+      "GDP of %{name}: %{gdp} in %{to}, %{per_capita} per person (%{ppp} in purchasing power parity). Real growth of %{growth} in %{to} (IMF).",
+      names(name,
+        gdp: value(PublicData.at(s["gdp_usd_bn"], to), "gdp_usd_bn", locale),
+        per_capita:
+          value(PublicData.at(s["gdp_per_capita_usd"], to), "gdp_per_capita_usd", locale),
+        ppp: value(PublicData.at(s["gdp_per_capita_ppp"], to), "gdp_per_capita_ppp", locale),
+        growth: rate(PublicData.at(s["real_gdp_growth"], to), locale),
+        to: to
+      )
+    )
+  end
+
   defp tab_answer(_tab, name, data, from, to, locale, _wb, _trade, _r, _rs),
     do: answer(name, data, from, to, locale)
 
   defp pct(v, locale), do: SyliAtlasWeb.Format.number(v, 1, locale) <> " %"
+
+  # A growth rate in a sentence: « 6,7 % », « −1,2 % », without the plus sign
+  # of the tables.
+  defp rate(nil, locale), do: SyliAtlasWeb.Format.number(nil, 1, locale)
+  defp rate(v, locale), do: pct(v, locale)
 
   # The line drawn next to a country (its region) or a region (Africa).
   defp comparison(area, region, from, to, locale) do
@@ -309,7 +471,7 @@ defmodule SyliAtlasWeb.AreaController do
       end
 
     with %{} <- other, %{"profile" => p} <- PublicData.area(other.code, from, to) do
-      %{name: p["name"][locale], series: p["series"]}
+      %{name: SyliAtlas.Locales.pick(p["name"], locale), series: p["series"]}
     else
       _ -> nil
     end
@@ -365,13 +527,16 @@ defmodule SyliAtlasWeb.AreaController do
   end
 
   defp members(%{"members" => codes}, from, to, locale) when is_list(codes) and codes != [] do
+    # The comparison query takes six areas at a time (the compare page's
+    # limit): a region of fifteen countries is asked in three goes.
     codes
-    |> PublicData.compare(from, to)
+    |> Enum.chunk_every(6)
+    |> Enum.flat_map(&PublicData.compare(&1, from, to))
     |> Enum.map(
       &%{
         "code" => &1["code"],
-        "name" => &1["name"][locale],
-        "slug" => &1["slug"][locale],
+        "name" => SyliAtlas.Locales.pick(&1["name"], locale),
+        "slug" => SyliAtlas.Locales.pick(&1["slug"], locale),
         "kind" => &1["kind"],
         "value" => &1["gdp_change_pct"]
       }
@@ -381,41 +546,89 @@ defmodule SyliAtlasWeb.AreaController do
 
   defp members(_, _, _, _), do: []
 
-  @doc false
+  @doc """
+  The lead sentence of a profile: real growth first (what the economy did),
+  then the size and rank. GDP in current dollars comes last, and only when it
+  tells another story than real growth (a currency that fell, as the naira
+  since 2020): said alone, « −51.5 % » reads as a collapse.
+  """
   def answer(name, data, from, to, locale) do
     s = data["profile"]["series"]
     ch = data["period"]["changes"]
+    growth = rate(PublicData.at(s["real_gdp_growth"], to), locale)
+    real = change(ch["real_gdp_index"], "real_gdp_index", locale)
+    gdp = value(PublicData.at(s["gdp_usd_bn"], to), "gdp_usd_bn", locale)
 
-    gettext(
-      "%{name}: GDP of %{gdp} in %{to} (IMF), %{change} since %{from} in current dollars. Growth in %{to}: %{growth}.",
-      name: name,
-      gdp: value(PublicData.at(s["gdp_usd_bn"], to), "gdp_usd_bn", locale),
-      to: to,
-      from: from,
-      change: change(ch["gdp_usd_bn"], "gdp_usd_bn", locale),
-      growth: value(PublicData.at(s["real_gdp_growth"], to), "real_gdp_growth", locale)
-    )
+    lead =
+      case gdp_rank(data, to) do
+        {rank, _of} ->
+          gettext(
+            "%{name}: growth of %{growth} in %{to}, real GDP %{real} since %{from} (IMF). GDP of %{gdp}, no. %{rank} in Africa.",
+            name: name,
+            growth: growth,
+            to: to,
+            real: real,
+            from: from,
+            gdp: gdp,
+            rank: rank
+          )
+
+        nil ->
+          gettext(
+            "%{name}: growth of %{growth} in %{to}, real GDP %{real} since %{from} (IMF). GDP of %{gdp}.",
+            name: name,
+            growth: growth,
+            to: to,
+            real: real,
+            from: from,
+            gdp: gdp
+          )
+      end
+
+    lead <> dollar_note(data, from, locale)
+  end
+
+  # GDP in current dollars, when it fell 20 points or more below real growth:
+  # the gap is the exchange rate, said as such.
+  defp dollar_note(data, from, locale) do
+    ch = data["period"]["changes"]
+    usd = ch["gdp_usd_bn"]
+    real = ch["real_gdp_index"]
+
+    with true <- is_number(usd) and is_number(real) and real - usd >= 20,
+         %{name: currency} <- Currencies.for_country(data["profile"]["code"], locale) do
+      " " <>
+        gettext("In current dollars: %{change} since %{from}, as the %{currency} fell.",
+          change: change(usd, "gdp_usd_bn", locale),
+          from: from,
+          currency: currency
+        )
+    else
+      _ -> ""
+    end
   end
 
   defp faq(name, data, from, to, locale) do
     s = data["profile"]["series"]
 
     [
-      {gettext("How much has the economy of %{name} grown since %{from}?", name: name, from: from),
-       answer(name, data, from, to, locale)},
-      {gettext("What is the GDP per capita of %{name}?", name: name),
+      {gettext(
+         "How much has the economy of %{name} grown since %{from}?",
+         names(name, from: from)
+       ), answer(name, data, from, to, locale)},
+      {gettext("What is the GDP per capita of %{name}?", names(name)),
        gettext(
          "%{value} in %{year} at market exchange rates, %{ppp} in purchasing power parity (IMF).",
          value: value(PublicData.at(s["gdp_per_capita_usd"], to), "gdp_per_capita_usd", locale),
          ppp: value(PublicData.at(s["gdp_per_capita_ppp"], to), "gdp_per_capita_ppp", locale),
          year: to
        )},
-      {gettext("What is the inflation rate in %{name}?", name: name),
+      {gettext("What is the inflation rate in %{name}?", names(name)),
        gettext("%{value} in %{year}, average annual change in consumer prices (IMF).",
          value: value(PublicData.at(s["inflation"], to), "inflation", locale),
          year: to
        )},
-      {gettext("What is the public debt of %{name}?", name: name),
+      {gettext("What is the public debt of %{name}?", names(name)),
        gettext("%{value} of GDP in %{year}, gross debt of the general government (IMF).",
          value: value(PublicData.at(s["public_debt_pct_gdp"], to), "public_debt_pct_gdp", locale),
          year: to
@@ -427,7 +640,7 @@ defmodule SyliAtlasWeb.AreaController do
 
         {rank, of} ->
           [
-            {gettext("Where does %{name} rank in Africa?", name: name),
+            {gettext("Where does %{name} rank in Africa?", names(name)),
              gettext(
                "Economy no. %{rank} of %{of} in Africa by GDP in current dollars in %{year} (IMF).",
                rank: rank,

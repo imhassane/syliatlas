@@ -5,6 +5,7 @@ defmodule SyliAtlasWeb.Charts do
   the browser when the period changes.
   """
   use Phoenix.Component
+  use Gettext, backend: SyliAtlasWeb.Gettext
   alias SyliAtlasWeb.Format
 
   @first 2015
@@ -37,13 +38,54 @@ defmodule SyliAtlasWeb.Charts do
   A line chart drawn twice: a wide one with labels at the end of each line,
   and a narrow one for phones (text stays readable, no end labels: a legend
   goes under it). CSS shows one or the other.
+
+  Under it, the same figures as a table, folded (`<details>`): the text
+  alternative of a complex image (RGAA 1.9, 1.10) for screen readers and
+  anyone who wants the exact values.
   """
   def line_chart(assigns) do
     ~H"""
     <div class="chart-figure">
       <.chart_svg {assigns} id={@id} size={:wide} class="chart chart-wide" />
       <.chart_svg {assigns} id={@id <> "-narrow"} size={:narrow} class="chart chart-narrow" />
+      <.chart_table {assigns} />
     </div>
+    """
+  end
+
+  defp chart_table(assigns) do
+    assigns = assign(assigns, :years, Enum.with_index(@first..@last))
+
+    ~H"""
+    <details class="chart-data" id={@id <> "-data"}>
+      <summary>{gettext("Chart data as a table")}</summary>
+      <div class="table-box" role="region" aria-labelledby={@id <> "-data-caption"} tabindex="0">
+        <table class="table">
+          <caption id={@id <> "-data-caption"}>{@label}</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="l">{gettext("Year")}</th>
+              <th :for={s <- @series} scope="col">{s.name}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={{year, i} <- @years}>
+              <th scope="row" class="l">
+                {year}
+                <span :if={year >= @estimate_from} class="muted">
+                  · {if year == @estimate_from,
+                    do: gettext("estimate"),
+                    else: gettext("projection")}
+                </span>
+              </th>
+              <td :for={s <- @series} class="num">
+                {Format.value(Enum.at(s.values, i), @indicator, @locale)}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
     """
   end
 

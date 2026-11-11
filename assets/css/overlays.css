@@ -58,7 +58,7 @@
   .sheet-trigger {
     display: flex; align-items: center; gap: 10px; width: 100%; min-height: 52px; padding: 0 18px;
     border: 0; border-radius: 999px; background: var(--card); color: var(--ink);
-    box-shadow: inset 0 0 0 1px var(--border-input); font: inherit; font-size: 15px; cursor: pointer; text-align: left;
+    box-shadow: inset 0 0 0 1px var(--border-input); font: inherit; font-size: 15px; cursor: pointer; text-align: start;
   }
   .sheet-trigger svg { flex: none; color: var(--accent-text); }
   .sheet-trigger-label { flex: none; font-weight: 500; }
@@ -86,31 +86,39 @@
 }
 @keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
 
-/* --- Toasts (assets/js/ui/toasts.js), as in the Kalanso workshop ---
-   Bottom of the end edge; the newest in front, the others folded behind,
-   unfolded when pointed at or focused. Move, never fade. */
-.toasts { position: fixed; bottom: max(24px, env(safe-area-inset-bottom)); right: 24px; z-index: 60; display: grid; gap: 12px; width: min(380px, calc(100% - 32px)); pointer-events: none; }
-.toast { --toast-edges: 0 0 transparent; position: relative; display: flex; align-items: flex-start; gap: 12px; padding: 16px 10px 16px 18px; border-radius: 12px; background: var(--card); color: var(--ink); box-shadow: inset 0 0 0 1px var(--border), var(--toast-edges), var(--shadow-pop); font-size: 14px; line-height: 1.5; pointer-events: auto; animation: toast-in .3s var(--ease) both; }
+/* --- Toasts (assets/js/ui/toasts.js): « Encre » ---
+   Night-blue cards with white text, bottom of the end edge; the newest in
+   front, the others folded behind, unfolded when pointed at or focused.
+   Move, never fade. */
+.toasts { --toast-bg: var(--deep); --toast-line: transparent; --toast-ink: var(--on-deep); --toast-muted: var(--on-deep-muted); position: fixed; bottom: max(24px, env(safe-area-inset-bottom)); inset-inline-end: 24px; z-index: 60; display: grid; gap: 12px; width: min(380px, calc(100% - 32px)); pointer-events: none; }
+[data-theme="dark"] .toasts { --toast-bg: var(--deep-raised); --toast-line: var(--border-strong); }
+.toast { --toast-edges: 0 0 transparent; position: relative; display: flex; flex-wrap: wrap; align-items: flex-start; gap: 12px; padding: 12px 8px 12px 16px; border-radius: 10px; background: var(--toast-bg); color: var(--toast-ink); box-shadow: inset 0 0 0 1px var(--toast-line), var(--toast-edges), 0 16px 32px -12px rgba(11, 26, 51, .45); font-size: 14px; line-height: 1.5; pointer-events: auto; animation: toast-in .3s var(--ease) both; }
+[data-theme="dark"] .toast { box-shadow: inset 0 0 0 1px var(--toast-line), var(--toast-edges), 0 16px 32px -12px rgba(0, 0, 0, .6); }
 .toast.is-leaving { animation: toast-out .2s var(--ease) both; }
 .toasts > .toast { grid-area: 1 / 1; align-self: end; }
 .toasts:is(:hover, :focus-within) > .toast { grid-area: auto; }
 .toasts:not(:hover, :focus-within) > .toast:not(:last-child) { visibility: hidden; }
-.toasts:not(:hover, :focus-within) > .toast:last-child:nth-child(2) { --toast-edges: 0 -7px 0 -5px var(--card), 0 -7px 0 -4px var(--border); }
-.toasts:not(:hover, :focus-within) > .toast:last-child:nth-child(n + 3) { --toast-edges: 0 -7px 0 -5px var(--card), 0 -7px 0 -4px var(--border), 0 -13px 0 -10px var(--card), 0 -13px 0 -9px var(--border); }
-.toast-icon { display: grid; flex: none; place-items: center; width: 20px; height: 21px; color: var(--accent-text); }
-.toast[data-kind="success"] .toast-icon { color: var(--success-ink); }
-.toast[data-kind="warning"] .toast-icon { color: var(--warning-ink); }
-.toast-text { flex: 1; min-width: 0; display: grid; gap: 2px; align-self: center; }
+.toasts:not(:hover, :focus-within) > .toast:last-child:nth-child(2) { --toast-edges: 0 -7px 0 -5px var(--toast-bg), 0 -7px 0 -4px var(--border-strong); }
+.toasts:not(:hover, :focus-within) > .toast:last-child:nth-child(n + 3) { --toast-edges: 0 -7px 0 -5px var(--toast-bg), 0 -7px 0 -4px var(--border-strong), 0 -13px 0 -10px var(--toast-bg), 0 -13px 0 -9px var(--border-strong); }
+.toast-icon { display: grid; flex: none; place-items: center; width: 20px; height: 21px; margin-top: 4px; color: var(--accent-on-deep); }
+.toast[data-kind="success"] .toast-icon { color: #5ee0a8; }
+.toast[data-kind="warning"] .toast-icon { color: #ffb079; }
+.toast[data-kind="error"] .toast-icon { color: #ff9aa4; }
+.toast-text { flex: 1; min-width: 0; display: grid; gap: 2px; align-self: center; padding-block: 4px; }
 .toast-message { font-weight: 500; text-wrap: pretty; }
-.toast-description { color: var(--ink-muted); text-wrap: pretty; }
-.toast { flex-wrap: wrap; }
-.toast-actions { order: 3; display: flex; gap: 6px; width: 100%; justify-content: flex-end; padding-left: 32px; }
+.toast-description { color: var(--toast-muted); text-wrap: pretty; }
+.toast-actions { order: 3; display: flex; gap: 6px; width: 100%; justify-content: flex-end; padding-inline-end: 8px; }
 .toast-actions .btn { min-height: 34px; padding: 0 12px; font-size: 13px; }
-.toast-close { display: grid; flex: none; place-items: center; width: 32px; height: 32px; margin: -5px 0; border: 0; border-radius: 999px; background: transparent; color: var(--ink-subtle); cursor: pointer; }
-.toast-close:hover { background: var(--muted); color: var(--ink); }
-@media (pointer: coarse) { .toast-close { width: 44px; height: 44px; margin: -11px 0; } .toast-actions .btn { min-height: 40px; } }
+.toast-actions .btn-quiet { background: transparent; color: var(--toast-muted); box-shadow: none; }
+.toast-actions .btn-quiet:hover { background: rgba(255, 255, 255, .08); color: var(--toast-ink); }
+.toast-actions .btn-primary { padding: 0 14px; background: #ffffff; color: #0b1a33; box-shadow: none; }
+.toast-actions .btn-primary:hover { background: #e8eef7; }
+.toast :focus-visible { outline-color: var(--accent-on-deep); }
+.toast-close { display: grid; flex: none; place-items: center; width: 32px; height: 32px; border: 0; border-radius: 999px; background: transparent; color: var(--toast-muted); cursor: pointer; }
+.toast-close:hover { background: rgba(255, 255, 255, .08); color: var(--toast-ink); }
+@media (pointer: coarse) { .toast-close { width: 44px; height: 44px; margin: -6px 0; } .toast-actions .btn { min-height: 40px; } }
 @media (max-width: 39.99rem) {
-  .toasts { left: 16px; right: 16px; width: auto; bottom: max(16px, env(safe-area-inset-bottom)); }
+  .toasts { inset-inline-start: 16px; inset-inline-end: 16px; width: auto; bottom: max(16px, env(safe-area-inset-bottom)); }
 }
 @keyframes toast-in { from { transform: translateY(calc(100% + 24px)); } }
 @keyframes toast-out { to { transform: translateX(calc(100% + 32px)); } }

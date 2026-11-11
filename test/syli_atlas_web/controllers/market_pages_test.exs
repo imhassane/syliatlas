@@ -10,11 +10,10 @@ defmodule SyliAtlasWeb.MarketPagesTest do
 
   defp doc(conn, path), do: conn |> get(path) |> html_response(200) |> LazyHTML.from_document()
 
-  test "the list shows every exchange, the scrolling band and the source", %{conn: conn} do
+  test "the list shows every exchange, the header band and the source", %{conn: conn} do
     html = doc(conn, "/fr/bourses")
     assert html |> LazyHTML.query("#market-list tbody tr") |> Enum.count() == 21
-    assert html |> LazyHTML.query(".ticker-list") |> Enum.count() == 2
-    assert html |> LazyHTML.query(".ticker-list[aria-hidden=true]") |> Enum.count() == 1
+    assert html |> LazyHTML.query("#site-ticker .site-ticker-list") |> Enum.count() == 2
     text = LazyHTML.text(html)
     assert text =~ "Data by MansaAPI"
     assert text =~ "pas un conseil en investissement"
@@ -45,10 +44,12 @@ defmodule SyliAtlasWeb.MarketPagesTest do
     SyliAtlas.Repo.delete_all(SyliAtlas.Market.EodPrice)
     SyliAtlas.Repo.delete_all(SyliAtlas.Market.IndexValue)
     SyliAtlas.Market.Snapshots.rebuild!()
+    SyliAtlasWeb.Ticker.reset()
 
     html = doc(build_conn(), "/fr/bourses")
     assert html |> LazyHTML.query("#market-empty") |> Enum.count() == 1
-    assert html |> LazyHTML.query("#market-summary, #market-table, .ticker") |> Enum.count() == 0
+    assert html |> LazyHTML.query("#market-summary, #market-table") |> Enum.count() == 0
+    assert html |> LazyHTML.query(~s(#site-ticker a[href^="/fr/bourses"])) |> Enum.count() == 0
   end
 
   test "the list is searched, filtered and sorted through the URL", %{conn: conn} do
@@ -109,10 +110,24 @@ defmodule SyliAtlasWeb.MarketPagesTest do
 
     assert html |> LazyHTML.query("#index-chart-empty") |> Enum.count() == 1
     assert html |> LazyHTML.query(".market-sources li") |> Enum.count() == 1
-    # Member countries link to their profiles.
+    # Member countries link to their profiles, from the shared header.
     assert html
-           |> LazyHTML.query(~s(.market-countries a[href="/fr/pays/cote-d-ivoire"]))
+           |> LazyHTML.query(~s(.entity-chips a[href="/fr/pays/cote-d-ivoire"]))
            |> Enum.count() == 1
+  end
+
+  test "exchange and security pages share the header of the profiles", %{conn: conn} do
+    html = doc(conn, "/fr/bourses/brvm")
+    assert html |> LazyHTML.query(".exchange-head h1.entity-name") |> LazyHTML.text() =~ "BRVM"
+    assert html |> LazyHTML.query(".exchange-head .entity-mark svg") |> Enum.count() == 1
+    assert html |> LazyHTML.query("#exchange-kpis li") |> Enum.count() == 4
+    assert html |> LazyHTML.query(".entity-actions #follow-alert") |> Enum.count() == 1
+    assert html |> LazyHTML.query(".tab-intro [data-answer]") |> Enum.count() == 1
+
+    html = doc(conn, "/fr/bourses/brvm/alpt")
+    assert html |> LazyHTML.query(".security-head .entity-tag") |> LazyHTML.text() =~ "ALPT"
+    assert html |> LazyHTML.query("#security-kpis li") |> Enum.count() == 6
+    assert html |> LazyHTML.query("#kpi-close") |> LazyHTML.text() =~ "XOF"
   end
 
   test "an exchange's securities are paged by 20", %{conn: conn} do
@@ -129,7 +144,7 @@ defmodule SyliAtlasWeb.MarketPagesTest do
     assert text =~ "4 000 XOF"
     assert text =~ "≈ 6,7 $"
     assert html |> LazyHTML.query("#price-chart-empty") |> Enum.count() == 1
-    assert conn |> get("/fr/bourses/brvm/ALPT") |> redirected_to() == "/fr/bourses/brvm/alpt"
+    assert conn |> get("/fr/bourses/brvm/ALPT") |> redirected_to(301) == "/fr/bourses/brvm/alpt"
   end
 
   test "the funds page", %{conn: conn} do

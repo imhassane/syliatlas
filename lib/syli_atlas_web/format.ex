@@ -1,9 +1,24 @@
 defmodule SyliAtlasWeb.Format do
-  @moduledoc "Number formatting for French and English pages."
+  @moduledoc """
+  Number formatting in the languages of the site. Digits stay Western in
+  every language (as in the Arabic, Hindi and Chinese financial press);
+  separators follow the language: 1 234,5 (fr, pt), 1.234,5 (es),
+  1,234.5 (en, ar, hi, zh).
+  """
   alias SyliAtlas.Sources.Indicators
 
   @nbsp " "
   @thin " "
+
+  @doc """
+  Gettext bindings for a template naming a country or region: `%{name}` and,
+  for French grammar, `%{of_name}` (du Sénégal), `%{in_name}` (au Sénégal),
+  `%{the_name}`/`%{The_name}` (le Sénégal) and `%{e}` (noté, notée). See
+  `SyliAtlas.Geo.French`. Uses the current Gettext locale.
+  """
+  def names(name, extra \\ []) do
+    SyliAtlas.Geo.French.bindings(name, Gettext.get_locale(SyliAtlasWeb.Gettext)) ++ extra
+  end
 
   @doc "Formats a number with the locale's separators."
   def number(nil, _decimals, _locale), do: "n.d."
@@ -20,10 +35,10 @@ defmodule SyliAtlasWeb.Format do
       |> String.reverse()
       |> String.graphemes()
       |> Enum.chunk_every(3)
-      |> Enum.map_join(if(locale == "en", do: ",", else: @thin), &Enum.join/1)
+      |> Enum.map_join(group_sep(locale), &Enum.join/1)
       |> String.reverse()
 
-    decimal_sep = if locale == "en", do: ".", else: ","
+    decimal_sep = decimal_sep(locale)
     sign <> grouped <> if(frac == "", do: "", else: decimal_sep <> frac)
   end
 
@@ -86,8 +101,29 @@ defmodule SyliAtlasWeb.Format do
   end
 
   defp signed(v, locale), do: if(v > 0, do: "+", else: "") <> number(v, 1, locale)
+  defp group_sep(locale) when locale in ["fr", "pt"], do: @thin
+  defp group_sep("es"), do: "."
+  defp group_sep(_), do: ","
+
+  @doc "The decimal separator of a language."
+  def decimal_sep(locale) when locale in ["fr", "pt", "es"], do: ","
+  def decimal_sep(_), do: "."
+
+  @doc "The short word for a billion: Md (fr), bn (en), mil M (es)…"
+  def billion_word("fr"), do: "Md"
+  def billion_word("es"), do: "mil M"
+  def billion_word("pt"), do: "mil M"
+  def billion_word("ar"), do: "مليار"
+  def billion_word("hi"), do: "अरब"
+  def billion_word("zh"), do: "十亿"
+  def billion_word(_), do: "bn"
+
+  def billions("fr"), do: "Md$"
   def billions("en"), do: "bn$"
-  def billions(_), do: "Md$"
-  defp na("en"), do: "n/a"
-  defp na(_), do: "n.d."
+  def billions(locale), do: billion_word(locale) <> " $"
+
+  defp na("fr"), do: "n.d."
+  defp na("es"), do: "n.d."
+  defp na("pt"), do: "n.d."
+  defp na(_), do: "n/a"
 end

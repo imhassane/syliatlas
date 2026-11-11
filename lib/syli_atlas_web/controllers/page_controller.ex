@@ -19,7 +19,7 @@ defmodule SyliAtlasWeb.PageController do
 
     case PublicData.home(locale) do
       %{"africa" => africa} = home when is_map(africa) ->
-        paths = %{"fr" => "/fr", "en" => "/en"}
+        paths = SyliAtlas.Locales.each(&"/#{&1}")
         map = home["map"] || %{"countries" => [], "from" => home["from"], "to" => home["to"]}
         map_countries = map["countries"]
 
@@ -29,14 +29,15 @@ defmodule SyliAtlasWeb.PageController do
             List.first(map_countries)
 
         render(conn, :home,
-          page_title: gettext("African economies, country by country"),
+          page_title: gettext("Economic data of the 54 African countries: GDP, debt, inflation"),
           seo:
             Seo.page(
               locale,
               paths,
               gettext(
                 "Growth, living standards, debt and inflation for every African country, from 2015 to the IMF projections for 2030."
-              )
+              ),
+              %{json_ld: Seo.site(locale)}
             ),
           alternates: Seo.alternates_for_header(paths),
           from: home["from"],
@@ -70,7 +71,7 @@ defmodule SyliAtlasWeb.PageController do
   """
   def offline(conn, _params) do
     locale = conn.assigns.locale
-    paths = %{"fr" => Paths.offline("fr"), "en" => Paths.offline("en")}
+    paths = SyliAtlas.Locales.each(fn l -> Paths.offline(l) end)
 
     render(conn, :offline,
       page_title: gettext("Offline"),
@@ -83,21 +84,111 @@ defmodule SyliAtlasWeb.PageController do
     )
   end
 
-  def method(conn, _params) do
+  @doc "Who makes the site, where its figures come from, how to cite and reach it."
+  def about(conn, _params) do
     locale = conn.assigns.locale
-    paths = %{"fr" => Paths.method("fr"), "en" => Paths.method("en")}
+    paths = SyliAtlas.Locales.each(fn l -> Paths.about(l) end)
+    edition = Sources.published_edition("imf_weo")
+    title = gettext("About Syli Atlas: sources, updates, how to cite")
 
-    render(conn, :method,
-      page_title: gettext("Method and sources"),
+    render(conn, String.to_existing_atom("about_" <> locale),
+      page_title: title,
       seo:
         Seo.page(
           locale,
           paths,
-          gettext("Where Syli Atlas figures come from and how totals and changes are computed.")
+          gettext(
+            "Syli Atlas gathers the economic figures of the 54 African countries from the IMF, the World Bank, CEPII and the rating agencies. Free and non-commercial; every figure names its source."
+          ),
+          %{
+            json_ld: [
+              Seo.breadcrumbs([
+                {"Syli Atlas", Paths.home(locale)},
+                {gettext("About"), paths[locale]}
+              ]),
+              Seo.about_page(title, paths[locale], [
+                {"IMF, World Economic Outlook", "https://www.imf.org/en/Publications/WEO"},
+                {"World Bank, World Development Indicators",
+                 "https://datacatalog.worldbank.org/search/dataset/0037712"},
+                {"CEPII, BACI",
+                 "https://www.cepii.fr/CEPII/en/bdd_modele/bdd_modele_item.asp?id=37"}
+              ])
+            ]
+          }
+        ),
+      alternates: Seo.alternates_for_header(paths),
+      edition_label: (edition && edition.label) || "World Economic Outlook",
+      contact_email: Application.get_env(:syli_atlas, :site, [])[:contact_email]
+    )
+  end
+
+  def method(conn, _params) do
+    locale = conn.assigns.locale
+    paths = SyliAtlas.Locales.each(fn l -> Paths.method(l) end)
+
+    render(conn, :method,
+      page_title: gettext("Sources and method: IMF, World Bank, CEPII, rating agencies"),
+      seo:
+        Seo.page(
+          locale,
+          paths,
+          gettext("Where Syli Atlas figures come from and how totals and changes are computed."),
+          %{
+            json_ld: [
+              Seo.breadcrumbs([
+                {"Syli Atlas", Paths.home(locale)},
+                {gettext("Method and sources"), paths[locale]}
+              ]),
+              Seo.about_page(
+                gettext("Method and sources"),
+                paths[locale],
+                for(
+                  s <- data_sources(Sources.published_edition("imf_weo")),
+                  do: {s.name, s[:url]}
+                )
+              )
+            ]
+          }
         ),
       alternates: Seo.alternates_for_header(paths),
       edition: Sources.published_edition("imf_weo"),
       data_sources: data_sources(Sources.published_edition("imf_weo"))
+    )
+  end
+
+  # The accessibility statement (RGAA). Update after each audit made in Ara
+  # (https://ara.numerique.gouv.fr): status :none | :partial | :full, the
+  # rate it gives, the date, and the pages left non-compliant.
+  @accessibility %{
+    status: :none,
+    rate: nil,
+    audited_on: nil,
+    stated_on: ~D[2026-11-11],
+    rgaa: "4.1.2"
+  }
+
+  @doc "The accessibility status, for the footer mention."
+  def accessibility_status, do: @accessibility.status
+
+  def accessibility(conn, _params) do
+    locale = conn.assigns.locale
+    paths = SyliAtlas.Locales.each(fn l -> Paths.accessibility(l) end)
+
+    template = if locale == "fr", do: :accessibility_fr, else: :accessibility_en
+
+    render(conn, template,
+      page_title: gettext("Accessibility"),
+      seo:
+        Seo.page(
+          locale,
+          paths,
+          gettext(
+            "Accessibility statement of Syli Atlas: compliance with the RGAA, known barriers and how to report one."
+          )
+        ),
+      alternates: Seo.alternates_for_header(paths),
+      a11y: @accessibility,
+      contact_email: Application.get_env(:syli_atlas, :site, [])[:contact_email]
     )
   end
 

@@ -1,4 +1,4 @@
-<Layouts.public locale={@locale} current={:login} current_user={@current_user}>
+<Layouts.public ticker={false} locale={@locale} current={:login} current_user={@current_user}>
   <section class="section section-alt auth">
     <div class="wrap auth-grid">
       <div class="stack gap-3 auth-intro">
@@ -47,6 +47,8 @@
               id="login-email"
               value={@email}
               autocomplete="email webauthn"
+              aria-describedby={@error && "login-error"}
+              aria-invalid={@error && "true"}
               required
               disabled={!@mail?}
             />

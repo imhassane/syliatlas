@@ -65,7 +65,8 @@ defmodule SyliAtlasWeb.MapComponents do
             s.code == @selected && "is-sel"
           ]}
           data-code={s.code}
-          aria-label={s.country["name"]}
+          data-name={s.country["name"]}
+          aria-label={country_label(@mode, @indicator, s.country, @locale)}
         >
           <path d={s.area.d}></path>
           <circle :if={s.area.small} class="isle" cx={s.area.cx} cy={s.area.cy} r="5"></circle>
@@ -73,6 +74,15 @@ defmodule SyliAtlasWeb.MapComponents do
       <% end %>
     </svg>
     """
+  end
+
+  # The colour also said in words (RGAA 3.1): « Sénégal : 32,4 Md$ ».
+  defp country_label(:regions, _indicator, c, _locale), do: c["name"]
+
+  defp country_label(_mode, indicator, c, locale) do
+    if indicator in MapScale.keys(),
+      do: c["name"] <> " : " <> MapScale.value_text(indicator, c, locale),
+      else: c["name"]
   end
 
   # The region's slug comes with the country in the map snapshot (no lookup).
@@ -252,10 +262,13 @@ defmodule SyliAtlasWeb.MapComponents do
           class="btn btn-primary grow"
           data-field="href"
           href={Paths.area(@locale, "country", @c["slug"])}
-        >{gettext("See the full profile")} →</a>
-        <a class="btn btn-secondary" data-field="compare" href={Paths.compare(@locale, [@c["slug"]])}>{gettext(
-          "Compare"
-        )}</a>
+        >
+          {gettext("See the full profile")}<span class="vh" data-field="name-vh"> : {@c["name"]}</span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <a class="btn btn-secondary" data-field="compare" href={Paths.compare(@locale, [@c["slug"]])}>
+          {gettext("Compare")}<span class="vh" data-field="name-vh-compare"> : {@c["name"]}</span>
+        </a>
       </div>
     </aside>
     """
@@ -400,6 +413,9 @@ defmodule SyliAtlasWeb.MapComponents do
           {gettext(
             "Islands are marked with a dot. Western Sahara has no separate IMF data. Source: IMF, World Economic Outlook."
           )}
+          <a href={Paths.ranking_main(@locale)}>{gettext(
+            "The same figures as a table: ranking of the 54 countries"
+          )}</a>
         </p>
       </.card>
       <.map_panel

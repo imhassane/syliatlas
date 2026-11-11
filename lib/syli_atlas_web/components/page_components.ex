@@ -107,7 +107,7 @@ defmodule SyliAtlasWeb.PageComponents do
 
   @doc """
   Search form. Without JavaScript it submits to the search page; with it,
-  `assets/js/ui/search.js` shows suggestions from `/api/v1/search` under the
+  `assets/js/ui/search.js` shows suggestions from `/api/internal/search` under the
   field (combobox, arrows, Enter, Escape).
   """
   def search_form(assigns) do
@@ -115,6 +115,7 @@ defmodule SyliAtlasWeb.PageComponents do
     <form
       class={["search", @compact && "search-compact"]}
       role="search"
+      aria-label={if @compact, do: gettext("Site search"), else: gettext("Search the data")}
       action={SyliAtlasWeb.Paths.search(@locale)}
       method="get"
       data-search={@locale}
@@ -163,9 +164,13 @@ defmodule SyliAtlasWeb.PageComponents do
   def source_line(assigns) do
     ~H"""
     <p class="src">
-      {gettext("Source: IMF, %{label}", label: @edition["label"])} · {gettext("copied on %{date}",
-        date: String.slice(@edition["fetched_at"] || "", 0, 10)
-      )}
+      {gettext("Source: IMF, %{label}", label: @edition["label"])} · {gettext("updated on")}
+      <time datetime={String.slice(@edition["fetched_at"] || "", 0, 10)}>
+        {SyliAtlasWeb.RatingComponents.date_text(
+          String.slice(@edition["fetched_at"] || "", 0, 10),
+          @locale
+        )}
+      </time>
     </p>
     """
   end

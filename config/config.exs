@@ -49,9 +49,18 @@ config :syli_atlas, Oban,
        {"20 7 * * *", SyliAtlas.Workers.RatingsWatchWorker},
        # Digests of favourites: Mondays, and the 1st for monthly ones (the
        # worker picks who is due), after the morning check of the sources.
-       {"40 6 * * *", SyliAtlas.Workers.DigestWorker}
+       {"40 6 * * *", SyliAtlas.Workers.DigestWorker},
+       # Country recaps without an account (docs/recap.md): purge of the
+       # addresses never confirmed, then the recaps due today.
+       {"45 6 * * *", SyliAtlas.Workers.RecapWorker},
+       # Server time of the public API: a probe, then the finished hours written.
+       {"5 * * * *", SyliAtlas.Workers.ApiTimingWorker}
      ]}
   ]
+
+# Public API: requests per minute and per visitor address. "internal" is
+# for the routes the site itself calls (search while typing, offline pack).
+config :syli_atlas, SyliAtlasWeb.Plugs.ApiRateLimit, enabled: true, public: 60, internal: 240
 
 # Market pages are shown when an active source's licence allows public
 # display, or in preview (dev and test; MARKET_PREVIEW=true in production).

@@ -4,16 +4,37 @@ defmodule SyliAtlasWeb.Admin.RatingsController do
 
   alias SyliAtlas.Ratings
   alias SyliAtlas.Ratings.{Rating, Review}
+  alias SyliAtlasWeb.Admin.RatingsHTML
 
   def root(conn, _params), do: redirect(conn, to: ~p"/admin/notations")
 
-  def index(conn, _params) do
+  def index(conn, params) do
+    doc = Ratings.document()
+    pending = Review.list("pending", 1000)
+
+    filter =
+      if params["filtre"] in ~w(changements confirmations), do: params["filtre"], else: "toutes"
+
+    shown =
+      case filter do
+        "changements" -> Enum.filter(pending, &(RatingsHTML.kind(&1, doc) == :change))
+        "confirmations" -> Enum.filter(pending, &(RatingsHTML.kind(&1, doc) == :confirmation))
+        "toutes" -> pending
+      end
+
     render(conn, :index,
       page_title: "Admin · Notations",
-      pending: Review.list("pending"),
-      decided: Review.list("approved", 10) ++ Review.list("rejected", 10),
+      pending: pending,
+      shown: SyliAtlasWeb.Pagination.paginate(shown, params["page"]),
+      params: Map.take(params, ["filtre", "page", "verif", "decisions"]),
+      filter: filter,
+      decided:
+        (Review.list("approved", 500) ++ Review.list("rejected", 500))
+        |> Enum.sort_by(& &1.reviewed_at, {:desc, DateTime})
+        |> SyliAtlasWeb.Pagination.paginate(params["decisions"]),
       to_check: Review.to_check(),
-      doc: Ratings.document(),
+      to_check_page: SyliAtlasWeb.Pagination.paginate(Review.to_check(), params["verif"]),
+      doc: doc,
       extractor?: SyliAtlas.Ratings.Extractor.configured?(),
       last_watch: SyliAtlas.Ratings.Watch.last_run()
     )

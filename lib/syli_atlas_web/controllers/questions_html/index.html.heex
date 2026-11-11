@@ -1,0 +1,22 @@
+<Layouts.public locale={@locale} current={:themes} alternates={@alternates}>
+  <.section>
+    <nav aria-label={gettext("Breadcrumb")}>
+      <ol class="crumbs">
+        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+        <li aria-current="page">{gettext("Questions")}</li>
+      </ol>
+    </nav>
+    <.section_head level={1} eyebrow={gettext("Questions")} title={@heading}>
+      <:intro>
+        {gettext(
+          "Each answer is written from the latest figures of the IMF, the World Bank and the rating agencies, with its source."
+        )}
+      </:intro>
+    </.section_head>
+    <.card id="questions-list">
+      <ul class="stack gap-2">
+        <li :for={{q, href} <- @questions}><a href={href}>{q}</a></li>
+      </ul>
+    </.card>
+  </.section>
+</Layouts.public>

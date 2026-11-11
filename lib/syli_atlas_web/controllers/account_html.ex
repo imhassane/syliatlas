@@ -12,7 +12,6 @@ defmodule SyliAtlasWeb.AccountHTML do
   attr :locale, :string, required: true
   attr :user, :any, required: true
   attr :tab, :atom, required: true
-  attr :flash, :map, required: true
   slot :inner_block, required: true
 
   @doc "The frame of the space: the account and its tabs, then the page."
@@ -45,10 +44,6 @@ defmodule SyliAtlasWeb.AccountHTML do
           </.form>
         </aside>
         <div class="space-main stack gap-4">
-          <p :if={msg = Phoenix.Flash.get(@flash, :info)} class="adm-flash ok" role="status">{msg}</p>
-          <p :if={msg = Phoenix.Flash.get(@flash, :error)} class="adm-flash err" role="alert">
-            {msg}
-          </p>
           {render_slot(@inner_block)}
         </div>
       </div>

@@ -13,12 +13,14 @@
 // Offline reading: each page lists the files it loaded ({type: "save-assets"}),
 // and once a page asks ({type: "save-pages", locale}), the
 // worker saves every country, region and main page of that language that
-// it does not hold yet (list from /api/v1/offline-pages), one at a time,
+// it does not hold yet (list from /api/internal/offline-pages), one at a time,
 // and stops at the first network failure.
 const VERSION = new URL(self.location).searchParams.get("v") || "dev"
 const PAGES = "pages-" + VERSION
 const STATIC = "static-" + VERSION
 const API = "api-v1"
+// The offline page of each language of the site (SyliAtlasWeb.Paths.offline/1).
+const OFFLINE_PAGES = {fr: "/fr/hors-ligne", en: "/en/offline", es: "/es/sin-conexion", pt: "/pt/offline", ar: "/ar/offline", hi: "/hi/offline", zh: "/zh/offline"}
 const OFFLINE_START = ["/fr", "/en", "/fr/hors-ligne", "/en/offline"]
 
 self.addEventListener("install", event => {
@@ -39,7 +41,8 @@ self.addEventListener("message", event => {
   if (event.data === "skip-waiting") self.skipWaiting()
   if (event.data?.type === "save-assets") event.waitUntil(saveAssets(event.data.assets))
   if (event.data?.type === "save-pages" && !saving) {
-    saving = savePages(event.data.locale === "en" ? "en" : "fr").finally(() => { saving = null })
+    const locale = event.data.locale in OFFLINE_PAGES ? event.data.locale : "fr"
+    saving = savePages(locale).finally(() => { saving = null })
     event.waitUntil(saving)
   }
 })
@@ -61,7 +64,7 @@ async function savePages(locale) {
   const cache = await caches.open(PAGES)
   let paths
   try {
-    const res = await fetch(`/api/v1/offline-pages?locale=${locale}`)
+    const res = await fetch(`/api/internal/offline-pages?locale=${locale}`)
     if (!res.ok) return
     paths = (await res.json()).pages
   } catch (_) { return }
@@ -90,8 +93,9 @@ async function networkFirst(request, cacheName) {
     if (request.mode === "navigate") {
       // Not saved: the offline page, shown under the asked address (it says
       // which page and lists the saved ones), else the home page.
-      const en = new URL(request.url).pathname.startsWith("/en")
-      const fallback = (await cache.match(en ? "/en/offline" : "/fr/hors-ligne")) || (await cache.match(en ? "/en" : "/fr"))
+      const first = new URL(request.url).pathname.split("/")[1]
+      const lang = first in OFFLINE_PAGES ? first : "fr"
+      const fallback = (await cache.match(OFFLINE_PAGES[lang])) || (await cache.match("/" + lang))
       if (fallback) return fallback
     }
     throw error
@@ -115,7 +119,7 @@ self.addEventListener("fetch", event => {
   if (url.origin === location.origin) {
     if (url.pathname.startsWith("/live") || url.pathname.startsWith("/phoenix") || url.pathname.startsWith("/admin")) return
     if (request.mode === "navigate") return event.respondWith(networkFirst(request, PAGES))
-    if (url.pathname.startsWith("/api/v1/version")) return
+    if (url.pathname.startsWith("/api/internal/version") || url.pathname.startsWith("/api/v1/version")) return
     if (url.pathname.startsWith("/api/")) return event.respondWith(networkFirst(request, API))
     if (/^\/(assets|images|fonts)\//.test(url.pathname)) return event.respondWith(cacheFirst(request))
   }

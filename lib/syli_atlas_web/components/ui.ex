@@ -6,6 +6,41 @@ defmodule SyliAtlasWeb.UI do
   """
   use Phoenix.Component
 
+  # Flags -------------------------------------------------------------------
+
+  attr :code, :string, required: true, doc: "ISO 3166-1 alpha-3 code of the country"
+  attr :size, :string, default: "md", values: ~w(sm md lg)
+
+  attr :sprite, :boolean,
+    default: false,
+    doc: "lists: a reference into the shared flag file instead of the SVG itself"
+
+  attr :class, :string, default: nil
+
+  @doc """
+  A country's flag (SyliAtlasWeb.Flags), decorative: the name is next to it.
+  Nothing for an area without a flag (a region, Western Sahara).
+  """
+  def flag(assigns) do
+    assigns =
+      assign(assigns,
+        svg: !assigns.sprite && SyliAtlasWeb.Flags.inline(assigns.code),
+        href: assigns.sprite && SyliAtlasWeb.Flags.sprite_href(assigns.code)
+      )
+
+    ~H"""
+    <span :if={@svg} class={["flag", "flag-#{@size}", @class]} aria-hidden="true">{@svg}</span>
+    <span :if={@href} class={["flag", "flag-#{@size}", @class]} aria-hidden="true">
+      <svg
+        class="flag-svg"
+        viewBox="0 0 640 480"
+        preserveAspectRatio="xMidYMid slice"
+        focusable="false"
+      ><use href={@href}></use></svg>
+    </span>
+    """
+  end
+
   # Sections ------------------------------------------------------------
 
   attr :variant, :string, default: "plain", values: ~w(plain alt deep)
@@ -140,6 +175,10 @@ defmodule SyliAtlasWeb.UI do
   attr :start, :integer, default: 0, doc: "rank of the first item minus one (paged lists)"
 
   @doc "Numbered ranking. With `bars`, each row shows a bar scaled by `:bar` (0–100)."
+  attr :flags, :boolean,
+    default: false,
+    doc: "a small flag before each country (shared flag file)"
+
   def rank_list(assigns) do
     ~H"""
     <ol class={["rank-list", @bars && "rank-bars"]} start={@start + 1}>
@@ -148,7 +187,9 @@ defmodule SyliAtlasWeb.UI do
         class={item.key == @current && "is-current"}
       >
         <span class="num subtle">{i}</span>
-        <a href={item.href}>{item.name}</a>
+        <a href={item.href} class={@flags && "rank-flagged"}>
+          <.flag :if={@flags} code={item.key} size="sm" sprite />{item.name}
+        </a>
         <span :if={@bars} class="bar-track" aria-hidden="true">
           <span class={["bar-fill", item[:neg] && "neg"]} style={"width: #{item[:bar] || 0}%"}></span>
         </span>

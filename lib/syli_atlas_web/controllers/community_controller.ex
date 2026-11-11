@@ -16,7 +16,7 @@ defmodule SyliAtlasWeb.CommunityController do
 
   def index(conn, _params) do
     locale = conn.assigns.locale
-    paths = %{"fr" => Paths.communities("fr"), "en" => Paths.communities("en")}
+    paths = SyliAtlas.Locales.each(fn l -> Paths.communities(l) end)
     rows = Enum.map(Communities.all(), &summary(&1, locale))
     answer = answer(rows, locale)
 
@@ -28,7 +28,16 @@ defmodule SyliAtlasWeb.CommunityController do
             Seo.breadcrumbs([
               {"Syli Atlas", Paths.home(locale)},
               {gettext("Economic communities"), paths[locale]}
-            ])
+            ]),
+            Seo.item_list(
+              gettext("Economic communities of Africa"),
+              for(
+                c <- Communities.all(),
+                do:
+                  {SyliAtlas.Locales.pick(c.name, locale),
+                   Paths.community(locale, SyliAtlas.Locales.pick(c.slug, locale))}
+              )
+            )
           ]
         }),
       alternates: Seo.alternates_for_header(paths),
@@ -46,24 +55,24 @@ defmodule SyliAtlasWeb.CommunityController do
       Communities.by_slug(slug, locale) || Communities.by_slug(slug, other(locale)) ||
         raise NotFoundError
 
-    paths = %{
-      "fr" => Paths.community("fr", community.slug["fr"]),
-      "en" => Paths.community("en", community.slug["en"])
-    }
+    paths =
+      SyliAtlas.Locales.each(fn l ->
+        Paths.community(l, SyliAtlas.Locales.pick(community.slug, l))
+      end)
 
     if conn.request_path != paths[locale] do
-      redirect(conn, to: paths[locale])
+      conn |> put_status(301) |> redirect(to: paths[locale])
     else
       s = summary(community, locale)
-      name = community.short[locale]
+      name = SyliAtlas.Locales.pick(community.short, locale)
 
       members =
         s.members
         |> Enum.map(fn m ->
           %{
             code: m["code"],
-            name: m["name"][locale],
-            slug: m["slug"][locale],
+            name: SyliAtlas.Locales.pick(m["name"], locale),
+            slug: SyliAtlas.Locales.pick(m["slug"], locale),
             gdp: at(m["series"], "gdp_usd_bn"),
             growth: at(m["series"], "real_gdp_growth"),
             debt: at(m["series"], "public_debt_pct_gdp"),
@@ -78,7 +87,12 @@ defmodule SyliAtlasWeb.CommunityController do
       answer = community_answer(community, s, locale)
 
       render(conn, :show,
-        page_title: "#{name} · " <> community.name[locale],
+        page_title:
+          gettext("%{name}: GDP, growth and debt of the %{count} member countries (%{year})",
+            name: name,
+            count: length(s.members),
+            year: @year
+          ),
         seo:
           Seo.page(locale, paths, answer, %{
             json_ld: [
@@ -86,7 +100,13 @@ defmodule SyliAtlasWeb.CommunityController do
                 {"Syli Atlas", Paths.home(locale)},
                 {gettext("Economic communities"), Paths.communities(locale)},
                 {name, paths[locale]}
-              ])
+              ]),
+              Seo.community(
+                SyliAtlas.Locales.pick(community.name, locale),
+                name,
+                paths[locale],
+                for(m <- members, do: {m.name, Paths.area(locale, "country", m.slug)})
+              )
             ]
           }),
         alternates: Seo.alternates_for_header(paths),
@@ -104,6 +124,9 @@ defmodule SyliAtlasWeb.CommunityController do
 
   @doc "The six communities with their totals for #{@year} (cached; regions page)."
   def summaries, do: Enum.map(Communities.all(), &summary(&1, nil))
+
+  @doc "The totals of one community (share images)."
+  def summary_for(community), do: summary(community, nil)
 
   # Totals change only with the IMF data: computed once per data version,
   # kept in memory (the six communities together take ~10 ms to add up).
@@ -154,9 +177,9 @@ defmodule SyliAtlasWeb.CommunityController do
     gettext(
       "In %{year}, %{largest} is the largest African economic community by GDP (%{gdp}), and %{fastest} the fastest-growing (%{growth}), according to IMF figures added up by Syli Atlas.",
       year: @year,
-      largest: largest && largest.community.short[locale],
+      largest: largest && SyliAtlas.Locales.pick(largest.community.short, locale),
       gdp: largest && SyliAtlasWeb.Format.value(largest.gdp, "gdp_usd_bn", locale),
-      fastest: fastest && fastest.community.short[locale],
+      fastest: fastest && SyliAtlas.Locales.pick(fastest.community.short, locale),
       growth: fastest && SyliAtlasWeb.Format.value(fastest.growth, "real_gdp_growth", locale)
     )
   end
@@ -164,7 +187,7 @@ defmodule SyliAtlasWeb.CommunityController do
   defp community_answer(c, s, locale) do
     gettext(
       "%{name} (%{n} members): GDP of %{gdp} in %{year}, %{population} inhabitants, growth of %{growth} and public debt of %{debt} of GDP (IMF, Syli Atlas totals).",
-      name: c.short[locale],
+      name: SyliAtlas.Locales.pick(c.short, locale),
       n: length(c.members),
       gdp: SyliAtlasWeb.Format.value(s.gdp, "gdp_usd_bn", locale),
       year: @year,

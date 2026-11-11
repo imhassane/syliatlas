@@ -1,4 +1,4 @@
-<Layouts.public locale={@locale} current={:login} current_user={@current_user}>
+<Layouts.public ticker={false} locale={@locale} current={:login} current_user={@current_user}>
   <section class="section section-alt auth">
     <div class="wrap auth-narrow">
       <div class="card pad stack gap-3">
@@ -22,13 +22,15 @@
               pattern="[0-9 ]{6,7}"
               maxlength="7"
               dir="ltr"
+              aria-describedby={if @error, do: "code-error code-hint", else: "code-hint"}
+              aria-invalid={@error && "true"}
               required
               autofocus
             />
           </label>
           <button class="btn btn-primary" type="submit" id="code-submit">{gettext("Confirm")}</button>
         </.form>
-        <p class="small muted">
+        <p class="small muted" id="code-hint">
           {gettext("Valid for 10 minutes, 5 attempts. Nothing received? Check your spam, or")}
           <a href={Paths.login(@locale)}>{gettext("ask for a new code")}</a>.
         </p>

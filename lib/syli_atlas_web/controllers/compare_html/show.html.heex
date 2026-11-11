@@ -3,8 +3,9 @@
     <.section_head
       level={1}
       eyebrow={gettext("Compare")}
-      title={gettext("Side by side, over the same period.")}
+      title={@heading || gettext("Side by side, over the same period.")}
     />
+    <p :if={@answer} class="lead" data-answer id="pair-answer">{@answer}</p>
     <div class="row gap-2">
       <.series_chip
         :for={s <- @series}

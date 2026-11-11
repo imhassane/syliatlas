@@ -1,12 +1,11 @@
 defmodule SyliAtlasWeb.MarketComponents do
   @moduledoc """
-  Pieces of the market pages: price and change formats, the scrolling band
-  of indices, the index chart, the source block, and the « stock exchange »
-  block of a country page. Prices arrive as strings (exact decimals).
+  Pieces of the market pages: price and change formats, the index chart,
+  the source block, and the « stock exchange » block of a country page. Prices arrive as strings (exact decimals).
   """
   use Phoenix.Component
   use Gettext, backend: SyliAtlasWeb.Gettext
-  import SyliAtlasWeb.Format, only: [number: 3]
+  import SyliAtlasWeb.Format, only: [number: 3, names: 2]
   alias SyliAtlas.Market.Catalog
   alias SyliAtlasWeb.Paths
 
@@ -91,7 +90,7 @@ defmodule SyliAtlasWeb.MarketComponents do
   end
 
   defp scale(v, locale) do
-    billion = if locale == "en", do: "bn", else: "Md"
+    billion = SyliAtlasWeb.Format.billion_word(locale)
 
     cond do
       abs(v) >= 1.0e9 -> {v / 1.0e9, billion}
@@ -104,9 +103,6 @@ defmodule SyliAtlasWeb.MarketComponents do
   def integer(nil, locale), do: na(locale)
   def integer(n, locale), do: number(n * 1.0, 0, locale)
 
-  @months_fr ~w(janv. févr. mars avr. mai juin juil. août sept. oct. nov. déc.)
-  @months_en ~w(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
-
   @doc "« 9 nov. 2026 » / « 9 Nov 2026 »; without the year when `year: false`."
   def day(iso, locale, opts \\ [])
   def day(nil, locale, _opts), do: na(locale)
@@ -114,9 +110,9 @@ defmodule SyliAtlasWeb.MarketComponents do
   def day(iso, locale, opts) do
     case Date.from_iso8601(String.slice(iso, 0, 10)) do
       {:ok, d} ->
-        months = if locale == "en", do: @months_en, else: @months_fr
-        base = "#{d.day} #{Enum.at(months, d.month - 1)}"
-        if Keyword.get(opts, :year, true), do: base <> " #{d.year}", else: base
+        if Keyword.get(opts, :year, true),
+          do: SyliAtlasWeb.Dates.day_month_year(d.day, d.month, d.year, locale),
+          else: SyliAtlasWeb.Dates.day_month(d.day, d.month, locale)
 
       _ ->
         iso
@@ -174,51 +170,6 @@ defmodule SyliAtlasWeb.MarketComponents do
     >
       {gettext("to check")}
     </span>
-    """
-  end
-
-  # The scrolling band -----------------------------------------------------------
-
-  attr :exchanges, :list, required: true
-  attr :locale, :string, required: true
-
-  @doc """
-  Indices at the last close, scrolling. The list is written twice so the
-  loop is seamless; the copy is hidden from screen readers. Still when the
-  reader asked for less motion, paused on hover.
-  """
-  def ticker_band(assigns) do
-    assigns =
-      assign(assigns, :items, Enum.filter(assigns.exchanges, &(&1["index"]["value"] != nil)))
-
-    ~H"""
-    <div
-      :if={@items != []}
-      class="ticker"
-      role="region"
-      aria-label={gettext("Indices at the last close")}
-    >
-      <div class="ticker-track">
-        <ul class="ticker-list">
-          <li :for={x <- @items}>
-            <a href={Paths.exchange(@locale, x["exchange"]["code"])}>
-              <b>{x["exchange"]["short_name"]}</b>
-              <span class="muted">{price(x["index"]["value"], @locale)}</span>
-              <span class={tone(x["index"]["change_pct"])}>{pct(x["index"]["change_pct"], @locale)}</span>
-            </a>
-          </li>
-        </ul>
-        <ul class="ticker-list" aria-hidden="true">
-          <li :for={x <- @items}>
-            <a href={Paths.exchange(@locale, x["exchange"]["code"])} tabindex="-1">
-              <b>{x["exchange"]["short_name"]}</b>
-              <span class="muted">{price(x["index"]["value"], @locale)}</span>
-              <span class={tone(x["index"]["change_pct"])}>{pct(x["index"]["change_pct"], @locale)}</span>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
     """
   end
 
@@ -369,7 +320,11 @@ defmodule SyliAtlasWeb.MarketComponents do
     assigns = assign(assigns, :used, used_sources(assigns.sources))
 
     ~H"""
-    <span class="credit" data-credit>
+    <span :if={SyliAtlas.Market.fake?()} class="credit" data-credit>
+      <b>{gettext("Fictitious figures (development), not MansaAPI's")}</b>
+      · {when_text(@date, @locale)}
+    </span>
+    <span :if={!SyliAtlas.Market.fake?()} class="credit" data-credit>
       <%= for {s, i} <- Enum.with_index(@used) do %>
         {if i > 0, do: ", "}<a href={Catalog.url(s["code"]) || s["url"]} rel="noopener">{Catalog.attribution(
           s["code"]
@@ -408,9 +363,9 @@ defmodule SyliAtlasWeb.MarketComponents do
             <div class="section-head">
               <p class="eyebrow">{gettext("Stock exchange")}</p>
               <h2 class="h1">
-                {gettext("%{country} on the %{exchange}",
-                  country: @name,
-                  exchange: x["exchange"]["short_name"]
+                {gettext(
+                  "%{name} on the %{exchange}",
+                  names(@name, exchange: x["exchange"]["short_name"])
                 )}
               </h2>
               <p :if={x["regional"]} class="lead">

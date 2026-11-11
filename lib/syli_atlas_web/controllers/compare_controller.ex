@@ -25,6 +25,12 @@ defmodule SyliAtlasWeb.CompareController do
       |> Enum.reject(&is_nil/1)
       |> Enum.take(@max)
 
+    # A pair with a page of its own (SyliAtlasWeb.Topics): indexed in its
+    # order; the other order keeps the reader's choice and names the first
+    # as canonical.
+    pair = length(areas) == 2 && SyliAtlasWeb.Topics.pair(Enum.map(areas, & &1.code))
+    in_order? = pair && Enum.map(areas, & &1.code) == pair
+
     canonical_slugs = Enum.map(areas, &SyliAtlas.Geo.Area.slug(&1, locale))
 
     if params["add"] || canonical_slugs != List.wrap(params["slugs"]) do
@@ -46,7 +52,7 @@ defmodule SyliAtlasWeb.CompareController do
               [
                 %{
                   id: a.code,
-                  name: item["name"][locale],
+                  name: SyliAtlas.Locales.pick(item["name"], locale),
                   color: Enum.at(@colors, i),
                   item: item,
                   area: a
@@ -57,26 +63,56 @@ defmodule SyliAtlasWeb.CompareController do
 
       names = Enum.map_join(series, ", ", & &1.name)
 
-      paths = %{
-        "fr" => Paths.compare("fr", Enum.map(areas, &SyliAtlas.Geo.Area.slug(&1, "fr"))),
-        "en" => Paths.compare("en", Enum.map(areas, &SyliAtlas.Geo.Area.slug(&1, "en")))
-      }
+      paths =
+        SyliAtlas.Locales.each(fn l ->
+          Paths.compare(l, Enum.map(areas, &SyliAtlas.Geo.Area.slug(&1, l)))
+        end)
+
+      # Only the pairs chosen in SyliAtlasWeb.Topics are indexed, over the
+      # default period: free combinations would make thousands of near-copies.
+      indexed? =
+        in_order? == true and length(series) == 2 and is_nil(params["from"]) and
+          is_nil(params["to"])
+
+      reversed? = pair not in [nil, false] and in_order? == false and length(series) == 2
+
+      title =
+        cond do
+          series == [] -> gettext("Compare")
+          indexed? -> pair_title(series, to)
+          true -> gettext("Compare %{names}", names: names)
+        end
+
+      description =
+        if indexed?,
+          do: pair_answer(series, from, to, locale),
+          else:
+            gettext("Growth, income, inflation and debt side by side: %{names}.", names: names)
 
       render(conn, :show,
-        page_title:
-          if(series == [],
-            do: gettext("Compare"),
-            else: gettext("Compare %{names}", names: names)
-          ),
+        page_title: title,
+        heading: if(indexed?, do: pair_heading(series), else: nil),
+        answer: if(indexed?, do: description, else: nil),
         seo:
-          Seo.page(
-            locale,
-            paths,
-            gettext("Growth, income, inflation and debt side by side: %{names}.", names: names),
-            %{
-              noindex: length(series) < 2
-            }
-          ),
+          Seo.page(locale, paths, description, %{
+            noindex: not indexed? and not reversed?,
+            json_ld:
+              if(indexed?,
+                do: [
+                  Seo.breadcrumbs([
+                    {"Syli Atlas", Paths.home(locale)},
+                    {gettext("Compare"), Paths.compare(locale, [])},
+                    {pair_heading(series), paths[locale]}
+                  ])
+                ],
+                else: []
+              )
+          })
+          |> then(fn seo ->
+            if reversed?,
+              do: Map.put(seo, :canonical, Seo.url(SyliAtlasWeb.Topics.pair_path(locale, pair))),
+              else: seo
+          end),
         alternates: Seo.alternates_for_header(paths),
         from: from,
         to: to,
@@ -87,5 +123,39 @@ defmodule SyliAtlasWeb.CompareController do
         full?: length(areas) >= @max
       )
     end
+  end
+
+  defp pair_heading([a, b]), do: gettext("%{a} or %{b}?", a: a.name, b: b.name)
+
+  defp pair_title([a, b], to),
+    do:
+      gettext("%{a} or %{b}: GDP, growth and debt compared (%{year})",
+        a: a.name,
+        b: b.name,
+        year: to
+      )
+
+  # « Côte d'Ivoire : PIB réel +37,1 % depuis 2020 ; Sénégal : +31,1 % (FMI). »
+  defp pair_answer(series, from, to, locale) do
+    parts =
+      for s <- series do
+        item = s.item
+
+        gettext("%{name}: real GDP %{change} since %{from}, GDP of %{gdp} in %{to}",
+          name: s.name,
+          change:
+            SyliAtlasWeb.Format.change(item["real_gdp_change_pct"], "real_gdp_index", locale),
+          from: from,
+          gdp:
+            SyliAtlasWeb.Format.value(
+              SyliAtlasWeb.PublicData.at(item["series"]["gdp_usd_bn"], to),
+              "gdp_usd_bn",
+              locale
+            ),
+          to: to
+        )
+      end
+
+    Enum.join(parts, if(locale == "fr", do: " ; ", else: "; ")) <> " " <> gettext("(IMF).")
   end
 end

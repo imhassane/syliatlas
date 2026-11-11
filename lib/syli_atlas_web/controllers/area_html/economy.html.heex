@@ -1,5 +1,6 @@
 <.section id="economie">
   <.area_kpis
+    :if={@area.kind == "country"}
     kpis={@kpis}
     data={@data}
     profile={@profile}
@@ -120,10 +121,13 @@
   </.card>
 
   <div class="row gap-2">
-    <a class="btn btn-primary" href={Paths.compare(@locale, [@profile["slug"][@locale]])}>{gettext(
+    <a
+      class="btn btn-primary"
+      href={Paths.compare(@locale, [SyliAtlas.Locales.pick(@profile["slug"], @locale)])}
+    >{gettext(
       "Compare %{name}",
       name: @name
     )} →</a>
-    <a class="btn btn-secondary" href={Paths.ranking(@locale)}>{gettext("African ranking")}</a>
+    <a class="btn btn-secondary" href={Paths.ranking_main(@locale)}>{gettext("African ranking")}</a>
   </div>
 </.section>

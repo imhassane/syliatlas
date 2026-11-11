@@ -1,6 +1,8 @@
 defmodule SyliAtlasWeb.CommunityHTML do
   use SyliAtlasWeb, :html
 
+  alias SyliAtlasWeb.ProfileComponents
+
   embed_templates "community_html/*"
 
   def status_class(:met), do: "pill-ok"

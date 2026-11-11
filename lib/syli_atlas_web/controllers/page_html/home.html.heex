@@ -66,7 +66,7 @@
     />
     <div class="grid grid-3">
       <.question_card
-        href={Paths.ranking(@locale)}
+        href={Paths.ranking(@locale) <> "?mode=change"}
         eyebrow={gettext("Growth")}
         title={gettext("Which African countries grew the most since %{year}?", year: @from)}
         subtitle={gettext("GDP in current dollars, %{from} → %{to}", from: @from, to: @to)}
@@ -88,13 +88,13 @@
       >
         <.list_row
           :for={r <- Enum.take(@regions, 2) ++ Enum.take(@regions, -1)}
-          label={r["profile"]["name"][@locale]}
+          label={SyliAtlas.Locales.pick(r["profile"]["name"], @locale)}
           value={change(r["period"]["changes"]["gdp_usd_bn"], "gdp_usd_bn", @locale)}
           tone={tone(r["period"]["changes"]["gdp_usd_bn"], "gdp_usd_bn")}
         />
       </.question_card>
       <.question_card
-        href={Paths.ranking(@locale) <> "?order=asc"}
+        href={Paths.ranking(@locale) <> "?mode=change&order=asc"}
         eyebrow={gettext("Weakest")}
         title={gettext("Which economies grew the least since %{year}?", year: @from)}
         subtitle={gettext("GDP in current dollars, %{from} → %{to}", from: @from, to: @to)}
@@ -151,8 +151,11 @@
       <.feature n="03" title={gettext("Open data")}>
         {gettext("Download every profile as CSV or query the public API, free of charge.")}
       </.feature>
-      <.feature n="04" title={gettext("Discussed openly")}>
-        {gettext("Every profile has a moderated discussion to ask a question or report an error.")}
+      <.feature n="04" title={gettext("Questions answered")}>
+        {gettext(
+          "The richest, fastest-growing or most indebted countries: each common question has its page, answered from the figures."
+        )}
+        <a href={SyliAtlasWeb.Topics.questions_path(@locale)}>{gettext("All questions")} →</a>
       </.feature>
     </div>
     <.install_card />

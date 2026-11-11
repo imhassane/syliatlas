@@ -69,8 +69,20 @@ defmodule SyliAtlas.Accounts do
 
   # Administration ---------------------------------------------------------
 
+  @doc "How many accounts match the filters of `list_users/1`."
+  def count_users(opts \\ []), do: opts |> users_query() |> Repo.aggregate(:count)
+
   def list_users(opts \\ []) do
-    query = from u in User, order_by: [desc: u.inserted_at], limit: 200
+    opts
+    |> users_query()
+    |> order_by([u], desc: u.inserted_at, desc: u.id)
+    |> limit(^Keyword.get(opts, :limit, 200))
+    |> offset(^Keyword.get(opts, :offset, 0))
+    |> Repo.all()
+  end
+
+  defp users_query(opts) do
+    query = from(u in User, as: :u)
 
     query =
       case opts[:search] do
@@ -79,10 +91,79 @@ defmodule SyliAtlas.Accounts do
       end
 
     query = if opts[:role], do: where(query, [u], u.role == ^opts[:role]), else: query
-    Repo.all(query)
+
+    query =
+      case opts[:only] do
+        :with_passkey ->
+          where(
+            query,
+            [u],
+            exists(
+              from p in SyliAtlas.Accounts.Passkey,
+                where: p.user_id == parent_as(:u).id,
+                select: 1
+            )
+          )
+
+        :deactivated ->
+          where(query, [u], not is_nil(u.deactivated_at))
+
+        _ ->
+          query
+      end
+
+    query
   end
 
   def get_user!(id), do: Repo.get!(User, id)
+
+  @doc "Closes every open session of an account (it signs in again)."
+  def close_sessions(%User{} = user) do
+    {count, _} =
+      Repo.update_all(
+        from(s in Session, where: s.user_id == ^user.id and is_nil(s.revoked_at)),
+        set: [revoked_at: DateTime.utc_now(:second)]
+      )
+
+    count
+  end
+
+  @doc "Per account: last use of a session, open sessions, active alerts."
+  def activity do
+    now = DateTime.utc_now(:second)
+
+    sessions =
+      Repo.all(
+        from s in Session,
+          group_by: s.user_id,
+          select:
+            {s.user_id, max(s.last_used_at),
+             fragment(
+               "sum(CASE WHEN ? IS NULL AND ? > ? THEN 1 ELSE 0 END)",
+               s.revoked_at,
+               s.expires_at,
+               ^now
+             )}
+      )
+
+    alerts =
+      Repo.all(
+        from a in SyliAtlas.Accounts.Alert,
+          where: a.active == true,
+          group_by: a.user_id,
+          select: {a.user_id, count(a.id)}
+      )
+      |> Map.new()
+
+    base =
+      for {id, last, open} <- sessions,
+          into: %{},
+          do: {id, %{last: last, open: open || 0, alerts: 0}}
+
+    Enum.reduce(alerts, base, fn {id, n}, acc ->
+      Map.update(acc, id, %{last: nil, open: 0, alerts: n}, &%{&1 | alerts: n})
+    end)
+  end
 
   def count_admins, do: Repo.aggregate(where(User, role: "admin"), :count)
 

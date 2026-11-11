@@ -22,7 +22,10 @@ defmodule SyliAtlasWeb.Api.Params do
     end
   end
 
-  def locale(%{"locale" => "en"}), do: "en"
+  def locale(%{"locale" => locale}) when is_binary(locale) do
+    if SyliAtlas.Locales.valid?(locale), do: locale, else: "fr"
+  end
+
   def locale(_), do: "fr"
 
   def codes(nil), do: []

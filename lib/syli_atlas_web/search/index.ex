@@ -162,16 +162,13 @@ defmodule SyliAtlasWeb.Search.Index do
       %{
         type: :country,
         code: a.code,
-        names: %{"fr" => a.name_fr, "en" => a.name_en},
+        names: Area.names(a),
         terms:
-          terms([
-            a.name_fr,
-            a.name_en,
-            a.code,
-            a.slug_fr,
-            a.slug_en | Map.get(@aliases, a.code, [])
-          ]),
-        path: %{"fr" => Paths.area("fr", a), "en" => Paths.area("en", a)},
+          terms(
+            Map.values(Area.names(a)) ++
+              [a.code, a.slug_fr, a.slug_en | Map.get(@aliases, a.code, [])]
+          ),
+        path: SyliAtlas.Locales.each(fn l -> Paths.area(l, a) end),
         slug: %{"fr" => a.slug_fr, "en" => a.slug_en},
         rank: 0
       }
@@ -183,9 +180,9 @@ defmodule SyliAtlasWeb.Search.Index do
       %{
         type: :region,
         code: a.code,
-        names: %{"fr" => a.name_fr, "en" => a.name_en},
-        terms: terms([a.name_fr, a.name_en, a.slug_fr, a.slug_en]),
-        path: %{"fr" => Paths.area("fr", a), "en" => Paths.area("en", a)},
+        names: Area.names(a),
+        terms: terms(Map.values(Area.names(a)) ++ [a.slug_fr, a.slug_en]),
+        path: SyliAtlas.Locales.each(fn l -> Paths.area(l, a) end),
         kind: a.kind,
         rank: if(a.kind == "region", do: 1, else: 2)
       }
@@ -197,15 +194,15 @@ defmodule SyliAtlasWeb.Search.Index do
       %{
         type: :community,
         code: c.code,
-        names: %{
-          "fr" => "#{c.short["fr"]} · #{c.name["fr"]}",
-          "en" => "#{c.short["en"]} · #{c.name["en"]}"
-        },
-        terms: terms([c.short["fr"], c.short["en"], c.name["fr"], c.name["en"], c.code]),
-        path: %{
-          "fr" => Paths.community("fr", c.slug["fr"]),
-          "en" => Paths.community("en", c.slug["en"])
-        },
+        names:
+          SyliAtlas.Locales.each(fn l ->
+            "#{SyliAtlas.Locales.pick(c.short, l)} · #{SyliAtlas.Locales.pick(c.name, l)}"
+          end),
+        terms: terms(Map.values(c.short) ++ Map.values(c.name) ++ [c.code]),
+        path:
+          SyliAtlas.Locales.each(fn l ->
+            Paths.community(l, SyliAtlas.Locales.pick(c.slug, l))
+          end),
         rank: 1
       }
     end
@@ -215,7 +212,15 @@ defmodule SyliAtlasWeb.Search.Index do
   defp pages do
     [
       {:debt, &Paths.debt/1,
-       %{"fr" => "Dette des pays africains", "en" => "Debt of African countries"},
+       %{
+         "fr" => "Dette des pays africains",
+         "en" => "Debt of African countries",
+         "es" => "Deuda de los países africanos",
+         "pt" => "Dívida dos países africanos",
+         "ar" => "ديون الدول الأفريقية",
+         "hi" => "अफ़्रीकी देशों का ऋण",
+         "zh" => "非洲国家债务"
+       },
        [
          "dette",
          "debt",
@@ -226,7 +231,15 @@ defmodule SyliAtlasWeb.Search.Index do
          "chine dette"
        ]},
       {:ratings, &Paths.ratings/1,
-       %{"fr" => "Notations souveraines", "en" => "Sovereign credit ratings"},
+       %{
+         "fr" => "Notations souveraines",
+         "en" => "Sovereign credit ratings",
+         "es" => "Calificaciones soberanas",
+         "pt" => "Ratings soberanos",
+         "ar" => "التصنيفات السيادية",
+         "hi" => "संप्रभु क्रेडिट रेटिंग",
+         "zh" => "主权信用评级"
+       },
        [
          "notation",
          "notations",
@@ -240,7 +253,15 @@ defmodule SyliAtlasWeb.Search.Index do
          "agences de notation"
        ]},
       {:communities, &Paths.communities/1,
-       %{"fr" => "Communautés économiques", "en" => "Economic communities"},
+       %{
+         "fr" => "Communautés économiques",
+         "en" => "Economic communities",
+         "es" => "Comunidades económicas",
+         "pt" => "Comunidades económicas",
+         "ar" => "المجموعات الاقتصادية",
+         "hi" => "आर्थिक समुदाय",
+         "zh" => "经济共同体"
+       },
        [
          "communautes",
          "communautes economiques",
@@ -249,10 +270,26 @@ defmodule SyliAtlasWeb.Search.Index do
          "franc cfa",
          "cfa"
        ]},
-      {:regions, &Paths.regions/1, %{"fr" => "Régions d'Afrique", "en" => "Regions of Africa"},
-       ["regions", "region", "regions d'afrique"]},
+      {:regions, &Paths.regions/1,
+       %{
+         "fr" => "Régions d'Afrique",
+         "en" => "Regions of Africa",
+         "es" => "Regiones de África",
+         "pt" => "Regiões de África",
+         "ar" => "مناطق أفريقيا",
+         "hi" => "अफ़्रीका के क्षेत्र",
+         "zh" => "非洲各地区"
+       }, ["regions", "region", "regions d'afrique"]},
       {:ranking, &Paths.ranking/1,
-       %{"fr" => "Classement des pays africains", "en" => "Ranking of African countries"},
+       %{
+         "fr" => "Classement des pays africains",
+         "en" => "Ranking of African countries",
+         "es" => "Clasificación de los países africanos",
+         "pt" => "Classificação dos países africanos",
+         "ar" => "ترتيب الدول الأفريقية",
+         "hi" => "अफ़्रीकी देशों की रैंकिंग",
+         "zh" => "非洲国家排名"
+       },
        [
          "classement",
          "ranking",
@@ -264,16 +301,39 @@ defmodule SyliAtlasWeb.Search.Index do
          "richest"
        ]},
       {:compare, &Paths.compare(&1, []),
-       %{"fr" => "Comparer des pays", "en" => "Compare countries"},
-       ["comparer", "compare", "comparaison", "comparison", "versus", "vs"]},
-      {:method, &Paths.method/1, %{"fr" => "Méthode et sources", "en" => "Method and sources"},
-       ["methode", "method", "sources", "licence", "license", "api", "donnees", "data"]}
+       %{
+         "fr" => "Comparer des pays",
+         "en" => "Compare countries",
+         "es" => "Comparar países",
+         "pt" => "Comparar países",
+         "ar" => "مقارنة الدول",
+         "hi" => "देशों की तुलना",
+         "zh" => "国家比较"
+       }, ["comparer", "compare", "comparaison", "comparison", "versus", "vs"]},
+      {:method, &Paths.method/1,
+       %{
+         "fr" => "Méthode et sources",
+         "en" => "Method and sources",
+         "es" => "Método y fuentes",
+         "pt" => "Método e fontes",
+         "ar" => "المنهجية والمصادر",
+         "hi" => "पद्धति और स्रोत",
+         "zh" => "方法与来源"
+       }, ["methode", "method", "sources", "licence", "license", "api", "donnees", "data"]}
     ]
     |> Kernel.++(
       if SyliAtlas.Market.public?(),
         do: [
           {:markets, &Paths.markets/1,
-           %{"fr" => "Bourses africaines", "en" => "African stock exchanges"},
+           %{
+             "fr" => "Bourses africaines",
+             "en" => "African stock exchanges",
+             "es" => "Bolsas africanas",
+             "pt" => "Bolsas africanas",
+             "ar" => "البورصات الأفريقية",
+             "hi" => "अफ़्रीकी शेयर बाज़ार",
+             "zh" => "非洲证券交易所"
+           },
            [
              "bourse",
              "bourses",
@@ -292,8 +352,8 @@ defmodule SyliAtlasWeb.Search.Index do
         type: :page,
         code: Atom.to_string(code),
         names: names,
-        terms: terms([names["fr"], names["en"] | words]),
-        path: %{"fr" => path.("fr"), "en" => path.("en")},
+        terms: terms(Map.values(names) ++ words),
+        path: SyliAtlas.Locales.each(fn l -> path.(l) end),
         rank: 2
       }
     end)
@@ -307,15 +367,9 @@ defmodule SyliAtlasWeb.Search.Index do
           type: :exchange,
           code: e["code"],
           short_name: e["short_name"],
-          names: %{
-            "fr" => "#{e["short_name"]} · #{e["name"]}",
-            "en" => "#{e["short_name"]} · #{e["name"]}"
-          },
+          names: SyliAtlas.Locales.each(fn _ -> "#{e["short_name"]} · #{e["name"]}" end),
           terms: terms([e["short_name"], e["name"], e["code"], e["index_name"], e["mic"]]),
-          path: %{
-            "fr" => Paths.exchange("fr", e["code"]),
-            "en" => Paths.exchange("en", e["code"])
-          },
+          path: SyliAtlas.Locales.each(fn l -> Paths.exchange(l, e["code"]) end),
           rank: 2
         }
 
@@ -328,12 +382,10 @@ defmodule SyliAtlasWeb.Search.Index do
                 %{
                   type: :security,
                   code: "#{e["code"]}:#{s["ticker"]}",
-                  names: %{"fr" => label, "en" => label},
+                  names: SyliAtlas.Locales.each(fn _ -> label end),
                   terms: terms([s["name"], s["ticker"], s["issuer"], s["isin"]]),
-                  path: %{
-                    "fr" => Paths.security("fr", e["code"], s["ticker"]),
-                    "en" => Paths.security("en", e["code"], s["ticker"])
-                  },
+                  path:
+                    SyliAtlas.Locales.each(fn l -> Paths.security(l, e["code"], s["ticker"]) end),
                   rank: 3
                 }
               end

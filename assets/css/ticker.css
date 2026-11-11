@@ -1,0 +1,49 @@
+/* Band under the header of every public page (SyliAtlasWeb.TickerComponents):
+   indices at the last close, then the latest rating decisions. The list is
+   written twice and the track moves by half its width, so the loop is
+   seamless. Paused on hover, on keyboard focus and by its button; still
+   (and scrollable by hand) when the reader asked for less motion. */
+.site-ticker { position: relative; display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: stretch; border-bottom: 1px solid var(--border); background: var(--alt); }
+.site-ticker-pause { display: inline-flex; align-items: center; justify-content: center; width: 48px; min-height: 44px; padding: 0; border: 0; border-inline-end: 1px solid var(--border); background: transparent; color: var(--ink-muted); cursor: pointer; }
+.site-ticker-pause[hidden] { display: none; }
+.site-ticker-pause:hover { color: var(--ink); }
+.site-ticker-pause:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.site-ticker-pause .i-play, .site-ticker.is-paused .site-ticker-pause .i-pause { display: none; }
+.site-ticker.is-paused .site-ticker-pause .i-play { display: block; }
+.site-ticker-view { grid-column: 2; overflow: hidden; }
+.site-ticker-track { display: flex; width: max-content; animation: site-ticker var(--ticker-duration, 90s) linear infinite;
+  /* Continuity from page to page: the loop position follows the clock (--now,
+     set by the root layout before the first paint). */
+  animation-delay: calc(-1 * mod(var(--now, 0s), var(--ticker-duration, 90s))); }
+.site-ticker-view:hover .site-ticker-track,
+.site-ticker-view:focus-within .site-ticker-track,
+.site-ticker.is-paused .site-ticker-track { animation-play-state: paused; }
+.site-ticker-list { display: flex; align-items: center; gap: 28px; margin: 0; padding: 0 0 0 28px; list-style: none; }
+.site-ticker-list a { display: inline-flex; align-items: baseline; gap: 8px; padding: 12px 0; color: var(--ink); font-size: 13px; text-decoration: none; white-space: nowrap; }
+.site-ticker-list a:hover b { text-decoration: underline; }
+.site-ticker-list a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.site-ticker-list a b { font-weight: 600; }
+.site-ticker-list .mono, .site-ticker-list .muted, .site-ticker-list .up, .site-ticker-list .down { font-family: var(--mono); }
+.site-ticker-list .subtle { font-size: 12px; }
+.site-ticker-head { display: inline-flex; align-items: center; gap: 8px; padding: 4px 10px; border-radius: 999px; background: var(--accent-bg); color: var(--accent-text); font-size: 11px; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; }
+.site-ticker-head span { font-weight: 400; letter-spacing: 0; text-transform: none; }
+.site-ticker-credit { grid-column: 3; display: flex; align-items: center; gap: 4px; margin: 0; padding: 0 20px; border-inline-start: 1px solid var(--border); color: var(--ink-subtle); font-family: var(--mono); font-size: 12px; white-space: nowrap; }
+.site-ticker-credit a { text-decoration: none; }
+@keyframes site-ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* Phone: the change only (no level, agency or date), the credit on its own line. */
+@media (max-width: 48rem) {
+  .site-ticker { grid-template-columns: auto minmax(0, 1fr); }
+  .site-ticker-detail { display: none; }
+  .site-ticker-list { gap: 20px; padding-inline-start: 20px; }
+  .site-ticker-list a { font-size: 12px; padding: 13px 0; }
+  .site-ticker-head span { display: none; }
+  .site-ticker-credit { grid-column: 1 / -1; padding: 0 16px 6px 56px; border-inline-start: 0; font-size: 10px; white-space: normal; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-ticker-track { animation: none; }
+  .site-ticker-view { overflow-x: auto; }
+  .site-ticker-list[aria-hidden="true"] { display: none; }
+  .site-ticker-pause { display: none !important; }
+}

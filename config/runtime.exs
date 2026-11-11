@@ -37,6 +37,20 @@ if config_env() != :test do
       )
 end
 
+# MANSA_FAKE=true (development): the market import reads
+# SyliAtlas.Market.Sources.MansaFake instead of mansaapi.com, fictitious
+# figures that spend none of the shared daily quota. Refused in the Railway
+# environment named "production".
+if config_env() != :test and System.get_env("MANSA_FAKE") in ~w(true 1) do
+  if System.get_env("RAILWAY_ENVIRONMENT_NAME") == "production",
+    do: raise("MANSA_FAKE=true is refused in production: fictitious market figures")
+
+  config :syli_atlas, SyliAtlas.Market.Sources.Mansa,
+    req_options: [plug: SyliAtlas.Market.Sources.MansaFake, retry: false]
+
+  config :syli_atlas, SyliAtlas.Market, fake: true
+end
+
 # Ratings watch: the AI extraction uses the Railway variable ANTHROPIC_API_KEY.
 # Without it, the watch still collects the news but proposes nothing.
 # (The administration needs an administrator account: the email code, then
@@ -48,6 +62,30 @@ if config_env() != :test do
          v when v in [nil, ""] -> nil
          v -> String.trim(v)
        end)
+end
+
+# Cloudflare: after each publication, the API answers are dropped from its
+# cache (SyliAtlas.Cdn). CLOUDFLARE_ZONE_ID and CLOUDFLARE_API_TOKEN (a token
+# with the single permission Zone > Cache Purge). Without them, no purge.
+# RATE_LIMIT_PER_MINUTE changes the public API limit (60 by default).
+if config_env() != :test do
+  env = fn name ->
+    case System.get_env(name) do
+      v when v in [nil, ""] -> nil
+      v -> String.trim(v)
+    end
+  end
+
+  config :syli_atlas, SyliAtlas.Cdn,
+    zone_id: env.("CLOUDFLARE_ZONE_ID"),
+    api_token: env.("CLOUDFLARE_API_TOKEN")
+
+  if limit = env.("RATE_LIMIT_PER_MINUTE") do
+    config :syli_atlas, SyliAtlasWeb.Plugs.ApiRateLimit,
+      enabled: true,
+      public: String.to_integer(limit),
+      internal: 240
+  end
 end
 
 # Emails (sign-in codes, alerts, digests). MAILER_ADAPTER chooses, else
@@ -197,6 +235,13 @@ if config_env() == :prod do
   # display (MansaAPI's does); MARKET_PREVIEW=true forces them on otherwise.
   config :syli_atlas, SyliAtlas.Market, preview: System.get_env("MARKET_PREVIEW") == "true"
 
+  # Share images, drawn once per version and kept on the volume; the main
+  # ones are drawn again after each deploy.
+  config :syli_atlas, SyliAtlasWeb.OgImageController,
+    cache_dir: Path.join(Path.dirname(database_path), "og")
+
+  config :syli_atlas, og_warm_on_boot: true
+
   unless System.get_env("R2_BUCKET") do
     config :syli_atlas, SyliAtlas.Market.RawStore,
       adapter: SyliAtlas.Market.RawStore.Local,
@@ -216,6 +261,18 @@ if config_env() == :prod do
       """
 
   host = System.get_env("PHX_HOST") || "example.com"
+
+  # Search engines and the public address (SyliAtlasWeb.Plugs.CanonicalHost).
+  # Other hosts are redirected to PHX_HOST, unless PHX_HOST is itself the
+  # Railway address (the site would then redirect its own domain away).
+  # SITE_NOINDEX=true keeps an environment (development) out of search engines.
+  config :syli_atlas, :site,
+    canonical_redirect:
+      System.get_env("CANONICAL_REDIRECT", "true") == "true" and
+        not String.ends_with?(host, ".up.railway.app") and host != "example.com",
+    noindex: System.get_env("SITE_NOINDEX") == "true",
+    # Shown on the accessibility statement: where to report a barrier.
+    contact_email: System.get_env("CONTACT_EMAIL")
 
   # Passkeys belong to the site's host: changing PHX_HOST makes existing ones unusable.
   config :syli_atlas, SyliAtlas.Accounts.Passkeys,

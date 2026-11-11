@@ -12,6 +12,7 @@ defmodule SyliAtlasWeb.RatingComponents do
 
   alias SyliAtlas.Ratings.Scale
   alias SyliAtlasWeb.Paths
+  import SyliAtlasWeb.Format, only: [names: 1, names: 2]
 
   # Words ----------------------------------------------------------------
 
@@ -149,27 +150,27 @@ defmodule SyliAtlasWeb.RatingComponents do
 
   def agencies_text(_), do: ""
 
-  @months_fr ~w(janv. févr. mars avr. mai juin juil. août sept. oct. nov. déc.)
-  @months_en ~w(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
-
   @doc "A full, month or year date: « 14 nov. 2025 », « oct. 2026 », « 2026 »."
   def date_text(nil, _locale), do: nil
   def date_text("", _locale), do: nil
 
   def date_text(iso, locale) do
-    months = if locale == "en", do: @months_en, else: @months_fr
-
     case String.split(iso, "-") do
-      [y, m, d] -> "#{String.to_integer(d)} #{Enum.at(months, String.to_integer(m) - 1)} #{y}"
-      [y, m] -> "#{Enum.at(months, String.to_integer(m) - 1)} #{y}"
-      [y] -> y
+      [y, m, d] ->
+        SyliAtlasWeb.Dates.day_month_year(String.to_integer(d), String.to_integer(m), y, locale)
+
+      [y, m] ->
+        SyliAtlasWeb.Dates.month_year(String.to_integer(m), y, locale)
+
+      [y] ->
+        y
     end
   end
 
   def headline(%{"band" => nil}, _name), do: gettext("No agency rating")
 
   def headline(%{"band" => "investment"} = e, name),
-    do: gettext("%{rating}: %{name} is investment grade", rating: e["label"], name: name)
+    do: gettext("%{rating}: %{name} is investment grade", names(name, rating: e["label"]))
 
   def headline(%{"band" => "speculative"} = e, _name),
     do: gettext("%{rating}: a fair rating, %{gap}", rating: e["label"], gap: gap_text(e))
@@ -190,14 +191,14 @@ defmodule SyliAtlasWeb.RatingComponents do
 
   def faq_items(name, %{"band" => nil}, _doc) do
     [
-      {gettext("What is the credit rating of %{name}?", name: name),
-       gettext("%{name} is not rated by S&P, Moody's or Fitch.", name: name)}
+      {gettext("What is the credit rating of %{name}?", names(name)),
+       gettext("%{name} is not rated by S&P, Moody's or Fitch.", names(name))}
     ]
   end
 
   def faq_items(name, rating, doc) do
     [
-      {gettext("What is the credit rating of %{name}?", name: name),
+      {gettext("What is the credit rating of %{name}?", names(name)),
        gettext("%{agencies}: %{verdict}, %{category}, %{gap}, %{rank}.",
          agencies: agencies_text(rating),
          verdict: String.downcase(verdict(rating["band"])),
@@ -267,7 +268,7 @@ defmodule SyliAtlasWeb.RatingComponents do
     """
   end
 
-  defp gauge_label(%{"label" => nil}, name), do: gettext("%{name} is not rated", name: name)
+  defp gauge_label(%{"label" => nil}, name), do: gettext("%{name} is not rated", names(name))
 
   defp gauge_label(e, name),
     do:
@@ -296,16 +297,18 @@ defmodule SyliAtlasWeb.RatingComponents do
             <p class="eyebrow">{gettext("Sovereign rating")}</p>
             <.dynamic_tag tag_name={if @page, do: "h1", else: "h2"} class="h1 rt-title">
               {if @page,
-                do: gettext("%{name}: %{headline}", name: @name, headline: headline(@entry, @name)),
+                do:
+                  gettext(
+                    "Credit rating of %{name} · %{headline}",
+                    names(@name, headline: headline(@entry, @name))
+                  ),
                 else: headline(@entry, @name)}
             </.dynamic_tag>
             <p class="lead rt-lead">
               <%= if @entry["band"] do %>
-                {gettext("%{name} is no. %{rank} of the %{of} African countries rated, %{tier}.",
-                  name: @name,
-                  rank: @entry["rank"],
-                  of: @rated,
-                  tier: tier_text(@entry["rank"])
+                {gettext(
+                  "%{name} is no. %{rank} of the %{of} African countries rated, %{tier}.",
+                  names(@name, rank: @entry["rank"], of: @rated, tier: tier_text(@entry["rank"]))
                 )}
                 {meaning(@entry["band"])}
               <% else %>
@@ -318,14 +321,14 @@ defmodule SyliAtlasWeb.RatingComponents do
               :if={!@page and @entry["band"]}
               class="btn btn-secondary"
               id="rating-history-link"
-              href={Paths.rating(@locale, @entry["slug"][@locale])}
+              href={Paths.rating(@locale, SyliAtlas.Locales.pick(@entry["slug"], @locale))}
             >
               {gettext("History of decisions")} →
             </a>
             <a
               :if={@page}
               class="btn btn-secondary"
-              href={Paths.area(@locale, "country", @entry["slug"][@locale])}
+              href={Paths.area(@locale, "country", SyliAtlas.Locales.pick(@entry["slug"], @locale))}
             >
               {gettext("Profile of %{name}", name: @name)} →
             </a>
@@ -463,7 +466,10 @@ defmodule SyliAtlasWeb.RatingComponents do
             <span class="eyebrow">{gettext("Best rated")}</span>
             <div>
               <div :for={{e, i} <- Enum.with_index(@top, 1)} class="list-row">
-                <a href={Paths.area(@locale, "country", e["slug"][@locale])}>{i} · {e["name"][@locale]}</a>
+                <a href={Paths.area(@locale, "country", SyliAtlas.Locales.pick(e["slug"], @locale))}>{i} · {SyliAtlas.Locales.pick(
+                  e["name"],
+                  @locale
+                )}</a>
                 <span>
                   <b class="num">{e["label"]}</b>
                   <.verdict_badge band={e["band"]}>{category(e["band"])}</.verdict_badge>
@@ -480,7 +486,9 @@ defmodule SyliAtlasWeb.RatingComponents do
             <div>
               <div :for={r <- @recent} class="list-row">
                 <span>
-                  {@doc["countries"][r["code"]]["name"][@locale]} · {agency_name(r["agency"])} · {date_text(
+                  {SyliAtlas.Locales.pick(@doc["countries"][r["code"]]["name"], @locale)} · {agency_name(
+                    r["agency"]
+                  )} · {date_text(
                     r["action_date"],
                     @locale
                   )}

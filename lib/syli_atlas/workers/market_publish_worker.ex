@@ -15,6 +15,7 @@ defmodule SyliAtlas.Workers.MarketPublishWorker do
     # Market alerts read the documents just rebuilt; one event per window,
     # and each delivery is unique per session, so repeats send nothing.
     SyliAtlas.Accounts.AlertEvents.market_published()
+    SyliAtlas.Workers.OgWarmWorker.enqueue()
     :ok
   end
 end

@@ -5,6 +5,7 @@ defmodule SyliAtlasWeb.RatingsController do
   alias SyliAtlas.Ratings
   alias SyliAtlas.Ratings.Scale
   alias SyliAtlasWeb.{NotFoundError, Paths, RatingComponents, Seo}
+  import SyliAtlasWeb.Format, only: [names: 1, names: 2]
 
   plug :put_layout, false
 
@@ -13,7 +14,7 @@ defmodule SyliAtlasWeb.RatingsController do
   @doc "The 54 countries and their ratings, filtered by verdict or searched by name or rating."
   def index(conn, params) do
     locale = conn.assigns.locale
-    paths = %{"fr" => Paths.ratings("fr"), "en" => Paths.ratings("en")}
+    paths = SyliAtlas.Locales.each(fn l -> Paths.ratings(l) end)
     doc = Ratings.document() || empty()
     verdict = if params["verdict"] in @tabs, do: params["verdict"]
     q = params |> Map.get("q", "") |> String.trim() |> String.slice(0, 60)
@@ -25,7 +26,7 @@ defmodule SyliAtlasWeb.RatingsController do
     unrated =
       doc["unrated"]
       |> Enum.map(&doc["countries"][&1])
-      |> Enum.sort_by(&Area.normalize(&1["name"][locale]))
+      |> Enum.sort_by(&Area.normalize(SyliAtlas.Locales.pick(&1["name"], locale)))
 
     rows =
       case verdict do
@@ -71,21 +72,23 @@ defmodule SyliAtlasWeb.RatingsController do
     doc = Ratings.document() || raise NotFoundError
 
     entry =
-      doc["countries"] |> Map.values() |> Enum.find(&(&1["slug"][locale] == slug)) ||
+      doc["countries"]
+      |> Map.values()
+      |> Enum.find(&(SyliAtlas.Locales.pick(&1["slug"], locale) == slug)) ||
         raise NotFoundError
 
-    name = entry["name"][locale]
+    name = SyliAtlas.Locales.pick(entry["name"], locale)
 
-    paths = %{
-      "fr" => Paths.rating("fr", entry["slug"]["fr"]),
-      "en" => Paths.rating("en", entry["slug"]["en"])
-    }
+    paths =
+      SyliAtlas.Locales.each(fn l ->
+        Paths.rating(l, SyliAtlas.Locales.pick(entry["slug"], l))
+      end)
 
     faq = RatingComponents.faq_items(name, entry, doc)
     description = description(entry, name)
 
     render(conn, :show,
-      page_title: gettext("Credit rating of %{name}: S&P, Moody's, Fitch", name: name),
+      page_title: title(entry, name),
       seo:
         Seo.page(locale, paths, description, %{
           # A country without any rating has nothing to say beyond the main page.
@@ -108,8 +111,22 @@ defmodule SyliAtlasWeb.RatingsController do
     )
   end
 
+  # « Note souveraine du Sénégal : S&P CC, Moody's Ca »: the ratings
+  # themselves are what people look for.
+  defp title(%{"band" => nil}, name),
+    do: gettext("Credit rating of %{name}: not rated by S&P, Moody's or Fitch", names(name))
+
+  defp title(entry, name),
+    do:
+      gettext(
+        "Credit rating of %{name}: %{agencies}",
+        names(name,
+          agencies: entry |> RatingComponents.agencies_text() |> String.replace(" · ", ", ")
+        )
+      )
+
   defp description(%{"band" => nil}, name),
-    do: gettext("%{name} is not rated by S&P, Moody's or Fitch.", name: name)
+    do: gettext("%{name} is not rated by S&P, Moody's or Fitch.", names(name))
 
   defp description(entry, name) do
     gettext("%{name}: %{agencies}. %{verdict}, %{category}, %{gap}.",
@@ -138,7 +155,7 @@ defmodule SyliAtlasWeb.RatingsController do
     needle = Area.normalize(q)
 
     Enum.filter(rows, fn e ->
-      String.contains?(Area.normalize(e["name"][locale]), needle) or
+      String.contains?(Area.normalize(SyliAtlas.Locales.pick(e["name"], locale)), needle) or
         Enum.any?(e["agencies"], &(String.downcase(&1["rating"]) == String.downcase(q))) or
         String.downcase(e["label"] || "") == String.downcase(String.replace(q, "-", "−"))
     end)
@@ -164,7 +181,7 @@ defmodule SyliAtlasWeb.RatingsController do
     doc["ranking"]
     |> Enum.map(&doc["countries"][&1])
     |> Enum.filter(fun)
-    |> Enum.map(&"#{&1["name"][locale]} (#{&1["label"]})")
+    |> Enum.map(&"#{SyliAtlas.Locales.pick(&1["name"], locale)} (#{&1["label"]})")
   end
 
   defp list_or_none([]), do: gettext("none")
@@ -179,7 +196,7 @@ defmodule SyliAtlasWeb.RatingsController do
     [
       {gettext("Which African country has the best credit rating?"),
        gettext("%{name}: %{agencies} (average %{rating} on the common scale).",
-         name: best["name"][locale],
+         name: SyliAtlas.Locales.pick(best["name"], locale),
          agencies: RatingComponents.agencies_text(best),
          rating: best["label"]
        )},

@@ -4,7 +4,7 @@ defmodule SyliAtlas.MixProject do
   def project do
     [
       app: :syli_atlas,
-      version: "0.1.0",
+      version: "0.2.0",
       elixir: "~> 1.17",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
@@ -52,6 +52,7 @@ defmodule SyliAtlas.MixProject do
       {:esbuild, "~> 0.10", runtime: Mix.env() == :dev},
       {:swoosh, "~> 1.16"},
       {:req, "~> 0.5"},
+      {:hammer, "~> 7.0"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 1.0"},
@@ -62,7 +63,9 @@ defmodule SyliAtlas.MixProject do
       # Passkeys (WebAuthn): signature, origin and challenge checks.
       {:wax_, "~> 0.7.0"},
       # SMTP to Mailpit outside production (Resend in production).
-      {:gen_smtp, "~> 1.2"}
+      {:gen_smtp, "~> 1.2"},
+      # Share images (Open Graph): SVG drawn from the data, rendered to PNG.
+      {:resvg, "~> 0.6"}
     ]
   end
 

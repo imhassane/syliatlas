@@ -3,17 +3,31 @@
     <div class="stack gap-4">
       <h2 class="h1">{gettext("Questions")}</h2>
       <.faq items={@faq} />
+      <a
+        :if={@area.kind == "country"}
+        href={SyliAtlasWeb.CountryQuestionsController.questions_path(@locale, @area)}
+        id="all-questions"
+      >
+        {gettext("All questions on the economy of %{name}", names(@name, []))} →
+      </a>
     </div>
     <div class="stack gap-4">
-      <.card pad class="stack gap-2">
-        <p class="eyebrow">{gettext("Discussion")}</p>
+      <%!-- Discussions are not open yet (no /discussion page): no link to a
+           page that does not exist. --%>
+      <.card pad class="stack gap-2" id="report">
+        <p class="eyebrow">{gettext("Contact")}</p>
         <h2 class="h2">{gettext("A question, a correction, a source?")}</h2>
-        <p class="muted">
-          {gettext("Every profile has a moderated discussion. Sign in by email to take part.")}
-        </p>
-        <a class="btn btn-secondary" href={Paths.discussion(@locale, @area)} rel="nofollow">{gettext(
-          "Open the discussion"
-        )} →</a>
+        <%= if email = SyliAtlasWeb.AreaHTML.contact_email() do %>
+          <p class="muted">
+            {gettext("Write to us with the address of the page and, if you can, the source.")}
+          </p>
+          <a class="btn btn-secondary" href={"mailto:" <> email}>{email}</a>
+        <% else %>
+          <p class="muted">
+            {gettext("Who makes Syli Atlas, and how to reach us, is on the About page.")}
+          </p>
+          <a class="btn btn-secondary" href={Paths.about(@locale)}>{gettext("About")} →</a>
+        <% end %>
       </.card>
       <.card pad class="stack gap-2">
         <p class="eyebrow">{gettext("Cite this page")}</p>

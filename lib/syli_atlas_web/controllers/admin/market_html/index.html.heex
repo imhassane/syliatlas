@@ -1,0 +1,276 @@
+<.admin_shell current={:market} counts={@admin_counts} until={@admin_until} key={@admin_key}>
+  <header class="adm-head">
+    <div class="adm-intro">
+      <p class={["eyebrow", if(@paused?, do: "adm-paused", else: "adm-live")]}>
+        <span aria-hidden="true"></span>
+        {if @paused?,
+          do: "Données · imports en pause",
+          else: "Données · prochains imports 16:45 et 20:15 UTC, jours ouvrés"}
+      </p>
+      <h1 class="adm-title">Données de marché</h1>
+      <p class="muted">
+        Les cours des {length(@exchanges)} bourses sont importés après chaque clôture, contrôlés, puis publiés depuis la source prioritaire de chaque bourse.
+      </p>
+    </div>
+    <div class="adm-head-actions">
+      <.form for={%{}} action={~p"/admin/marches/pause"} method="post" id="market-pause">
+        <input type="hidden" name="paused" value={to_string(!@paused?)} />
+        <button class="btn btn-secondary" type="submit">
+          {if @paused?, do: "Reprendre", else: "Mettre en pause"}
+        </button>
+      </.form>
+      <.form for={%{}} action={~p"/admin/marches/importer"} method="post" id="market-import">
+        <button class="btn btn-primary" type="submit">Importer maintenant</button>
+      </.form>
+    </div>
+  </header>
+
+  <div :if={!@public?} class="card adm-banner" role="alert" id="market-blocked">
+    <p>
+      <b>Affichage public bloqué.</b>
+      Aucune source active n'a de licence qui autorise l'affichage : les pages bourses ne sont pas publiées.
+    </p>
+    <a class="btn btn-secondary btn-sm" href={~p"/admin/marches?onglet=sources"}>Voir les licences</a>
+  </div>
+  <div :if={!@configured?} class="card adm-banner" role="alert" id="market-no-key">
+    <p>
+      <b>Clé MansaAPI absente.</b>
+      Les imports s'arrêtent sans rien télécharger tant que la variable n'est pas posée.
+    </p>
+  </div>
+
+  <dl class="stats" id="market-stats">
+    <div>
+      <dt>Dernier import</dt>
+      <dd class="big num adm-big-sm">{when_(@last_import && @last_import.at)}</dd>
+      <dd class="small muted">
+        <%= if @last_import do %>
+          {day(@last_import.at)} · {@last_import.payloads} fichiers{if @last_import.errors > 0,
+            do: ", #{@last_import.errors} en erreur"} · {int(@last_import.securities)} titres
+        <% else %>
+          aucun import
+        <% end %>
+      </dd>
+    </div>
+    <div>
+      <dt>Quota Mansa du jour</dt>
+      <dd class="big num adm-big-sm">{@quota.calls} / {@quota.quota}</dd>
+      <dd class="small muted">plafond strict à {@quota.cap}</dd>
+    </div>
+    <div>
+      <dt>Anomalies ouvertes</dt>
+      <dd class="big num adm-big-sm">{@counts.all}</dd>
+      <dd class={["small", if(@counts.hiding > 0, do: "down", else: "muted")]}>
+        {@counts.hiding} masquent ou retiennent un chiffre
+      </dd>
+    </div>
+    <div>
+      <dt>Sources officielles</dt>
+      <dd class="big num adm-big-sm">{@official} / {length(@exchanges)}</dd>
+      <dd class="small muted">
+        {length(@shadow)} prévue{if length(@shadow) > 1, do: "s"} : {Enum.map_join(
+          @shadow,
+          ", ",
+          & &1.name
+        )}
+      </dd>
+    </div>
+  </dl>
+
+  <.admin_tabs
+    current={@tab}
+    tabs={[
+      {"anomalies", "Anomalies · #{@counts.all}", ~p"/admin/marches"},
+      {"bourses", "Bourses et priorités", ~p"/admin/marches?onglet=bourses"},
+      {"sources", "Sources et licences", ~p"/admin/marches?onglet=sources"},
+      {"fantome", "Mode fantôme", ~p"/admin/marches?onglet=fantome"}
+    ]}
+  />
+
+  <section :if={@tab == "anomalies"} class="card adm-list" id="issues">
+    <div class="adm-card-head">
+      <div>
+        <h2 class="h2">À trancher</h2>
+        <p class="small subtle">
+          Une anomalie se ferme seule quand un import suivant ne la montre plus. Une décision la ferme tout de suite.
+        </p>
+      </div>
+      <nav class="seg" aria-label="Filtrer les anomalies">
+        <a href={~p"/admin/marches"} aria-current={if(is_nil(@severity), do: "page")}>
+          Toutes · {@counts.all}
+        </a>
+        <a
+          href={~p"/admin/marches?gravite=high"}
+          aria-current={if(@severity == "high", do: "page")}
+        >
+          Urgentes · {@counts.high}
+        </a>
+        <a href={~p"/admin/marches?gravite=mid"} aria-current={if(@severity == "mid", do: "page")}>
+          À suivre · {@counts.mid}
+        </a>
+        <a href={~p"/admin/marches?gravite=low"} aria-current={if(@severity == "low", do: "page")}>
+          Info · {@counts.low}
+        </a>
+      </nav>
+    </div>
+    <p :if={@issues.total == 0} class="adm-empty muted">Aucune anomalie ouverte.</p>
+    <div :if={@issues.total > 0} class="table-wrap">
+      <table class="table adm-table">
+        <thead>
+          <tr>
+            <th class="l">Gravité</th>
+            <th class="l">Où</th>
+            <th class="l">Problème</th>
+            <th class="l">Ce que voit le visiteur</th>
+            <th class="l">Décision</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={i <- @issues.entries} id={"issue-#{i.id}"}>
+            <td class="l">
+              <% {label, cls} = severity(i.severity) %>
+              <span class={["pill", cls]}>{label}</span>
+            </td>
+            <td class="l adm-strong">{i.where}</td>
+            <td class="l adm-wrap">
+              <b class="adm-strong">{rule_label(i.rule)}</b>
+              <div class="muted small">
+                {detail(i)}{session(i)}
+              </div>
+            </td>
+            <td class="l muted adm-wrap">{effect(i.rule)}</td>
+            <td class="l">
+              <% {action, label} = main_action(i.rule) %>
+              <div class="adm-inline">
+                <.form for={%{}} action={~p"/admin/marches/anomalies/#{i.id}"} method="post">
+                  <input type="hidden" name="action" value={action} />
+                  <input :if={@severity} type="hidden" name="gravite" value={@severity} />
+                  <button class="btn btn-secondary btn-sm" type="submit" id={"issue-main-#{i.id}"}>
+                    {label}
+                  </button>
+                </.form>
+                <.form for={%{}} action={~p"/admin/marches/anomalies/#{i.id}"} method="post">
+                  <input type="hidden" name="action" value="ignore" />
+                  <input :if={@severity} type="hidden" name="gravite" value={@severity} />
+                  <button class="btn btn-quiet btn-sm" type="submit" id={"issue-ignore-#{i.id}"}>
+                    Ignorer
+                  </button>
+                </.form>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <.admin_pager page={@issues} path={~p"/admin/marches"} params={@params} key="page" />
+  </section>
+
+  <section :if={@tab == "bourses"} class="card adm-list" id="exchanges">
+    <div class="adm-card-head">
+      <h2 class="h2">Source publiée par bourse</h2>
+      <span class="mono subtle small">
+        rang 1 = publiée · secours = prise si le rang 1 manque ou échoue
+      </span>
+    </div>
+    <div class="table-wrap">
+      <table class="table adm-table">
+        <thead>
+          <tr>
+            <th class="l">Bourse</th>
+            <th class="l">Rang 1</th>
+            <th class="l">Secours</th>
+            <th class="l">Prévue</th>
+            <th class="l">Dernière séance</th>
+            <th>Anomalies</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={r <- @exchanges_page.entries} id={"exchange-#{r.exchange.code}"}>
+            <td class="l">
+              <b class="adm-strong">{r.exchange.short_name}</b>
+              <span class="mono subtle small">{r.exchange.mic || r.exchange.city}</span>
+            </td>
+            <td class="l">{source_name(r.rank1)}</td>
+            <td class="l subtle">
+              {if r.fallback == [], do: "—", else: Enum.map_join(r.fallback, ", ", &source_name/1)}
+            </td>
+            <td class="l muted">
+              {if r.planned == [], do: "—", else: Enum.map_join(r.planned, ", ", &source_name/1)}
+            </td>
+            <td class="l">
+              <span class={["pill", fresh_class(r.last_session)]}>
+                {if r.last_session, do: day(r.last_session, year: false), else: "aucune"}
+              </span>
+            </td>
+            <td>{r.issues}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <.admin_pager page={@exchanges_page} path={~p"/admin/marches"} params={@params} key="page" />
+    <p class="mono subtle small adm-note">
+      Le classement des sources se règle quand une deuxième source existe pour une bourse : aujourd'hui, MansaAPI est la seule active.
+    </p>
+  </section>
+
+  <section :if={@tab == "sources"} class="adm-cards" id="licences">
+    <div :for={s <- @sources} class="card adm-src" id={"licence-#{s.code}"}>
+      <div class="adm-src-head">
+        <h2 class="h2">{s.name}</h2>
+        <% {label, cls} = source_state(s) %>
+        <span class={["pill", cls]}>{label}</span>
+      </div>
+      <p class="muted small">
+        {kind_label(s.kind)} ·
+        <a href={s.url} rel="noopener noreferrer" target="_blank">{URI.parse(s.url).host}</a>
+      </p>
+      <dl>
+        <dt>Affichage public</dt>
+        <dd>{yes_no(s.licence.display_public)}</dd>
+        <dt>Export CSV</dt>
+        <dd>{yes_no(s.licence.export_csv)}</dd>
+        <dt>API publique</dt>
+        <dd>{yes_no(s.licence.redistribute_api)}</dd>
+        <dt>Attribution</dt>
+        <dd>« {s.licence.attribution} »</dd>
+        <dt>Quota</dt>
+        <dd>
+          {if s.daily_quota,
+            do: "#{s.daily_quota} appels par jour, plafond #{s.daily_cap}",
+            else: "—"}
+        </dd>
+      </dl>
+    </div>
+  </section>
+
+  <section :if={@tab == "fantome"} class="adm-split" id="shadow">
+    <div class="card pad stack gap-3">
+      <h2 class="h2">Passer une source officielle en rang 1</h2>
+      <p class="muted small">
+        Une nouvelle source est d'abord lue chaque soir et comparée à la source publiée, sans être affichée. Elle passe en rang 1 quand ces critères sont tenus :
+      </p>
+      <ul class="adm-criteria">
+        <li><span class="pill pill-neutral no-dot">—</span>20 séances comparées</li>
+        <li><span class="pill pill-neutral no-dot">—</span>99 % des clôtures à moins de 0,1 %</li>
+        <li><span class="pill pill-neutral no-dot">—</span>Aucun titre manquant</li>
+        <li><span class="pill pill-neutral no-dot">—</span>Autorisation écrite de la bourse</li>
+      </ul>
+    </div>
+    <div class="card adm-list">
+      <div class="adm-card-head">
+        <h2 class="h2">Sources en test</h2>
+      </div>
+      <div :for={s <- @shadow} class="adm-row" id={"shadow-#{s.code}"}>
+        <div class="adm-row-main">
+          <div class="adm-item-head">
+            <b>{s.name}</b><span class="pill pill-neutral">Pas encore lue</span>
+          </div>
+          <p class="small muted">
+            Aucune séance comparée : le lecteur de cette source n'existe pas encore. Les chiffres de comparaison apparaîtront ici dès le premier soir de lecture.
+          </p>
+        </div>
+      </div>
+      <p :if={@shadow == []} class="adm-empty muted">Aucune source en test.</p>
+    </div>
+  </section>
+</.admin_shell>

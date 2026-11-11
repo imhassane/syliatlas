@@ -25,7 +25,8 @@ defmodule SyliAtlas.Market.Sources.Mansa do
   @impl true
   def parser_version, do: 1
 
-  def configured?, do: api_key() not in [nil, ""]
+  # The development stand-in (`MansaFake`) needs no key.
+  def configured?, do: SyliAtlas.Market.fake?() or api_key() not in [nil, ""]
 
   @impl true
   def fetch("stocks", ext_id, opts) when is_binary(ext_id), do: fetch_pages(ext_id, 0, [], opts)

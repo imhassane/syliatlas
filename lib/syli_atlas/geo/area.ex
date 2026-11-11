@@ -31,11 +31,24 @@ defmodule SyliAtlas.Geo.Area do
     |> unique_constraint(:code)
   end
 
+  def name(%__MODULE__{name_fr: name}, "fr"), do: name
   def name(%__MODULE__{name_en: name}, "en"), do: name
-  def name(%__MODULE__{name_fr: name}, _locale), do: name
 
-  def slug(%__MODULE__{slug_en: slug}, "en"), do: slug
-  def slug(%__MODULE__{slug_fr: slug}, _locale), do: slug
+  def name(%__MODULE__{code: code, name_en: name}, locale),
+    do: SyliAtlas.Geo.Names.name(code, locale) || name
+
+  def slug(%__MODULE__{slug_fr: slug}, "fr"), do: slug
+
+  def slug(%__MODULE__{code: code, slug_en: slug}, locale) when locale in ["es", "pt"],
+    do: SyliAtlas.Geo.Names.slug(code, locale) || slug
+
+  def slug(%__MODULE__{slug_en: slug}, _locale), do: slug
+
+  @doc "Names in every language of the site, as the documents store them."
+  def names(area), do: SyliAtlas.Locales.each(&name(area, &1))
+
+  @doc "Slugs in every language of the site."
+  def slugs(area), do: SyliAtlas.Locales.each(&slug(area, &1))
 
   defp put_search_text(changeset) do
     text =

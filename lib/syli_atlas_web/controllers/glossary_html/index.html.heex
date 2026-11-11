@@ -1,0 +1,23 @@
+<Layouts.public locale={@locale} current={:themes} alternates={@alternates}>
+  <.section>
+    <nav aria-label={gettext("Breadcrumb")}>
+      <ol class="crumbs">
+        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+        <li aria-current="page">{gettext("Glossary")}</li>
+      </ol>
+    </nav>
+    <.section_head level={1} eyebrow={gettext("Glossary")} title={@heading}>
+      <:intro>
+        {gettext(
+          "The notions used on Syli Atlas, each defined in a few sentences and shown with the figures of the 54 African countries."
+        )}
+      </:intro>
+    </.section_head>
+    <dl class="stack gap-3" id="glossary">
+      <div :for={{name, short, href} <- @entries} class="card pad stack gap-1">
+        <dt class="h2"><a href={href}>{name}</a></dt>
+        <dd class="muted">{short}</dd>
+      </div>
+    </dl>
+  </.section>
+</Layouts.public>
