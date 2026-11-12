@@ -15,6 +15,9 @@ function load(token) {
 export function initAnalytics() {
   const token = document.querySelector('meta[name="cf-web-analytics"]')?.content
   if (!token || /^\/(admin|dev)(\/|$)/.test(location.pathname)) return
+  // Cloudflare's automatic injection still on: its beacon is already in the
+  // page, a second one would count each visit twice.
+  if (document.querySelector('script[data-cf-beacon], script[src*="cloudflareinsights.com"]')) return
 
   if (document.prerendering) {
     document.addEventListener("prerenderingchange", () => load(token), {once: true})
