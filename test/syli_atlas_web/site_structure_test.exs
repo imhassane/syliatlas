@@ -19,6 +19,7 @@ defmodule SyliAtlasWeb.SiteStructureTest do
 
     assert themes == [
              "/fr/dette",
+             "/fr/budgets",
              "/fr/notations",
              "/fr/regions",
              "/fr/monnaies",

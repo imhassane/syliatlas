@@ -69,6 +69,7 @@ defmodule SyliAtlasWeb.AccountHTML do
     do: [
       {"rating_change", gettext("a rating agency acts (new rating or outlook)")},
       {"new_edition", gettext("the IMF publishes new figures")},
+      {"budget_law", gettext("a budget law is voted or published")},
       {"indicator_above", gettext("an indicator goes above a threshold")},
       {"indicator_below", gettext("an indicator goes below a threshold")}
     ]
@@ -139,6 +140,9 @@ defmodule SyliAtlasWeb.AccountHTML do
 
         "new_edition" ->
           gettext("new IMF figures")
+
+        "budget_law" ->
+          gettext("budget laws")
 
         "indicator_above" ->
           gettext("%{indicator} above %{threshold}",

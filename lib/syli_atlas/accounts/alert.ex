@@ -1,14 +1,14 @@
 defmodule SyliAtlas.Accounts.Alert do
   @moduledoc """
-  An alert on a country: a new rating action, a new IMF edition, or an IMF
-  indicator crossing a threshold. Or on a market: an index or a security
+  An alert on a country: a new rating action, a new IMF edition, an IMF
+  indicator crossing a threshold, or a budget law published. Or on a market: an index or a security
   moving more than a percentage in one session, or a security's close
   crossing a price. Thresholds are exact decimals.
   """
   use Ecto.Schema
   import Ecto.Changeset
 
-  @country_kinds ~w(rating_change new_edition indicator_above indicator_below)
+  @country_kinds ~w(rating_change new_edition indicator_above indicator_below budget_law)
   @market_kinds ~w(session_move price_above price_below)
   @kinds @country_kinds ++ @market_kinds
   @frequencies ~w(immediate weekly)

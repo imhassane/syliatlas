@@ -211,7 +211,16 @@ defmodule SyliAtlasWeb.Layouts do
         >{gettext("Stock exchanges")}</a>
         <details class="nav-menu" data-nav-menu>
           <summary aria-current={
-            @current in [:debt, :ratings, :regions, :currencies, :simulator, :themes, :method] &&
+            @current in [
+              :debt,
+              :budgets,
+              :ratings,
+              :regions,
+              :currencies,
+              :simulator,
+              :themes,
+              :method
+            ] &&
               "true"
           }>
             {gettext("Themes")}
@@ -257,6 +266,14 @@ defmodule SyliAtlasWeb.Layouts do
         label: gettext("Debt"),
         href: Paths.debt(locale),
         description: gettext("Levels, creditors, risk of debt distress · 54 countries"),
+        short: gettext("54 countries")
+      },
+      %{
+        key: :budgets,
+        current: [:budgets],
+        label: gettext("State budgets"),
+        href: Paths.budgets(locale),
+        description: gettext("Revenue, expenditure, finance laws voted · 54 countries"),
         short: gettext("54 countries")
       },
       %{

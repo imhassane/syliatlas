@@ -23,6 +23,7 @@ defmodule SyliAtlasWeb.AdminComponents do
          [
            {:updates, "Mises à jour", ~p"/admin/mises-a-jour", :updates},
            {:ratings, "Notations", ~p"/admin/notations", :ratings},
+           {:budgets, "Budgets et lois", ~p"/admin/budgets", :budgets},
            {:market, "Données de marché", ~p"/admin/marches", :market}
          ]},
         {"Communauté",
@@ -169,6 +170,24 @@ defmodule SyliAtlasWeb.AdminComponents do
       aria-hidden="true"
     >
       <rect x="3" y="5" width="18" height="14" rx="2" /><path d="M3 7l9 6 9-6" />
+    </svg>
+    """
+  end
+
+  defp nav_icon(%{name: :budgets} = assigns) do
+    ~H"""
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.7"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M4 10l8-6 8 6" /><path d="M6 10v8M10 10v8M14 10v8M18 10v8" /><path d="M3 20h18" />
     </svg>
     """
   end

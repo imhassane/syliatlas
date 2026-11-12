@@ -35,6 +35,8 @@ defmodule SyliAtlas.Release do
         SyliAtlas.Market.seed!()
         # Bundled sovereign ratings: idempotent upsert, then the document.
         SyliAtlas.Ratings.seed!()
+        # Who votes each country's budget (catalog), then the budget documents.
+        SyliAtlas.Budgets.seed!()
 
         if SyliAtlas.Sources.published_edition("imf_weo") == nil do
           {:ok, _status, edition} = SyliAtlas.Imports.import_snapshot!()

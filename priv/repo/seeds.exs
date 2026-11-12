@@ -4,5 +4,6 @@
 SyliAtlas.Geo.seed_areas!()
 SyliAtlas.Sources.seed_sources!()
 SyliAtlas.Ratings.seed!()
+SyliAtlas.Budgets.seed!()
 {:ok, _status, edition} = SyliAtlas.Imports.import_snapshot!()
 IO.puts("IMF edition #{edition.code} online")
