@@ -204,6 +204,41 @@ defmodule SyliAtlas.AccountsTest do
       refute Session.admin_verified?(session, later)
     end
 
+    test "after an email code, an administrator replaces a broken passkey alone" do
+      admin = user_fixture(%{role: "admin"})
+      broken = passkey_fixture(admin)
+
+      # Signed in by code long ago: nothing can change.
+      long_ago = DateTime.add(DateTime.utc_now(), -3600)
+      {_token, stale} = Sessions.create(admin, :code, now: long_ago)
+      assert {:error, :proof_required} = Accounts.remove_passkey(admin, stale, broken.id)
+      refute Accounts.may_manage_passkeys?(admin, stale)
+
+      # A new code in the same session: add a passkey, rename, remove the broken one.
+      {:ok, code_id, _} = Accounts.request_code(admin.email, "fr")
+      code = code_from_email()
+      {:ok, session} = Accounts.confirm_with_code(code_id, admin, stale, code)
+      assert Accounts.may_manage_passkeys?(admin, session)
+      assert {:error, :already_used} = Accounts.confirm_with_code(code_id, admin, session, code)
+
+      key = SoftAuthenticator.new()
+      {:ok, options} = Accounts.passkey_registration_options(admin, session)
+
+      {:ok, new_key, session} =
+        Accounts.register_passkey(admin, session, SoftAuthenticator.attestation(key, options))
+
+      assert {:ok, %{name: "Clé USB"}} =
+               Accounts.rename_passkey(admin, session, new_key.id, "  Clé USB ")
+
+      assert :ok = Accounts.remove_passkey(admin, session, broken.id)
+      assert [_] = Accounts.list_passkeys(admin)
+      assert Accounts.admin_session?(admin, session)
+
+      # Even the last one may go: the next code asks for a new passkey.
+      assert :ok = Accounts.remove_passkey(admin, session, new_key.id)
+      assert Accounts.list_passkeys(admin) == []
+    end
+
     test "an administrator's first passkey needs a fresh code" do
       admin = user_fixture(%{role: "admin"})
       {_token, session} = Sessions.create(admin, :code)
@@ -244,15 +279,15 @@ defmodule SyliAtlas.AccountsTest do
                )
     end
 
-    test "the last passkey of an administrator stays; removing one closes its sessions" do
-      admin = user_fixture(%{role: "admin"})
-      only = passkey_fixture(admin)
-      assert {:error, :last_admin_passkey} = Accounts.remove_passkey(admin, only.id)
+    test "removing a passkey closes the other sessions opened with it, not this one" do
+      member = user_fixture()
+      key = passkey_fixture(member)
+      {token, _} = Sessions.create(member, key)
+      {current_token, current} = Sessions.create(member, key)
 
-      second = passkey_fixture(admin)
-      {token, _session} = Sessions.create(admin, second)
-      assert :ok = Accounts.remove_passkey(admin, second.id)
+      assert :ok = Accounts.remove_passkey(member, current, key.id)
       assert Accounts.fetch_session(token) == nil
+      assert Accounts.fetch_session(current_token)
     end
   end
 

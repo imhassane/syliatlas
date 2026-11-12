@@ -1284,7 +1284,7 @@ msgstr "已恢复联网"
 #: lib/syli_atlas_web/components/layouts.ex:514
 #: lib/syli_atlas_web/components/layouts.ex:617
 #: lib/syli_atlas_web/components/layouts.ex:808
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:76
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:159
 #, elixir-autogen, elixir-format
 msgid "Close"
 msgstr "收盘价"
@@ -4531,17 +4531,18 @@ msgid "1 alert"
 msgid_plural "%{count} alerts"
 msgstr[0] ""
 
-#: lib/syli_atlas_web/controllers/account_controller.ex:109
+#: lib/syli_atlas_web/controllers/account_controller.ex:111
 #, elixir-autogen, elixir-format
 msgid "50 alerts at most."
 msgstr ""
 
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:30
 #: lib/syli_atlas_web/controllers/session_html/code.html.heex:14
 #, elixir-autogen, elixir-format
 msgid "6-digit code"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:48
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:131
 #, elixir-autogen, elixir-format
 msgid "Add a passkey"
 msgstr ""
@@ -4577,12 +4578,12 @@ msgstr ""
 msgid "Administrator accounts then confirm with their passkey."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_controller.ex:106
+#: lib/syli_atlas_web/controllers/account_controller.ex:108
 #, elixir-autogen, elixir-format
 msgid "Alert created."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_controller.ex:137
+#: lib/syli_atlas_web/controllers/account_controller.ex:139
 #, elixir-autogen, elixir-format
 msgid "Alert deleted."
 msgstr ""
@@ -4593,11 +4594,6 @@ msgstr ""
 #: lib/syli_atlas_web/controllers/session_html/new.html.heex:16
 #, elixir-autogen, elixir-format
 msgid "Alerts"
-msgstr ""
-
-#: lib/syli_atlas_web/controllers/account_controller.ex:149
-#, elixir-autogen, elixir-format
-msgid "An administrator keeps at least one passkey."
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:6
@@ -4621,7 +4617,7 @@ msgstr ""
 msgid "Change address"
 msgstr "更改地址"
 
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:87
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:170
 #, elixir-autogen, elixir-format
 msgid "Close every other session"
 msgstr ""
@@ -4637,6 +4633,7 @@ msgstr ""
 msgid "Comparison"
 msgstr "比较"
 
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:45
 #: lib/syli_atlas_web/controllers/session_html/code.html.heex:31
 #: lib/syli_atlas_web/controllers/unsubscribe_html/show.html.heex:16
 #, elixir-autogen, elixir-format
@@ -4681,17 +4678,17 @@ msgid "Current account (% of GDP)"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:40
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:146
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:229
 #, elixir-autogen, elixir-format
 msgid "Delete"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:135
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:218
 #, elixir-autogen, elixir-format
 msgid "Delete my account"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:144
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:227
 #, elixir-autogen, elixir-format
 msgid "Delete your account for good?"
 msgstr ""
@@ -4701,7 +4698,7 @@ msgstr ""
 msgid "Digest"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:101
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:184
 #, elixir-autogen, elixir-format
 msgid "Digest of favourites"
 msgstr ""
@@ -4714,12 +4711,12 @@ msgstr ""
 msgid "Email address"
 msgstr "电子邮件地址"
 
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:120
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:203
 #, elixir-autogen, elixir-format
 msgid "Email me when a passkey is added or an admin session opens"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:92
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:175
 #: lib/syli_atlas_web/controllers/unsubscribe_html/show.html.heex:5
 #, elixir-autogen, elixir-format
 msgid "Emails"
@@ -4750,7 +4747,7 @@ msgstr "每周一"
 msgid "Favourites"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:137
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:220
 #, elixir-autogen, elixir-format
 msgid "Favourites, alerts, passkeys and sessions are erased."
 msgstr ""
@@ -4822,7 +4819,7 @@ msgstr ""
 msgid "Inflation (%)"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:123
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:206
 #, elixir-autogen, elixir-format
 msgid "Language of emails and of my space"
 msgstr ""
@@ -4832,7 +4829,7 @@ msgstr ""
 msgid "Last sent:"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:29
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:97
 #, elixir-autogen, elixir-format
 msgid "Last used:"
 msgstr ""
@@ -4848,7 +4845,7 @@ msgstr ""
 msgid "My space"
 msgstr "我的空间"
 
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:44
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:127
 #, elixir-autogen, elixir-format
 msgid "Name of the new passkey"
 msgstr ""
@@ -4888,12 +4885,12 @@ msgstr ""
 msgid "On the 1st of the month"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:58
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:141
 #, elixir-autogen, elixir-format
 msgid "Open sessions"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_controller.ex:164
+#: lib/syli_atlas_web/controllers/account_controller.ex:223
 #, elixir-autogen, elixir-format
 msgid "Other sessions closed."
 msgstr ""
@@ -4903,17 +4900,18 @@ msgstr ""
 msgid "Passkey"
 msgstr ""
 
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:81
 #: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:33
 #, elixir-autogen, elixir-format
 msgid "Passkey name"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_controller.ex:145
+#: lib/syli_atlas_web/controllers/account_controller.ex:149
 #, elixir-autogen, elixir-format
 msgid "Passkey removed."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:18
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:61
 #, elixir-autogen, elixir-format
 msgid "Passkeys"
 msgstr ""
@@ -4923,7 +4921,7 @@ msgstr ""
 msgid "Pause"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_controller.ex:171
+#: lib/syli_atlas_web/controllers/account_controller.ex:230
 #, elixir-autogen, elixir-format
 msgid "Preferences saved."
 msgstr ""
@@ -4949,7 +4947,7 @@ msgid "Registered passkeys:"
 msgstr ""
 
 #: lib/syli_atlas_web/controllers/account_html/favorites.html.heex:49
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:38
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:120
 #, elixir-autogen, elixir-format
 msgid "Remove"
 msgstr ""
@@ -4959,7 +4957,7 @@ msgstr ""
 msgid "Resume"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:129
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:212
 #: lib/syli_atlas_web/controllers/recap_html/manage.html.heex:26
 #, elixir-autogen, elixir-format
 msgid "Save"
@@ -4976,7 +4974,7 @@ msgstr ""
 msgid "Sign in or create an account"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:20
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:63
 #, elixir-autogen, elixir-format
 msgid "Sign in with your device's fingerprint, face or PIN."
 msgstr ""
@@ -5013,11 +5011,6 @@ msgstr "步骤"
 msgid "Tell me when"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:10
-#, elixir-autogen, elixir-format
-msgid "The administration asks for the email code, then a passkey. Keep at least two passkeys: the last one cannot be removed."
-msgstr ""
-
 #: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:53
 #, elixir-autogen, elixir-format
 msgid "The email code is verified. Your account is an administrator: access also asks for this device's fingerprint, face or PIN."
@@ -5029,7 +5022,7 @@ msgstr ""
 msgid "The email could not be sent. Try again in a moment."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_controller.ex:188
+#: lib/syli_atlas_web/controllers/account_controller.ex:247
 #, elixir-autogen, elixir-format
 msgid "The last administrator cannot delete their account."
 msgstr ""
@@ -5044,12 +5037,12 @@ msgstr ""
 msgid "This account is deactivated."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_controller.ex:131
+#: lib/syli_atlas_web/controllers/account_controller.ex:133
 #, elixir-autogen, elixir-format
 msgid "This alert could not be changed."
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:51
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:134
 #, elixir-autogen, elixir-format
 msgid "This browser cannot use passkeys."
 msgstr ""
@@ -5115,6 +5108,7 @@ msgstr ""
 msgid "We send you a 6-digit code, valid for 10 minutes."
 msgstr ""
 
+#: lib/syli_atlas_web/controllers/account_controller.ex:205
 #: lib/syli_atlas_web/controllers/session_controller.ex:130
 #, elixir-autogen, elixir-format
 msgid "Wrong code. Check the last email received."
@@ -5205,7 +5199,7 @@ msgstr ""
 msgid "the IMF publishes new figures"
 msgstr ""
 
-#: lib/syli_atlas_web/controllers/account_html/security.html.heex:65
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:148
 #, elixir-autogen, elixir-format
 msgid "this device"
 msgstr ""
@@ -8678,3 +8672,78 @@ msgstr "原始"
 #, elixir-autogen, elixir-format
 msgid "original currencies as published"
 msgstr "原始货币 按发布"
+
+#: lib/syli_atlas_web/controllers/account_controller.ex:177
+#, elixir-autogen, elixir-format
+msgid "A code was sent to your address."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:16
+#, elixir-autogen, elixir-format
+msgid "Confirm it's you"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/account_controller.ex:212
+#, elixir-autogen, elixir-format
+msgid "Confirm with an email code first."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/account_controller.ex:194
+#, elixir-autogen, elixir-format
+msgid "Confirmed: you can manage your passkeys for 10 minutes."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:18
+#, elixir-autogen, elixir-format
+msgid "Managing the passkeys of an administrator account asks for a code sent to your email address. It stays valid 10 minutes."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:68
+#, elixir-autogen, elixir-format
+msgid "No passkey yet."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/account_controller.ex:163
+#, elixir-autogen, elixir-format
+msgid "Passkey renamed."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:116
+#, elixir-autogen, elixir-format
+msgid "Remove this passkey?"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:113
+#, elixir-autogen, elixir-format
+msgid "Remove your last passkey? The administration will ask you to create a new one after the next email code."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:91
+#, elixir-autogen, elixir-format
+msgid "Rename"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:53
+#, elixir-autogen, elixir-format
+msgid "Send a new code"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:53
+#, elixir-autogen, elixir-format
+msgid "Send me a code"
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/account_html/security.html.heex:10
+#, elixir-autogen, elixir-format
+msgid "The administration asks for the email code, then a passkey. To add, rename or remove a passkey, confirm with an email code first: a lost or broken passkey can be replaced that way."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/account_controller.ex:182
+#, elixir-autogen, elixir-format
+msgid "The code could not be sent. Try again in a few minutes."
+msgstr ""
+
+#: lib/syli_atlas_web/controllers/account_controller.ex:200
+#, elixir-autogen, elixir-format
+msgid "This code no longer works. Ask for a new one."
+msgstr ""

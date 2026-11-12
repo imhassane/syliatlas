@@ -73,6 +73,8 @@ defmodule SyliAtlasWeb.AccountController do
       page_title: pgettext("account", "Security"),
       tab: :security,
       passkeys: Accounts.list_passkeys(user),
+      manage?: Accounts.may_manage_passkeys?(user, conn.assigns.current_session),
+      code_sent?: get_session(conn, :security_code) != nil,
       sessions: Accounts.list_sessions(user),
       seo: %{noindex: true}
     )
@@ -140,18 +142,75 @@ defmodule SyliAtlasWeb.AccountController do
   # Security --------------------------------------------------------------
 
   def delete_passkey(conn, %{"id" => id}) do
-    case Accounts.remove_passkey(conn.assigns.current_user, id) do
+    %{current_user: user, current_session: session} = conn.assigns
+
+    case Accounts.remove_passkey(user, session, id) do
       :ok ->
         conn |> put_flash(:info, gettext("Passkey removed.")) |> back(:security)
 
-      {:error, :last_admin_passkey} ->
-        conn
-        |> put_flash(:error, gettext("An administrator keeps at least one passkey."))
-        |> back(:security)
+      {:error, :proof_required} ->
+        proof_required(conn)
 
       {:error, _} ->
         back(conn, :security)
     end
+  end
+
+  def rename_passkey(conn, %{"id" => id, "passkey" => %{"name" => name}}) do
+    %{current_user: user, current_session: session} = conn.assigns
+
+    case Accounts.rename_passkey(user, session, id, name) do
+      {:ok, _} -> conn |> put_flash(:info, gettext("Passkey renamed.")) |> back(:security)
+      {:error, :proof_required} -> proof_required(conn)
+      {:error, _} -> back(conn, :security)
+    end
+  end
+
+  @doc "Sends a code to the account's address, to manage its passkeys."
+  def request_security_code(conn, _params) do
+    user = conn.assigns.current_user
+
+    case Accounts.request_code(user.email, user.locale) do
+      {:ok, code_id, _email} ->
+        conn
+        |> put_session(:security_code, code_id)
+        |> put_flash(:info, gettext("A code was sent to your address."))
+        |> back(:security)
+
+      {:error, _} ->
+        conn
+        |> put_flash(:error, gettext("The code could not be sent. Try again in a few minutes."))
+        |> back(:security)
+    end
+  end
+
+  def confirm_security_code(conn, %{"code" => code}) do
+    %{current_user: user, current_session: session} = conn.assigns
+
+    with id when id != nil <- get_session(conn, :security_code),
+         {:ok, _session} <- Accounts.confirm_with_code(id, user, session, code) do
+      conn
+      |> Plug.Conn.delete_session(:security_code)
+      |> put_flash(:info, gettext("Confirmed: you can manage your passkeys for 10 minutes."))
+      |> back(:security)
+    else
+      {:error, reason} when reason in [:expired, :too_many_attempts, :already_used] ->
+        conn
+        |> Plug.Conn.delete_session(:security_code)
+        |> put_flash(:error, gettext("This code no longer works. Ask for a new one."))
+        |> back(:security)
+
+      _ ->
+        conn
+        |> put_flash(:error, gettext("Wrong code. Check the last email received."))
+        |> back(:security)
+    end
+  end
+
+  defp proof_required(conn) do
+    conn
+    |> put_flash(:error, gettext("Confirm with an email code first."))
+    |> back(:security)
   end
 
   def delete_session(conn, %{"id" => id}) do

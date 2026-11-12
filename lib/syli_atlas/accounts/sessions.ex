@@ -99,9 +99,19 @@ defmodule SyliAtlas.Accounts.Sessions do
     revoke_where(dynamic([s], s.user_id == ^user_id and s.id != ^keep))
   end
 
-  @doc "Every session opened with a passkey: closed when the passkey is removed."
-  def revoke_by_passkey(passkey_id),
-    do: revoke_where(dynamic([s], s.passkey_id == ^passkey_id))
+  @doc """
+  Every session opened with a passkey: closed when the passkey is removed,
+  except the session given as `:except` (the one removing it).
+  """
+  def revoke_by_passkey(passkey_id, opts \\ []) do
+    case opts[:except] do
+      %Session{id: keep} ->
+        revoke_where(dynamic([s], s.passkey_id == ^passkey_id and s.id != ^keep))
+
+      nil ->
+        revoke_where(dynamic([s], s.passkey_id == ^passkey_id))
+    end
+  end
 
   defp revoke_where(condition) do
     {count, _} =
