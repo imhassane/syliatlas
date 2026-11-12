@@ -16,7 +16,7 @@ defmodule SyliAtlasWeb.SiteStructureTest do
     top = hrefs(doc, "#header-nav > a")
     assert top == ["/fr/classement/pib", "/fr/bourses", "/fr/comparer/"]
     themes = hrefs(doc, "#header-nav details .nav-mega-item")
-    assert themes == ["/fr/dette", "/fr/notations", "/fr/regions"]
+    assert themes == ["/fr/dette", "/fr/notations", "/fr/regions", "/fr/monnaies"]
     panel = doc |> LazyHTML.query("#header-nav details") |> LazyHTML.text()
     assert panel =~ "54 pays" and panel =~ "CEDEAO"
     assert hrefs(doc, "#header-nav .nav-mega-foot a") == ["/fr/methode"]

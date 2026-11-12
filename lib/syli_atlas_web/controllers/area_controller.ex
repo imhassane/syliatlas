@@ -480,13 +480,21 @@ defmodule SyliAtlasWeb.AreaController do
   defp currency(%{kind: "country", code: code}, locale), do: Currencies.for_country(code, locale)
   defp currency(_area, _locale), do: nil
 
-  # Dollar rate of the country's currency, when a market source allows showing it.
+  # The currency's rates against the dollar, the euro and the yuan, with their
+  # change over a year (SyliAtlas.Fx, our own daily rates).
   defp fx(%{kind: "country", code: code}, locale) do
     with %{code: cur} <- Currencies.for_country(code, locale),
-         true <- SyliAtlas.Market.public?(),
-         %{"rates" => rates} = doc <- SyliAtlas.Market.fx(),
-         rate when is_number(rate) <- rates["USD/" <> cur] do
-      %{rate: rate, as_of: doc["as_of"]}
+         %{} = doc <- SyliAtlas.Fx.latest(),
+         usd when is_number(usd) <- SyliAtlas.Fx.per(doc, cur) do
+      rows =
+        for base <- ~w(USD EUR CNY),
+            base != cur,
+            value <- [SyliAtlas.Fx.per(doc, cur, base)],
+            value do
+          %{base: base, value: value, change: SyliAtlas.Fx.change(doc, cur, base)}
+        end
+
+      %{as_of: doc["as_of"], year_ago: doc["year_ago"], source: doc["source"], rows: rows}
     else
       _ -> nil
     end
