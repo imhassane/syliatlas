@@ -1,7 +1,9 @@
 defmodule SyliAtlas.Workers.FxBackfillWorker do
   @moduledoc """
   Fetches the days missing from the primary source over the last `days`
-  (400 by default: the year-on-year comparison needs a year), one request
+  (by default every day since the source's first dated release, about two
+  and a half years: the year-on-year comparison needs one, the simulator
+  converts the start of a placement with the rate of its day), one request
   per day, then publishes again. The source keeps its history by date,
   with no quota.
   """
@@ -15,7 +17,7 @@ defmodule SyliAtlas.Workers.FxBackfillWorker do
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: args}) do
-    days = Map.get(args, "days", 400)
+    days = Map.get(args, "days") || default_days()
     missing = Fx.missing_days(days)
 
     {ok, failed} =
@@ -35,5 +37,8 @@ defmodule SyliAtlas.Workers.FxBackfillWorker do
     :ok
   end
 
-  def enqueue(days \\ 400), do: Oban.insert(new(%{"days" => days}))
+  def enqueue(days \\ nil), do: Oban.insert(new(%{"days" => days || default_days()}))
+
+  defp default_days,
+    do: Date.diff(Date.utc_today(), SyliAtlas.Fx.Sources.ExchangeApi.first_day())
 end

@@ -106,13 +106,120 @@
 .fx-name { display: inline-flex; align-items: center; gap: 10px; }
 .fx-flags { display: inline-flex; flex: none; width: 44px; }
 .fx-flags .flag + .flag { margin-inline-start: -8px; }
-.fx-convert { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 16px; margin-top: 16px; }
-.fx-convert .h2 { flex: 0 0 auto; margin: 0 12px 10px 0; }
-.fx-convert .field { display: flex; flex-direction: column; gap: 6px; flex: 1 1 180px; font-size: 13px; font-weight: 500; color: var(--ink-muted); }
-.fx-convert input, .fx-convert select { min-height: 44px; border: 0; border-radius: 10px; padding: 0 12px; background: var(--alt); color: var(--ink); font: inherit; font-size: 16px; }
-.fx-result { display: flex; flex-direction: column; gap: 2px; flex: 1 1 220px; }
-.fx-result b { font-size: 24px; font-weight: 500; }
+.fx-convert { position: relative; z-index: 5; display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+.fx-convert-title { margin: 0; }
+.fx-convert-row { display: grid; grid-template-columns: minmax(8rem, .8fr) minmax(0, 1.5fr) auto minmax(0, 1.5fr) auto; align-items: end; gap: 12px; }
+.fx-convert .field { display: flex; flex-direction: column; gap: 6px; min-width: 0; font-size: 13px; font-weight: 500; color: var(--ink-muted); }
+.fx-convert input:not(.fx-pick-search), .fx-convert select, .fx-pick-btn { box-sizing: border-box; width: 100%; height: 48px; border: 1px solid var(--border-strong); border-radius: 10px; padding: 0 14px; background: var(--card); color: var(--ink); font: inherit; font-size: 16px; }
+.fx-amount input { font-variant-numeric: tabular-nums; font-weight: 500; }
+.fx-convert input:focus-visible, .fx-pick-btn:focus-visible, .fx-pick-btn[aria-expanded="true"] { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+.fx-convert-go { height: 48px; }
+.fx-swap { display: grid; place-items: center; width: 40px; height: 48px; border-radius: 10px; color: var(--ink-muted); font-size: 20px; text-decoration: none; }
+.fx-swap:hover { color: var(--accent-text); background: var(--alt); }
+.fx-result { display: flex; flex-direction: column; gap: 2px; padding-top: 14px; border-top: 1px solid var(--border-faint); }
+.fx-result b { font-size: 28px; font-weight: 500; }
+/* Currency picker: a searchable list of ten rows that scrolls. */
+.fx-pick { position: relative; }
+.fx-pick-btn { display: flex; align-items: center; justify-content: space-between; gap: 8px; cursor: pointer; text-align: start; }
+.fx-pick-current { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.fx-pick-current b { font-weight: 600; font-variant-numeric: tabular-nums; }
+.fx-pick-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--ink-muted); }
+.fx-pick-chev { color: var(--ink-subtle); font-size: 12px; }
+.fx-pick-pop { position: absolute; inset-inline: 0; top: calc(100% + 6px); z-index: 30; min-width: min(22rem, 90vw); padding: 8px; border-radius: 12px; background: var(--card); box-shadow: var(--shadow-pop); }
+.fx-pick-search { box-sizing: border-box; width: 100%; height: 40px; border: 0; border-radius: 8px; padding: 0 12px; background: var(--alt); color: var(--ink); font: inherit; font-size: 15px; }
+.fx-pick-search:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; }
+.fx-pick-list { list-style: none; margin: 6px 0 0; padding: 0; max-height: calc(10 * 52px); overflow-y: auto; overscroll-behavior: contain; }
+.fx-pick-list li { display: grid; grid-template-columns: 48px minmax(0, 1fr) auto; align-items: center; gap: 10px; box-sizing: border-box; height: 52px; padding: 4px 10px; border-radius: 8px; cursor: pointer; color: var(--ink); }
+.fx-pick-list li[hidden] { display: none; }
+.fx-pick .fx-flags { width: auto; min-width: 0; }
+.fx-pick-list li.is-active { background: var(--alt); }
+.fx-pick-list li[aria-selected="true"] { background: var(--accent-bg); }
+.fx-pick-list li[aria-selected="true"] .fx-pick-code { color: var(--accent-text); }
+.fx-pick-text { display: flex; flex-direction: column; min-width: 0; }
+.fx-pick-text b { font-weight: 500; font-size: 14px; line-height: 1.3; }
+.fx-pick-text span { font-size: 12px; line-height: 1.3; }
+.fx-pick-text span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.fx-pick-code { font-family: var(--mono); font-size: 12px; color: var(--ink-subtle); }
+.fx-pick-empty { margin: 8px 10px; }
+.fx-sym { display: inline-grid; place-items: center; width: 22px; height: 16px; border-radius: 3px; background: var(--muted); color: var(--ink-muted); font-size: 11px; font-weight: 600; }
+@media (max-width: 860px) {
+  .fx-convert-row { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); }
+  .fx-amount, .fx-convert-go { grid-column: 1 / -1; }
+}
 .fx-rates { margin-top: 16px; }
 @media (max-width: 760px) {
   .table-scroll { max-height: none; }
 }
+
+/* Placement simulator (canvas « Simulateur », variant B) ------------------ */
+.sim-hero { background: var(--deep); color: var(--on-deep); padding: 26px 0 40px; }
+.sim-hero-wrap { display: flex; flex-direction: column; gap: 14px; }
+.sim-hero .crumbs, .sim-hero .crumbs a { color: var(--on-deep-muted); }
+.sim-kicker { margin: 10px 0 0; font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-on-deep); }
+.sim-h1 { margin: 0; font-size: clamp(28px, 3.6vw, 44px); line-height: 1.05; font-weight: 400; letter-spacing: -.03em; max-width: 760px; }
+.sim-sentence { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; margin-top: 8px; font-size: clamp(18px, 2vw, 24px); line-height: 1.3; }
+.sim-field { min-height: 46px; border: 0; border-radius: 10px; padding: 0 12px; background: var(--deep-raised); color: var(--on-deep); font: inherit; font-size: inherit; box-shadow: inset 0 -2px 0 var(--accent-on-deep); }
+.sim-field:focus-visible { outline: 2px solid var(--accent-on-deep); outline-offset: 2px; }
+.sim-amount { width: 7.5ch; text-align: end; }
+.sim-field[type="date"] { color-scheme: dark; }
+.sim-sentence .btn { min-height: 46px; }
+.sim-presets { display: flex; flex-wrap: wrap; gap: 8px; }
+.sim-chip { padding: 6px 12px; text-decoration: none; border-radius: 999px; font-size: 14px; color: var(--on-deep-muted); box-shadow: inset 0 0 0 1px var(--deep-raised); }
+.sim-chip:hover { color: var(--on-deep); }
+.sim-chip.on { background: var(--on-deep); color: var(--deep); }
+.sim-result { margin-top: 18px; display: flex; flex-direction: column; gap: 4px; }
+.sim-today { margin: 0; color: var(--on-deep-muted); font-size: 15px; }
+.sim-final { margin: 0; font-size: clamp(44px, 7vw, 76px); line-height: 1; font-weight: 400; letter-spacing: -.035em; }
+.sim-gain { margin: 4px 0 0; font-size: 17px; color: var(--on-deep-muted); }
+.sim-gain b { font-weight: 600; }
+.sim-hero .up { color: #5ee0a8; }
+.sim-hero .down { color: #ffb079; }
+.sim-note { font-size: 14px; }
+.sim-detail { padding-top: 28px; }
+.sim-detail .wrap { display: flex; flex-direction: column; gap: 20px; }
+.sim-warn { margin: 0; padding: 10px 14px; border-radius: 10px; background: var(--warning-bg); color: var(--warning-ink); font-size: 14px; }
+.sim-chart-card { display: flex; flex-direction: column; gap: 12px; }
+.sim-chart-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; }
+.sim-chart-head .h2 { margin: 0; }
+.sim-chart { width: 100%; height: auto; display: block; }
+.sim-grid { stroke: var(--border-faint); stroke-width: 1; }
+.sim-tick { fill: var(--ink-subtle); font-size: 11px; text-anchor: middle; font-family: var(--sans); }
+.sim-base { stroke: var(--ink-subtle); stroke-width: 1; stroke-dasharray: 4 4; }
+.sim-line { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linejoin: round; }
+.sim-area { fill: var(--accent); opacity: .08; }
+.sim-dot { fill: var(--accent); }
+.sim-chart.is-down .sim-line, .sim-chart.is-down .sim-dot { stroke: var(--signal); fill: var(--signal); }
+.sim-chart.is-down .sim-line { fill: none; }
+.sim-chart.is-down .sim-area { fill: var(--signal); }
+.sim-legend { margin: 0; }
+.sim-key { display: inline-block; width: 18px; margin-inline-end: 6px; vertical-align: middle; border-top: 1px dashed var(--ink-subtle); }
+.sim-stats dd .small { display: block; margin-top: 2px; }
+.sim-others { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.sim-others li { display: grid; grid-template-columns: 3.5rem 1fr auto; gap: 8px; padding: 6px 0; border-top: 1px solid var(--border-faint); font-size: 14px; }
+.sim-others li:first-child { border-top: 0; }
+.sim-list { margin: 0; padding-inline-start: 18px; display: flex; flex-direction: column; gap: 6px; color: var(--ink-muted); }
+.sim-bar-col { width: 30%; }
+.sim-bar { display: block; height: 8px; border-radius: 4px; min-width: 2px; }
+.sim-bar.up { background: var(--success); }
+.sim-bar.down { background: var(--signal); }
+.sim-share { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.sim-share p { margin: 0; flex: 1 0 100%; }
+.sim-share-url { flex: 1 1 320px; min-height: 44px; border: 0; border-radius: 10px; padding: 0 12px; background: var(--alt); color: var(--ink); font: inherit; font-size: 14px; }
+.sim-cta { margin-top: 4px; }
+@media (max-width: 760px) {
+  .sim-sentence { font-size: 18px; }
+  .sim-field { flex: 1 1 40%; }
+  .sim-sentence .btn { flex: 1 0 100%; }
+}
+.fx-convert-row > .fx-pick ~ .fx-pick .fx-pick-pop { inset-inline-start: auto; inset-inline-end: 0; }
+@media (max-width: 560px) {
+  .fx-convert-row { grid-template-columns: minmax(0, 1fr); gap: 8px; }
+  .fx-swap { justify-self: center; height: 32px; transform: rotate(90deg); }
+  .fx-pick-list { max-height: min(calc(10 * 52px), 60dvh); }
+  .fx-pick-search { height: 44px; font-size: 16px; }
+}
+/* On a phone the list opens as a sheet at the bottom of the screen, with
+   the same margins on both sides (moved under <body> by the script, so no
+   transformed ancestor holds it). */
+.fx-pick-pop.is-sheet { position: fixed; inset: auto 12px max(12px, env(safe-area-inset-bottom)) 12px; top: auto; min-width: 0; z-index: 90; padding: 10px; border-radius: 16px; }
+.fx-pick-backdrop { position: fixed; inset: 0; z-index: 89; background: rgba(11, 26, 51, .4); }

@@ -27,8 +27,12 @@ le demande le projet.
    `market_raw_payloads`, jeu `fx`).
 3. Les taux des monnaies suivies vont dans `fx_rates` : une ligne par monnaie,
    jour et source, en unités pour un dollar, décimal exact stocké en texte.
-4. `FxBackfillWorker` remplit les jours manquants des 400 derniers jours (une
-   requête par jour) dès qu'il en manque dans les 30 derniers.
+4. `FxBackfillWorker` remplit les jours manquants depuis le 2 mars 2024,
+   premier jour publié par la source (une requête par jour), dès qu'il en
+   manque dans les 30 derniers ou que l'historique ne remonte pas jusque-là.
+   Le simulateur de placement convertit le début d'un placement au taux de
+   son jour : sans taux ce jour-là (et hors parité fixe), il reste dans la
+   monnaie de l'indice.
 5. `SyliAtlas.Fx.publish!/0` écrit le document `market:fx_rates` (table
    `snapshots`) : taux du dernier jour, taux d'environ un an plus tôt,
    parités, contrôles. Les pages ne lisent que lui.

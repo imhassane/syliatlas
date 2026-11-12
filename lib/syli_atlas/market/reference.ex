@@ -170,12 +170,33 @@ defmodule SyliAtlas.Market.Reference do
 
   @doc "Sources by rank for an exchange and dataset, best first."
   def ranked_sources(exchange_id, dataset, date \\ Date.utc_today()) do
-    from(p in SourcePriority,
-      where: p.exchange_id == ^exchange_id and p.dataset == ^dataset and p.valid_from <= ^date,
-      order_by: [asc: p.rank, desc: p.valid_from],
-      select: p.source
-    )
-    |> Repo.all()
-    |> Enum.uniq()
+    case ranked(exchange_id, dataset, date) do
+      # Before the first priorities (past closes from an index history),
+      # the first priorities known apply.
+      [] -> ranked(exchange_id, dataset, nil)
+      sources -> sources
+    end
+  end
+
+  defp ranked(exchange_id, dataset, date) do
+    query =
+      from(p in SourcePriority,
+        where: p.exchange_id == ^exchange_id and p.dataset == ^dataset,
+        order_by: [asc: p.rank, desc: p.valid_from],
+        select: p.source
+      )
+
+    query =
+      if date,
+        do: where(query, [p], p.valid_from <= ^date),
+        else: where(query, [p], p.valid_from == subquery(first_valid_from(exchange_id, dataset)))
+
+    query |> Repo.all() |> Enum.uniq()
+  end
+
+  defp first_valid_from(exchange_id, dataset) do
+    from p in SourcePriority,
+      where: p.exchange_id == ^exchange_id and p.dataset == ^dataset,
+      select: min(p.valid_from)
   end
 end

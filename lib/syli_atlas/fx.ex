@@ -82,7 +82,7 @@ defmodule SyliAtlas.Fx do
 
   @doc "The days of the last `days` without a rate from the primary source, oldest first."
   def missing_days(days, today \\ Date.utc_today()) do
-    first = Date.add(today, -days)
+    first = Enum.max([Date.add(today, -days), ExchangeApi.first_day()], Date)
 
     have =
       Repo.all(
@@ -98,6 +98,11 @@ defmodule SyliAtlas.Fx do
   end
 
   # Reading the table ----------------------------------------------------
+
+  @doc "The first day with rates from a source, or nil."
+  def first_stored_day(source \\ ExchangeApi) do
+    Repo.one(from r in Rate, where: r.source == ^source.code(), select: min(r.date))
+  end
 
   @doc "The latest day with rates from a source, or nil."
   def latest_day(source \\ ExchangeApi) do

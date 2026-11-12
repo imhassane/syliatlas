@@ -221,11 +221,40 @@ defmodule SyliAtlas.MarketFixtures do
         "/api/v1/markets/forex" ->
           forex()
 
+        "/api/v1/markets/indices/" <> rest ->
+          index_history(String.replace_suffix(rest, "/history", ""))
+
         "/api/v1/markets/exchanges/" <> rest ->
           stocks(String.replace_suffix(rest, "/stocks", ""), offset)
       end
 
     Req.Test.json(conn, body)
+  end
+
+  @doc """
+  The past closes of an index: one per weekday from 2 January 2019 to 30
+  June 2023, rising by 1 a day from 100 (BRVM), or a short year (others).
+  """
+  def index_history(code) do
+    {first, last} =
+      if code == "brvm-ci",
+        do: {~D[2019-01-02], ~D[2023-06-30]},
+        else: {~D[2023-01-02], ~D[2023-06-30]}
+
+    points =
+      Date.range(first, last)
+      |> Enum.filter(&(Date.day_of_week(&1) <= 5))
+      |> Enum.with_index(fn d, i -> %{"date" => Date.to_iso8601(d), "close" => 100 + i} end)
+
+    %{"success" => true, "data" => %{"index_code" => code, "points" => points}, "meta" => %{}}
+  end
+
+  @doc "Brings the index histories through the pipeline, as the one-off job does."
+  def import_history! do
+    Req.Test.stub(SyliAtlas.Market.Sources.Mansa, &mansa_plug/1)
+    :ok = SyliAtlas.Workers.IndexHistoryWorker.run()
+    Oban.drain_queue(queue: :market, with_scheduled: true)
+    :ok
   end
 
   @doc "Seeds the reference, runs a full import and publishes, as the evening job does."

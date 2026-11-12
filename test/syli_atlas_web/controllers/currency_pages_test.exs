@@ -61,6 +61,21 @@ defmodule SyliAtlasWeb.CurrencyPagesTest do
       assert text(doc, "#currency-result") =~ "Saisissez un montant"
     end
 
+    test "the currency lists: a select without a script, a searchable list with one", %{
+      conn: conn
+    } do
+      doc = doc(conn, "/fr/monnaies?amount=100&from=NGN&to=EUR")
+      # The select sends the value; the list (shown by the script) offers the
+      # 45 currencies, with their countries to search.
+      assert has?(doc, ~s(#convert-from option[value="NGN"][selected]))
+      assert doc |> LazyHTML.query("#convert-to-list [role=option]") |> Enum.count() == 45
+      assert has?(doc, ~s(#convert-from-NGN[aria-selected="true"][data-search*="nigeria"]))
+      assert has?(doc, ~s(#convert-to-EUR[aria-selected="true"]))
+
+      swap = doc |> LazyHTML.query("#convert-swap") |> LazyHTML.attribute("href") |> hd()
+      assert swap =~ "from=EUR" and swap =~ "to=NGN"
+    end
+
     test "the page exists in every language with its alternates and a dataset", %{conn: conn} do
       for path <-
             ~w(/fr/monnaies /en/currencies /es/monedas /pt/moedas /ar/currencies /hi/currencies /zh/currencies) do

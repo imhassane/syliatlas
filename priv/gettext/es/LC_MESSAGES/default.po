@@ -111,8 +111,8 @@ msgstr "Variación anual del volumen de la producción."
 msgid "Apply"
 msgstr "Aplicar"
 
-#: lib/syli_atlas_web/components/layouts.ex:852
-#: lib/syli_atlas_web/components/layouts.ex:867
+#: lib/syli_atlas_web/components/layouts.ex:868
+#: lib/syli_atlas_web/components/layouts.ex:883
 #, elixir-autogen, elixir-format
 msgid "Attempting to reconnect"
 msgstr "Intentando reconectar"
@@ -146,11 +146,13 @@ msgstr "Ingreso medio por habitante, ajustado a los precios locales."
 #: lib/syli_atlas_web/controllers/ratings_html/index.html.heex:3
 #: lib/syli_atlas_web/controllers/ratings_html/show.html.heex:3
 #: lib/syli_atlas_web/controllers/regions_html/index.html.heex:5
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:4
 #, elixir-autogen, elixir-format
 msgid "Breadcrumb"
 msgstr "Ruta de navegación"
 
 #: lib/syli_atlas_web/controllers/area_html/economy.html.heex:80
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:269
 #, elixir-autogen, elixir-format
 msgid "Change"
 msgstr "Variación"
@@ -166,14 +168,14 @@ msgid "Checked every day"
 msgstr "Comprobado cada día"
 
 #: lib/syli_atlas_web/controllers/area_html/questions.html.heex:33
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:245
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:255
 #, elixir-autogen, elixir-format
 msgid "Cite this page"
 msgstr "Citar esta página"
 
 #: lib/syli_atlas_web/components/layouts.ex:199
-#: lib/syli_atlas_web/components/layouts.ex:240
-#: lib/syli_atlas_web/components/layouts.ex:398
+#: lib/syli_atlas_web/components/layouts.ex:241
+#: lib/syli_atlas_web/components/layouts.ex:414
 #: lib/syli_atlas_web/components/map_components.ex:270
 #: lib/syli_atlas_web/controllers/compare_controller.ex:81
 #: lib/syli_atlas_web/controllers/compare_controller.ex:104
@@ -206,7 +208,7 @@ msgstr "Continente"
 
 #: lib/syli_atlas_web/components/layouts.ex:176
 #: lib/syli_atlas_web/components/layouts.ex:206
-#: lib/syli_atlas_web/components/layouts.ex:383
+#: lib/syli_atlas_web/components/layouts.ex:399
 #: lib/syli_atlas_web/controllers/recap_html.ex:49
 #: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:9
 #: lib/syli_atlas_web/controllers/recap_html/confirmation.html.heex:24
@@ -270,7 +272,7 @@ msgstr "Cifras que puede comprobar, citar y reutilizar."
 msgid "Five regions, very different paths."
 msgstr "Cinco regiones, trayectorias muy distintas."
 
-#: lib/syli_atlas_web/components/layouts.ex:381
+#: lib/syli_atlas_web/components/layouts.ex:397
 #, elixir-autogen, elixir-format
 msgid "Footer"
 msgstr "Pie de página"
@@ -422,7 +424,7 @@ msgid "Inflation"
 msgstr "Inflación"
 
 #: lib/syli_atlas_web/components/layouts.ex:77
-#: lib/syli_atlas_web/components/layouts.ex:713
+#: lib/syli_atlas_web/components/layouts.ex:729
 #: lib/syli_atlas_web/components/page_components.ex:203
 #, elixir-autogen, elixir-format
 msgid "Install the app"
@@ -459,12 +461,12 @@ msgstr "Países miembros"
 msgid "Method"
 msgstr "Método"
 
-#: lib/syli_atlas_web/components/layouts.ex:234
-#: lib/syli_atlas_web/components/layouts.ex:414
-#: lib/syli_atlas_web/components/layouts.ex:709
+#: lib/syli_atlas_web/components/layouts.ex:235
+#: lib/syli_atlas_web/components/layouts.ex:430
+#: lib/syli_atlas_web/components/layouts.ex:725
 #: lib/syli_atlas_web/controllers/country_questions_html/show.html.heex:25
 #: lib/syli_atlas_web/controllers/glossary_controller.ex:516
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:242
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:252
 #: lib/syli_atlas_web/controllers/page_controller.ex:140
 #: lib/syli_atlas_web/controllers/page_controller.ex:143
 #, elixir-autogen, elixir-format
@@ -496,7 +498,7 @@ msgstr "Número de habitantes, estimación del FMI."
 msgid "Often viewed:"
 msgstr "Muy consultados:"
 
-#: lib/syli_atlas_web/components/layouts.ex:710
+#: lib/syli_atlas_web/components/layouts.ex:726
 #: lib/syli_atlas_web/controllers/page_html/home.html.heex:151
 #, elixir-autogen, elixir-format
 msgid "Open data"
@@ -523,7 +525,7 @@ msgstr "Población"
 msgid "Population %{year}"
 msgstr "Población %{year}"
 
-#: lib/syli_atlas_web/components/layouts.ex:415
+#: lib/syli_atlas_web/components/layouts.ex:431
 #: lib/syli_atlas_web/controllers/api_doc_controller.ex:47
 #: lib/syli_atlas_web/controllers/page_html/method.html.heex:149
 #, elixir-autogen, elixir-format
@@ -549,7 +551,7 @@ msgstr "Deuda pública"
 msgid "Public debt of a group is weighted by GDP in dollars."
 msgstr "La deuda pública de un grupo se pondera por el PIB en dólares."
 
-#: lib/syli_atlas_web/components/layouts.ex:399
+#: lib/syli_atlas_web/components/layouts.ex:415
 #: lib/syli_atlas_web/controllers/area_html/questions.html.heex:4
 #: lib/syli_atlas_web/controllers/area_html/show.html.heex:52
 #: lib/syli_atlas_web/controllers/country_questions_controller.ex:46
@@ -671,7 +673,7 @@ msgstr "Mostrar"
 msgid "Side by side, over the same period."
 msgstr "Lado a lado, en el mismo periodo."
 
-#: lib/syli_atlas_web/components/layouts.ex:754
+#: lib/syli_atlas_web/components/layouts.ex:770
 #: lib/syli_atlas_web/controllers/session_controller.ex:112
 #, elixir-autogen, elixir-format
 msgid "Sign in"
@@ -694,7 +696,7 @@ msgstr "Tamaño de la economía a tipos de cambio de mercado."
 msgid "Skip to content"
 msgstr "Ir al contenido"
 
-#: lib/syli_atlas_web/components/layouts.ex:859
+#: lib/syli_atlas_web/components/layouts.ex:875
 #, elixir-autogen, elixir-format
 msgid "Something went wrong!"
 msgstr "¡Algo ha fallado!"
@@ -718,7 +720,7 @@ msgstr "Fuentes"
 msgid "Start with a question"
 msgstr "Empiece por una pregunta"
 
-#: lib/syli_atlas_web/components/layouts.ex:634
+#: lib/syli_atlas_web/components/layouts.ex:650
 #, elixir-autogen, elixir-format
 msgid "Switch theme"
 msgstr "Cambiar de tema"
@@ -785,7 +787,7 @@ msgstr "Valor en el año de llegada"
 msgid "Volume of output, excluding inflation and exchange rates. 2015 = 100."
 msgstr "Volumen de la producción, sin inflación ni tipos de cambio. 2015 = 100."
 
-#: lib/syli_atlas_web/components/layouts.ex:844
+#: lib/syli_atlas_web/components/layouts.ex:860
 #, elixir-autogen, elixir-format
 msgid "We can't find the internet"
 msgstr "No encontramos internet"
@@ -902,7 +904,7 @@ msgstr "media ponderada"
 msgid "Choose"
 msgstr "Elegir"
 
-#: lib/syli_atlas_web/components/layouts.ex:692
+#: lib/syli_atlas_web/components/layouts.ex:708
 #, elixir-autogen, elixir-format
 msgid "Close the menu"
 msgstr "Cerrar el menú"
@@ -918,7 +920,7 @@ msgid "Indicators in %{year}"
 msgstr "Indicadores en %{year}"
 
 #: lib/syli_atlas_web/components/layouts.ex:97
-#: lib/syli_atlas_web/components/layouts.ex:683
+#: lib/syli_atlas_web/components/layouts.ex:699
 #, elixir-autogen, elixir-format
 msgid "Menu"
 msgstr "Menú"
@@ -1251,50 +1253,50 @@ msgstr "FMI, a tipos de cambio de mercado · discontinuo: proyecciones"
 msgid "World, in dollars since %{year}"
 msgstr "Mundo, en dólares desde %{year}"
 
-#: lib/syli_atlas_web/components/layouts.ex:774
+#: lib/syli_atlas_web/components/layouts.ex:790
 #, elixir-autogen, elixir-format
 msgid "A new version of Syli Atlas is available"
 msgstr "Hay una nueva versión de Syli Atlas"
 
-#: lib/syli_atlas_web/components/layouts.ex:780
+#: lib/syli_atlas_web/components/layouts.ex:796
 #, elixir-autogen, elixir-format
 msgid "Back online"
 msgstr "De nuevo en línea"
 
-#: lib/syli_atlas_web/components/layouts.ex:480
-#: lib/syli_atlas_web/components/layouts.ex:583
-#: lib/syli_atlas_web/components/layouts.ex:771
+#: lib/syli_atlas_web/components/layouts.ex:496
+#: lib/syli_atlas_web/components/layouts.ex:599
+#: lib/syli_atlas_web/components/layouts.ex:787
 #: lib/syli_atlas_web/controllers/account_html/security.html.heex:76
 #, elixir-autogen, elixir-format
 msgid "Close"
 msgstr "Cierre"
 
-#: lib/syli_atlas_web/components/layouts.ex:784
+#: lib/syli_atlas_web/components/layouts.ex:800
 #, elixir-autogen, elixir-format
 msgid "In Safari, tap Share, then « Add to Home Screen »."
 msgstr "En Safari, toque Compartir y luego «Añadir a pantalla de inicio»."
 
-#: lib/syli_atlas_web/components/layouts.ex:785
+#: lib/syli_atlas_web/components/layouts.ex:801
 #, elixir-autogen, elixir-format
 msgid "Install"
 msgstr "Instalar"
 
-#: lib/syli_atlas_web/components/layouts.ex:781
+#: lib/syli_atlas_web/components/layouts.ex:797
 #, elixir-autogen, elixir-format
 msgid "Install Syli Atlas"
 msgstr "Instalar Syli Atlas"
 
-#: lib/syli_atlas_web/components/layouts.ex:773
+#: lib/syli_atlas_web/components/layouts.ex:789
 #, elixir-autogen, elixir-format
 msgid "Later"
 msgstr "Más tarde"
 
-#: lib/syli_atlas_web/components/layouts.ex:776
+#: lib/syli_atlas_web/components/layouts.ex:792
 #, elixir-autogen, elixir-format
 msgid "New IMF figures are online"
 msgstr "Nuevas cifras del FMI en línea"
 
-#: lib/syli_atlas_web/components/layouts.ex:786
+#: lib/syli_atlas_web/components/layouts.ex:802
 #, elixir-autogen, elixir-format
 msgid "Not now"
 msgstr "Ahora no"
@@ -1304,37 +1306,37 @@ msgstr "Ahora no"
 msgid "Notifications"
 msgstr "Notificaciones"
 
-#: lib/syli_atlas_web/components/layouts.ex:783
+#: lib/syli_atlas_web/components/layouts.ex:799
 #, elixir-autogen, elixir-format
 msgid "One tap from your home screen, readable offline, no app store."
 msgstr "A un toque desde su pantalla de inicio, legible sin conexión, sin tienda de aplicaciones."
 
-#: lib/syli_atlas_web/components/layouts.ex:779
+#: lib/syli_atlas_web/components/layouts.ex:795
 #, elixir-autogen, elixir-format
 msgid "Pages you have already opened stay readable."
 msgstr "Las páginas que ya ha abierto siguen legibles."
 
-#: lib/syli_atlas_web/components/layouts.ex:772
+#: lib/syli_atlas_web/components/layouts.ex:788
 #, elixir-autogen, elixir-format
 msgid "Refresh"
 msgstr "Actualizar"
 
-#: lib/syli_atlas_web/components/layouts.ex:775
+#: lib/syli_atlas_web/components/layouts.ex:791
 #, elixir-autogen, elixir-format
 msgid "Refresh to see it. Nothing you are reading will be lost."
 msgstr "Actualice para verla. No perderá nada de lo que está leyendo."
 
-#: lib/syli_atlas_web/components/layouts.ex:777
+#: lib/syli_atlas_web/components/layouts.ex:793
 #, elixir-autogen, elixir-format
 msgid "Refresh to see the latest edition."
 msgstr "Actualice para ver la última edición."
 
-#: lib/syli_atlas_web/components/layouts.ex:787
+#: lib/syli_atlas_web/components/layouts.ex:803
 #, elixir-autogen, elixir-format
 msgid "Syli Atlas is installed"
 msgstr "Syli Atlas está instalado"
 
-#: lib/syli_atlas_web/components/layouts.ex:778
+#: lib/syli_atlas_web/components/layouts.ex:794
 #, elixir-autogen, elixir-format
 msgid "You are offline"
 msgstr "Está sin conexión"
@@ -1366,7 +1368,7 @@ msgstr[1] "%{count} bolsas"
 msgid "%{count} funds are listed in Africa in our data. On %{date}, they traded %{value} in all."
 msgstr "En nuestros datos cotizan %{count} fondos en África. El %{date} se negociaron %{value} en total."
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:127
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:137
 #, elixir-autogen, elixir-format
 msgid "%{count} listed securities"
 msgstr "%{count} valores cotizados"
@@ -1379,27 +1381,27 @@ msgid_plural "%{count} results for « %{q} »"
 msgstr[0] "%{count} resultado para «%{q}»"
 msgstr[1] "%{count} resultados para «%{q}»"
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:301
+#: lib/syli_atlas_web/controllers/market_controller.ex:303
 #, elixir-autogen, elixir-format
 msgid "%{name} (%{ticker}) closed at %{price} %{currency} on %{date} on the %{exchange} (%{change})."
 msgstr "%{name} (%{ticker}) cerró a %{price} %{currency} el %{date} en la %{exchange} (%{change})."
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:312
+#: lib/syli_atlas_web/controllers/market_controller.ex:314
 #, elixir-autogen, elixir-format
 msgid "%{name} (%{ticker}), listed on the %{exchange}."
 msgstr "%{name} (%{ticker}), cotizada en la %{exchange}."
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:290
+#: lib/syli_atlas_web/controllers/market_controller.ex:292
 #, elixir-autogen, elixir-format
 msgid "%{name}: %{count} listed securities. Its index is not provided by our source."
 msgstr "%{name}: %{count} valores cotizados. Nuestra fuente no facilita su índice."
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:79
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:89
 #, elixir-autogen, elixir-format
 msgid "%{share} % on %{name}"
 msgstr "%{share} % en %{name}"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:135
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:145
 #, elixir-autogen, elixir-format
 msgid "%{up} up, %{flat} unchanged, %{down} down, %{none} without trade"
 msgstr "%{up} al alza, %{flat} sin cambios, %{down} a la baja, %{none} sin negociación"
@@ -1420,8 +1422,8 @@ msgstr "Bolsas africanas"
 msgid "All"
 msgstr "Todo"
 
-#: lib/syli_atlas_web/components/layouts.ex:392
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:266
+#: lib/syli_atlas_web/components/layouts.ex:408
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:276
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:61
 #, elixir-autogen, elixir-format
 msgid "All exchanges"
@@ -1437,12 +1439,12 @@ msgstr "Un índice en 250 000 puntos no es «más alto» que uno en 500: cada un
 msgid "Backup"
 msgstr "Respaldo"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:161
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:171
 #, elixir-autogen, elixir-format
 msgid "Biggest falls"
 msgstr "Mayores caídas"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:160
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:170
 #, elixir-autogen, elixir-format
 msgid "Biggest rises"
 msgstr "Mayores subidas"
@@ -1475,14 +1477,14 @@ msgstr "Cierres en %{currency} · sesiones recibidas por Syli Atlas"
 
 #: lib/syli_atlas_web/controllers/currency_html/index.html.heex:106
 #: lib/syli_atlas_web/controllers/currency_html/index.html.heex:136
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:190
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:209
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:200
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:219
 #: lib/syli_atlas_web/controllers/market_html/security.html.heex:136
 #, elixir-autogen, elixir-format
 msgid "Code"
 msgstr "Código"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:189
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:199
 #, elixir-autogen, elixir-format
 msgid "Company"
 msgstr "Empresa"
@@ -1492,14 +1494,15 @@ msgstr "Empresa"
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:152
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:206
 #: lib/syli_atlas_web/controllers/market_html/security.html.heex:157
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:31
 #, elixir-autogen, elixir-format
 msgid "Currency"
 msgstr "Moneda"
 
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:42
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:62
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:192
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:213
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:202
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:223
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:141
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:196
 #, elixir-autogen, elixir-format
@@ -1513,7 +1516,7 @@ msgid "Data of"
 msgstr "Datos del"
 
 #: lib/syli_atlas_web/controllers/currency_html/index.html.heex:25
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:151
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:161
 #, elixir-autogen, elixir-format
 msgid "Down"
 msgstr "A la baja"
@@ -1549,7 +1552,7 @@ msgstr "Todas las bolsas africanas seguidas por Syli Atlas: índice principal, v
 msgid "Every close is recorded from the first import on. Older history will come from an official or licensed source."
 msgstr "Cada cierre se registra desde la primera importación. El historial anterior vendrá de una fuente oficial o con licencia."
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:118
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:128
 #, elixir-autogen, elixir-format
 msgid "Every close is recorded from the first import on. The curve appears from the second session."
 msgstr "Cada cierre se registra desde la primera importación. La curva aparece a partir de la segunda sesión."
@@ -1579,13 +1582,14 @@ msgstr "Fondo cotizado"
 msgid "Exchange-traded funds"
 msgstr "Fondos cotizados"
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:198
+#: lib/syli_atlas_web/controllers/market_controller.ex:200
 #, elixir-autogen, elixir-format
 msgid "Exchange-traded funds listed in Africa: price, daily change, volume and issuer."
 msgstr "Fondos cotizados en África: precio, variación diaria, volumen y emisor."
 
 #: lib/syli_atlas_web/controllers/currency_html/index.html.heex:48
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:49
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:95
 #, elixir-autogen, elixir-format
 msgid "Figures on their way"
 msgstr "Cifras en camino"
@@ -1596,7 +1600,7 @@ msgstr "Cifras en camino"
 msgid "Filter by region"
 msgstr "Filtrar por región"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:239
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:249
 #, elixir-autogen, elixir-format
 msgid "Flagged on this page:"
 msgstr "Señalados en esta página:"
@@ -1627,7 +1631,7 @@ msgstr "Los fondos cotizados en Nueva York, Londres o París que invierten en em
 msgid "Funds listed outside Africa"
 msgstr "Fondos cotizados fuera de África"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:116
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:126
 #: lib/syli_atlas_web/controllers/market_html/security.html.heex:120
 #, elixir-autogen, elixir-format
 msgid "History being built"
@@ -1638,7 +1642,7 @@ msgstr "Historial en construcción"
 msgid "How to read these figures"
 msgstr "Cómo leer estas cifras"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:253
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:263
 #: lib/syli_atlas_web/controllers/market_html/security.html.heex:179
 #, elixir-autogen, elixir-format
 msgid "Information, not investment advice."
@@ -1657,7 +1661,7 @@ msgid "Issuer"
 msgstr "Emisor"
 
 #: lib/syli_atlas_web/components/market_components.ex:398
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:180
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:190
 #: lib/syli_atlas_web/og_image/specs.ex:521
 #, elixir-autogen, elixir-format
 msgid "Listed securities"
@@ -1669,8 +1673,8 @@ msgid "Local currencies"
 msgstr "Monedas locales"
 
 #: lib/syli_atlas_web/components/market_components.ex:388
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:48
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:105
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:58
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:115
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:129
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:190
 #, elixir-autogen, elixir-format
@@ -1724,7 +1728,7 @@ msgid_plural "%{count} stretches without data: the line is broken there."
 msgstr[0] "Un tramo sin datos: la línea se interrumpe ahí."
 msgstr[1] "%{count} tramos sin datos: la línea se interrumpe ahí."
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:106
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:116
 #, elixir-autogen, elixir-format
 msgid "Points · sessions received by Syli Atlas"
 msgstr "Puntos · sesiones recibidas por Syli Atlas"
@@ -1760,12 +1764,12 @@ msgstr "Busque una bolsa, un país, un índice o una moneda"
 msgid "Securities"
 msgstr "Valores"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:185
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:195
 #, elixir-autogen, elixir-format
 msgid "Securities listed on the %{exchange}"
 msgstr "Valores cotizados en la %{exchange}"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:165
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:175
 #, elixir-autogen, elixir-format
 msgid "Securities traded that day"
 msgstr "Valores negociados ese día"
@@ -1778,14 +1782,14 @@ msgstr "Valores negociados ese día"
 msgid "Security"
 msgstr "Valor"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:55
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:65
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:23
 #: lib/syli_atlas_web/controllers/market_html/security.html.heex:64
 #, elixir-autogen, elixir-format
 msgid "Session"
 msgstr "Sesión"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:126
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:136
 #, elixir-autogen, elixir-format
 msgid "Session of %{date}"
 msgstr "Sesión del %{date}"
@@ -1800,7 +1804,7 @@ msgstr "Peso"
 msgid "Share of the exchange's trading"
 msgstr "Peso en la negociación de la bolsa"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:66
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:76
 #: lib/syli_atlas_web/og_image/specs.ex:522
 #, elixir-autogen, elixir-format
 msgid "Since 1 January"
@@ -1811,7 +1815,7 @@ msgstr "Desde el 1 de enero"
 msgid "Sorted by value traded · prices in the currency of the exchange"
 msgstr "Ordenado por valor negociado · precios en la moneda de la bolsa"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:225
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:235
 #, elixir-autogen, elixir-format
 msgid "Sorted by value traded · value = close × volume, computed by Syli Atlas"
 msgstr "Ordenado por valor negociado · valor = cierre × volumen, calculado por Syli Atlas"
@@ -1842,7 +1846,7 @@ msgid "Southern Africa"
 msgstr "África Austral"
 
 #: lib/syli_atlas_web/components/market_components.ex:364
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:35
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:45
 #: lib/syli_atlas_web/og_image/specs.ex:507
 #: lib/syli_atlas_web/search.ex:235
 #, elixir-autogen, elixir-format
@@ -1851,16 +1855,18 @@ msgstr "Bolsa de valores"
 
 #: lib/syli_atlas_web/components/layouts.ex:183
 #: lib/syli_atlas_web/components/layouts.ex:211
-#: lib/syli_atlas_web/components/layouts.ex:390
+#: lib/syli_atlas_web/components/layouts.ex:406
 #: lib/syli_atlas_web/components/ticker_components.ex:82
 #: lib/syli_atlas_web/controllers/market_controller.ex:58
-#: lib/syli_atlas_web/controllers/market_controller.ex:100
-#: lib/syli_atlas_web/controllers/market_controller.ex:167
-#: lib/syli_atlas_web/controllers/market_controller.ex:205
+#: lib/syli_atlas_web/controllers/market_controller.ex:102
+#: lib/syli_atlas_web/controllers/market_controller.ex:169
+#: lib/syli_atlas_web/controllers/market_controller.ex:207
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:6
 #: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:6
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:7
 #: lib/syli_atlas_web/controllers/market_html/security.html.heex:6
+#: lib/syli_atlas_web/controllers/simulator_controller.ex:48
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:7
 #: lib/syli_atlas_web/og_image/specs.ex:205
 #, elixir-autogen, elixir-format
 msgid "Stock exchanges"
@@ -1872,12 +1878,12 @@ msgstr "Bolsas"
 msgid "The %{exchange} page"
 msgstr "La página de la %{exchange}"
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:282
+#: lib/syli_atlas_web/controllers/market_controller.ex:284
 #, elixir-autogen, elixir-format
 msgid "The %{index} closed at %{value} points on %{date} (%{change})."
 msgstr "El %{index} cerró en %{value} puntos el %{date} (%{change})."
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:271
+#: lib/syli_atlas_web/controllers/market_controller.ex:273
 #, elixir-autogen, elixir-format
 msgid "The %{index} closed at %{value} points on %{date} (%{change}). Since 1 January: %{ytd}, according to %{source}."
 msgstr "El %{index} cerró en %{value} puntos el %{date} (%{change}). Desde el 1 de enero: %{ytd}, según %{source}."
@@ -1892,17 +1898,17 @@ msgstr "El país no tiene bolsa nacional: sus empresas cotizan en la %{exchange}
 msgid "The first import of market closes has not run yet. It runs every weekday after the last African close."
 msgstr "La primera importación de cierres de mercado aún no se ha ejecutado. Se ejecuta cada día laborable tras el último cierre africano."
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:74
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:84
 #, elixir-autogen, elixir-format
 msgid "Traded that day"
 msgstr "Negociados ese día"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:150
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:160
 #, elixir-autogen, elixir-format
 msgid "Unchanged"
 msgstr "Sin cambios"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:149
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:159
 #, elixir-autogen, elixir-format
 msgid "Up"
 msgstr "Al alza"
@@ -1914,8 +1920,8 @@ msgstr "Utilizada"
 
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:44
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:66
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:194
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:217
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:204
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:227
 #: lib/syli_atlas_web/controllers/market_html/security.html.heex:75
 #: lib/syli_atlas_web/og_image/specs.ex:491
 #, elixir-autogen, elixir-format
@@ -1924,8 +1930,8 @@ msgstr "Valor negociado"
 
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:43
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:65
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:193
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:216
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:203
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:226
 #: lib/syli_atlas_web/controllers/market_html/security.html.heex:70
 #: lib/syli_atlas_web/og_image/specs.ex:489
 #, elixir-autogen, elixir-format
@@ -1942,18 +1948,18 @@ msgstr "Oeste"
 msgid "West Africa"
 msgstr "África Occidental"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:236
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:246
 #: lib/syli_atlas_web/controllers/market_html/security.html.heex:171
 #, elixir-autogen, elixir-format
 msgid "Where these figures come from"
 msgstr "De dónde vienen estas cifras"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:152
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:162
 #, elixir-autogen, elixir-format
 msgid "Without trade"
 msgstr "Sin negociación"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:70
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:80
 #, elixir-autogen, elixir-format
 msgid "as given by the source"
 msgstr "según la fuente"
@@ -2048,7 +2054,7 @@ msgstr "la lista oficial de la bolsa"
 
 #: lib/syli_atlas_web/components/market_components.ex:171
 #: lib/syli_atlas_web/controllers/currency_html/index.html.heex:154
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:60
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:70
 #, elixir-autogen, elixir-format
 msgid "to check"
 msgstr "a verificar"
@@ -2181,8 +2187,8 @@ msgstr "Índices al alza"
 
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:41
 #: lib/syli_atlas_web/controllers/market_html/etfs.html.heex:59
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:191
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:210
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:201
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:220
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:131
 #: lib/syli_atlas_web/controllers/market_html/index.html.heex:193
 #, elixir-autogen, elixir-format
@@ -2464,7 +2470,7 @@ msgstr "Aún no tiene grado de inversión, pero está en lo alto del grado espec
 msgid "Rated countries by category: %{parts}; %{unrated} without a rating"
 msgstr "Países calificados por categoría: %{parts}; %{unrated} sin calificación"
 
-#: lib/syli_atlas_web/components/layouts.ex:264
+#: lib/syli_atlas_web/components/layouts.ex:265
 #: lib/syli_atlas_web/components/ticker_components.ex:99
 #, elixir-autogen, elixir-format
 msgid "Ratings"
@@ -3275,6 +3281,7 @@ msgid "UEMOA convergence criteria"
 msgstr "Criterios de convergencia de la UEMOA"
 
 #: lib/syli_atlas_web/components/economy_components.ex:395
+#: lib/syli_atlas_web/controllers/currency_controller.ex:131
 #: lib/syli_atlas_web/controllers/currency_html.ex:77
 #, elixir-autogen, elixir-format
 msgid "US dollar"
@@ -3313,7 +3320,8 @@ msgid "average annual change in consumer prices"
 msgstr "variación anual media de los precios al consumo"
 
 #: lib/syli_atlas_web/components/economy_components.ex:394
-#: lib/syli_atlas_web/controllers/currency_controller.ex:201
+#: lib/syli_atlas_web/controllers/currency_controller.ex:132
+#: lib/syli_atlas_web/controllers/currency_controller.ex:222
 #: lib/syli_atlas_web/controllers/currency_html.ex:78
 #, elixir-autogen, elixir-format
 msgid "euro"
@@ -3444,7 +3452,7 @@ msgstr "Bonos (eurobonos)"
 msgid "China"
 msgstr "China"
 
-#: lib/syli_atlas_web/components/layouts.ex:256
+#: lib/syli_atlas_web/components/layouts.ex:257
 #: lib/syli_atlas_web/components/world_bank_components.ex:53
 #: lib/syli_atlas_web/controllers/debt_controller.ex:43
 #: lib/syli_atlas_web/controllers/debt_html/index.html.heex:6
@@ -3765,6 +3773,7 @@ msgstr "Mujeres en la población activa"
 
 #: lib/syli_atlas_web/components/charts.ex:67
 #: lib/syli_atlas_web/components/world_bank_components.ex:383
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:266
 #, elixir-autogen, elixir-format
 msgid "Year"
 msgstr "Año"
@@ -4103,7 +4112,7 @@ msgstr "Un país, un tema, un valor: «deuda Senegal»"
 msgid "Adults with an account"
 msgstr "Adultos con una cuenta"
 
-#: lib/syli_atlas_web/components/layouts.ex:386
+#: lib/syli_atlas_web/components/layouts.ex:402
 #, elixir-autogen, elixir-format
 msgid "All 54 countries"
 msgstr "Los 54 países"
@@ -4119,7 +4128,7 @@ msgstr "Comunidad"
 msgid "Convergence criteria"
 msgstr "Criterios de convergencia"
 
-#: lib/syli_atlas_web/components/layouts.ex:397
+#: lib/syli_atlas_web/components/layouts.ex:413
 #: lib/syli_atlas_web/components/profile_components.ex:779
 #: lib/syli_atlas_web/components/profile_components.ex:829
 #: lib/syli_atlas_web/components/profile_components.ex:830
@@ -4181,12 +4190,12 @@ msgstr "Para saber más"
 msgid "Growth %{year}"
 msgstr "Crecimiento %{year}"
 
-#: lib/syli_atlas_web/components/layouts.ex:427
+#: lib/syli_atlas_web/components/layouts.ex:443
 #, elixir-autogen, elixir-format
 msgid "IMF"
 msgstr "FMI"
 
-#: lib/syli_atlas_web/components/layouts.ex:428
+#: lib/syli_atlas_web/components/layouts.ex:444
 #: lib/syli_atlas_web/components/profile_components.ex:629
 #, elixir-autogen, elixir-format
 msgid "IMF debt sustainability analyses"
@@ -4212,7 +4221,7 @@ msgstr "En %{year}, %{largest} es la mayor comunidad económica africana por PIB
 msgid "In the region: %{region}"
 msgstr "En la región: %{region}"
 
-#: lib/syli_atlas_web/components/layouts.ex:436
+#: lib/syli_atlas_web/components/layouts.ex:452
 #, elixir-autogen, elixir-format
 msgid "Information, not investment advice. Figures are those of the sources; totals and rankings are Syli Atlas calculations."
 msgstr "Información, no asesoramiento de inversión. Las cifras son las de las fuentes; los totales y las clasificaciones son cálculos de Syli Atlas."
@@ -4271,7 +4280,7 @@ msgstr "Clasificación por deuda pública"
 msgid "Ranked by GDP in %{year}"
 msgstr "Clasificados por PIB en %{year}"
 
-#: lib/syli_atlas_web/components/layouts.ex:276
+#: lib/syli_atlas_web/components/layouts.ex:277
 #: lib/syli_atlas_web/controllers/community_html/index.html.heex:11
 #, elixir-autogen, elixir-format
 msgid "Regions and communities"
@@ -4305,7 +4314,7 @@ msgstr "Secciones de esta ficha"
 msgid "See the details"
 msgstr "Ver los detalles"
 
-#: lib/syli_atlas_web/components/layouts.ex:419
+#: lib/syli_atlas_web/components/layouts.ex:435
 #, elixir-autogen, elixir-format
 msgid "Site map"
 msgstr "Mapa del sitio"
@@ -4338,7 +4347,7 @@ msgstr "Calificaciones soberanas de los 54 países"
 msgid "Syli Atlas calculation from IMF figures (%{edition}) · GDP and population: sums · growth: weighted by GDP in PPP · debt: weighted by GDP in dollars · membership as of %{date}: ECOWAS without Burkina Faso, Mali and Niger, members of the AES"
 msgstr "Cálculo de Syli Atlas a partir de las cifras del FMI (%{edition}) · PIB y población: sumas · crecimiento: ponderado por el PIB en PPA · deuda: ponderada por el PIB en dólares · composición a %{date}: CEDEAO sin Burkina Faso, Malí ni Níger, miembros de la AES"
 
-#: lib/syli_atlas_web/components/layouts.ex:442
+#: lib/syli_atlas_web/components/layouts.ex:458
 #, elixir-autogen, elixir-format
 msgid "Terms of each source"
 msgstr "Condiciones de cada fuente"
@@ -4354,7 +4363,7 @@ msgid "Theme"
 msgstr "Tema"
 
 #: lib/syli_atlas_web/components/layouts.ex:190
-#: lib/syli_atlas_web/components/layouts.ex:216
+#: lib/syli_atlas_web/components/layouts.ex:217
 #, elixir-autogen, elixir-format
 msgid "Themes"
 msgstr "Temas"
@@ -4369,7 +4378,7 @@ msgstr "Pruebe con el nombre de un país (Costa de Marfil, Côte d'Ivoire, CIV),
 msgid "World Bank"
 msgstr "Banco Mundial"
 
-#: lib/syli_atlas_web/components/layouts.ex:428
+#: lib/syli_atlas_web/components/layouts.ex:444
 #: lib/syli_atlas_web/components/profile_components.ex:627
 #, elixir-autogen, elixir-format
 msgid "World Bank (CC BY 4.0)"
@@ -4390,7 +4399,7 @@ msgstr "de las exportaciones: %{product}, %{year} (CEPII)"
 msgid "public debt, % of GDP, %{year} (IMF)"
 msgstr "deuda pública, % del PIB, %{year} (FMI)"
 
-#: lib/syli_atlas_web/components/layouts.ex:430
+#: lib/syli_atlas_web/components/layouts.ex:446
 #: lib/syli_atlas_web/components/profile_components.ex:630
 #, elixir-autogen, elixir-format
 msgid "rating agencies"
@@ -4421,7 +4430,7 @@ msgstr "ponderado por el PIB en PPA"
 msgid "Growth %{year}: %{value}"
 msgstr "Crecimiento %{year}: %{value}"
 
-#: lib/syli_atlas_web/components/layouts.ex:427
+#: lib/syli_atlas_web/components/layouts.ex:443
 #, elixir-autogen, elixir-format
 msgid "Sources:"
 msgstr "Fuentes:"
@@ -4437,7 +4446,7 @@ msgstr "Otras regiones y agrupaciones"
 msgid "Rating history of %{name}"
 msgstr "Historial de calificaciones de %{name}"
 
-#: lib/syli_atlas_web/components/layouts.ex:271
+#: lib/syli_atlas_web/components/layouts.ex:272
 #, elixir-autogen, elixir-format
 msgid "%{n} rated"
 msgstr "%{n} calificados"
@@ -4449,12 +4458,12 @@ msgid_plural "%{count} exchanges"
 msgstr[0] "1 bolsa"
 msgstr[1] "%{count} bolsas"
 
-#: lib/syli_atlas_web/components/layouts.ex:259
+#: lib/syli_atlas_web/components/layouts.ex:260
 #, elixir-autogen, elixir-format
 msgid "54 countries"
 msgstr "54 países"
 
-#: lib/syli_atlas_web/components/layouts.ex:278
+#: lib/syli_atlas_web/components/layouts.ex:279
 #, elixir-autogen, elixir-format
 msgid "AU regions, ECOWAS, AES, WAEMU, CEMAC, EAC, SADC"
 msgstr "Regiones de la UA, CEDEAO, AES, UEMOA, CEMAC, CAE, SADC"
@@ -4469,17 +4478,17 @@ msgstr "Comunidades y uniones monetarias"
 msgid "Compare the communities"
 msgstr "Comparar las comunidades"
 
-#: lib/syli_atlas_web/components/layouts.ex:230
+#: lib/syli_atlas_web/components/layouts.ex:231
 #, elixir-autogen, elixir-format
 msgid "Each theme compares the 54 countries; a country profile has the same theme in a tab."
 msgstr "Cada tema compara los 54 países; la ficha de un país tiene el mismo tema en una pestaña."
 
-#: lib/syli_atlas_web/components/layouts.ex:258
+#: lib/syli_atlas_web/components/layouts.ex:259
 #, elixir-autogen, elixir-format
 msgid "Levels, creditors, risk of debt distress · 54 countries"
 msgstr "Niveles, acreedores, riesgo de sobreendeudamiento · 54 países"
 
-#: lib/syli_atlas_web/components/layouts.ex:268
+#: lib/syli_atlas_web/components/layouts.ex:269
 #, elixir-autogen, elixir-format
 msgid "S&P, Moody's, Fitch · %{n} countries rated"
 msgstr "S&P, Moody's, Fitch · %{n} países calificados"
@@ -4590,7 +4599,7 @@ msgstr ""
 msgid "Budget balance (% of GDP)"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:582
+#: lib/syli_atlas_web/components/layouts.ex:598
 #: lib/syli_atlas_web/controllers/session_html/code.html.heex:9
 #, elixir-autogen, elixir-format
 msgid "Change address"
@@ -4681,8 +4690,8 @@ msgstr ""
 msgid "Digest of favourites"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:358
-#: lib/syli_atlas_web/components/layouts.ex:514
+#: lib/syli_atlas_web/components/layouts.ex:374
+#: lib/syli_atlas_web/components/layouts.ex:530
 #: lib/syli_atlas_web/controllers/recap_html/new.html.heex:29
 #: lib/syli_atlas_web/controllers/session_html/new.html.heex:42
 #, elixir-autogen, elixir-format
@@ -4710,7 +4719,7 @@ msgstr ""
 msgid "Enter the code you received"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:546
+#: lib/syli_atlas_web/components/layouts.ex:562
 #: lib/syli_atlas_web/controllers/account_html.ex:92
 #: lib/syli_atlas_web/controllers/recap_html.ex:91
 #, elixir-autogen, elixir-format
@@ -4751,7 +4760,7 @@ msgstr ""
 msgid "Followed"
 msgstr "Seguido"
 
-#: lib/syli_atlas_web/components/layouts.ex:543
+#: lib/syli_atlas_web/components/layouts.ex:559
 #: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:103
 #: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:198
 #: lib/syli_atlas_web/controllers/recap_html.ex:82
@@ -4812,8 +4821,8 @@ msgstr ""
 msgid "Last used:"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:744
-#: lib/syli_atlas_web/components/layouts.ex:752
+#: lib/syli_atlas_web/components/layouts.ex:760
+#: lib/syli_atlas_web/components/layouts.ex:768
 #: lib/syli_atlas_web/controllers/account_html.ex:30
 #: lib/syli_atlas_web/controllers/account_html/alerts.html.heex:4
 #: lib/syli_atlas_web/controllers/account_html/favorites.html.heex:4
@@ -4977,7 +4986,7 @@ msgstr ""
 msgid "Sign-in · step 1"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:476
+#: lib/syli_atlas_web/components/layouts.ex:492
 #: lib/syli_atlas_web/controllers/session_html/admin_key.html.heex:5
 #, elixir-autogen, elixir-format
 msgid "Steps"
@@ -5376,17 +5385,17 @@ msgstr "Accesibilidad"
 msgid "Accessibility statement of Syli Atlas: compliance with the RGAA, known barriers and how to report one."
 msgstr "Declaración de accesibilidad de Syli Atlas: conformidad con el RGAA, barreras conocidas y cómo señalar una."
 
-#: lib/syli_atlas_web/components/layouts.ex:877
+#: lib/syli_atlas_web/components/layouts.ex:893
 #, elixir-autogen, elixir-format
 msgid "Accessibility: fully compliant"
 msgstr "Accesibilidad: totalmente conforme"
 
-#: lib/syli_atlas_web/components/layouts.ex:879
+#: lib/syli_atlas_web/components/layouts.ex:895
 #, elixir-autogen, elixir-format
 msgid "Accessibility: not compliant"
 msgstr "Accesibilidad: no conforme"
 
-#: lib/syli_atlas_web/components/layouts.ex:878
+#: lib/syli_atlas_web/components/layouts.ex:894
 #, elixir-autogen, elixir-format
 msgid "Accessibility: partially compliant"
 msgstr "Accesibilidad: parcialmente conforme"
@@ -5438,12 +5447,12 @@ msgstr "PIB real %{change} %{since}"
 msgid "%{name} on the %{exchange}"
 msgstr "%{name} en la %{exchange}"
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:157
+#: lib/syli_atlas_web/controllers/market_controller.ex:159
 #, elixir-autogen, elixir-format
 msgid "%{name} (%{ticker}): price on the %{exchange} and history"
 msgstr "%{name} (%{ticker}): cotización en la %{exchange} e historial"
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:224
+#: lib/syli_atlas_web/controllers/market_controller.ex:226
 #, elixir-autogen, elixir-format
 msgid "%{name}: %{index} index and prices of the %{count} listed securities"
 msgstr "%{name}: índice %{index} y cotizaciones de los %{count} valores cotizados"
@@ -5483,7 +5492,7 @@ msgstr "%{name}: crecimiento del %{growth} en %{to}, PIB real %{real} desde %{fr
 msgid "%{name}: poverty, jobs and access to electricity"
 msgstr "%{name}: pobreza, empleo y acceso a la electricidad"
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:230
+#: lib/syli_atlas_web/controllers/market_controller.ex:232
 #, elixir-autogen, elixir-format
 msgid "%{name}: prices of the %{count} listed securities"
 msgstr "%{name}: cotizaciones de los %{count} valores cotizados"
@@ -5520,7 +5529,7 @@ msgstr "Datos económicos de los 54 países africanos: PIB, deuda, inflación"
 msgid "Exports of %{name}: products and main buyers (%{year})"
 msgstr "Exportaciones de %{name}: productos y principales compradores (%{year})"
 
-#: lib/syli_atlas_web/controllers/market_controller.ex:193
+#: lib/syli_atlas_web/controllers/market_controller.ex:195
 #: lib/syli_atlas_web/og_image/specs.ex:198
 #, elixir-autogen, elixir-format
 msgid "Funds exposed to Africa (ETF): prices and daily change"
@@ -5847,7 +5856,7 @@ msgstr "%{name}: PIB real %{change} desde %{from}, PIB de %{gdp} en %{to}"
 msgid "(IMF)."
 msgstr "(FMI)."
 
-#: lib/syli_atlas_web/components/layouts.ex:413
+#: lib/syli_atlas_web/components/layouts.ex:429
 #: lib/syli_atlas_web/controllers/area_html/questions.html.heex:29
 #: lib/syli_atlas_web/controllers/page_controller.ex:107
 #, elixir-autogen, elixir-format
@@ -6189,7 +6198,7 @@ msgstr "Otras comparaciones"
 msgid "Population ranking"
 msgstr "Clasificación por población"
 
-#: lib/syli_atlas_web/components/layouts.ex:403
+#: lib/syli_atlas_web/components/layouts.ex:419
 #, elixir-autogen, elixir-format
 msgid "Rankings"
 msgstr "Clasificaciones"
@@ -6199,13 +6208,13 @@ msgstr "Clasificaciones"
 msgid "Unemployment ranking"
 msgstr "Clasificación por desempleo"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:265
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:275
 #, elixir-autogen, elixir-format
 msgid "Funds exposed to Africa (ETF)"
 msgstr "Fondos expuestos a África (ETF)"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:259
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:260
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:269
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:270
 #, elixir-autogen, elixir-format
 msgid "Other exchanges of the region"
 msgstr "Otras bolsas de la región"
@@ -6230,12 +6239,12 @@ msgstr "Unión económica y monetaria"
 msgid "Regional economic community"
 msgstr "Comunidad económica regional"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:34
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:44
 #, elixir-autogen, elixir-format
 msgid "Regional exchange"
 msgstr "Bolsa regional"
 
-#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:62
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:72
 #, elixir-autogen, elixir-format
 msgid "change of the index"
 msgstr "variación del índice"
@@ -6265,7 +6274,7 @@ msgstr "Leer la licencia"
 msgid "Source figures keep the terms of their source, listed above: cite the IMF, the World Bank, CEPII or the agency along with Syli Atlas. Stock prices are the exception: their source (MansaAPI) allows display on this site only, so they are not covered by this licence and may not be redistributed."
 msgstr "Las cifras de las fuentes conservan las condiciones de su fuente, indicadas arriba: cite al FMI, al Banco Mundial, al CEPII o a la agencia junto con Syli Atlas. Las cotizaciones bursátiles son la excepción: su fuente (MansaAPI) solo permite mostrarlas en este sitio, por lo que no están cubiertas por esta licencia y no pueden redistribuirse."
 
-#: lib/syli_atlas_web/components/layouts.ex:439
+#: lib/syli_atlas_web/components/layouts.ex:455
 #, elixir-autogen, elixir-format
 msgid "Syli Atlas calculations: CC BY 4.0"
 msgstr "Cálculos de Syli Atlas: CC BY 4.0"
@@ -6446,7 +6455,7 @@ msgstr "El PIB dividido por la población: la producción media por habitante, u
 msgid "GDP per capita of %{value} in %{year}, %{verdict} (%{median}): no. %{rank} of %{of} in Africa per person (IMF)."
 msgstr "PIB per cápita de %{value} en %{year}, %{verdict} (%{median}): n.º %{rank} de %{of} en África por habitante (FMI)."
 
-#: lib/syli_atlas_web/components/layouts.ex:400
+#: lib/syli_atlas_web/components/layouts.ex:416
 #: lib/syli_atlas_web/controllers/glossary_controller.ex:60
 #: lib/syli_atlas_web/controllers/glossary_controller.ex:72
 #: lib/syli_atlas_web/controllers/glossary_controller.ex:100
@@ -6788,7 +6797,7 @@ msgstr "muy por encima de la mediana africana"
 msgid "Its companies are listed on the %{exchange}, the regional exchange shared by %{count} countries."
 msgstr "Sus empresas cotizan en la %{exchange}, la bolsa regional compartida por %{count} países."
 
-#: lib/syli_atlas_web/components/layouts.ex:531
+#: lib/syli_atlas_web/components/layouts.ex:547
 #, elixir-autogen, elixir-format
 msgid "+ Another country"
 msgstr "+ Otro país"
@@ -6798,7 +6807,7 @@ msgstr "+ Otro país"
 msgid "A confirmation link works for 7 days."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:529
+#: lib/syli_atlas_web/components/layouts.ex:545
 #, elixir-autogen, elixir-format
 msgid "Add a country"
 msgstr "Añadir un país"
@@ -6808,7 +6817,7 @@ msgstr "Añadir un país"
 msgid "Address"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:336
+#: lib/syli_atlas_web/components/layouts.ex:352
 #, elixir-autogen, elixir-format
 msgid "African economies in verifiable figures. Every figure cites its source."
 msgstr "Las economías africanas en cifras verificables. Cada cifra cita su fuente."
@@ -6845,7 +6854,7 @@ msgstr ""
 msgid "Choose between 1 and %{max} countries."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:369
+#: lib/syli_atlas_web/components/layouts.ex:385
 #, elixir-autogen, elixir-format
 msgid "Choose my countries"
 msgstr "Elegir mis países"
@@ -6860,7 +6869,7 @@ msgstr ""
 msgid "Choose your countries"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:575
+#: lib/syli_atlas_web/components/layouts.ex:591
 #: lib/syli_atlas_web/controllers/recap_html/sent.html.heex:6
 #, elixir-autogen, elixir-format
 msgid "Confirm in your inbox"
@@ -6877,12 +6886,12 @@ msgstr ""
 msgid "Confirm your recap"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:478
+#: lib/syli_atlas_web/components/layouts.ex:494
 #, elixir-autogen, elixir-format
 msgid "Confirmation"
 msgstr "Confirmación"
 
-#: lib/syli_atlas_web/components/layouts.ex:518
+#: lib/syli_atlas_web/components/layouts.ex:534
 #, elixir-autogen, elixir-format
 msgid "Countries of the recap"
 msgstr "Países del resumen"
@@ -6897,28 +6906,28 @@ msgstr ""
 msgid "Every Monday, the rating decisions, the stock exchange, the currency and the IMF landmarks of the African countries you choose. Free, without an account."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:395
+#: lib/syli_atlas_web/components/layouts.ex:411
 #, elixir-autogen, elixir-format
 msgid "Explore"
 msgstr "Explorar"
 
-#: lib/syli_atlas_web/components/layouts.ex:507
+#: lib/syli_atlas_web/components/layouts.ex:523
 #, elixir-autogen, elixir-format
 msgid "For each country: the rating decisions, the stock exchange and the currency of the week, and the IMF landmarks."
 msgstr "Para cada país: las decisiones de calificación, la bolsa y la moneda de la semana, y las referencias del FMI."
 
-#: lib/syli_atlas_web/components/layouts.ex:554
+#: lib/syli_atlas_web/components/layouts.ex:570
 #: lib/syli_atlas_web/controllers/recap_html/new.html.heex:48
 #, elixir-autogen, elixir-format
 msgid "Get the recap"
 msgstr "Recibir el resumen"
 
-#: lib/syli_atlas_web/components/layouts.ex:604
+#: lib/syli_atlas_web/components/layouts.ex:620
 #, elixir-autogen, elixir-format
 msgid "Language"
 msgstr "Idioma"
 
-#: lib/syli_atlas_web/components/layouts.ex:574
+#: lib/syli_atlas_web/components/layouts.ex:590
 #: lib/syli_atlas_web/controllers/recap_html/sent.html.heex:5
 #, elixir-autogen, elixir-format
 msgid "Last step"
@@ -6935,24 +6944,24 @@ msgstr ""
 msgid "Nothing received? Check your spam, or"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:586
+#: lib/syli_atlas_web/components/layouts.ex:602
 #, elixir-autogen, elixir-format
 msgid "Nothing received? Check your spam. The link is valid for 7 days."
 msgstr "¿No ha recibido nada? Revise su correo no deseado. El enlace es válido durante 7 días."
 
-#: lib/syli_atlas_web/components/layouts.ex:550
+#: lib/syli_atlas_web/components/layouts.ex:566
 #: lib/syli_atlas_web/controllers/recap_html.ex:102
 #, elixir-autogen, elixir-format
 msgid "On the 1st of each month"
 msgstr "El día 1 de cada mes"
 
-#: lib/syli_atlas_web/components/layouts.ex:577
+#: lib/syli_atlas_web/components/layouts.ex:593
 #: lib/syli_atlas_web/controllers/recap_html/sent.html.heex:8
 #, elixir-autogen, elixir-format
 msgid "One click is enough: without it, no recap goes out."
 msgstr "Basta un clic: sin él, no se envía ningún resumen."
 
-#: lib/syli_atlas_web/components/layouts.ex:352
+#: lib/syli_atlas_web/components/layouts.ex:368
 #, elixir-autogen, elixir-format
 msgid "Ratings, stock exchange, currency and IMF landmarks of your countries, every Monday."
 msgstr "Calificaciones, bolsa, moneda y referencias del FMI de sus países, cada lunes."
@@ -6997,13 +7006,13 @@ msgstr ""
 msgid "Subscribe again"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:408
+#: lib/syli_atlas_web/components/layouts.ex:424
 #, elixir-autogen, elixir-format
 msgid "The %{count} rankings"
 msgstr "Las %{count} clasificaciones"
 
-#: lib/syli_atlas_web/components/layouts.ex:350
-#: lib/syli_atlas_web/components/layouts.ex:502
+#: lib/syli_atlas_web/components/layouts.ex:366
+#: lib/syli_atlas_web/components/layouts.ex:518
 #: lib/syli_atlas_web/controllers/recap_html/manage.html.heex:5
 #: lib/syli_atlas_web/controllers/recap_html/new.html.heex:5
 #, elixir-autogen, elixir-format
@@ -7025,7 +7034,7 @@ msgstr ""
 msgid "The past month, in brief"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:412
+#: lib/syli_atlas_web/components/layouts.ex:428
 #, elixir-autogen, elixir-format
 msgid "The project"
 msgstr "El proyecto"
@@ -7071,18 +7080,18 @@ msgstr ""
 msgid "We keep the address, the countries, the rhythm and the language, nothing else: no name, no IP address, no tracking of opens or clicks. One email to confirm, nothing goes out before; stopping the recap deletes the address, an address never confirmed is deleted after 7 days."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:577
+#: lib/syli_atlas_web/components/layouts.ex:593
 #: lib/syli_atlas_web/controllers/recap_html/sent.html.heex:8
 #, elixir-autogen, elixir-format
 msgid "We sent a link to"
 msgstr "Hemos enviado un enlace a"
 
-#: lib/syli_atlas_web/components/layouts.ex:556
+#: lib/syli_atlas_web/components/layouts.ex:572
 #, elixir-autogen, elixir-format
 msgid "Without an account or password. One click in each email to stop."
 msgstr "Sin cuenta ni contraseña. Un clic en cada correo para darse de baja."
 
-#: lib/syli_atlas_web/components/layouts.ex:373
+#: lib/syli_atlas_web/components/layouts.ex:389
 #, elixir-autogen, elixir-format
 msgid "Without an account. The next step opens the choice of countries, the address already filled in."
 msgstr "Sin cuenta. El siguiente paso abre la elección de países, con la dirección ya rellenada."
@@ -7097,7 +7106,7 @@ msgstr ""
 msgid "Your address is deleted: you will receive nothing more from the recap."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:477
+#: lib/syli_atlas_web/components/layouts.ex:493
 #, elixir-autogen, elixir-format
 msgid "Your countries"
 msgstr "Sus países"
@@ -7107,7 +7116,7 @@ msgstr "Sus países"
 msgid "Your countries, every Monday"
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:504
+#: lib/syli_atlas_web/components/layouts.ex:520
 #, elixir-autogen, elixir-format
 msgid "Your countries, every week, in your inbox"
 msgstr "Sus países, cada semana, en su bandeja de entrada"
@@ -7147,7 +7156,7 @@ msgstr ""
 msgid "the same link is at the bottom of every recap."
 msgstr ""
 
-#: lib/syli_atlas_web/components/layouts.ex:366
+#: lib/syli_atlas_web/components/layouts.ex:382
 #: lib/syli_atlas_web/controllers/recap_html/new.html.heex:36
 #, elixir-autogen, elixir-format
 msgid "you@example.com"
@@ -7183,7 +7192,7 @@ msgstr "1 unidad de:"
 msgid "1,000 units ="
 msgstr "1.000 unidades ="
 
-#: lib/syli_atlas_web/components/layouts.ex:288
+#: lib/syli_atlas_web/components/layouts.ex:289
 #, elixir-autogen, elixir-format
 msgid "42 currencies"
 msgstr "42 monedas"
@@ -7193,10 +7202,11 @@ msgstr "42 monedas"
 msgid "A move above 10%, or a gap with our check source: read with care."
 msgstr "Un movimiento de más del 10 % o una diferencia con nuestra fuente de control: léase con cautela."
 
-#: lib/syli_atlas_web/components/layouts.ex:284
+#: lib/syli_atlas_web/components/layouts.ex:285
 #: lib/syli_atlas_web/controllers/currency_controller.ex:55
 #: lib/syli_atlas_web/controllers/currency_html/index.html.heex:7
 #: lib/syli_atlas_web/controllers/currency_html/index.html.heex:12
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:328
 #, elixir-autogen, elixir-format
 msgid "African currencies"
 msgstr "Monedas africanas"
@@ -7216,7 +7226,8 @@ msgstr "Todas las monedas africanas"
 msgid "All currencies"
 msgstr "Todas las monedas"
 
-#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:180
+#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:181
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:27
 #, elixir-autogen, elixir-format
 msgid "Amount"
 msgstr "Importe"
@@ -7227,11 +7238,12 @@ msgstr "Importe"
 msgid "Check"
 msgstr "Control"
 
-#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:242
+#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:262
 #, elixir-autogen, elixir-format
 msgid "Checks"
 msgstr "Controles"
 
+#: lib/syli_atlas_web/controllers/currency_controller.ex:133
 #: lib/syli_atlas_web/controllers/currency_html.ex:79
 #, elixir-autogen, elixir-format
 msgid "Chinese yuan"
@@ -7243,12 +7255,12 @@ msgid "Compare with"
 msgstr "Comparar con"
 
 #: lib/syli_atlas_web/controllers/currency_html/index.html.heex:178
-#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:205
+#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:224
 #, elixir-autogen, elixir-format
 msgid "Convert"
 msgstr "Convertir"
 
-#: lib/syli_atlas_web/components/layouts.ex:287
+#: lib/syli_atlas_web/components/layouts.ex:288
 #, elixir-autogen, elixir-format
 msgid "Daily rates of the 42 currencies against the dollar, the euro and the yuan"
 msgstr "Tipos del día de las 42 monedas frente al dólar, el euro y el yuan"
@@ -7258,12 +7270,12 @@ msgstr "Tipos del día de las 42 monedas frente al dólar, el euro y el yuan"
 msgid "Dollar"
 msgstr "Dólar"
 
-#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:228
+#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:248
 #, elixir-autogen, elixir-format
 msgid "End-of-day rates published by the source, updated every night. Where a parallel market exists, the rate actually paid in the street can be very different: it is not followed here."
 msgstr "Tipos de cierre publicados por la fuente, actualizados cada noche. Donde existe un mercado paralelo, el tipo que realmente se paga en la calle puede ser muy distinto: aquí no se sigue."
 
-#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:216
+#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:236
 #, elixir-autogen, elixir-format
 msgid "Enter an amount."
 msgstr "Introduzca un importe."
@@ -7273,12 +7285,12 @@ msgstr "Introduzca un importe."
 msgid "Euro"
 msgstr "Euro"
 
-#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:244
+#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:264
 #, elixir-autogen, elixir-format
 msgid "Every rate is compared with a second source and with the day before. A move above 10% or a gap above 2% is flagged « to check »: it can be a real devaluation or a source error."
 msgstr "Cada tipo se compara con una segunda fuente y con el día anterior. Un movimiento de más del 10 % o una diferencia de más del 2 % se marca « a verificar »: puede ser una devaluación real o un error de la fuente."
 
-#: lib/syli_atlas_web/controllers/currency_controller.ex:172
+#: lib/syli_atlas_web/controllers/currency_controller.ex:193
 #, elixir-autogen, elixir-format
 msgid "Exchange rates of the 42 African currencies against the dollar, the euro and the yuan, with their change over a year and a converter."
 msgstr "Tipos de cambio de las 42 monedas africanas frente al dólar, el euro y el yuan, con su evolución en un año y un conversor."
@@ -7298,7 +7310,7 @@ msgstr "Tipos de cambio de las monedas africanas frente al %{base}"
 msgid "Filter by exchange regime"
 msgstr "Filtrar por régimen cambiario"
 
-#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:234
+#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:254
 #, elixir-autogen, elixir-format
 msgid "Fixed parities"
 msgstr "Paridades fijas"
@@ -7308,12 +7320,12 @@ msgstr "Paridades fijas"
 msgid "Floating or managed"
 msgstr "Flotantes o gestionadas"
 
-#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:184
+#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:193
 #, elixir-autogen, elixir-format
 msgid "From"
 msgstr "De"
 
-#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:223
+#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:243
 #, elixir-autogen, elixir-format
 msgid "How to read these rates"
 msgstr "Cómo leer estos tipos"
@@ -7323,12 +7335,12 @@ msgstr "Cómo leer estos tipos"
 msgid "Official end-of-day rates:"
 msgstr "Tipos oficiales de cierre:"
 
-#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:226
+#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:246
 #, elixir-autogen, elixir-format
 msgid "Official rates"
 msgstr "Tipos oficiales"
 
-#: lib/syli_atlas_web/controllers/currency_controller.ex:177
+#: lib/syli_atlas_web/controllers/currency_controller.ex:198
 #, elixir-autogen, elixir-format
 msgid "On %{date}, %{down} of %{known} African currencies were worth less against the %{base} than a year earlier and %{up} were worth more. Largest rise: %{best} (%{best_change}); largest fall: %{worst} (%{worst_change})."
 msgstr "El %{date}, %{down} de %{known} monedas africanas valían menos frente al %{base} que un año antes y %{up} valían más. Mayor subida: %{best} (%{best_change}); mayor caída: %{worst} (%{worst_change})."
@@ -7380,7 +7392,7 @@ msgstr "Tipos del"
 msgid "Regime"
 msgstr "Régimen"
 
-#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:236
+#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:256
 #, elixir-autogen, elixir-format
 msgid "Ten currencies are pegged: the two CFA francs, the Comorian franc, the escudo and the dobra to the euro; the loti, the Namibian dollar and the lilangeni to the rand; the Djibouti franc and the nakfa to the dollar. Their rate is computed from the official parity, never taken from a source."
 msgstr "Diez monedas están vinculadas: los dos francos CFA, el franco comorense, el escudo y la dobra al euro; el loti, el dólar namibio y el lilangeni al rand; el franco yibutiano y el nakfa al dólar. Su tipo se calcula a partir de la paridad oficial, nunca se toma de una fuente."
@@ -7390,7 +7402,7 @@ msgstr "Diez monedas están vinculadas: los dos francos CFA, el franco comorense
 msgid "The first import of exchange rates has not run yet. It runs every night."
 msgstr "La primera importación de tipos de cambio aún no se ha realizado. Se realiza cada noche."
 
-#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:195
+#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:219
 #, elixir-autogen, elixir-format
 msgid "To"
 msgstr "A"
@@ -7415,7 +7427,7 @@ msgstr "Yuan"
 msgid "at par with the rand"
 msgstr "a la par con el rand"
 
-#: lib/syli_atlas_web/controllers/currency_controller.ex:200
+#: lib/syli_atlas_web/controllers/currency_controller.ex:221
 #, elixir-autogen, elixir-format
 msgid "dollar"
 msgstr "dólar"
@@ -7460,7 +7472,8 @@ msgstr "vinculado al dólar"
 msgid "pegged to the euro"
 msgstr "vinculado al euro"
 
-#: lib/syli_atlas_web/controllers/currency_controller.ex:202
+#: lib/syli_atlas_web/controllers/currency_controller.ex:223
+#: lib/syli_atlas_web/controllers/simulator_html.ex:19
 #, elixir-autogen, elixir-format
 msgid "yuan"
 msgstr "yuan"
@@ -7470,7 +7483,321 @@ msgstr "yuan"
 msgid "▲ the currency gained against the one chosen, ▼ it lost · official rates: where a parallel market exists, the rate actually paid can be very different · « to check »: a move above 10% or a gap with our check source"
 msgstr "▲ la moneda ganó frente a la elegida, ▼ perdió · tipos oficiales: donde existe un mercado paralelo, el tipo realmente pagado puede ser muy distinto · « a verificar »: un movimiento de más del 10 % o una diferencia con nuestra fuente de control"
 
-#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:210
+#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:230
 #, elixir-autogen, elixir-format
 msgid "exchange rate of %{date}"
 msgstr "tipo del %{date}"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:304
+#, elixir-autogen, elixir-format
+msgid "%{amount} placed in the %{index} on %{date} would be worth %{final} today."
+msgstr "%{amount} invertidos en el %{index} el %{date} valdrían hoy %{final}."
+
+#: lib/syli_atlas_web/controllers/simulator_controller.ex:230
+#, elixir-autogen, elixir-format
+msgid "%{amount} placed in the %{index} on %{start} would be worth %{final} on %{end} (%{gain}), dividends not included. Choose the index, the day and the amount."
+msgstr "%{amount} invertidos en el %{index} el %{start} valdrían %{final} el %{end} (%{gain}), sin dividendos. Elija el índice, el día y el importe."
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:129
+#, elixir-autogen, elixir-format
+msgid "%{amount} placed on %{date}"
+msgstr "%{amount} invertidos el %{date}"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:203
+#, elixir-autogen, elixir-format
+msgid "%{points} pts from the currency"
+msgstr "%{points} pts por la moneda"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:85
+#, elixir-autogen, elixir-format
+msgid "%{rate} a year on average"
+msgstr "%{rate} al año de media"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:225
+#, elixir-autogen, elixir-format
+msgid "%{rate}/yr"
+msgstr "%{rate}/año"
+
+#: lib/syli_atlas_web/controllers/simulator_html.ex:23
+#, elixir-autogen, elixir-format
+msgid "1 year"
+msgid_plural "%{count} years"
+msgstr[0] "1 año"
+msgstr[1] "%{count} años"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:184
+#, elixir-autogen, elixir-format
+msgid "Average per year"
+msgstr "Media anual"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:233
+#, elixir-autogen, elixir-format
+msgid "Broker and custody fees, taxes on gains."
+msgstr "Las comisiones de intermediación y custodia, los impuestos sobre las ganancias."
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:118
+#, elixir-autogen, elixir-format
+msgid "Conversion into %{currency} is available for placements started from %{date}: the result is shown in %{index_currency}, for the same amount at today's rate."
+msgstr "La conversión a %{currency} está disponible para inversiones iniciadas a partir del %{date}: el resultado se muestra en %{index_currency}, por el mismo importe al tipo del día."
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:247
+#, elixir-autogen, elixir-format
+msgid "Dividends not included"
+msgstr "Dividendos no incluidos"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:144
+#, elixir-autogen, elixir-format
+msgid "From %{start} to %{final}"
+msgstr "De %{start} a %{final}"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:178
+#, elixir-autogen, elixir-format
+msgid "Gain or loss"
+msgstr "Ganancia o pérdida"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:75
+#, elixir-autogen, elixir-format
+msgid "I would have, on %{date}"
+msgstr "Tendría, el %{date}"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:21
+#, elixir-autogen, elixir-format
+msgid "If I had put"
+msgstr "Si hubiera invertido"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:37
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:267
+#, elixir-autogen, elixir-format
+msgid "Index"
+msgstr "Índice"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:195
+#, elixir-autogen, elixir-format
+msgid "Index / exchange rate"
+msgstr "Índice / tipo de cambio"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:194
+#, elixir-autogen, elixir-format
+msgid "Index change"
+msgstr "Variación del índice"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:322
+#, elixir-autogen, elixir-format
+msgid "Index closes:"
+msgstr "Cierres del índice:"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:297
+#, elixir-autogen, elixir-format
+msgid "Link"
+msgstr "Enlace"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:235
+#, elixir-autogen, elixir-format
+msgid "Liquidity: on smaller exchanges, buying every share of the index at its price is not always possible."
+msgstr "La liquidez: en las bolsas pequeñas no siempre es posible comprar cada acción del índice a su precio."
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:106
+#, elixir-autogen, elixir-format
+msgid "No result for these settings"
+msgstr "Sin resultado para estos ajustes"
+
+#: lib/syli_atlas_web/components/layouts.ex:297
+#: lib/syli_atlas_web/controllers/simulator_controller.ex:49
+#: lib/syli_atlas_web/controllers/simulator_controller.ex:251
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:8
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:11
+#, elixir-autogen, elixir-format
+msgid "Placement simulator"
+msgstr "Simulador de inversión"
+
+#: lib/syli_atlas_web/controllers/simulator_controller.ex:227
+#, elixir-autogen, elixir-format
+msgid "Placement simulator for African stock exchanges"
+msgstr "Simulador de inversión en las bolsas africanas"
+
+#: lib/syli_atlas_web/controllers/simulator_controller.ex:225
+#, elixir-autogen, elixir-format
+msgid "Placement simulator: what %{index} would have given"
+msgstr "Simulador de inversión: lo que habría dado el %{index}"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:317
+#, elixir-autogen, elixir-format
+msgid "See the %{exchange}"
+msgstr "Ver la %{exchange}"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:58
+#, elixir-autogen, elixir-format
+msgid "Simulate"
+msgstr "Simular"
+
+#: lib/syli_atlas_web/controllers/market_html/exchange.html.heex:38
+#, elixir-autogen, elixir-format
+msgid "Simulate a placement"
+msgstr "Simular una inversión"
+
+#: lib/syli_atlas_web/controllers/simulator_html.ex:22
+#, elixir-autogen, elixir-format
+msgid "Since the start"
+msgstr "Desde el inicio"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:62
+#, elixir-autogen, elixir-format
+msgid "Start"
+msgstr "Inicio"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:51
+#, elixir-autogen, elixir-format
+msgid "Start date"
+msgstr "Fecha de inicio"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:214
+#, elixir-autogen, elixir-format
+msgid "The day you start matters"
+msgstr "El día de entrada importa"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:240
+#, elixir-autogen, elixir-format
+msgid "The exchange rate of your bank: we use the market rate of the first and last day."
+msgstr "El tipo de cambio de su banco: usamos el tipo de mercado del primer y del último día."
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:249
+#, elixir-autogen, elixir-format
+msgid "The index follows prices only. African shares often pay high dividends (several % a year on the BRVM): reinvested, they would add to this result."
+msgstr "El índice solo sigue los precios. Las acciones africanas suelen pagar dividendos altos (varios % al año en la BRVM): reinvertidos, se sumarían a este resultado."
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:216
+#, elixir-autogen, elixir-format
+msgid "The same amount placed on 1 January of each year, kept until %{date}:"
+msgstr "El mismo importe invertido el 1 de enero de cada año, mantenido hasta el %{date}:"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:97
+#, elixir-autogen, elixir-format
+msgid "The simulator needs at least three years of closes of an index. The history is being imported."
+msgstr "El simulador necesita al menos tres años de cierres de un índice. El historial se está importando."
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:296
+#, elixir-autogen, elixir-format
+msgid "This result has its own address:"
+msgstr "Este resultado tiene su propia dirección:"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:107
+#, elixir-autogen, elixir-format
+msgid "Try another day or another index."
+msgstr "Pruebe otro día u otro índice."
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:272
+#, elixir-autogen, elixir-format
+msgid "Value at year end (%{currency})"
+msgstr "Valor a fin de año (%{currency})"
+
+#: lib/syli_atlas_web/controllers/simulator_controller.ex:242
+#: lib/syli_atlas_web/controllers/simulator_controller.ex:259
+#, elixir-autogen, elixir-format
+msgid "What an amount placed in an African stock exchange index on the day of your choice would be worth today, in the currency of your choice."
+msgstr "Lo que valdría hoy un importe invertido en un índice bursátil africano el día que elija, en la moneda que elija."
+
+#: lib/syli_atlas_web/components/layouts.ex:300
+#, elixir-autogen, elixir-format
+msgid "What an amount placed in the BRVM or another African index would be worth"
+msgstr "Lo que valdría un importe invertido en la BRVM u otro índice africano"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:231
+#, elixir-autogen, elixir-format
+msgid "What is not counted"
+msgstr "Lo que no se cuenta"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:12
+#, elixir-autogen, elixir-format
+msgid "What would your money be worth today?"
+msgstr "¿Cuánto valdría hoy su dinero?"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:188
+#, elixir-autogen, elixir-format
+msgid "Worst fall on the way"
+msgstr "Peor caída en el camino"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:259
+#, elixir-autogen, elixir-format
+msgid "Year by year"
+msgstr "Año por año"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:165
+#, elixir-autogen, elixir-format
+msgid "amount put in"
+msgstr "importe invertido"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:87
+#, elixir-autogen, elixir-format
+msgid "dividends not included"
+msgstr "sin dividendos"
+
+#: lib/syli_atlas_web/controllers/simulator_html.ex:17
+#, elixir-autogen, elixir-format
+msgid "dollars"
+msgstr "dólares"
+
+#: lib/syli_atlas_web/controllers/simulator_html.ex:18
+#, elixir-autogen, elixir-format
+msgid "euros"
+msgstr "euros"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:327
+#, elixir-autogen, elixir-format
+msgid "exchange rates:"
+msgstr "tipos de cambio:"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:165
+#, elixir-autogen, elixir-format
+msgid "highest: %{value} (%{date})"
+msgstr "máximo: %{value} (%{date})"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:36
+#, elixir-autogen, elixir-format
+msgid "in the"
+msgstr "en el"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:169
+#, elixir-autogen, elixir-format
+msgid "lowest: %{value} (%{date})"
+msgstr "mínimo: %{value} (%{date})"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:46
+#, elixir-autogen, elixir-format
+msgid "on"
+msgstr "el"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:279
+#, elixir-autogen, elixir-format
+msgid "partial"
+msgstr "parcial"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:329
+#, elixir-autogen, elixir-format
+msgid "past performance does not predict future results; information, not investment advice"
+msgstr "las rentabilidades pasadas no garantizan las futuras; información, no asesoramiento de inversión"
+
+#: lib/syli_atlas_web/controllers/simulator_html/index.html.heex:135
+#, elixir-autogen, elixir-format
+msgid "value of the placement, weekly"
+msgstr "valor de la inversión, semanal"
+
+#: lib/syli_atlas_web/controllers/currency_html.ex:131
+#, elixir-autogen, elixir-format
+msgid "Currency, code or country"
+msgstr "Moneda, código o país"
+
+#: lib/syli_atlas_web/controllers/currency_html.ex:156
+#, elixir-autogen, elixir-format
+msgid "No currency found."
+msgstr "No se encontró ninguna moneda."
+
+#: lib/syli_atlas_web/controllers/currency_html.ex:132
+#, elixir-autogen, elixir-format
+msgid "Search a currency"
+msgstr "Buscar una moneda"
+
+#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:210
+#: lib/syli_atlas_web/controllers/currency_html/index.html.heex:211
+#, elixir-autogen, elixir-format
+msgid "Swap the currencies"
+msgstr "Invertir las monedas"

@@ -38,6 +38,10 @@ defmodule SyliAtlas.Application do
       if Application.get_env(:syli_atlas, :fx_import_on_boot, false),
         do: SyliAtlas.Workers.FxImportWorker.enqueue_if_missing()
 
+      # Past closes of the main indices, once (skipped when already there).
+      if Application.get_env(:syli_atlas, :index_history_on_boot, false),
+        do: SyliAtlas.Workers.IndexHistoryWorker.enqueue()
+
       ok
     end
   end

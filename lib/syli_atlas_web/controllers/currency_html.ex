@@ -82,4 +82,95 @@ defmodule SyliAtlasWeb.CurrencyHTML do
 
     code <> " · " <> name
   end
+
+  attr :id, :string, required: true
+  attr :name, :string, required: true
+  attr :label, :string, required: true
+  attr :options, :list, required: true, doc: "%{code, name, countries, country_names}"
+  attr :selected, :string, required: true
+  attr :locale, :string, required: true
+
+  @doc """
+  A currency choice. Without JavaScript, a plain select. With it
+  (`assets/js/ui/currency_picker.js`), a button opening a searchable list
+  of ten rows that scrolls, like the long tables: flags, name, code and
+  countries, searched by any of them. The select keeps the value sent.
+  """
+  def currency_picker(assigns) do
+    current = Enum.find(assigns.options, &(&1.code == assigns.selected))
+    assigns = assign(assigns, :current, current)
+
+    ~H"""
+    <div class="field fx-pick" data-currency-picker id={@id <> "-field"}>
+      <label for={@id}>{@label}</label>
+      <select id={@id} name={@name} class="fx-pick-native">
+        <option :for={o <- @options} value={o.code} selected={o.code == @selected}>
+          {o.code} · {cap(o.name)}
+        </option>
+      </select>
+      <div class="fx-pick-ui" hidden>
+        <button
+          type="button"
+          class="fx-pick-btn"
+          aria-haspopup="listbox"
+          aria-expanded="false"
+          aria-controls={@id <> "-pop"}
+          aria-label={@label}
+        >
+          <span class="fx-pick-current" data-current>
+            <.currency_mark :if={@current} option={@current} />
+            <b>{@current && @current.code}</b>
+            <span class="fx-pick-name">{@current && cap(@current.name)}</span>
+          </span>
+          <span class="fx-pick-chev" aria-hidden="true">▾</span>
+        </button>
+        <div class="fx-pick-pop" id={@id <> "-pop"} hidden>
+          <input
+            type="search"
+            class="fx-pick-search"
+            placeholder={gettext("Currency, code or country")}
+            aria-label={gettext("Search a currency")}
+            autocomplete="off"
+            aria-controls={@id <> "-list"}
+          />
+          <ul class="fx-pick-list" role="listbox" id={@id <> "-list"} aria-label={@label}>
+            <li
+              :for={o <- @options}
+              role="option"
+              id={"#{@id}-#{o.code}"}
+              data-value={o.code}
+              data-search={String.downcase(Enum.join([o.code, o.name | o.country_names], " "))}
+              aria-selected={to_string(o.code == @selected)}
+            >
+              <.currency_mark option={o} />
+              <span class="fx-pick-text">
+                <b>{cap(o.name)}</b>
+                <span :if={o.country_names != []} class="small muted">
+                  {Enum.join(Enum.take(o.country_names, 3), ", ")}{if length(o.country_names) > 3,
+                    do: " …"}
+                </span>
+              </span>
+              <span class="fx-pick-code">{o.code}</span>
+            </li>
+          </ul>
+          <p class="fx-pick-empty small muted" hidden>{gettext("No currency found.")}</p>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  attr :option, :map, required: true
+
+  defp currency_mark(assigns) do
+    ~H"""
+    <span class="fx-flags" aria-hidden="true">
+      <%= if @option.countries == [] do %>
+        <span class="fx-sym">{symbol(@option.code)}</span>
+      <% else %>
+        <.flag :for={c <- Enum.take(@option.countries, 2)} code={c} size="sm" sprite />
+      <% end %>
+    </span>
+    """
+  end
 end

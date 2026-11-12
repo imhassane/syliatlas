@@ -175,34 +175,54 @@
       action={Paths.currencies(@locale) <> "#currency-converter"}
       method="get"
     >
-      <h2 class="h2">{gettext("Convert")}</h2>
-      <label class="field">
-        <span>{gettext("Amount")}</span>
-        <input name="amount" inputmode="decimal" value={@converter.raw} autocomplete="off" />
-      </label>
-      <label class="field">
-        <span>{gettext("From")}</span>
-        <select name="from">
-          <option :for={c <- @choices} value={c} selected={c == @converter.from}>
-            {choice_label(
-              c,
-              @locale
-            )}
-          </option>
-        </select>
-      </label>
-      <label class="field">
-        <span>{gettext("To")}</span>
-        <select name="to">
-          <option :for={c <- @choices} value={c} selected={c == @converter.to}>
-            {choice_label(
-              c,
-              @locale
-            )}
-          </option>
-        </select>
-      </label>
-      <button type="submit" class="btn btn-primary">{gettext("Convert")}</button>
+      <h2 class="h2 fx-convert-title">{gettext("Convert")}</h2>
+      <div class="fx-convert-row">
+        <label class="field fx-amount">
+          <span>{gettext("Amount")}</span>
+          <input
+            id="convert-amount"
+            name="amount"
+            inputmode="decimal"
+            value={@converter.raw}
+            autocomplete="off"
+          />
+        </label>
+        <.currency_picker
+          id="convert-from"
+          name="from"
+          label={gettext("From")}
+          options={@picker}
+          selected={@converter.from}
+          locale={@locale}
+        />
+        <a
+          class="fx-swap"
+          id="convert-swap"
+          href={
+            Paths.currencies(@locale) <>
+              "?" <>
+              URI.encode_query(%{
+                "amount" => @converter.raw,
+                "from" => @converter.to,
+                "to" => @converter.from
+              }) <> "#currency-converter"
+          }
+          title={gettext("Swap the currencies")}
+          aria-label={gettext("Swap the currencies")}
+          data-fx-swap
+        >
+          ⇄
+        </a>
+        <.currency_picker
+          id="convert-to"
+          name="to"
+          label={gettext("To")}
+          options={@picker}
+          selected={@converter.to}
+          locale={@locale}
+        />
+        <button type="submit" class="btn btn-primary fx-convert-go">{gettext("Convert")}</button>
+      </div>
       <output class="fx-result" for="amount from to" id="currency-result">
         <%= if @converter.result do %>
           <b class="num">{rate(@converter.result, @locale)} {@converter.to}</b>

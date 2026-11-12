@@ -9,6 +9,11 @@ defmodule SyliAtlas.Market.Sources.Mansa do
   securities of an exchange, 24 for all 21), `etfs` (1, the NGX's) and
   `forex` (1). The key is read from the `STOCK_EXCHANGE_API_KEY`
   environment variable.
+
+  `index_history` (one call per index, run once by
+  `SyliAtlas.Workers.IndexHistoryWorker`) brings the past closes of the
+  main indices that Mansa keeps (`/indices/{code}/history`), for the
+  simulator.
   """
   @behaviour SyliAtlas.Market.Source
   alias SyliAtlas.Market.Ingestion
@@ -20,7 +25,22 @@ defmodule SyliAtlas.Market.Sources.Mansa do
   def code, do: "mansa"
 
   @impl true
-  def datasets, do: ~w(exchanges indices stocks etfs forex)
+  def datasets, do: ~w(exchanges indices stocks etfs forex index_history)
+
+  # Our exchanges' Mansa ids → the code of their main index in
+  # `/indices/{code}/history` (codes named in Mansa's documentation).
+  @history_codes %{
+    "ivory-coast" => "brvm-ci",
+    "nigeria" => "ngx-asi",
+    "south-africa" => "jse-asi",
+    "ghana" => "gse-ci",
+    "egypt" => "egx-30",
+    "morocco" => "masi",
+    "namibia" => "nsx-oi"
+  }
+
+  @doc "Mansa exchange ids whose main index has a history, with the index code."
+  def history_codes, do: @history_codes
 
   @impl true
   def parser_version, do: 1
@@ -34,6 +54,17 @@ defmodule SyliAtlas.Market.Sources.Mansa do
   def fetch("indices", _ext, opts), do: fetch_one("/indices", opts)
   def fetch("etfs", _ext, opts), do: fetch_one("/exchanges/NGX/etfs", opts)
   def fetch("forex", _ext, opts), do: fetch_one("/forex", opts)
+
+  def fetch("index_history", ext_id, opts) do
+    case Map.fetch(@history_codes, ext_id) do
+      {:ok, index} ->
+        with {:ok, response} <- get("/indices/#{index}/history", [from: "2010-01-01"], opts),
+             do: {:ok, [response]}
+
+      :error ->
+        {:error, :no_history}
+    end
+  end
 
   defp fetch_one(path, opts) do
     with {:ok, response} <- get(path, [], opts), do: {:ok, [response]}
@@ -115,6 +146,32 @@ defmodule SyliAtlas.Market.Sources.Mansa do
   # Parsing ---------------------------------------------------------------
 
   @impl true
+  def parse("index_history", body, meta) do
+    case Jason.decode(body) do
+      {:ok, %{"data" => %{"points" => points}}} when is_list(points) ->
+        {:ok,
+         for p <- points,
+             {:ok, day} <- [Date.from_iso8601(to_string(p["date"] || p["trade_date"]))],
+             %Decimal{} = close <- [history_close(p["close"] || p["value"])] do
+           %{
+             type: :index,
+             exchange: meta.exchange,
+             value: close,
+             change_pct: nil,
+             ytd_pct: nil,
+             as_of: DateTime.new!(day, ~T[16:00:00]),
+             history: true
+           }
+         end}
+
+      {:ok, _} ->
+        {:error, :unexpected_shape}
+
+      {:error, _} ->
+        {:error, :invalid_json}
+    end
+  end
+
   def parse(dataset, body, meta) do
     case Jason.decode(body) do
       {:ok, %{"data" => data} = doc} when is_list(data) ->
@@ -127,6 +184,18 @@ defmodule SyliAtlas.Market.Sources.Mansa do
         {:error, :invalid_json}
     end
   end
+
+  defp history_close(n) when is_integer(n) and n > 0, do: Decimal.new(n)
+  defp history_close(n) when is_float(n) and n > 0, do: Decimal.from_float(n)
+
+  defp history_close(s) when is_binary(s) do
+    case Decimal.parse(String.trim(s)) do
+      {d, ""} -> if Decimal.gt?(d, 0), do: d
+      _ -> nil
+    end
+  end
+
+  defp history_close(_), do: nil
 
   defp records("exchanges", data, _doc, _meta) do
     for e <- data, is_binary(e["id"]) do

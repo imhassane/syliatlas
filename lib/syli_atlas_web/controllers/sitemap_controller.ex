@@ -296,7 +296,11 @@ defmodule SyliAtlasWeb.SitemapController do
       day = overview["as_of"] && String.slice(overview["as_of"], 0, 10)
 
       markets =
-        [{both(&Paths.markets/1), day}, {both(&Paths.etfs/1), day}] ++
+        [
+          {both(&Paths.markets/1), day},
+          {both(&Paths.etfs/1), day},
+          {both(&Paths.simulator/1), day}
+        ] ++
           for x <- exchanges, code = x["exchange"]["code"] do
             {both(&Paths.exchange(&1, code)), x["index"]["date"] || day}
           end

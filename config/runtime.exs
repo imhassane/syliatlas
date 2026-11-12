@@ -256,6 +256,8 @@ if config_env() == :prod do
   config :syli_atlas, og_warm_on_boot: true
   # First deploy of the exchange rates: import at once rather than at 01:10 UTC.
   config :syli_atlas, fx_import_on_boot: true
+  # Past closes of the main indices for the simulator, once (7 Mansa calls).
+  config :syli_atlas, index_history_on_boot: true
 
   unless System.get_env("R2_BUCKET") do
     config :syli_atlas, SyliAtlas.Market.RawStore,

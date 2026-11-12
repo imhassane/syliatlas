@@ -17,6 +17,9 @@ defmodule SyliAtlas.Fx.Sources.ExchangeApi do
   def name, do: "fawazahmed0/exchange-api"
   @impl true
   def url, do: "https://github.com/fawazahmed0/exchange-api"
+
+  @doc "The first day the source publishes by date (its npm releases start there)."
+  def first_day, do: ~D[2024-03-02]
   @impl true
   def parser_version, do: 1
 
