@@ -233,6 +233,7 @@ defmodule SyliAtlasWeb.Router do
       get "/#{seg.(:ratings)}/:slug", RatingsController, :show
       get "/#{seg.(:markets)}", MarketController, :index
       get "/#{seg.(:markets)}/etf", MarketController, :etfs
+      get "/#{seg.(:markets)}/#{seg.(:simulator)}", SimulatorController, :index
       get "/#{seg.(:markets)}/:exchange", MarketController, :exchange
       get "/#{seg.(:markets)}/:exchange/:ticker", MarketController, :security
     end

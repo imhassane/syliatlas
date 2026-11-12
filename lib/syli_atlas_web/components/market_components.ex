@@ -261,7 +261,7 @@ defmodule SyliAtlasWeb.MarketComponents do
     ticks =
       for i <- 0..3 do
         v = lo + step * i
-        %{y: fmt(y.(v)), label: Float.round(v, if(v >= 100, do: 0, else: 2))}
+        %{y: Float.round(y.(v), 1), label: Float.round(v, if(v >= 100, do: 0, else: 2))}
       end
 
     {_, end_v} = List.last(points)

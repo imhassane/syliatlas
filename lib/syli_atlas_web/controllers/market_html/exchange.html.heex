@@ -27,6 +27,16 @@
           path={SyliAtlasWeb.Paths.exchange(@locale, @e["code"])}
           alert_market={{@e["code"], nil}}
         />
+        <a
+          :if={@simulable}
+          class="btn btn-secondary"
+          id="exchange-simulate"
+          href={
+            Paths.simulator(@locale) <> "?" <> URI.encode_query(%{"indice" => @e["code"]})
+          }
+        >
+          {gettext("Simulate a placement")}
+        </a>
       </:actions>
       <:chips>
         <span class="pill pill-neutral no-dot">

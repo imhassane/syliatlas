@@ -211,7 +211,8 @@ defmodule SyliAtlasWeb.Layouts do
         >{gettext("Stock exchanges")}</a>
         <details class="nav-menu" data-nav-menu>
           <summary aria-current={
-            @current in [:debt, :ratings, :regions, :currencies, :themes, :method] && "true"
+            @current in [:debt, :ratings, :regions, :currencies, :simulator, :themes, :method] &&
+              "true"
           }>
             {gettext("Themes")}
           </summary>
@@ -287,7 +288,22 @@ defmodule SyliAtlasWeb.Layouts do
           gettext("Daily rates of the 42 currencies against the dollar, the euro and the yuan"),
         short: gettext("42 currencies")
       }
-    ]
+    ] ++
+      if SyliAtlas.Market.public?() do
+        [
+          %{
+            key: :simulator,
+            current: [:simulator],
+            label: gettext("Placement simulator"),
+            href: Paths.simulator(locale),
+            description:
+              gettext("What an amount placed in the BRVM or another African index would be worth"),
+            short: nil
+          }
+        ]
+      else
+        []
+      end
   end
 
   attr :locale, :string, required: true

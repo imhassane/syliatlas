@@ -78,6 +78,7 @@ defmodule SyliAtlasWeb.CurrencyController do
       summary: summary,
       converter: converter,
       choices: ["USD", "EUR", "CNY" | Currencies.codes()],
+      picker: picker_options(all, locale),
       kept: kept,
       answer: answer
     )
@@ -110,6 +111,26 @@ defmodule SyliAtlasWeb.CurrencyController do
       }
     end
   end
+
+  # The converter's currency list: the three references, then the African
+  # currencies by name, each with its countries (shown and searched).
+  defp picker_options(rows, locale) do
+    majors =
+      for code <- ~w(USD EUR CNY) do
+        %{code: code, name: major_name(code), countries: [], country_names: []}
+      end
+
+    african =
+      rows
+      |> sort_rows("name", locale)
+      |> Enum.map(&Map.take(&1, [:code, :name, :countries, :country_names]))
+
+    majors ++ african
+  end
+
+  defp major_name("USD"), do: gettext("US dollar")
+  defp major_name("EUR"), do: gettext("euro")
+  defp major_name("CNY"), do: gettext("Chinese yuan")
 
   defp regime(code) do
     case Currencies.peg(code) do

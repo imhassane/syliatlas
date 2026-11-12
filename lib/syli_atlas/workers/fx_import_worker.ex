@@ -26,12 +26,24 @@ defmodule SyliAtlas.Workers.FxImportWorker do
       {:ok, day, n} ->
         Logger.info("fx: #{n} rates for #{day}")
         Fx.publish!()
-        if Fx.missing_days(30) != [], do: SyliAtlas.Workers.FxBackfillWorker.enqueue()
+
+        if Fx.missing_days(30) != [] or history_short?(),
+          do: SyliAtlas.Workers.FxBackfillWorker.enqueue()
+
         :ok
 
       {:error, reason} ->
         Logger.error("fx primary source failed: #{inspect(reason)}")
         {:error, reason}
+    end
+  end
+
+  # The stored history does not reach back to the source's first day (the
+  # simulator converts the start of a placement with the rate of its day).
+  defp history_short? do
+    case Fx.first_stored_day() do
+      nil -> true
+      first -> Date.diff(first, SyliAtlas.Fx.Sources.ExchangeApi.first_day()) > 7
     end
   end
 

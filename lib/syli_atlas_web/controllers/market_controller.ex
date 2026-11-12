@@ -89,9 +89,11 @@ defmodule SyliAtlasWeb.MarketController do
     e = doc["exchange"]
     paths = SyliAtlas.Locales.each(fn l -> Paths.exchange(l, code) end)
     page = Pagination.paginate(doc["securities"], params["page"], 20)
+    simulable = Enum.any?(SyliAtlas.Market.Simulator.available(), &(&1.exchange.code == code))
 
     render(conn, :exchange,
       page_title: exchange_title(e, doc),
+      simulable: simulable,
       seo:
         Seo.page(locale, paths, answer(doc, locale), %{
           json_ld: [

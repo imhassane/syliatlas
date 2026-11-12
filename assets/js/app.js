@@ -26,9 +26,11 @@ import {initHeader} from "./ui/header"
 import {initTransitions} from "./ui/transitions"
 import {initFlashToasts} from "./ui/toasts"
 import {initRecap, initRecapPage} from "./ui/recap"
+import {initCurrencyPickers} from "./ui/currency_picker"
 
 initTheme()
 initDrawer()
+initCurrencyPickers()
 initSheets()
 initPeriodForms()
 initMap()

@@ -98,6 +98,9 @@ defmodule SyliAtlasWeb.Paths do
 
   def markets(locale), do: "/#{locale}/#{segment(locale, :markets)}"
   def etfs(locale), do: markets(locale) <> "/etf"
+
+  @doc "The placement simulator: /fr/bourses/simulateur, /en/stock-exchanges/simulator."
+  def simulator(locale), do: markets(locale) <> "/" <> segment(locale, :simulator)
   def exchange(locale, code), do: markets(locale) <> "/" <> code
 
   def security(locale, exchange_code, ticker),
@@ -146,6 +149,12 @@ defmodule SyliAtlasWeb.Paths do
       "pt" => "comunidades-economicas"
     },
     debt: %{"fr" => "dette", "en" => "debt", "es" => "deuda", "pt" => "divida"},
+    simulator: %{
+      "fr" => "simulateur",
+      "en" => "simulator",
+      "es" => "simulador",
+      "pt" => "simulador"
+    },
     currencies: %{"fr" => "monnaies", "en" => "currencies", "es" => "monedas", "pt" => "moedas"},
     questions: %{
       "fr" => "questions",
