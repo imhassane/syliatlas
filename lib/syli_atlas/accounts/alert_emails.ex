@@ -101,6 +101,55 @@ defmodule SyliAtlas.Accounts.AlertEmails do
     }
   end
 
+  defp content("budget_law", p, country, locale) do
+    law = budget_law_name(p)
+    stage = budget_stage(p["stage"])
+
+    %{
+      subject:
+        dgettext("emails", "%{country}: %{law} %{stage}",
+          country: country,
+          law: law,
+          stage: stage
+        ),
+      preheader:
+        dgettext(
+          "emails",
+          "A budget law of a country you follow, checked against the official text."
+        ),
+      eyebrow: dgettext("emails", "Alert · budget law"),
+      title: dgettext("emails", "%{law} of %{country}", law: law, country: country),
+      blocks:
+        [
+          {:paragraph,
+           dgettext("emails", "Followed country: %{country}. %{law} is %{stage}.",
+             country: country,
+             law: law,
+             stage: stage
+           )},
+          {:facts,
+           [
+             {dgettext("emails", "Expenditure"),
+              SyliAtlas.Budgets.Money.short(decimal(p["expenditure"]), p["currency"], locale)},
+             {dgettext("emails", "Revenue"),
+              SyliAtlas.Budgets.Money.short(decimal(p["revenue"]), p["currency"], locale)},
+             {dgettext("emails", "Date"), p["last_date"] || "—"}
+           ]}
+        ] ++
+          if(p["source_url"],
+            do: [
+              {:paragraph,
+               dgettext("emails", "Official text: %{name}, %{url}",
+                 name: p["source_name"],
+                 url: p["source_url"]
+               )}
+            ],
+            else: []
+          ),
+      button: dgettext("emails", "See the budget of %{country}", country: country)
+    }
+  end
+
   defp content(kind, p, country, _locale) when kind in ["indicator_above", "indicator_below"] do
     indicator = indicator(p["indicator"])
     unit = &with_unit(p["indicator"], &1)
@@ -307,6 +356,10 @@ defmodule SyliAtlas.Accounts.AlertEmails do
        do:
          "#{p["name"]} · #{money(p["value"], p["currency"])} · #{signed_percent(p["change_pct"])} · #{p["date"]}"
 
+  defp line(%AlertDelivery{kind: "budget_law", payload: p}),
+    do:
+      "#{budget_law_name(p)} · #{budget_stage(p["stage"])} · #{SyliAtlas.Budgets.Money.short(decimal(p["expenditure"]), p["currency"], Gettext.get_locale(SyliAtlasWeb.Gettext))}"
+
   defp line(%AlertDelivery{kind: "new_edition", payload: p}),
     do: dgettext("emails", "new IMF figures (%{edition})", edition: p["edition"])
 
@@ -404,7 +457,34 @@ defmodule SyliAtlas.Accounts.AlertEmails do
     end
   end
 
+  defp subject_path("budget_law", p, locale) do
+    case p["country_code"] && Geo.get_area_by_code(p["country_code"]) do
+      nil -> Paths.home(locale)
+      area -> Paths.area_tab(locale, area, :budget)
+    end
+  end
+
   defp subject_path(_kind, p, locale), do: country_path(p["country_code"], locale)
+
+  defp budget_law_name(%{"kind" => "initial", "fiscal_year" => y}),
+    do: dgettext("emails", "The %{year} finance law", year: y)
+
+  defp budget_law_name(%{"kind" => "amending", "fiscal_year" => y}),
+    do: dgettext("emails", "The amending finance law for %{year}", year: y)
+
+  defp budget_law_name(%{"kind" => "settlement", "fiscal_year" => y}),
+    do: dgettext("emails", "The settlement law for %{year}", year: y)
+
+  defp budget_law_name(%{"fiscal_year" => y}),
+    do: dgettext("emails", "The provisional budget for %{year}", year: y)
+
+  defp budget_stage("tabled"), do: dgettext("emails", "tabled before the legislature")
+  defp budget_stage("voted"), do: dgettext("emails", "voted")
+  defp budget_stage("promulgated"), do: dgettext("emails", "promulgated")
+  defp budget_stage(_), do: dgettext("emails", "published in the official gazette")
+
+  defp decimal(nil), do: nil
+  defp decimal(s) when is_binary(s), do: Decimal.new(s)
 
   # « Data by MansaAPI (https://mansaapi.com) », as the licence asks next to
   # every figure, exactly as the market pages credit it.

@@ -1,0 +1,160 @@
+<Layouts.public locale={@locale} current={:budgets} alternates={@alternates}>
+  <.section id="budgets" tight={:top}>
+    <nav aria-label={gettext("Breadcrumb")}>
+      <ol class="crumbs">
+        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+        <li aria-current="page">{gettext("State budgets")}</li>
+      </ol>
+    </nav>
+
+    <div class="section-head">
+      <p class="eyebrow">{gettext("State budgets · %{year}", year: @year)}</p>
+      <h1 class="h1">{gettext("State budgets of the 54 African countries")}</h1>
+      <p class="lead" data-answer>{@answer}</p>
+    </div>
+
+    <.card :if={@latest != []} pad id="budget-latest">
+      <.card_head
+        title={gettext("Latest budget laws")}
+        subtitle={gettext("Voted, promulgated or published · checked against the official text")}
+      />
+      <BudgetComponents.currency_picker fx={@fx} locale={@locale} id="latest-money-picker" />
+      <ul class="budget-latest">
+        <li :for={l <- @latest} id={"latest-law-#{l["id"]}"}>
+          <a
+            href={Paths.area_tab(@locale, l["area"], :budget) <> "#budget"}
+            class="budget-latest-item"
+          >
+            <span class="budget-latest-head">
+              <span class="eyebrow">{l["name"]}</span>
+              <span class={["pill", BudgetComponents.stage_class(l["stage"])]}>{BudgetComponents.stage_label(
+                l["stage"]
+              )}</span>
+            </span>
+            <b class="budget-latest-title">{BudgetComponents.law_name(l)}</b>
+            <BudgetComponents.money
+              amount={l["expenditure"]}
+              currency={l["currency"]}
+              fx={@fx}
+              locale={@locale}
+              class="budget-latest-amount"
+            />
+            <span class="small muted">
+              {gettext("of expenditure")}<time :if={l["last_date"]} datetime={l["last_date"]}> · {BudgetComponents.date_text(
+                l["last_date"],
+                @locale
+              )}</time>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </.card>
+
+    <div class="card market-table" id="budgets-table">
+      <div class="market-toolbar">
+        <div class="market-toolbar-title">
+          <h2 class="market-h1">{gettext("Country by country")}</h2>
+          <p class="src">
+            {gettext(
+              "Revenue and expenditure in % of GDP (IMF) for every country; the latest finance law where Syli Atlas has it"
+            )}
+          </p>
+        </div>
+      </div>
+      <nav class="market-tabs" aria-label={gettext("Filter by region")}>
+        <a
+          href={href(@locale, nil, @sort) <> "#budgets-table"}
+          aria-current={@region == nil && "true"}
+        >
+          {gettext("All countries")}<span class="market-tab-count">{@counts[nil]}</span>
+        </a>
+        <a
+          :for={r <- @regions}
+          href={href(@locale, r, @sort) <> "#budgets-table"}
+          aria-current={@region && @region.code == r.code && "true"}
+        >
+          {region_name(r, @locale)}<span class="market-tab-count">{@counts[r.code]}</span>
+        </a>
+      </nav>
+
+      <div class="table-box">
+        <table class="table table-stack table-wide" id="budgets-rows">
+          <caption class="vh">{gettext("State budgets of the 54 African countries")}</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="l" aria-sort={@sort == "name" && "ascending"}>
+                <a href={href(@locale, @region, "name") <> "#budgets-table"}>{gettext("Country")}{if(
+                  @sort == "name",
+                  do: " ↑"
+                )}</a>
+              </th>
+              <th
+                :for={
+                  {key, label} <- [
+                    {"expenditure", gettext("Expenditure, % of GDP · %{year}", year: @year)},
+                    {"revenue", gettext("Revenue, % of GDP · %{year}", year: @year)},
+                    {"balance", gettext("Balance, % of GDP")},
+                    {"law", gettext("Latest finance law")}
+                  ]
+                }
+                scope="col"
+                aria-sort={@sort == key && "descending"}
+                class={key == "law" && "l"}
+              >
+                <a href={href(@locale, @region, key) <> "#budgets-table"}>{label}{if(@sort == key,
+                  do: " ↓"
+                )}</a>
+              </th>
+              <th scope="col" class="l">{gettext("Who votes it")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={r <- @rows} id={"budget-" <> r["code"]}>
+              <th scope="row" class="l">
+                <a href={Paths.country_tab(@locale, r["slug"], :budget)}>{r["name"]}</a>
+              </th>
+              <td data-label={gettext("Expenditure, % of GDP · %{year}", year: @year)} class="num">
+                {pct(r["expenditure_pct"], @locale)}
+              </td>
+              <td data-label={gettext("Revenue, % of GDP · %{year}", year: @year)} class="num">
+                {pct(r["revenue_pct"], @locale)}
+              </td>
+              <td data-label={gettext("Balance, % of GDP")}>
+                <b class={[
+                  "num",
+                  (is_number(r["balance_pct"]) and r["balance_pct"] < 0) && "down"
+                ]}>{pct(r["balance_pct"], @locale)}</b>
+              </td>
+              <td data-label={gettext("Latest finance law")} class="l">
+                <%= if r["latest_law"] do %>
+                  <span class="block">{BudgetComponents.law_name(r["latest_law"])}</span>
+                  <span class={["pill", BudgetComponents.stage_class(r["latest_law"]["stage"])]}>
+                    {BudgetComponents.stage_label(r["latest_law"]["stage"])}
+                  </span>
+                <% else %>
+                  <span class="pill pill-neutral no-dot">{gettext("IMF estimate")}</span>
+                <% end %>
+              </td>
+              <td data-label={gettext("Who votes it")} class="l small">
+                {BudgetComponents.legislature(r, @locale) || "—"}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-foot stack gap-2">
+        <p class="src">
+          {gettext(
+            "Revenue and expenditure: IMF, %{label}, general government, % of GDP · balance: revenue minus expenditure (Syli Atlas calculation)",
+            label: @doc["imf"]["label"] || "Fiscal Monitor"
+          )} · <a href={@doc["imf"]["url"]} rel="noopener">imf.org</a>
+        </p>
+        <p class="src">
+          {gettext(
+            "Finance laws: official texts (official gazettes, ministries of finance), read with AI assistance and checked by hand before publication · who votes: Syli Atlas, checked by hand"
+          )}
+        </p>
+      </div>
+    </div>
+  </.section>
+</Layouts.public>

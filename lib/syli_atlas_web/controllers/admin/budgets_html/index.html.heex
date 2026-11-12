@@ -1,0 +1,288 @@
+<.admin_shell
+  current={:budgets}
+  counts={@admin_counts}
+  until={@admin_until}
+  key={@admin_key}
+>
+  <input type="checkbox" id="adm-new-toggle" class="adm-toggle" hidden checked={@open} />
+  <header class="adm-head">
+    <div class="adm-intro">
+      <p class="eyebrow">Données</p>
+      <h1 class="adm-title">Budgets et lois de finances</h1>
+      <p class="muted">
+        Un fichier arrive (déposé ici ou lu sur une page suivie), l'IA en tire la loi avec la page de chaque chiffre, les contrôles tournent. Rien n'est publié avant validation, avec le lien du texte officiel.
+      </p>
+    </div>
+    <div class="adm-head-actions">
+      <a href={~p"/admin/budgets/pays"} class="btn btn-secondary" id="adm-countries">
+        Fiches des 54 pays
+      </a>
+      <.form for={%{}} action={~p"/admin/budgets/veille"} method="post" id="adm-budget-watch-form">
+        <button class="btn btn-secondary" type="submit" id="adm-budget-watch">
+          Lire les pages suivies
+        </button>
+      </.form>
+      <label for="adm-new-toggle" class="btn btn-primary" id="adm-new-open" role="button">
+        Saisir une loi
+      </label>
+    </div>
+  </header>
+
+  <dl class="stats" id="adm-stats">
+    <div>
+      <dt>À valider</dt>
+      <dd class="big num">{length(@pending)}</dd>
+      <dd class="small muted">lois dans la file</dd>
+    </div>
+    <div>
+      <dt>Pays avec une loi</dt>
+      <dd class="big num">{@overview["counts"]["official"]}</dd>
+      <dd class="small muted">sur 54 · les autres : FMI seulement</dd>
+    </div>
+    <div>
+      <dt>Pages suivies</dt>
+      <dd class="big num">{@watched}</dd>
+      <dd class="small muted">lues chaque matin à 05:30 UTC</dd>
+    </div>
+    <div>
+      <dt>Lecture IA</dt>
+      <dd class="big num adm-big-sm">{if @extractor?, do: "Active", else: "Absente"}</dd>
+      <dd class="small muted">
+        {if @extractor?, do: @model, else: "ANTHROPIC_API_KEY manquante : saisie à la main"}
+      </dd>
+    </div>
+  </dl>
+
+  <section class="card adm-new" id="adm-new">
+    <div class="adm-card-head">
+      <div>
+        <h2 class="h2">Saisir une loi</h2>
+        <p class="small muted">
+          Elle rejoint la file avec ses contrôles, puis se publie comme les autres.
+        </p>
+      </div>
+      <label for="adm-new-toggle" class="btn btn-quiet btn-sm" role="button">Fermer</label>
+    </div>
+    <.form
+      for={%{}}
+      action={~p"/admin/budgets/propositions"}
+      method="post"
+      class="adm-form adm-pad"
+      id="adm-budget-new-form"
+    >
+      <.law_fields proposal={%SyliAtlas.Budgets.Proposal{}} countries={@countries} />
+      <div class="adm-actions">
+        <button class="btn btn-primary" type="submit" id="adm-budget-new-submit">Ajouter à la file</button>
+      </div>
+    </.form>
+  </section>
+
+  <section class="card" id="adm-upload">
+    <div class="adm-card-head">
+      <div>
+        <h2 class="h2">Déposer un fichier</h2>
+        <p class="small muted">
+          PDF du Journal officiel ou de la loi de finances, ou page web enregistrée. Un même fichier n'est jamais lu deux fois pour un pays.
+        </p>
+      </div>
+    </div>
+    <.form
+      for={%{}}
+      action={~p"/admin/budgets/documents"}
+      method="post"
+      multipart
+      class="adm-form adm-pad"
+      id="adm-upload-form"
+    >
+      <label>
+        Pays
+        <select name="d[country_code]" required id="adm-upload-country">
+          <option value="">—</option>
+          <option :for={c <- @countries} value={c.code}>
+            {SyliAtlas.Geo.Area.name(c, "fr")}
+          </option>
+        </select>
+      </label>
+      <label>
+        Fichier
+        <input
+          type="file"
+          name="d[file]"
+          accept=".pdf,.html,.htm,.txt"
+          required
+          id="adm-upload-file"
+        />
+      </label>
+      <label class="adm-wide">
+        Adresse d'origine (facultatif)
+        <input name="d[url]" type="url" placeholder="https://" id="adm-upload-url" />
+      </label>
+      <div class="adm-actions">
+        <button class="btn btn-primary" type="submit" id="adm-upload-submit">Envoyer</button>
+      </div>
+    </.form>
+  </section>
+
+  <section class="card adm-list" id="adm-pending">
+    <div class="adm-card-head">
+      <h2 class="h2">File d'attente</h2>
+    </div>
+
+    <p :if={@pending == []} class="adm-empty muted" id="adm-empty">
+      File vide. Déposez un fichier ou saisissez une loi.
+    </p>
+
+    <%= for p <- @pending do %>
+      <.form
+        for={%{}}
+        action={~p"/admin/budgets/propositions/#{p.id}/approuver"}
+        method="post"
+        class="adm-row"
+        id={"budget-proposal-#{p.id}"}
+      >
+        <input
+          type="checkbox"
+          id={"fix-#{p.id}"}
+          class="adm-toggle"
+          hidden
+          checked={SyliAtlas.Budgets.Checks.errors?(p.checks)}
+        />
+        <div class="adm-row-main">
+          <div class="adm-item-head">
+            <b>{country_name(@countries, p.country_code)} · {label(kinds(), p.kind)} {p.fiscal_year}</b>
+            <span class="pill pill-info">{label(stages(), p.stage)}</span>
+            <span class="mono subtle small">
+              {if(p.origin == "extraction", do: "lue par l'IA", else: "saisie")} le {fr_date(
+                p.inserted_at
+              )}{if p.document,
+                do: " · " <> (p.document.filename || p.document.url || "fichier")}
+            </span>
+          </div>
+          <p class="adm-proposal">
+            Dépenses : <b class="num">{amount(p.expenditure, p.currency)}</b>
+            · Recettes : <b class="num">{amount(p.revenue, p.currency)}</b>
+          </p>
+          <p class="small muted">
+            {p.reference || "numéro inconnu"} · vote {fr_date(p.voted_on)} · JO {fr_date(
+              p.published_on
+            )}{if p.legislature, do: " · " <> p.legislature}
+          </p>
+          <blockquote :if={p.evidence != %{}} class="adm-quote">
+            <span :if={p.evidence["revenue"]}>Recettes : {p.evidence["revenue"]}. </span>
+            <span :if={p.evidence["expenditure"]}>Dépenses : {p.evidence["expenditure"]}. </span>
+            <span :if={p.evidence["excerpt"]}>« {p.evidence["excerpt"]} »</span>
+          </blockquote>
+          <ul class="adm-checks small" id={"checks-#{p.id}"}>
+            <li :if={p.checks == []} class="subtle">Contrôles : rien à signaler ✓</li>
+            <li
+              :for={c <- p.checks}
+              class={if(c["level"] == "error", do: "adm-bad", else: "subtle")}
+            >
+              {if c["level"] == "error", do: "⚠", else: "•"} {c["message"]}
+            </li>
+          </ul>
+        </div>
+        <div class="adm-row-side">
+          <label class="adm-field">
+            Lien du texte officiel (https)
+            <input name="p[source_url]" type="url" value={p.source_url} placeholder="https://" />
+          </label>
+          <label class="adm-field">
+            Nom de la source
+            <input
+              name="p[source_name]"
+              value={p.source_name}
+              placeholder="Journal officiel de…"
+            />
+          </label>
+          <div class="adm-buttons">
+            <button class="btn btn-primary btn-sm" type="submit" id={"approve-#{p.id}"}>
+              Valider et publier
+            </button>
+            <label for={"fix-#{p.id}"} class="btn btn-secondary btn-sm" role="button">Corriger</label>
+            <button
+              class="btn btn-quiet btn-sm"
+              type="submit"
+              form={"reject-#{p.id}"}
+              id={"reject-btn-#{p.id}"}
+            >
+              Rejeter
+            </button>
+          </div>
+        </div>
+        <div class="adm-fix adm-form">
+          <.law_fields proposal={p} />
+        </div>
+      </.form>
+      <.form
+        for={%{}}
+        action={~p"/admin/budgets/propositions/#{p.id}/rejeter"}
+        method="post"
+        id={"reject-#{p.id}"}
+        class="adm-hidden-form"
+      >
+      </.form>
+    <% end %>
+  </section>
+
+  <section class="card" id="adm-documents">
+    <div class="adm-card-head">
+      <h2 class="h2">Fichiers reçus</h2>
+    </div>
+    <p :if={@documents == []} class="adm-empty muted">Aucun fichier pour l'instant.</p>
+    <div :if={@documents != []} class="table-box">
+      <table class="table adm-table">
+        <caption class="vh">Fichiers reçus</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="l">Pays</th>
+            <th scope="col" class="l">Fichier</th>
+            <th scope="col" class="l">Reçu</th>
+            <th scope="col" class="l">État</th>
+            <th scope="col" class="l"><span class="vh">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={d <- @documents} id={"document-#{d.id}"}>
+            <td class="l">{country_name(@countries, d.country_code)}</td>
+            <td class="l">
+              <a :if={d.url} href={d.url} rel="noopener noreferrer" target="_blank">{d.filename ||
+                d.url}</a>
+              <span :if={!d.url}>{d.filename}</span>
+              <span class="small subtle block">{if(d.origin == "auto",
+                do: "page suivie",
+                else: "déposé"
+              )}</span>
+            </td>
+            <td class="l small">{fr_date(d.inserted_at)}</td>
+            <td class="l">
+              <% {l, c} = status_label(d.status) %>
+              <span class={["pill", c]}>{l}</span>
+              <span :if={d.error} class="small subtle block">{d.error}</span>
+            </td>
+            <td class="l">
+              <.form for={%{}} action={~p"/admin/budgets/documents/#{d.id}/relire"} method="post">
+                <button class="btn btn-quiet btn-sm" type="submit" id={"reread-#{d.id}"}>Relire</button>
+              </.form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section :if={@decided != []} class="card" id="adm-decided">
+    <div class="adm-card-head">
+      <h2 class="h2">Décisions récentes</h2>
+    </div>
+    <ul class="adm-decided">
+      <li :for={p <- @decided}>
+        <span class={["pill", if(p.status == "approved", do: "pill-ok", else: "pill-neutral")]}>
+          {if p.status == "approved", do: "Publiée", else: "Rejetée"}
+        </span>
+        {country_name(@countries, p.country_code)} · {label(kinds(), p.kind)} {p.fiscal_year}
+        <span class="small subtle">· {fr_date(p.reviewed_at)}</span>
+      </li>
+    </ul>
+  </section>
+</.admin_shell>

@@ -265,6 +265,7 @@ defmodule SyliAtlasWeb.Router do
       get "/#{seg.(:compare)}/*slugs", CompareController, :show
       get "/#{seg.(:ratings)}", RatingsController, :index
       get "/#{seg.(:debt)}", DebtController, :index
+      get "/#{seg.(:budgets)}", BudgetController, :index
       get "/#{seg.(:currencies)}", CurrencyController, :index
       get "/#{seg.(:communities)}", CommunityController, :index
       get "/#{seg.(:communities)}/:slug", CommunityController, :show
@@ -300,6 +301,16 @@ defmodule SyliAtlasWeb.Router do
     post "/marches/importer", MarketController, :import
     post "/marches/pause", MarketController, :pause
     post "/marches/anomalies/:id", MarketController, :decide
+    get "/budgets", BudgetsController, :index
+    post "/budgets/veille", BudgetsController, :watch
+    post "/budgets/documents", BudgetsController, :upload
+    post "/budgets/documents/:id/relire", BudgetsController, :reread
+    post "/budgets/propositions", BudgetsController, :create
+    post "/budgets/propositions/:id/approuver", BudgetsController, :approve
+    post "/budgets/propositions/:id/rejeter", BudgetsController, :reject
+    get "/budgets/pays", BudgetsController, :countries
+    get "/budgets/pays/:code", BudgetsController, :country
+    post "/budgets/pays/:code", BudgetsController, :update_country
     get "/emails", EmailsController, :index
     post "/membres/:id/sessions", MembersController, :close_sessions
     get "/recherches", SearchMissesController, :index

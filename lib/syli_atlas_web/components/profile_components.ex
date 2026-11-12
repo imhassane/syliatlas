@@ -15,6 +15,7 @@ defmodule SyliAtlasWeb.ProfileComponents do
   def tab_label(:overview), do: gettext("Overview")
   def tab_label(:economy), do: gettext("Economy")
   def tab_label(:finances), do: gettext("Finances and debt")
+  def tab_label(:budget), do: gettext("State budget")
   def tab_label(:trade), do: gettext("Trade")
   def tab_label(:society), do: gettext("Society")
   def tab_label(:markets), do: gettext("Markets and rating")

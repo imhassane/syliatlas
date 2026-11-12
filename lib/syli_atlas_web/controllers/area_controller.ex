@@ -97,7 +97,14 @@ defmodule SyliAtlasWeb.AreaController do
     communities = if country?, do: SyliAtlas.Economy.Communities.for_country(area.code), else: []
     comparison = comparison(area, region, from, to, locale)
     tab_name = ProfileComponents.tab_label(tab)
-    answer = tab_answer(tab, name, data, from, to, locale, world_bank, trade, rating, ratings)
+    # The budget tab reads its own document and the exchange rates, only there.
+    budget = if tab == :budget, do: SyliAtlas.Budgets.country(area.code)
+    budget_fx = if tab == :budget, do: SyliAtlas.Fx.latest()
+
+    answer =
+      if tab == :budget,
+        do: budget_answer(budget, name, locale),
+        else: tab_answer(tab, name, data, from, to, locale, world_bank, trade, rating, ratings)
 
     # A period chosen by the reader follows them from tab to tab (the default
     # one stays out of the address, which stays canonical).
@@ -129,7 +136,10 @@ defmodule SyliAtlasWeb.AreaController do
       slugs: country_slugs(locale)
     }
 
-    title = title(tab, area, name, to, SyliAtlas.Trade.document())
+    title =
+      if tab == :budget,
+        do: budget_title(name, budget),
+        else: title(tab, area, name, to, SyliAtlas.Trade.document())
 
     crumbs =
       breadcrumbs(area, region, locale) ++
@@ -183,7 +193,36 @@ defmodule SyliAtlasWeb.AreaController do
       world_bank: world_bank,
       world_bank_doc: SyliAtlas.WorldBank.document(),
       trade: trade,
-      trade_doc: SyliAtlas.Trade.document()
+      trade_doc: SyliAtlas.Trade.document(),
+      budget: budget,
+      budget_fx: budget_fx,
+      budget_year: SyliAtlas.Budgets.imf_year()
+    )
+  end
+
+  # The budget tab: the latest finance law when one is online, else the IMF.
+  defp budget_answer(doc, name, locale) do
+    year = SyliAtlas.Budgets.imf_year()
+    law = Enum.find(doc["laws"], &(&1["kind"] in ["initial", "amending"]))
+    y = Integer.to_string((law && law["fiscal_year"]) || year)
+
+    SyliAtlasWeb.BudgetComponents.budget_lead(
+      law,
+      doc["imf"]["revenue"][y],
+      doc["imf"]["expenditure"][y],
+      name,
+      (law && law["fiscal_year"]) || year,
+      locale
+    )
+  end
+
+  defp budget_title(name, doc) do
+    law = Enum.find(doc["laws"], &(&1["kind"] in ["initial", "amending"]))
+    year = (law && law["fiscal_year"]) || SyliAtlas.Budgets.imf_year()
+
+    gettext(
+      "State budget of %{name} %{year}: revenue, expenditure, finance laws",
+      title_names(name, year: year)
     )
   end
 
@@ -352,7 +391,7 @@ defmodule SyliAtlasWeb.AreaController do
   def tabs_for(_area), do: [:overview]
 
   defp tabs(%{kind: "country"}, rating, climate, market, world_bank, trade) do
-    [:overview, :economy, :finances] ++
+    [:overview, :economy, :finances, :budget] ++
       if(trade, do: [:trade], else: []) ++
       if(world_bank, do: [:society], else: []) ++
       if(rating || climate || market != [], do: [:markets], else: [])

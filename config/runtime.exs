@@ -69,6 +69,11 @@ end
 # (The administration needs an administrator account: the email code, then
 # a passkey. ADMIN_USER and ADMIN_PASSWORD are no longer read.)
 if config_env() != :test do
+  # The budget laws are read with the same key; BUDGET_EXTRACT_MODEL changes the model.
+  if model = System.get_env("BUDGET_EXTRACT_MODEL") do
+    config :syli_atlas, SyliAtlas.Budgets.Extractor, model: String.trim(model)
+  end
+
   config :syli_atlas, SyliAtlas.Ratings.Extractor,
     api_key:
       (case System.get_env("ANTHROPIC_API_KEY") do

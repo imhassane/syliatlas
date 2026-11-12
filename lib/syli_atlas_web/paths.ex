@@ -14,7 +14,7 @@ defmodule SyliAtlasWeb.Paths do
   def area(locale, "country", slug), do: "/#{locale}/#{segment(locale, :country)}/#{slug}"
   def area(locale, _kind, slug), do: "/#{locale}/#{segment(locale, :regions)}/#{slug}"
 
-  @tabs [:overview, :economy, :finances, :trade, :society, :markets]
+  @tabs [:overview, :economy, :finances, :budget, :trade, :society, :markets]
 
   @doc "The tabs of a country profile, in page order."
   def tabs, do: @tabs
@@ -37,6 +37,7 @@ defmodule SyliAtlasWeb.Paths do
       "es" => "finanzas-y-deuda",
       "pt" => "financas-e-divida"
     },
+    budget: %{"fr" => "budget", "en" => "budget", "es" => "presupuesto", "pt" => "orcamento"},
     trade: %{"fr" => "commerce", "en" => "trade", "es" => "comercio", "pt" => "comercio"},
     society: %{"fr" => "societe", "en" => "society", "es" => "sociedad", "pt" => "sociedade"},
     markets: %{"fr" => "marches", "en" => "markets", "es" => "mercados", "pt" => "mercados"}
@@ -92,6 +93,9 @@ defmodule SyliAtlasWeb.Paths do
   def rating(locale, slug), do: ratings(locale) <> "/" <> slug
 
   def debt(locale), do: "/#{locale}/#{segment(locale, :debt)}"
+
+  @doc "The state budgets of the 54 countries: /fr/budgets, /en/budgets."
+  def budgets(locale), do: "/#{locale}/#{segment(locale, :budgets)}"
 
   @doc "The African currencies and their exchange rates: /fr/monnaies, /en/currencies."
   def currencies(locale), do: "/#{locale}/#{segment(locale, :currencies)}"
@@ -175,6 +179,12 @@ defmodule SyliAtlasWeb.Paths do
       "pt" => "comunidades-economicas"
     },
     debt: %{"fr" => "dette", "en" => "debt", "es" => "deuda", "pt" => "divida"},
+    budgets: %{
+      "fr" => "budgets",
+      "en" => "budgets",
+      "es" => "presupuestos",
+      "pt" => "orcamentos"
+    },
     simulator: %{
       "fr" => "simulateur",
       "en" => "simulator",

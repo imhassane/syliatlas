@@ -1,0 +1,71 @@
+/* State budgets (SyliAtlas.Budgets): the « Budget » tab of a country profile
+   and the budgets page. Tokens only, so the dark theme follows. */
+
+.budget-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 12px; }
+.money-picker { display: flex; align-items: center; gap: 8px; }
+.money-picker[hidden] { display: none; }
+.select-sm { min-height: 44px; font-size: 14px; padding-inline-start: 14px; max-width: 16rem; }
+
+/* An amount in the reader's currency, the local one under it. */
+.money { display: inline-flex; flex-direction: column; gap: 2px; font-variant-numeric: tabular-nums; }
+.money-main { white-space: nowrap; }
+.money-local { font-family: var(--mono); font-size: 12px; color: var(--ink-subtle); white-space: nowrap; letter-spacing: 0; font-weight: 400; }
+.money-local[hidden] { display: none; }
+.big .money-main { font-size: inherit; }
+.stats .big .money-local { font-size: 13px; line-height: 1.3; }
+
+.budget-grid { align-items: start; }
+.budget-grid > .budget-laws-card, .budget-grid > .budget-empty { grid-column: 1 / -1; }
+.budget-empty p { margin: 0 0 12px; color: var(--ink-muted); max-width: 62ch; }
+
+.law-name { display: block; font-weight: 600; }
+.law-ref, .law-src, .law-date { display: block; }
+.law-src { margin-top: 2px; }
+.block { display: block; }
+
+.budget-facts { margin: 0 0 12px; display: grid; gap: 12px; }
+.budget-facts div { display: grid; gap: 2px; }
+.budget-facts dt { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-subtle); }
+.budget-facts dd { margin: 0; overflow-wrap: anywhere; }
+
+tr.est td, tr.est th { font-style: italic; color: var(--ink-muted); }
+
+/* Timeline of the laws: tabled, voted, promulgated, published. */
+.timeline { list-style: none; margin: 0; padding: 0 0 0 20px; border-inline-start: 2px solid var(--border); display: grid; gap: 18px; }
+.timeline-item { position: relative; }
+.timeline-dot { position: absolute; inset-inline-start: -27px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--card); box-shadow: inset 0 0 0 2px var(--border-strong); }
+.timeline-voted .timeline-dot { box-shadow: inset 0 0 0 2px var(--accent-text); }
+.timeline-promulgated .timeline-dot, .timeline-published .timeline-dot { background: var(--success); box-shadow: none; }
+.timeline-date { display: block; font-family: var(--mono); font-size: 12px; color: var(--ink-subtle); }
+.timeline-title { margin: 2px 0 0; font-weight: 600; }
+.timeline-item .small { margin: 2px 0 0; }
+
+/* Latest laws, every country. */
+.budget-latest { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(240px, 100%), 1fr)); gap: 12px; }
+.budget-latest-item { display: flex; flex-direction: column; gap: 6px; height: 100%; padding: 16px; border-radius: 8px; background: var(--alt); color: var(--ink); text-decoration: none; min-height: 44px; }
+.budget-latest-item:hover { box-shadow: inset 0 0 0 1px var(--border-strong); }
+.budget-latest-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.budget-latest-title { font-weight: 600; }
+.budget-latest-amount .money-main { font-size: 22px; font-weight: 300; letter-spacing: -.02em; }
+
+/* The themes menu in two columns on wide screens (canvas « Budgets et lois »). */
+@media (min-width: 48rem) {
+  .nav-mega { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); min-width: 600px; }
+  .nav-mega .nav-mega-foot { grid-column: 1 / -1; }
+}
+
+@media (max-width: 47.99rem) {
+  .budget-actions { justify-content: flex-start; }
+  .money-picker { width: 100%; }
+  .money-picker .select { flex: 1; max-width: none; }
+}
+
+/* Admin: budget laws. */
+.adm-wide { grid-column: 1 / -1; }
+.adm-check { flex-direction: row !important; align-items: center; gap: 10px !important; grid-column: 1 / -1; }
+.adm-check input[type="checkbox"] { width: 20px; height: 20px; min-height: 0; }
+.adm-form textarea { font: inherit; font-size: 14px; padding: 8px 10px; border: 1px solid var(--border-input); border-radius: 8px; background: var(--card); color: var(--ink); width: 100%; }
+.adm-checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.adm-decided { list-style: none; margin: 0; padding: 8px 24px 20px; display: grid; gap: 10px; }
+
+#budget-latest .money-picker { margin: 0 0 16px; flex-wrap: wrap; }
