@@ -590,7 +590,9 @@ defmodule SyliAtlasWeb.Layouts do
   defp lang_link(assigns) do
     ~H"""
     <details class={["lang-menu", @up && "lang-menu-up"]} id={@id}>
-      <summary class={@class} aria-label={gettext("Language")}>
+      <%!-- Named by its visible text with « Language » before it (WCAG 2.5.3:
+           an aria-label that drops the visible « Français » fails voice control). --%>
+      <summary class={@class}>
         <svg
           width="16"
           height="16"
@@ -601,6 +603,7 @@ defmodule SyliAtlasWeb.Layouts do
           aria-hidden="true"
         ><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z">
         </path></svg>
+        <span class="sr-only">{gettext("Language")} :</span>
         <span>{SyliAtlas.Locales.native(@locale)}</span>
       </summary>
       <ul role="list">
