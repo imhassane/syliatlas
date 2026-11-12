@@ -53,6 +53,9 @@ config :syli_atlas, Oban,
        # Country recaps without an account (docs/recap.md): purge of the
        # addresses never confirmed, then the recaps due today.
        {"45 6 * * *", SyliAtlas.Workers.RecapWorker},
+       # Exchange rates (SyliAtlas.Fx): the sources update once a day, around
+       # midnight UTC.
+       {"10 1 * * *", SyliAtlas.Workers.FxImportWorker},
        # Server time of the public API: a probe, then the finished hours written.
        {"5 * * * *", SyliAtlas.Workers.ApiTimingWorker}
      ]}

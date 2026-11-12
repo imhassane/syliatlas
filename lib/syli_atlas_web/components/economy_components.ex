@@ -72,7 +72,7 @@ defmodule SyliAtlasWeb.EconomyComponents do
         </:stat>
       </.stat_grid>
 
-      <div class="grid grid-2">
+      <div class="grid grid-2 grid-even" id="finance-charts">
         <.card pad>
           <.card_head
             title={gettext("Fiscal balance, % of GDP")}
@@ -188,14 +188,14 @@ defmodule SyliAtlasWeb.EconomyComponents do
 
   attr :fx, :map,
     default: nil,
-    doc: "%{rate, as_of} for one US dollar, when a market source allows it"
+    doc: "%{as_of, year_ago, source, rows: [%{base, value, change}]} from SyliAtlas.Fx"
 
   attr :profile, :map, required: true
   attr :name, :string, required: true
   attr :to, :integer, required: true
   attr :locale, :string, required: true
 
-  @doc "The currency: its peg when it has one, the monetary union, inflation and the dollar rate."
+  @doc "The currency: its peg when it has one, the monetary union, inflation and its exchange rates."
   def money_section(assigns) do
     ~H"""
     <.section id="monnaie">
@@ -203,7 +203,7 @@ defmodule SyliAtlasWeb.EconomyComponents do
         <:intro>{money_lead(@currency, @name)}</:intro>
       </.section_head>
 
-      <.stat_grid class={if(@fx, do: nil, else: "stats-3")}>
+      <.stat_grid class="stats-3">
         <:stat id="currency" label={gettext("Currency")} value={@currency.code}>
           {@currency.name}
         </:stat>
@@ -225,15 +225,28 @@ defmodule SyliAtlasWeb.EconomyComponents do
         >
           {gettext("average annual change in consumer prices")}
         </:stat>
-        <:stat
-          :if={@fx}
-          id="usd-rate"
-          label={gettext("One US dollar")}
-          value={"#{number(@fx.rate, if(@fx.rate >= 100, do: 0, else: 2), @locale)} #{@currency.code}"}
-        >
-          {gettext("rate of %{date}", date: String.slice(@fx.as_of || "", 0, 10))}
-        </:stat>
       </.stat_grid>
+
+      <dl :if={@fx && @fx.rows != []} class="stats stats-3 fx-rates" id="fx-rates">
+        <div :for={r <- @fx.rows} data-fx-base={r.base}>
+          <dt>{base_label(r.base)}</dt>
+          <dd class="big num" data-kpi={"rate-" <> String.downcase(r.base)}>
+            {fx_number(r.value, @locale)} <span class="small">{@currency.code}</span>
+          </dd>
+          <dd :if={@currency.peg && @currency.peg.anchor == r.base} class="small muted">
+            {gettext("fixed parity")}
+          </dd>
+          <dd
+            :if={r.change && !(@currency.peg && @currency.peg.anchor == r.base)}
+            class={["small", change_tone(r.change)]}
+          >
+            {gettext("%{currency}: %{change} in a year",
+              currency: cap(@currency.name),
+              change: signed_pct(r.change, @locale)
+            )}
+          </dd>
+        </div>
+      </dl>
 
       <p class="src">
         {gettext(
@@ -241,12 +254,38 @@ defmodule SyliAtlasWeb.EconomyComponents do
           label: @profile["edition"]["label"]
         )}
         <span :if={@fx}>
-          · {gettext("dollar rate:")} Data by
-          <a href="https://mansaapi.com" rel="noopener">MansaAPI</a>
+          · {gettext("official rates of %{date}:",
+            date: SyliAtlasWeb.CurrencyController.date_text(@fx.as_of, @locale)
+          )}
+          <a href={@fx.source["url"]} rel="noopener">{@fx.source["name"]}</a>
+          · <a href={SyliAtlasWeb.Paths.currencies(@locale)}>{gettext("All African currencies")} →</a>
         </span>
       </p>
     </.section>
     """
+  end
+
+  defp base_label("USD"), do: gettext("One US dollar")
+  defp base_label("EUR"), do: gettext("One euro")
+  defp base_label("CNY"), do: gettext("One Chinese yuan")
+
+  defp fx_number(v, locale) when v >= 1000, do: number(v, 0, locale)
+  defp fx_number(v, locale) when v >= 1, do: number(v, 2, locale)
+  defp fx_number(v, locale), do: number(v, 4, locale)
+
+  defp change_tone(c) when c > 0.05, do: "up"
+  defp change_tone(c) when c < -0.05, do: "down"
+  defp change_tone(_), do: "muted"
+
+  defp signed_pct(c, locale) do
+    sign =
+      cond do
+        c > 0.05 -> "+"
+        c < -0.05 -> "−"
+        true -> ""
+      end
+
+    sign <> number(abs(c), 1, locale) <> " %"
   end
 
   # Text helpers ---------------------------------------------------------

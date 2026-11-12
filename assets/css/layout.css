@@ -207,3 +207,9 @@ main > section.section:first-of-type { padding-top: 40px; }
 .community-card { color: var(--ink); text-decoration: none; }
 .community-card:hover { border-color: var(--accent); }
 .community-card p, .community-card b { margin: 0; }
+
+/* Two cards side by side that must line up (charts of the finances tab):
+   same height, the source line pushed to the bottom of each. */
+.grid-even { align-items: stretch; }
+.grid-even > .card { display: flex; flex-direction: column; }
+.grid-even > .card > .src:last-child { margin-top: auto; }

@@ -62,6 +62,11 @@ defmodule SyliAtlas.Market.Snapshots do
     )
   end
 
+  @doc "Stores any document under a key (the exchange rates use it: `SyliAtlas.Fx`)."
+  def store!(key, doc) do
+    put!(key, doc, DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601())
+  end
+
   def read(key) do
     case Repo.query!("SELECT json(doc) FROM snapshots WHERE key = ?1", [key]).rows do
       [[json]] when is_binary(json) -> Jason.decode!(json)

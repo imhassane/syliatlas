@@ -210,7 +210,9 @@ defmodule SyliAtlasWeb.Layouts do
           aria-current={@current == :markets && "page"}
         >{gettext("Stock exchanges")}</a>
         <details class="nav-menu" data-nav-menu>
-          <summary aria-current={@current in [:debt, :ratings, :regions, :themes, :method] && "true"}>
+          <summary aria-current={
+            @current in [:debt, :ratings, :regions, :currencies, :themes, :method] && "true"
+          }>
             {gettext("Themes")}
           </summary>
           <div class="nav-menu-pop nav-mega">
@@ -275,6 +277,15 @@ defmodule SyliAtlasWeb.Layouts do
         href: Paths.regions(locale),
         description: gettext("AU regions, ECOWAS, AES, WAEMU, CEMAC, EAC, SADC"),
         short: nil
+      },
+      %{
+        key: :currencies,
+        current: [:currencies],
+        label: gettext("African currencies"),
+        href: Paths.currencies(locale),
+        description:
+          gettext("Daily rates of the 42 currencies against the dollar, the euro and the yuan"),
+        short: gettext("42 currencies")
       }
     ]
   end

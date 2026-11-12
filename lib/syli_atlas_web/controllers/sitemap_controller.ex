@@ -244,6 +244,7 @@ defmodule SyliAtlasWeb.SitemapController do
       for fun <- [:home, :regions, :method, :accessibility, :debt, :communities, :api] do
         {both(&apply(Paths, fun, [&1])), imf}
       end ++
+        [{both(&Paths.currencies/1), (SyliAtlas.Fx.latest() || %{})["as_of"] || imf}] ++
         for(p <- SyliAtlasWeb.Topics.sitemap_pages(), do: {p, imf})
 
     # A country is listed once per tab that has data: each tab has its

@@ -35,6 +35,9 @@ defmodule SyliAtlas.Application do
       if Application.get_env(:syli_atlas, :og_warm_on_boot, false),
         do: SyliAtlas.Workers.OgWarmWorker.enqueue(60)
 
+      if Application.get_env(:syli_atlas, :fx_import_on_boot, false),
+        do: SyliAtlas.Workers.FxImportWorker.enqueue_if_missing()
+
       ok
     end
   end
