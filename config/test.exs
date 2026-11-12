@@ -69,3 +69,10 @@ config :syli_atlas, SyliAtlas.Ratings.Extractor,
 config :syli_atlas, SyliAtlas.Ratings.Watch,
   feeds: [{"test", "https://feeds.test/ratings.xml"}],
   req_options: [plug: {Req.Test, SyliAtlas.Ratings.Watch}, retry: false]
+
+# Exchange rates: both sources stubbed (Req.Test).
+config :syli_atlas, SyliAtlas.Fx.Sources.ExchangeApi,
+  req_options: [plug: {Req.Test, SyliAtlas.Fx.Sources.ExchangeApi}, retry: false]
+
+config :syli_atlas, SyliAtlas.Fx.Sources.ErApi,
+  req_options: [plug: {Req.Test, SyliAtlas.Fx.Sources.ErApi}, retry: false]

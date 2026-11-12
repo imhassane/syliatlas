@@ -254,6 +254,8 @@ if config_env() == :prod do
     cache_dir: Path.join(Path.dirname(database_path), "og")
 
   config :syli_atlas, og_warm_on_boot: true
+  # First deploy of the exchange rates: import at once rather than at 01:10 UTC.
+  config :syli_atlas, fx_import_on_boot: true
 
   unless System.get_env("R2_BUCKET") do
     config :syli_atlas, SyliAtlas.Market.RawStore,

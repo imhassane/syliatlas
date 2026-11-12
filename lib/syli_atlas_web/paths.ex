@@ -93,6 +93,9 @@ defmodule SyliAtlasWeb.Paths do
 
   def debt(locale), do: "/#{locale}/#{segment(locale, :debt)}"
 
+  @doc "The African currencies and their exchange rates: /fr/monnaies, /en/currencies."
+  def currencies(locale), do: "/#{locale}/#{segment(locale, :currencies)}"
+
   def markets(locale), do: "/#{locale}/#{segment(locale, :markets)}"
   def etfs(locale), do: markets(locale) <> "/etf"
   def exchange(locale, code), do: markets(locale) <> "/" <> code
@@ -169,6 +172,7 @@ defmodule SyliAtlasWeb.Paths do
       "pt" => "comunidades-economicas"
     },
     debt: %{"fr" => "dette", "en" => "debt", "es" => "deuda", "pt" => "divida"},
+    currencies: %{"fr" => "monnaies", "en" => "currencies", "es" => "monedas", "pt" => "moedas"},
     data: %{"fr" => "donnees", "en" => "data", "es" => "datos", "pt" => "dados"},
     embed: %{"fr" => "integrer", "en" => "embed", "es" => "insertar", "pt" => "incorporar"},
     questions: %{

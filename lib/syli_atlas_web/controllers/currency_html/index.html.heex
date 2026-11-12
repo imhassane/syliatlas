@@ -1,0 +1,251 @@
+<Layouts.public locale={@locale} current={:currencies} alternates={@alternates}>
+  <section class="section-alt market-hero" id="currency-hero">
+    <div class="wrap market-hero-wrap">
+      <nav aria-label={gettext("Breadcrumb")}>
+        <ol class="crumbs">
+          <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+          <li aria-current="page">{gettext("African currencies")}</li>
+        </ol>
+      </nav>
+      <div class="market-hero-row">
+        <div class="market-hero-title">
+          <h1 class="market-h1">{gettext("African currencies")}</h1>
+          <p class="muted market-hero-lead" id="currency-answer">{@answer}</p>
+        </div>
+        <dl :if={@doc} class="market-summary" id="currency-summary">
+          <div>
+            <dt>{gettext("Rates of")}</dt>
+            <dd class="num">{date_text(@doc["as_of"], @locale)}</dd>
+          </div>
+          <div>
+            <dt>{gettext("Up against the %{base}", base: base_name(@base))}</dt>
+            <dd class="num up" id="summary-up">▲ {@summary.up}</dd>
+          </div>
+          <div>
+            <dt>{gettext("Down")}</dt>
+            <dd class="num down" id="summary-down">▼ {@summary.down}</dd>
+          </div>
+          <div>
+            <dt>{gettext("Pegged")}</dt>
+            <dd class="num" id="summary-pegged">
+              {@counts["EUR"] + @counts["ZAR"] + @counts["USD"]}
+            </dd>
+          </div>
+        </dl>
+      </div>
+      <p :if={@doc} class="src">
+        {gettext("Official end-of-day rates:")}
+        <a href={@doc["source"]["url"]} rel="noopener">{@doc["source"]["name"]}</a>
+        (CC0) · {gettext("fixed parities: central banks")} · {gettext(
+          "information, not investment advice"
+        )}
+      </p>
+    </div>
+  </section>
+
+  <.section id="currencies" class="market-list">
+    <div :if={!@doc} class="card pad stack gap-2" id="currency-empty">
+      <h2 class="h2">{gettext("Figures on their way")}</h2>
+      <p class="muted">
+        {gettext("The first import of exchange rates has not run yet. It runs every night.")}
+      </p>
+    </div>
+
+    <div :if={@doc} class="card market-table" id="currency-table">
+      <div class="market-filters">
+        <div class="market-toolbar">
+          <div class="market-toolbar-title">
+            <h2 class="h2">{gettext("All currencies")}</h2>
+            <span class="small muted" id="currency-count">
+              {ngettext("%{count} currency", "%{count} currencies", length(@rows))}
+            </span>
+          </div>
+          <nav class="fx-bases" aria-label={gettext("Compare with")}>
+            <span class="small muted">{gettext("1 unit of:")}</span>
+            <a
+              :for={b <- @bases}
+              href={list_href(@locale, @kept, "base", b) <> "#currencies"}
+              aria-current={@base == b && "true"}
+            >{base_tab(b)}</a>
+          </nav>
+        </div>
+        <nav class="market-tabs" aria-label={gettext("Filter by exchange regime")}>
+          <a
+            :for={r <- [nil | @regimes]}
+            href={list_href(@locale, @kept, "regime", r) <> "#currencies"}
+            aria-current={@regime == r && "true"}
+          >
+            {regime_tab(r)}<span class="market-tab-count">{@counts[r]}</span>
+          </a>
+        </nav>
+      </div>
+
+      <div
+        class="table-box table-scroll"
+        tabindex="0"
+        role="region"
+        aria-labelledby="currency-caption"
+      >
+        <table class="table table-stack table-wide market-list" id="currency-list">
+          <caption class="vh" id="currency-caption">
+            {gettext("Exchange rates of the African currencies against the %{base}",
+              base: base_name(@base)
+            )}
+          </caption>
+          <thead>
+            <tr>
+              <th
+                scope="col"
+                class="l"
+                aria-sort={if(@sort == "name", do: "ascending", else: "none")}
+              >
+                <a href={list_href(@locale, @kept, "sort", "name") <> "#currencies"}>{gettext(
+                  "Currency"
+                )}</a>
+              </th>
+              <th scope="col" class="l">{gettext("Code")}</th>
+              <th scope="col" class="l">{gettext("Regime")}</th>
+              <th scope="col">1 {symbol(@base)} =</th>
+              <th scope="col">{gettext("1,000 units =")}</th>
+              <th scope="col" aria-sort={if(@sort == "change", do: "descending", else: "none")}>
+                <a href={list_href(@locale, @kept, "sort", "change") <> "#currencies"}>{gettext(
+                  "Over a year"
+                )} ↓</a>
+              </th>
+              <th scope="col" class="l">{gettext("Check")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={c <- @rows} id={"currency-" <> c.code}>
+              <th scope="row" class="l">
+                <span class="fx-name">
+                  <span class="fx-flags" aria-hidden="true">
+                    <.flag
+                      :for={country <- Enum.take(c.countries, 3)}
+                      code={country}
+                      size="sm"
+                      sprite
+                    />
+                  </span>
+                  <span>
+                    <b>{cap(c.name)}</b>
+                    <span class="muted small">· {countries_text(c)}</span>
+                  </span>
+                </span>
+              </th>
+              <td class="l mono" data-label={gettext("Code")}>{c.code}</td>
+              <td class="l muted" data-label={gettext("Regime")}>{regime_label(c.regime)}</td>
+              <td class="num" data-label={"1 #{symbol(@base)} ="}>{rate(c.rate, @locale)}</td>
+              <td class="num muted" data-label={gettext("1,000 units =")}>
+                {rate(c.per_thousand, @locale)} {symbol(@base)}
+              </td>
+              <td class={["num", tone(c.change)]} data-label={gettext("Over a year")}>
+                {arrow(c.change)}{signed(c.change, @locale)}
+              </td>
+              <td class="l" data-label={gettext("Check")}>
+                <span :if={c.flags == [] and c.change} class="pill pill-ok">{gettext("ok")}</span>
+                <span :if={is_nil(c.change)} class="pill pill-warn">{gettext("no rate a year ago")}</span>
+                <span
+                  :if={c.flags != []}
+                  class="pill pill-warn"
+                  title={
+                    gettext("A move above 10%, or a gap with our check source: read with care.")
+                  }
+                >{gettext("to check")}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="src market-legend">
+        {ngettext(
+          "%{count} currency, scroll the table",
+          "%{count} currencies, scroll the table",
+          length(@rows)
+        )} · {gettext(
+          "▲ the currency gained against the one chosen, ▼ it lost · official rates: where a parallel market exists, the rate actually paid can be very different · « to check »: a move above 10% or a gap with our check source"
+        )}
+      </p>
+    </div>
+
+    <form
+      :if={@doc}
+      class="card pad fx-convert"
+      id="currency-converter"
+      action={Paths.currencies(@locale) <> "#currency-converter"}
+      method="get"
+    >
+      <h2 class="h2">{gettext("Convert")}</h2>
+      <label class="field">
+        <span>{gettext("Amount")}</span>
+        <input name="amount" inputmode="decimal" value={@converter.raw} autocomplete="off" />
+      </label>
+      <label class="field">
+        <span>{gettext("From")}</span>
+        <select name="from">
+          <option :for={c <- @choices} value={c} selected={c == @converter.from}>
+            {choice_label(
+              c,
+              @locale
+            )}
+          </option>
+        </select>
+      </label>
+      <label class="field">
+        <span>{gettext("To")}</span>
+        <select name="to">
+          <option :for={c <- @choices} value={c} selected={c == @converter.to}>
+            {choice_label(
+              c,
+              @locale
+            )}
+          </option>
+        </select>
+      </label>
+      <button type="submit" class="btn btn-primary">{gettext("Convert")}</button>
+      <output class="fx-result" for="amount from to" id="currency-result">
+        <%= if @converter.result do %>
+          <b class="num">{rate(@converter.result, @locale)} {@converter.to}</b>
+          <span class="small muted">
+            1 {@converter.from} = {rate(@converter.unit, @locale)} {@converter.to} · {gettext(
+              "exchange rate of %{date}",
+              date: date_text(@doc["as_of"], @locale)
+            )}
+          </span>
+        <% else %>
+          <span class="small muted">{gettext("Enter an amount.")}</span>
+        <% end %>
+      </output>
+    </form>
+  </.section>
+
+  <.section variant="alt">
+    <h2 class="h1">{gettext("How to read these rates")}</h2>
+    <div class="grid grid-3">
+      <.card pad class="stack gap-2">
+        <p class="eyebrow">{gettext("Official rates")}</p>
+        <p>
+          {gettext(
+            "End-of-day rates published by the source, updated every night. Where a parallel market exists, the rate actually paid in the street can be very different: it is not followed here."
+          )}
+        </p>
+      </.card>
+      <.card pad class="stack gap-2">
+        <p class="eyebrow">{gettext("Fixed parities")}</p>
+        <p>
+          {gettext(
+            "Ten currencies are pegged: the two CFA francs, the Comorian franc, the escudo and the dobra to the euro; the loti, the Namibian dollar and the lilangeni to the rand; the Djibouti franc and the nakfa to the dollar. Their rate is computed from the official parity, never taken from a source."
+          )}
+        </p>
+      </.card>
+      <.card pad class="stack gap-2">
+        <p class="eyebrow">{gettext("Checks")}</p>
+        <p>
+          {gettext(
+            "Every rate is compared with a second source and with the day before. A move above 10% or a gap above 2% is flagged « to check »: it can be a real devaluation or a source error."
+          )}
+        </p>
+      </.card>
+    </div>
+  </.section>
+</Layouts.public>

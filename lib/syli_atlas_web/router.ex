@@ -265,6 +265,7 @@ defmodule SyliAtlasWeb.Router do
       get "/#{seg.(:compare)}/*slugs", CompareController, :show
       get "/#{seg.(:ratings)}", RatingsController, :index
       get "/#{seg.(:debt)}", DebtController, :index
+      get "/#{seg.(:currencies)}", CurrencyController, :index
       get "/#{seg.(:communities)}", CommunityController, :index
       get "/#{seg.(:communities)}/:slug", CommunityController, :show
       get "/#{seg.(:ratings)}/:slug", RatingsController, :show
