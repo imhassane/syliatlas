@@ -19,7 +19,14 @@ defmodule SyliAtlasWeb.BudgetPagesTest do
       doc = doc(conn, "/fr/budgets")
       assert text(doc, "h1") =~ "Les budgets des 54 États africains"
       assert LazyHTML.query(doc, "#budgets-rows tbody tr") |> Enum.count() == 54
-      assert text(doc, "#budget-MLI") =~ "Conseil national de Transition"
+      assert text(doc, "#budget-MLI") =~ "Organe de transition"
+      assert text(doc, "#budget-NER") =~ "Aucun parlement"
+      # Scrolls inside its card, reachable with the keyboard.
+      assert has?(
+               doc,
+               ~s(.table-scroll[tabindex="0"][role="region"][aria-labelledby="budgets-caption"])
+             )
+
       assert text(doc, "#budget-MLI") =~ "Estimation FMI"
       assert text(doc, "[data-answer]") =~ "dépensent en médiane"
       assert attr(doc, "#budget-MLI th a", "href") == ["/fr/pays/mali/budget"]
@@ -58,7 +65,7 @@ defmodule SyliAtlasWeb.BudgetPagesTest do
       assert text(doc, "#budget-latest [data-money-local]") =~ "3 993 Md XOF"
       assert has?(doc, "[data-money-picker][hidden] select#latest-money-picker")
       assert text(doc, "[data-money-rates]") =~ "XOF"
-      assert text(doc, "#budget-MLI") =~ "Votée"
+      assert text(doc, "#budget-MLI") =~ "Rectificative 2026 · Votée"
     end
 
     test "is in the menu, the sitemap and the search", %{conn: conn} do
