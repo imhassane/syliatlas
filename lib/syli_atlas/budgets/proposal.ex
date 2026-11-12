@@ -60,7 +60,7 @@ defmodule SyliAtlas.Budgets.Proposal do
     |> update_change(:country_code, &String.upcase/1)
     |> update_change(:currency, &String.upcase/1)
     |> validate_required([:country_code, :origin])
-    |> validate_inclusion(:origin, ~w(extraction manual))
+    |> validate_inclusion(:origin, ~w(extraction manual research))
     |> validate_inclusion(:kind, Law.kinds())
     |> validate_inclusion(:stage, Law.stages())
     |> validate_number(:fiscal_year, greater_than_or_equal_to: 2000, less_than_or_equal_to: 2100)

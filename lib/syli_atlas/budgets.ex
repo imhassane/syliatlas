@@ -178,6 +178,57 @@ defmodule SyliAtlas.Budgets do
     |> Repo.insert()
   end
 
+  def research_path, do: Application.app_dir(:syli_atlas, "priv/data/budget_research.json")
+
+  @doc """
+  Turns the bundled research file (laws found on the web, with their
+  sources) into pending proposals, so a human reviews each one in the
+  admin. Idempotent: a law already proposed or published for the same
+  country, year, kind and sequence is skipped, whatever its status, so a
+  rejected proposal does not come back. Returns the number inserted.
+  """
+  def seed_research!(path \\ research_path()) do
+    %{"as_of" => as_of, "proposals" => rows} = path |> File.read!() |> Jason.decode!()
+
+    Enum.count(rows, fn row ->
+      key = {row["country_code"], row["fiscal_year"], row["kind"], row["sequence"] || 1}
+
+      if known_law?(key) do
+        false
+      else
+        evidence =
+          %{"note" => row["note"], "found_on" => as_of}
+          |> Map.reject(fn {_k, v} -> is_nil(v) end)
+
+        attrs =
+          row
+          |> Map.drop(["note"])
+          |> Map.merge(%{"origin" => "research", "evidence" => evidence})
+
+        match?(
+          {:ok, _},
+          %Proposal{} |> Proposal.changeset(attrs) |> with_checks() |> Repo.insert()
+        )
+      end
+    end)
+  end
+
+  defp known_law?({code, year, kind, seq}) do
+    proposal =
+      from p in Proposal,
+        where:
+          p.country_code == ^code and p.fiscal_year == ^year and p.kind == ^kind and
+            p.sequence == ^seq
+
+    law =
+      from l in Law,
+        where:
+          l.country_code == ^code and l.fiscal_year == ^year and l.kind == ^kind and
+            l.sequence == ^seq
+
+    Repo.exists?(proposal) or Repo.exists?(law)
+  end
+
   @doc "A law read by the AI from a document."
   def propose_from_document(%Document{} = d, fields, evidence, model) do
     attrs =

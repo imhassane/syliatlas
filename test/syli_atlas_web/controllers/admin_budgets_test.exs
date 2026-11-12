@@ -38,6 +38,15 @@ defmodule SyliAtlasWeb.AdminBudgetsTest do
     assert has?(html, "#adm-budget-new-form")
   end
 
+  test "proposals found by web research show their note and source", %{admin: conn} do
+    assert Budgets.seed_research!() > 0
+    html = conn |> get("/admin/budgets") |> html_response(200)
+
+    assert html =~ "trouvée par recherche web"
+    assert html =~ "communiqué officiel"
+    assert has?(html, ~s(a[href="https://fr.apanews.net/?p=257221"]))
+  end
+
   test "approving with the reviewer's corrections publishes the law", %{admin: conn} do
     {:ok, p} = Budgets.propose(BudgetFixtures.law_attrs(%{"stage" => "voted"}))
 
