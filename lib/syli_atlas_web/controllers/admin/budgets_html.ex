@@ -32,6 +32,11 @@ defmodule SyliAtlasWeb.Admin.BudgetsHTML do
       {"Suspendu", "suspended"}
     ]
 
+  @doc "How a proposal arrived, as shown in its row."
+  def origin_label("extraction"), do: "lue par l'IA"
+  def origin_label("research"), do: "trouvée par recherche web"
+  def origin_label(_), do: "saisie"
+
   def label(list, value),
     do: Enum.find_value(list, value || "—", fn {l, v} -> v == value && l end)
 

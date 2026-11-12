@@ -152,15 +152,18 @@
             <b>{country_name(@countries, p.country_code)} · {label(kinds(), p.kind)} {p.fiscal_year}</b>
             <span class="pill pill-info">{label(stages(), p.stage)}</span>
             <span class="mono subtle small">
-              {if(p.origin == "extraction", do: "lue par l'IA", else: "saisie")} le {fr_date(
-                p.inserted_at
-              )}{if p.document,
+              {origin_label(p.origin)} le {fr_date(p.inserted_at)}{if p.document,
                 do: " · " <> (p.document.filename || p.document.url || "fichier")}
             </span>
           </div>
           <p class="adm-proposal">
             Dépenses : <b class="num">{amount(p.expenditure, p.currency)}</b>
             · Recettes : <b class="num">{amount(p.revenue, p.currency)}</b>
+          </p>
+          <p :if={p.source_url} class="small">
+            Source :
+            <a href={p.source_url} rel="noopener noreferrer" target="_blank">{p.source_name ||
+              p.source_url}</a>
           </p>
           <p class="small muted">
             {p.reference || "numéro inconnu"} · vote {fr_date(p.voted_on)} · JO {fr_date(
@@ -171,6 +174,7 @@
             <span :if={p.evidence["revenue"]}>Recettes : {p.evidence["revenue"]}. </span>
             <span :if={p.evidence["expenditure"]}>Dépenses : {p.evidence["expenditure"]}. </span>
             <span :if={p.evidence["excerpt"]}>« {p.evidence["excerpt"]} »</span>
+            <span :if={p.evidence["note"]}>{p.evidence["note"]}</span>
           </blockquote>
           <ul class="adm-checks small" id={"checks-#{p.id}"}>
             <li :if={p.checks == []} class="subtle">Contrôles : rien à signaler ✓</li>

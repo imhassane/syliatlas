@@ -48,3 +48,18 @@ dollar ailleurs), le montant local dessous. `assets/js/ui/money.js` les réécri
 dans la devise choisie par le lecteur (gardée dans le navigateur), avec les
 taux du document `market:fx_rates` embarqués dans la page : les pages restent
 en cache.
+
+## Propositions issues de la recherche web
+
+`priv/data/budget_research.json` contient les lois de finances 2026 (ou 2026/27)
+trouvées par recherche web pour 53 pays (l'Érythrée ne publie pas de budget) :
+référence, dates, recettes, dépenses, devise, lien source et une note sur la
+fiabilité de chaque chiffre. Au déploiement, `Budgets.seed_research!/0` en fait
+des propositions **en attente** (origine `research`), visibles dans
+`/admin/budgets`. Rien n'est publié sans validation. Le seed est idempotent :
+une loi déjà proposée ou publiée (même pays, exercice, type et numéro), y compris
+une proposition rejetée, n'est pas recréée.
+
+Les montants marqués « approximatif », « converti » ou « supplémentaire » dans la
+note doivent être corrigés avant validation, de préférence en déposant le texte
+officiel pour que l'IA en lise les articles d'équilibre.

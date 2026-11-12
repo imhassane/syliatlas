@@ -41,6 +41,11 @@ defmodule SyliAtlas.Budgets.Checks do
   defp finding(code, level, message),
     do: %{"code" => code, "level" => level, "message" => message}
 
+  # Liberia and Somalia vote their budgets in US dollars, Zimbabwe has.
+  @dollar_budgets ~w(LBR SOM ZWE)
+
+  defp currency(%{country_code: c, currency: "USD"}) when c in @dollar_budgets, do: []
+
   defp currency(%{country_code: c, currency: cur}) when is_binary(cur) do
     case Currencies.for_country(c) do
       %{code: ^cur} -> []

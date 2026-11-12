@@ -37,6 +37,8 @@ defmodule SyliAtlas.Release do
         SyliAtlas.Ratings.seed!()
         # Who votes each country's budget (catalog), then the budget documents.
         SyliAtlas.Budgets.seed!()
+        # Laws found by web research: pending proposals for a human to review.
+        SyliAtlas.Budgets.seed_research!()
 
         if SyliAtlas.Sources.published_edition("imf_weo") == nil do
           {:ok, _status, edition} = SyliAtlas.Imports.import_snapshot!()
