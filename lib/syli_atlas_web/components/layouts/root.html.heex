@@ -10,6 +10,13 @@
     <meta :if={!assigns[:public]} name="csrf-token" content={get_csrf_token()} />
     <%!-- Site ownership for Yandex Webmaster. --%>
     <meta name="yandex-verification" content="b1d5b3859cfe52ef" />
+    <%!-- Visit counts without cookies (SyliAtlasWeb.WebAnalytics), only when the
+         token is set: assets/js/ui/analytics.js loads Cloudflare's beacon. --%>
+    <meta
+      :if={SyliAtlasWeb.WebAnalytics.token()}
+      name="cf-web-analytics"
+      content={SyliAtlasWeb.WebAnalytics.token()}
+    />
     <.live_title default="Syli Atlas" suffix=" · Syli Atlas" phx-no-format>{assigns[:page_title]}</.live_title>
     <meta :if={assigns[:seo][:description]} name="description" content={@seo[:description]} />
     <link :if={assigns[:seo][:canonical]} rel="canonical" href={@seo[:canonical]} />
