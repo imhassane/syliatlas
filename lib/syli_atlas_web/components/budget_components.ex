@@ -136,6 +136,25 @@ defmodule SyliAtlasWeb.BudgetComponents do
   def kind_label("provisional"), do: gettext("Provisional budget")
   def kind_label(_), do: gettext("Budget law")
 
+  @doc "The law in a few words, for a table cell: « Rectificative 2026 »."
+  def kind_short(%{"kind" => kind, "fiscal_year" => year}) do
+    label =
+      case kind do
+        "initial" -> gettext("Initial")
+        "amending" -> gettext("Amending")
+        "settlement" -> gettext("Settlement")
+        _ -> gettext("Provisional")
+      end
+
+    "#{label} #{year}"
+  end
+
+  @doc "Who votes the budget, in a word or two."
+  def legislature_kind_label("transition"), do: gettext("Transitional body")
+  def legislature_kind_label("none"), do: gettext("No parliament")
+  def legislature_kind_label("suspended"), do: gettext("Parliament not sitting")
+  def legislature_kind_label(_), do: gettext("Parliament")
+
   @doc "The law's name with its year: « Loi de finances initiale 2026 »."
   def law_name(%{"kind" => kind, "fiscal_year" => year} = law) do
     seq =
