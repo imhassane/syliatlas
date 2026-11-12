@@ -26,7 +26,10 @@ defmodule SyliAtlas.Accounts do
   defdelegate admin_confirm_options(user), to: Passkeys, as: :confirm_options
   defdelegate admin_confirm(user, session, params, opts \\ []), to: Passkeys, as: :confirm
   defdelegate list_passkeys(user), to: Passkeys, as: :list
-  defdelegate remove_passkey(user, id), to: Passkeys, as: :remove
+  defdelegate remove_passkey(user, session, id, opts \\ []), to: Passkeys, as: :remove
+  defdelegate rename_passkey(user, session, id, name, opts \\ []), to: Passkeys, as: :rename
+  defdelegate may_manage_passkeys?(user, session), to: Passkeys, as: :may_manage?
+  defdelegate confirm_with_code(code_id, user, session, code, opts \\ []), to: Codes, as: :confirm
 
   defdelegate fetch_session(token, opts \\ []), to: Sessions, as: :fetch
   defdelegate list_sessions(user), to: Sessions, as: :list

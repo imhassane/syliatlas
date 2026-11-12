@@ -206,6 +206,9 @@ defmodule SyliAtlasWeb.Router do
     put "/alerts/:id", AccountController, :update_alert
     delete "/alerts/:id", AccountController, :delete_alert
     delete "/passkeys/:id", AccountController, :delete_passkey
+    put "/passkeys/:id", AccountController, :rename_passkey
+    post "/security/code", AccountController, :request_security_code
+    post "/security/code/verify", AccountController, :confirm_security_code
     delete "/sessions/:id", AccountController, :delete_session
     delete "/sessions", AccountController, :delete_other_sessions
     put "/preferences", AccountController, :update_preferences

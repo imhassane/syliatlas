@@ -8,9 +8,52 @@
     <p :if={@current_user.role == "admin"} class="card pad small" id="admin-notice">
       <b>{gettext("Administrator account.")}</b>
       {gettext(
-        "The administration asks for the email code, then a passkey. Keep at least two passkeys: the last one cannot be removed."
+        "The administration asks for the email code, then a passkey. To add, rename or remove a passkey, confirm with an email code first: a lost or broken passkey can be replaced that way."
       )}
     </p>
+
+    <section :if={not @manage?} class="card pad stack gap-2" id="passkey-proof">
+      <h2 class="h2">{gettext("Confirm it's you")}</h2>
+      <p class="small muted">
+        {gettext(
+          "Managing the passkeys of an administrator account asks for a code sent to your email address. It stays valid 10 minutes."
+        )}
+      </p>
+      <.form
+        :if={@code_sent?}
+        for={%{}}
+        action={~p"/account/security/code/verify"}
+        id="security-code-form"
+        class="row gap-2 wrap"
+      >
+        <label class="field">
+          <span class="eyebrow">{gettext("6-digit code")}</span>
+          <input
+            class="input code-input"
+            type="text"
+            name="code"
+            id="security-code-input"
+            inputmode="numeric"
+            autocomplete="one-time-code"
+            pattern="[0-9 ]{6,7}"
+            maxlength="7"
+            dir="ltr"
+            required
+          />
+        </label>
+        <button class="btn btn-primary" type="submit" id="security-code-submit">
+          {gettext("Confirm")}
+        </button>
+      </.form>
+      <.form for={%{}} action={~p"/account/security/code"} id="security-code-request">
+        <button
+          class={["btn", if(@code_sent?, do: "btn-quiet btn-sm", else: "btn-primary")]}
+          type="submit"
+        >
+          {if(@code_sent?, do: gettext("Send a new code"), else: gettext("Send me a code"))}
+        </button>
+      </.form>
+    </section>
 
     <section class="card" id="passkeys">
       <div class="pad row between">
@@ -21,25 +64,65 @@
           </p>
         </div>
       </div>
+      <p :if={@passkeys == []} class="pad small muted" id="passkeys-empty">
+        {gettext("No passkey yet.")}
+      </p>
       <ul class="alert-list">
         <li :for={p <- @passkeys} id={"passkey-#{p.id}"}>
           <div class="grow stack">
-            <b>{p.name}</b>
+            <%= if @manage? do %>
+              <.form
+                for={%{}}
+                action={~p"/account/passkeys/#{p.id}"}
+                method="put"
+                id={"passkey-rename-#{p.id}"}
+                class="row gap-1 wrap"
+              >
+                <label class="sr-only" for={"passkey-name-#{p.id}"}>{gettext("Passkey name")}</label>
+                <input
+                  class="input passkey-name-input"
+                  type="text"
+                  name="passkey[name]"
+                  id={"passkey-name-#{p.id}"}
+                  value={p.name}
+                  maxlength="60"
+                  required
+                />
+                <button class="btn btn-quiet btn-sm" type="submit">{gettext("Rename")}</button>
+              </.form>
+            <% else %>
+              <b>{p.name}</b>
+            <% end %>
             <span class="small muted">
               {gettext("Last used:")} {when_label(p.last_used_at, @locale)}
             </span>
           </div>
           <.form
+            :if={@manage?}
             for={%{}}
             action={~p"/account/passkeys/#{p.id}"}
             method="delete"
             id={"passkey-delete-#{p.id}"}
           >
-            <button class="btn btn-quiet btn-sm" type="submit">{gettext("Remove")}</button>
+            <button
+              class="btn btn-quiet btn-sm"
+              type="submit"
+              data-confirm={
+                if(@current_user.role == "admin" and length(@passkeys) == 1,
+                  do:
+                    gettext(
+                      "Remove your last passkey? The administration will ask you to create a new one after the next email code."
+                    ),
+                  else: gettext("Remove this passkey?")
+                )
+              }
+            >
+              {gettext("Remove")}
+            </button>
           </.form>
         </li>
       </ul>
-      <div class="pad stack gap-2" id="passkey-add">
+      <div :if={@manage?} class="pad stack gap-2" id="passkey-add">
         <label class="field">
           <span class="eyebrow">{gettext("Name of the new passkey")}</span>
           <input class="input" type="text" id="passkey-name" maxlength="60" />
