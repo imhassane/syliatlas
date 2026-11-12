@@ -15,6 +15,18 @@
 .site-header .wrap { flex-wrap: nowrap; min-height: 64px; }
 @media (min-width: 60rem) { .site-header .wrap { min-height: 76px; } }
 .header-actions { flex: none; }
+/* One line from 60rem on, whatever the language: the brand and the menu never
+   wrap nor shrink; the search bar gives way first, then turns into the
+   magnifier (like phones) where it would be too narrow to type in. */
+.site-header .brand { flex: none; }
+.site-header .brand b, .nav-desktop a, .nav-desktop summary { white-space: nowrap; }
+.nav-desktop { flex-wrap: nowrap; flex: none; }
+.site-header .header-search { flex: 1 1 160px; min-width: 160px; }
+@media (min-width: 60rem) and (max-width: 71.99rem) {
+  .site-header .header-search { display: none; }
+  .site-header .header-search ~ .header-actions { margin-inline-start: auto; }
+  .site-header .search-toggle { display: inline-grid !important; }
+}
 [data-theme="dark"] .theme-moon, [data-theme="light"] .theme-sun { display: none; }
 
 /* Sections */
