@@ -80,6 +80,16 @@ defmodule SyliAtlasWeb.MarketComponents do
     String.trim(number(v, decimals, locale) <> @nbsp <> unit) <> @nbsp <> currency
   end
 
+  @doc """
+  `amount/3`, rewritable by the header's currency menu (latest rate:
+  a session's amount). For page bodies, not attributes.
+  """
+  def money_amount(value, currency, locale) when is_number(value),
+    do:
+      SyliAtlasWeb.Money.amount(amount(value, currency, locale), value: value, currency: currency)
+
+  def money_amount(value, currency, locale), do: amount(value, currency, locale)
+
   @doc "An amount in dollars, shortened: « ≈ 5,5 M$ »."
   def usd(nil, _locale), do: nil
 

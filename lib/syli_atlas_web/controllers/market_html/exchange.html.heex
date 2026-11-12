@@ -82,7 +82,7 @@
       <:kpi
         id="traded"
         label={gettext("Traded that day")}
-        value={amount(@doc["session"]["value"], @e["currency"], @locale)}
+        value={money_amount(@doc["session"]["value"], @e["currency"], @locale)}
       >
         {usd(SyliAtlas.Market.to_usd(@doc["session"]["value"], @e["currency"], @fx), @locale)}
         <span :if={@doc["session"]["top"]}>
@@ -225,7 +225,7 @@
               </td>
               <td class="num" data-label={gettext("Volume")}>{integer(r["volume"], @locale)}</td>
               <td class="num" data-label={gettext("Value traded")}>
-                {amount(r["value"], @e["currency"], @locale)}
+                {money_amount(r["value"], @e["currency"], @locale)}
               </td>
             </tr>
           </tbody>

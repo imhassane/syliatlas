@@ -48,7 +48,7 @@ defmodule SyliAtlasWeb.AreaHTML do
     do: change(data["period"]["changes"][k], k, locale)
 
   defp kpi_value(k, _data, profile, to, locale),
-    do: value(PublicData.at(profile["series"][k], to), k, locale)
+    do: money_value(PublicData.at(profile["series"][k], to), k, locale, to)
 
   @doc "Series embedded in the page so the browser recomputes the period offline."
   def embedded_json(profile) do

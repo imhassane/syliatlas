@@ -29,7 +29,7 @@ defmodule SyliAtlasWeb.PageHTML do
       <div class="window-body stack gap-3">
         <p class="eyebrow">{gettext("Africa's GDP in current dollars")} · {@to}</p>
         <div class="row gap-2">
-          <span class="num headline">{value(@gdp, "gdp_usd_bn", @locale)}</span>
+          <span class="num headline">{money_value(@gdp, "gdp_usd_bn", @locale, @to)}</span>
           <span class="pill pill-info">{gettext("%{year} estimated", year: @to)}</span>
         </div>
         <svg
@@ -81,7 +81,7 @@ defmodule SyliAtlasWeb.PageHTML do
     <.stat_grid>
       <:stat
         label={gettext("Total GDP") <> " · #{@to}"}
-        value={value(PublicData.at(@s["gdp_usd_bn"], @to), "gdp_usd_bn", @locale)}
+        value={money_value(PublicData.at(@s["gdp_usd_bn"], @to), "gdp_usd_bn", @locale, @to)}
       >
         {gettext("current dollars")}
       </:stat>
@@ -139,7 +139,12 @@ defmodule SyliAtlasWeb.PageHTML do
           ][@locale]}</a>
         </:head>
         <:col :let={r} label={gettext("GDP %{year}", year: @to)}>
-          {value(PublicData.at(r["profile"]["series"]["gdp_usd_bn"], @to), "gdp_usd_bn", @locale)}
+          {money_value(
+            PublicData.at(r["profile"]["series"]["gdp_usd_bn"], @to),
+            "gdp_usd_bn",
+            @locale,
+            @to
+          )}
         </:col>
         <:col :let={r} label={gettext("Share of African GDP")}>
           {number(PublicData.at(r["profile"]["share_of_africa_gdp"], @to), 1, @locale)} %

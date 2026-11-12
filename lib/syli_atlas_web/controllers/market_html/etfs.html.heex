@@ -64,7 +64,7 @@
               </td>
               <td class="num" data-label={gettext("Volume")}>{integer(f["volume"], @locale)}</td>
               <td class="num" data-label={gettext("Value traded")}>
-                {amount(f["value"], f["currency"], @locale)}
+                {money_amount(f["value"], f["currency"], @locale)}
               </td>
             </tr>
           </tbody>

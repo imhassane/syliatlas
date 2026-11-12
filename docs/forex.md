@@ -55,3 +55,29 @@ chez la source de contrôle.
   GET (sans script). Les variantes avec paramètres sont `noindex`.
 - Fiche pays, bloc « Monnaie » : 1 dollar, 1 euro, 1 yuan en monnaie locale,
   variation sur un an (« parité fixe » face à la monnaie d'ancrage).
+
+## Sélecteur de devise (tout le site)
+
+Menu « Devise » dans l'en-tête (`SyliAtlasWeb.CurrencyMenu`, `assets/js/ui/money.js`),
+d'après la maquette « Sélecteur de devise ».
+
+- Par défaut, la devise du pays du visiteur, comme pour la langue : les pages
+  étant en cache pour tous, le script demande une fois par visite `/visitor`
+  (pays lu dans l'en-tête `CF-IPCountry` de Cloudflare, réponse jamais en
+  cache). Zone euro → EUR, États-Unis → USD, Chine → CNY, pays africain → sa
+  monnaie, autre pays → dollar. Pays inconnu → montants tels que publiés.
+- Un choix fait dans le menu est gardé sur l'appareil (`localStorage`,
+  clé `sa.currency`, partagée avec les sélecteurs des pages budget) et
+  remplace la détection. « Devises d'origine » affiche tout tel que publié.
+- Les montants sont écrits par le serveur dans leur devise de publication,
+  dans `<span class="money" data-money data-currency [data-year]>`
+  (`SyliAtlasWeb.Money.amount/2`, `Format.money_value/4`,
+  `MarketComponents.money_amount/3`, `WorldBankComponents.money_usd/3`).
+  Le montant d'origine reste affiché en petit sous le montant converti.
+- Un montant annuel (PIB, dette, commerce) est converti au **taux moyen de
+  son année** (`Fx.year_averages/0`, au moins 20 jours de taux ; document
+  `market:fx_rates`, clé `year_avg`), jamais au taux du jour ; sans taux pour
+  l'année, il reste tel que publié. Une séance de bourse utilise le dernier
+  taux. Taux, ratios et pourcentages ne sont jamais convertis.
+- Les taux viennent avec la page (`<script type="application/json">`),
+  aucune requête de taux, aucune API.

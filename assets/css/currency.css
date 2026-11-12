@@ -1,0 +1,42 @@
+/* Header currency menu (SyliAtlasWeb.CurrencyMenu, canvas « Sélecteur de devise ») */
+.cur-menu { position: relative; }
+.cur-menu[hidden] { display: none; }
+.cur-btn { display: inline-flex; align-items: center; gap: 6px; font-variant-numeric: tabular-nums; }
+.cur-btn .cur-mark:empty { display: none; }
+.cur-mark { display: inline-flex; align-items: center; }
+.cur-mark .flag { box-shadow: 0 0 0 1px rgba(11, 26, 51, .12); border-radius: 2px; }
+.cur-pop { position: absolute; top: calc(100% + 8px); inset-inline-end: 0; z-index: 45; width: 360px; max-width: calc(100vw - 24px); padding: 10px; border-radius: 16px; background: var(--card); box-shadow: var(--shadow-pop); display: flex; flex-direction: column; gap: 6px; }
+.cur-pop[hidden] { display: none; }
+.cur-pop-title { margin: 2px 6px 0; font-size: 12px; color: var(--ink-subtle); }
+.cur-search { box-sizing: border-box; width: 100%; height: 40px; border: 0; border-radius: 999px; padding: 0 16px; background: var(--alt); color: var(--ink); font: inherit; font-size: 15px; }
+.cur-search:focus-visible { outline: 2px solid var(--accent); outline-offset: 0; }
+/* Ten rows, then the list scrolls (same as the long tables). */
+.cur-list { list-style: none; margin: 0; padding: 0; max-height: calc(10 * 46px); overflow-y: auto; overscroll-behavior: contain; display: flex; flex-direction: column; gap: 2px; }
+.cur-list [role="option"] { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; align-items: center; gap: 10px; box-sizing: border-box; min-height: 46px; padding: 4px 10px; border-radius: 10px; cursor: pointer; color: var(--ink); }
+.cur-list [hidden] { display: none !important; }
+.cur-list .is-active { background: var(--alt); }
+.cur-list [aria-selected="true"] { background: var(--accent-bg); color: var(--accent-text); }
+.cur-list .cur-auto { min-height: 60px; margin-bottom: 4px; background: var(--alt); }
+.cur-list .cur-auto[aria-selected="true"] { background: var(--accent-bg); box-shadow: inset 0 0 0 1.5px var(--accent); }
+.cur-text { display: flex; flex-direction: column; min-width: 0; }
+.cur-text b { font-weight: 500; font-size: 14px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cur-sub { font-size: 12px; line-height: 1.3; color: var(--ink-subtle); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cur-auto-line { display: flex; align-items: center; gap: 8px; min-width: 0; }
+.cur-badge { flex: none; display: inline-flex; align-items: center; min-height: 20px; padding: 0 8px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 11px; font-weight: 600; }
+.cur-code { font-family: var(--mono); font-size: 12px; color: var(--ink-subtle); }
+.cur-head { margin: 8px 10px 2px; font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-subtle); }
+.cur-empty { margin: 6px 10px; font-size: 13px; color: var(--ink-muted); }
+.cur-note { margin: 4px 10px 2px; font-size: 12px; line-height: 1.4; color: var(--ink-subtle); }
+/* Amounts the menu rewrites: the published amount under the converted one. */
+.money { display: inline-flex; flex-direction: column; gap: 2px; font-variant-numeric: tabular-nums; }
+.money-local { font-family: var(--mono); font-size: 12px; color: var(--ink-subtle); white-space: nowrap; letter-spacing: 0; font-weight: 400; }
+.money-local[hidden] { display: none; }
+@media (max-width: 760px) {
+  .cur-btn { padding-inline: 8px; gap: 4px; }
+  .cur-btn .cur-mark { display: none; }
+  .site-header .brand b { white-space: nowrap; }
+  /* On a phone the list opens as a sheet at the bottom of the screen. */
+  .cur-pop { position: fixed; inset: auto 12px max(12px, env(safe-area-inset-bottom)) 12px; top: auto; width: auto; max-width: none; z-index: 90; }
+  .cur-list { max-height: min(calc(10 * 46px), 55dvh); }
+}
+.cur-mark .fx-sym { width: auto; min-width: 22px; padding: 0 3px; box-sizing: border-box; font-size: 9px; letter-spacing: .02em; }

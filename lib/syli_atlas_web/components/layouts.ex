@@ -77,6 +77,7 @@ defmodule SyliAtlasWeb.Layouts do
           <button type="button" class="btn btn-quiet hide-mobile" data-install>{gettext(
             "Install the app"
           )}</button>
+          <SyliAtlasWeb.CurrencyMenu.currency_menu locale={@locale} />
           <.lang_link
             :if={@other_lang}
             langs={@other_lang}
