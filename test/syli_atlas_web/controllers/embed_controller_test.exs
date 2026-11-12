@@ -129,9 +129,14 @@ defmodule SyliAtlasWeb.EmbedControllerTest do
       assert scripts != []
 
       for [_, attrs, body] <- scripts do
-        assert attrs =~ ~s(src="/embed-frame.js"), "unexpected script: #{attrs}"
+        assert attrs =~ ~r{src="/embed-frame\.js\?v=[^"]+"}, "unexpected script: #{attrs}"
         assert String.trim(body) == ""
       end
+
+      # Plug.Static serves only the exact names of static_paths: a digested
+      # name (embed-frame-<hash>.js, what ~p gives in production) is a 404.
+      [_, src] = Regex.run(~r{<script src="/([^"?]+)}, html)
+      assert src in SyliAtlasWeb.static_paths()
     end
 
     test "the two scripts are served" do

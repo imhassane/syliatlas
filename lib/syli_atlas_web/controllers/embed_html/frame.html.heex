@@ -13,8 +13,11 @@
     <link rel="canonical" href={@canonical} />
     <link rel="stylesheet" href={~p"/assets/js/app.css"} />
     <%!-- Theme first (no flash of the wrong one), then the height sent to the
-         host page (embed.js). A file of the site: the CSP allows it ('self'). --%>
-    <script src={~p"/embed-frame.js"}>
+         host page (embed.js). A file of the site: the CSP allows it ('self').
+         Not ~p: in production ~p gives the digested name (embed-frame-<hash>.js),
+         which Plug.Static refuses (only: lists exact names). The query only
+         renews browser caches at each deploy. --%>
+    <script src={"/embed-frame.js?v=" <> SyliAtlasWeb.Build.id()}>
     </script>
   </head>
   <body class="embed-body">
