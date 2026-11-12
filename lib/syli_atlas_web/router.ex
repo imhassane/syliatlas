@@ -105,6 +105,7 @@ defmodule SyliAtlasWeb.Router do
 
   scope "/", SyliAtlasWeb do
     get "/health", HealthController, :show
+    get "/visitor", VisitorController, :show
     get "/sitemap.xml", SitemapController, :sitemap
     get "/sitemaps/:part", SitemapController, :part
     get "/robots.txt", SitemapController, :robots

@@ -232,12 +232,43 @@ defmodule SyliAtlas.Fx do
       "check" => %{"code" => ErApi.code(), "day" => shadow_day && Date.to_iso8601(shadow_day)},
       "rates" => encode(now),
       "year_ago_rates" => encode(year),
+      "year_avg" => year_averages(),
       "flags" => flags,
       "pegs" =>
         for {code, {anchor, parity}} <- Currencies.pegs(), into: %{} do
           {code, %{"anchor" => anchor, "rate" => parity}}
         end
     }
+  end
+
+  @doc """
+  Average rate of each calendar year we hold, per currency (units per US
+  dollar, fixed parities applied): `%{"2025" => %{"NGN" => "1502.3", ...}}`.
+  Annual amounts (GDP, debt, trade in dollars) are converted with the
+  average of their year, never with today's rate.
+  """
+  def year_averages(source \\ ExchangeApi) do
+    from(r in Rate,
+      where: r.source == ^source.code(),
+      group_by: [fragment("strftime('%Y', ?)", r.date), r.currency],
+      select:
+        {fragment("strftime('%Y', ?)", r.date), r.currency,
+         fragment("avg(CAST(? AS REAL))", r.rate), count()}
+    )
+    |> Repo.all()
+    |> Enum.group_by(&elem(&1, 0))
+    |> Map.new(fn {year, rows} ->
+      rates =
+        for {_y, code, avg, n} <- rows, n >= 20, is_number(avg), into: %{} do
+          {code, Decimal.from_float(avg * 1.0) |> Decimal.round(6)}
+        end
+
+      {year, rates}
+    end)
+    # A year with no average of its own (too few days) is left out: the
+    # dollar parities alone would say nothing.
+    |> Enum.reject(fn {_year, rates} -> rates == %{} end)
+    |> Map.new(fn {year, rates} -> {year, rates |> apply_pegs() |> encode()} end)
   end
 
   defp encode(rates) do

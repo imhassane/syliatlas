@@ -73,7 +73,7 @@
       <:kpi
         id="value"
         label={gettext("Value traded")}
-        value={amount(@row["value"], @row["currency"], @locale)}
+        value={money_amount(@row["value"], @row["currency"], @locale)}
       >
         {usd(SyliAtlas.Market.to_usd(@row["value"], @row["currency"], @fx), @locale)}
       </:kpi>

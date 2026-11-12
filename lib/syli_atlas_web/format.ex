@@ -88,6 +88,33 @@ defmodule SyliAtlasWeb.Format do
     end
   end
 
+  @doc """
+  `value/3`, rewritable by the header's currency menu when the indicator is
+  an amount in current dollars (GDP, GDP per head), converted at the
+  average rate of `year` (`SyliAtlasWeb.Money`). For use in page bodies
+  only, never in attributes.
+  """
+  def money_value(v, indicator, locale, year)
+
+  def money_value(v, "gdp_usd_bn", locale, year) when is_number(v),
+    do:
+      SyliAtlasWeb.Money.amount(value(v, "gdp_usd_bn", locale),
+        value: v,
+        scale: 1.0e9,
+        currency: "USD",
+        year: year
+      )
+
+  def money_value(v, "gdp_per_capita_usd", locale, year) when is_number(v),
+    do:
+      SyliAtlasWeb.Money.amount(value(v, "gdp_per_capita_usd", locale),
+        value: v,
+        currency: "USD",
+        year: year
+      )
+
+  def money_value(v, indicator, locale, _year), do: value(v, indicator, locale)
+
   def tone(nil, _indicator), do: nil
 
   def tone(value, indicator) do

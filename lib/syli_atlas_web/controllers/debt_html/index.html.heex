@@ -81,7 +81,11 @@
               </td>
               <td data-label={gettext("External debt")}>
                 <span :if={r.external} class="num">
-                  {usd(r.external["value"], @locale)}
+                  {SyliAtlasWeb.WorldBankComponents.money_usd(
+                    r.external["value"],
+                    r.external["year"],
+                    @locale
+                  )}
                   <span class="small subtle">{r.external["year"]}</span>
                 </span>
                 <span :if={!r.external} class="subtle">—</span>

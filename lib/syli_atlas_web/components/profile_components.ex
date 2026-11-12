@@ -8,7 +8,7 @@ defmodule SyliAtlasWeb.ProfileComponents do
   use Phoenix.Component
   use Gettext, backend: SyliAtlasWeb.Gettext
 
-  import SyliAtlasWeb.Format, only: [value: 3, change: 3, number: 3, names: 2]
+  import SyliAtlasWeb.Format, only: [value: 3, money_value: 4, change: 3, number: 3, names: 2]
   alias SyliAtlasWeb.{Paths, PublicData, WorldBankComponents, TradeComponents}
   alias SyliAtlas.Economy.Communities
 
@@ -430,7 +430,7 @@ defmodule SyliAtlasWeb.ProfileComponents do
       %{
         id: "gdp",
         label: gettext("GDP %{year}", year: ctx.to),
-        value: value(at.("gdp_usd_bn"), "gdp_usd_bn", l),
+        value: money_value(at.("gdp_usd_bn"), "gdp_usd_bn", l, ctx.to),
         sub: change(changes["gdp_usd_bn"], "gdp_usd_bn", l) <> " " <> since,
         tone: nil,
         href: "#economie"
@@ -450,7 +450,7 @@ defmodule SyliAtlasWeb.ProfileComponents do
       %{
         id: "gdp-per-capita",
         label: gettext("GDP per capita"),
-        value: value(at.("gdp_per_capita_usd"), "gdp_per_capita_usd", l),
+        value: money_value(at.("gdp_per_capita_usd"), "gdp_per_capita_usd", l, ctx.to),
         sub: to_string(ctx.to),
         tone: nil,
         href: "#economie"
@@ -499,7 +499,7 @@ defmodule SyliAtlasWeb.ProfileComponents do
       %{
         id: "gdp",
         label: gettext("GDP %{year}", year: ctx.to),
-        value: value(at.("gdp_usd_bn"), "gdp_usd_bn", l),
+        value: money_value(at.("gdp_usd_bn"), "gdp_usd_bn", l, ctx.to),
         sub: change(changes["gdp_usd_bn"], "gdp_usd_bn", l) <> " " <> since,
         tone: nil,
         href: tab.(:economy)
@@ -519,7 +519,7 @@ defmodule SyliAtlasWeb.ProfileComponents do
       %{
         id: "gdp-per-capita",
         label: gettext("GDP per capita"),
-        value: value(at.("gdp_per_capita_usd"), "gdp_per_capita_usd", l),
+        value: money_value(at.("gdp_per_capita_usd"), "gdp_per_capita_usd", l, ctx.to),
         sub: to_string(ctx.to),
         tone: nil,
         href: tab.(:economy)
