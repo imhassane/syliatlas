@@ -203,7 +203,9 @@ main > section.section:first-of-type { padding-top: 40px; }
 
 /* Themes panel, after the Navigation board: one line per theme. */
 .nav-mega { min-width: 380px; padding: 8px; gap: 2px; }
-.nav-mega-item { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 10px; }
+.nav-mega-item { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 10px; min-width: 0; }
+/* The header links never wrap; a theme's description must (it ran over the next column). */
+.nav-desktop .nav-mega-item, .nav-desktop .nav-mega-item span, .nav-desktop .nav-mega-foot p { white-space: normal; }
 .nav-mega-item b { font-weight: 600; color: var(--ink); font-size: 15px; }
 .nav-mega-item span { color: var(--ink-muted); font-size: 13px; font-weight: 400; line-height: 1.35; }
 .nav-mega-foot { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; padding: 12px 12px 6px; border-top: 1px solid var(--border-faint); }
