@@ -27,6 +27,7 @@ import {initTransitions} from "./ui/transitions"
 import {initFlashToasts} from "./ui/toasts"
 import {initRecap, initRecapPage} from "./ui/recap"
 import {initCopyButtons} from "./ui/copy"
+import {initAnalytics} from "./ui/analytics"
 
 initTheme()
 initDrawer()
@@ -49,6 +50,7 @@ initFlashToasts()
 initRecap()
 initRecapPage()
 initCopyButtons()
+initAnalytics()
 
 // The lines below enable quality of life phoenix_live_reload
 // development features:

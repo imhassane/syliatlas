@@ -13,6 +13,10 @@ defmodule SyliAtlasWeb.CSP do
   `<script type="application/json">` and `application/ld+json` blocks are
   data, never run, and need nothing here.
 
+  When `CLOUDFLARE_WEB_ANALYTICS_TOKEN` is set, the site's policy (never the
+  embed policy) also allows Cloudflare Web Analytics: its beacon script and
+  the address it reports to (SyliAtlasWeb.WebAnalytics).
+
   Styles: stylesheets from the site; `style="…"` attributes stay allowed
   (`style-src-attr`), they cannot run code.
 
@@ -76,14 +80,14 @@ defmodule SyliAtlasWeb.CSP do
     Enum.join(
       [
         "default-src 'self'",
-        Enum.join(["script-src 'self'" | @hashes], " "),
+        Enum.join(["script-src 'self'" | @hashes] ++ analytics(:script), " "),
         "style-src 'self'",
         "style-src-attr 'unsafe-inline'",
         "img-src 'self' data:",
         "font-src 'self'",
         # The LiveView socket. 'self' covers it in current browsers; older
         # Safari wants the ws(s) origin written out.
-        "connect-src 'self' #{socket_origin(url)}",
+        Enum.join(["connect-src 'self'", socket_origin(url) | analytics(:connect)], " "),
         "worker-src 'self'",
         "manifest-src 'self'",
         "frame-src 'self'",
@@ -160,6 +164,16 @@ defmodule SyliAtlasWeb.CSP do
 
   defp report_url do
     SyliAtlasWeb.Endpoint.struct_url() |> Map.put(:path, @report_path) |> URI.to_string()
+  end
+
+  # Cloudflare Web Analytics (SyliAtlasWeb.WebAnalytics), only when its token
+  # is set. Never in the embed policy: the framed views promise no tracking.
+  defp analytics(kind) do
+    cond do
+      not SyliAtlasWeb.WebAnalytics.enabled?() -> []
+      kind == :script -> [SyliAtlasWeb.WebAnalytics.script_origin()]
+      kind == :connect -> [SyliAtlasWeb.WebAnalytics.connect_origin()]
+    end
   end
 
   defp socket_origin(%URI{scheme: scheme} = url) do
