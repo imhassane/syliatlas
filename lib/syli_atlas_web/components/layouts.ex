@@ -59,7 +59,7 @@ defmodule SyliAtlasWeb.Layouts do
         <div class="header-actions">
           <a
             :if={@current != :search}
-            class="icon-btn show-mobile"
+            class="icon-btn show-mobile search-toggle"
             href={Paths.search(@locale)}
             aria-label={gettext("Search")}
           >
@@ -74,9 +74,6 @@ defmodule SyliAtlasWeb.Layouts do
               aria-hidden="true"
             ><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
           </a>
-          <button type="button" class="btn btn-quiet hide-mobile" data-install>{gettext(
-            "Install the app"
-          )}</button>
           <SyliAtlasWeb.CurrencyMenu.currency_menu locale={@locale} />
           <.lang_link
             :if={@other_lang}
@@ -84,6 +81,7 @@ defmodule SyliAtlasWeb.Layouts do
             locale={@locale}
             id="lang-header"
             class="btn btn-quiet hide-mobile"
+            short
           />
           <.theme_button />
           <.account_link
@@ -631,6 +629,10 @@ defmodule SyliAtlasWeb.Layouts do
   attr :class, :string, default: nil
   attr :up, :boolean, default: false, doc: "opens above the button (footer, drawer)"
 
+  attr :short, :boolean,
+    default: false,
+    doc: "the language code (FR) instead of its name (header)"
+
   # The language menu: this page in the other languages, each named in itself.
   defp lang_link(assigns) do
     ~H"""
@@ -649,7 +651,8 @@ defmodule SyliAtlasWeb.Layouts do
         ><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z">
         </path></svg>
         <span class="sr-only">{gettext("Language")} :</span>
-        <span>{SyliAtlas.Locales.native(@locale)}</span>
+        <span :if={@short} title={SyliAtlas.Locales.native(@locale)}>{String.upcase(@locale)}</span>
+        <span :if={!@short}>{SyliAtlas.Locales.native(@locale)}</span>
       </summary>
       <ul role="list">
         <li :for={{l, href} <- @langs}>
