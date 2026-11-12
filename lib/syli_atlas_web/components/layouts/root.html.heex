@@ -20,6 +20,15 @@
       href={href}
     />
     <meta :if={assigns[:seo][:noindex]} name="robots" content="noindex" />
+    <%!-- oEmbed: publishing tools turn a pasted profile address into its
+         embed (SyliAtlasWeb.OembedController). --%>
+    <link
+      :if={assigns[:seo][:oembed]}
+      rel="alternate"
+      type="application/json+oembed"
+      href={@seo[:oembed]}
+      title={assigns[:page_title]}
+    />
     <%!-- Shared links: title, description and an image drawn from the page's
          own figures (SyliAtlasWeb.OgImageController), in the page's language. --%>
     <meta property="og:site_name" content="Syli Atlas" />

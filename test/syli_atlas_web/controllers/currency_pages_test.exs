@@ -69,7 +69,7 @@ defmodule SyliAtlasWeb.CurrencyPagesTest do
       # 45 currencies, with their countries to search.
       assert has?(doc, ~s(#convert-from option[value="NGN"][selected]))
       assert doc |> LazyHTML.query("#convert-to-list [role=option]") |> Enum.count() == 45
-      assert has?(doc, ~s(#convert-from-NGN[aria-selected="true"][data-search*="nigeria"]))
+      assert has?(doc, ~s(#convert-from-NGN[aria-selected="true"][data-search*="naira"]))
       assert has?(doc, ~s(#convert-to-EUR[aria-selected="true"]))
 
       swap = doc |> LazyHTML.query("#convert-swap") |> LazyHTML.attribute("href") |> hd()

@@ -204,6 +204,7 @@ defmodule SyliAtlasWeb.ProfileComponents do
           path={@path}
           alert_area={@area.code}
         />
+        <.data_menu ctx={@ctx} />
       </:actions>
       <:chips>
         <a :if={@region} class="pill pill-neutral no-dot" href={Paths.area(@locale, @region)}>
@@ -235,6 +236,125 @@ defmodule SyliAtlasWeb.ProfileComponents do
         {k.sub}
       </:kpi>
     </.entity_head>
+    """
+  end
+
+  attr :ctx, :map, required: true, doc: "everything the profile knows (see AreaController)"
+
+  @doc """
+  « Data » and « Embed » in the profile's header. Data opens a menu (a
+  `<details>` panel: no JavaScript, keyboard-friendly) with the files of the
+  period shown (SyliAtlasWeb.ExportController); Embed leads to the page
+  that writes the code for an article (SyliAtlasWeb.EmbedController).
+  """
+  def data_menu(assigns) do
+    ctx = assigns.ctx
+    file = &Paths.area_data(ctx.locale, ctx.area, &1, ctx.from, ctx.to)
+
+    files = [
+      %{
+        id: "csv",
+        name: "CSV",
+        href: file.(:csv),
+        hint: gettext("opens in Excel, LibreOffice"),
+        # A sheet of rows and columns.
+        icon: [
+          "M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z",
+          "M14 3v5h5",
+          "M8.5 12.5h7M8.5 16h7M12 12.5V19"
+        ]
+      },
+      %{
+        id: "xlsx",
+        name: "Excel",
+        href: file.(:xlsx),
+        hint: gettext("a sheet of figures, a sheet of sources"),
+        # A grid: the workbook.
+        icon: [
+          "M5 4h14a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z",
+          "M4 9.5h16M4 14.5h16M9.5 4v16"
+        ]
+      },
+      %{
+        id: "json",
+        name: "JSON",
+        href: file.(:json),
+        hint: gettext("the format of the API"),
+        # Braces: data for code.
+        icon: [
+          "M8 4c-2 0-2.5 1-2.5 3v2c0 1.5-.8 2.5-2 3 1.2.5 2 1.5 2 3v2c0 2 .5 3 2.5 3",
+          "M16 4c2 0 2.5 1 2.5 3v2c0 1.5.8 2.5 2 3-1.2.5-2 1.5-2 3v2c0 2-.5 3-2.5 3"
+        ]
+      }
+    ]
+
+    assigns = assign(assigns, files: files)
+
+    ~H"""
+    <details class="data-menu" id="data-menu" data-nav-menu>
+      <summary class="btn btn-secondary btn-sm">
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        ><path d="M12 4v11"></path><path d="M7 10l5 5 5-5"></path><path d="M5 20h14"></path></svg>
+        <span>{gettext("Data")}</span>
+      </summary>
+      <div class="data-menu-panel">
+        <p class="eyebrow">
+          {gettext("IMF figures, %{from} → %{to}", from: @ctx.from, to: @ctx.to)}
+        </p>
+        <ul role="list">
+          <li :for={f <- @files}>
+            <a href={f.href} download id={"data-" <> f.id}>
+              <span class="data-menu-icon" aria-hidden="true">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path :for={d <- f.icon} d={d}></path>
+                </svg>
+              </span>
+              <span class="data-menu-text">
+                <b>{f.name} <span class="sr-only">{gettext("(file)")}</span></b>
+                <span class="small muted">{f.hint}</span>
+              </span>
+            </a>
+          </li>
+        </ul>
+        <p class="small muted">
+          {gettext(
+            "Each file names its source and the sentence to cite. Stock prices are not included."
+          )}
+        </p>
+      </div>
+    </details>
+    <a class="btn btn-quiet btn-sm" href={Paths.area_embed(@ctx.locale, @ctx.area)} id="embed-link">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      ><path d="M8 7l-5 5 5 5"></path><path d="M16 7l5 5-5 5"></path></svg>
+      <span>{gettext("Embed")}</span>
+    </a>
     """
   end
 
@@ -273,6 +393,7 @@ defmodule SyliAtlasWeb.ProfileComponents do
           locale={@ctx.locale}
           path={@path}
         />
+        <.data_menu ctx={@ctx} />
       </:actions>
       <:chips>
         <span class="pill pill-neutral no-dot">{area_kind_label(@ctx.area.kind)}</span>

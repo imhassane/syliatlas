@@ -1,0 +1,153 @@
+<Layouts.public locale={@locale} current={:countries} alternates={@alternates}>
+  <.section variant="alt" tight={:bottom}>
+    <nav aria-label={gettext("Breadcrumb")}>
+      <ol class="crumbs">
+        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+        <li><a href={Paths.area(@locale, @area)}>{@name}</a></li>
+        <li aria-current="page">{gettext("Embed")}</li>
+      </ol>
+    </nav>
+    <div class="stack gap-2">
+      <p class="eyebrow">{gettext("Journalists, blogs, institutions")}</p>
+      <h1 class="h1">{gettext("Embed the figures of %{name}", names(@name))}</h1>
+      <p class="lead">
+        {gettext(
+          "Paste the code in your article: the chart stays readable, with its source and a link to the profile. Free, no account, no cookie."
+        )}
+      </p>
+    </div>
+  </.section>
+
+  <.section>
+    <div class="embed-builder">
+      <form
+        class="card pad stack gap-4"
+        method="get"
+        action={Paths.area_embed(@locale, @area)}
+        id="embed-form"
+      >
+        <.field label={gettext("What")}>
+          <.select name="view" options={@views} selected={@view} id="embed-view" />
+        </.field>
+
+        <div class="row gap-2 embed-period">
+          <.field label={gettext("Since")}>
+            <.select name="from" options={Enum.map(2015..2029, &{&1, &1})} selected={@from} />
+          </.field>
+          <span aria-hidden="true" class="period-arrow">→</span>
+          <.field label={gettext("Until")}>
+            <.select name="to" options={Enum.map(2016..2030, &{&1, &1})} selected={@to} />
+          </.field>
+        </div>
+
+        <fieldset class="embed-options">
+          <legend class="eyebrow">{gettext("Theme")}</legend>
+          <label :for={
+            {value, label} <- [
+              {"auto", gettext("Reader's setting")},
+              {"light", gettext("Light")},
+              {"dark", gettext("Dark")}
+            ]
+          }>
+            <input type="radio" name="theme" value={value} checked={@opts.theme == value} />
+            {label}
+          </label>
+        </fieldset>
+
+        <.field label={gettext("Language")}>
+          <select name="lang" class="select">
+            <option
+              :for={l <- SyliAtlas.Locales.all()}
+              value={l}
+              lang={SyliAtlas.Locales.tag(l)}
+              selected={l == @embed_locale}
+            >
+              {SyliAtlas.Locales.native(l)}
+            </option>
+          </select>
+        </.field>
+
+        <div class="stack gap-2 embed-options">
+          <input type="hidden" name="compare" value="0" />
+          <label>
+            <input type="checkbox" name="compare" value="1" checked={@opts.compare} />
+            {gettext("Compare with its region (or Africa)")}
+          </label>
+          <input type="hidden" name="title" value="0" />
+          <label>
+            <input type="checkbox" name="title" value="1" checked={@opts.title} />
+            {gettext("Show the title")}
+          </label>
+        </div>
+
+        <button type="submit" class="btn btn-primary">{gettext("Update the preview")}</button>
+      </form>
+
+      <div class="stack gap-4 embed-result">
+        <div class="stack gap-2">
+          <p class="eyebrow">{gettext("Preview")}</p>
+          <iframe
+            src={@src}
+            title={gettext("Preview of the embedded figures")}
+            width="100%"
+            height={@height}
+            loading="lazy"
+            class="embed-preview"
+            data-syli-embed
+          ></iframe>
+        </div>
+
+        <div class="card pad stack gap-3">
+          <label for="embed-code" class="eyebrow">{gettext("Code to paste in your article")}</label>
+          <textarea
+            id="embed-code"
+            class="embed-code"
+            rows="5"
+            readonly
+            aria-describedby="embed-code-hint"
+          >{@code}</textarea>
+          <div class="row gap-2 embed-code-actions">
+            <button
+              type="button"
+              class="btn btn-primary"
+              data-copy="#embed-code"
+              data-copied={gettext("Copied")}
+              data-copy-failed={gettext("Copy failed: select the code")}
+              hidden
+            >
+              {gettext("Copy the code")}
+            </button>
+            <span class="small muted" id="embed-code-hint">
+              {gettext("The second line is optional: it sets the height by itself.")}
+            </span>
+            <span class="sr-only" role="status" data-copy-status></span>
+          </div>
+        </div>
+
+        <div class="card pad stack gap-2">
+          <h2 class="h2">{gettext("WordPress, Ghost and other tools")}</h2>
+          <p>
+            {gettext(
+              "Paste the address of the profile on a line of its own: these tools find the embed by themselves (oEmbed)."
+            )}
+          </p>
+          <p><code class="embed-url">{@profile_url}</code></p>
+        </div>
+
+        <ul class="small muted embed-terms">
+          <li>
+            {gettext("Figures: IMF, %{label}. Keep the source line: it is the only condition.",
+              label: @edition["label"]
+            )}
+          </li>
+          <li>
+            {gettext(
+              "The figures follow the IMF editions; when a new one comes out, a line in the frame says so."
+            )}
+          </li>
+          <li>{gettext("Stock prices cannot be embedded (MansaAPI licence).")}</li>
+        </ul>
+      </div>
+    </div>
+  </.section>
+</Layouts.public>

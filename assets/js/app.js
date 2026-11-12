@@ -27,6 +27,7 @@ import {initTransitions} from "./ui/transitions"
 import {initFlashToasts} from "./ui/toasts"
 import {initRecap, initRecapPage} from "./ui/recap"
 import {initCurrencyPickers} from "./ui/currency_picker"
+import {initCopyButtons} from "./ui/copy"
 
 initTheme()
 initDrawer()
@@ -49,6 +50,7 @@ initTransitions()
 initFlashToasts()
 initRecap()
 initRecapPage()
+initCopyButtons()
 
 // The lines below enable quality of life phoenix_live_reload
 // development features:
