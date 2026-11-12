@@ -203,7 +203,19 @@ main > section.section:first-of-type { padding-top: 40px; }
 
 /* Themes panel, after the Navigation board: one line per theme. */
 .nav-mega { min-width: 380px; padding: 8px; gap: 2px; }
-.nav-mega-item { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 10px; min-width: 0; }
+.nav-mega-col { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.nav-mega-head { margin: 8px 12px 4px; font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-subtle); }
+.nav-mega-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px; min-width: 0; }
+.nav-mega-item.is-featured { background: var(--alt); }
+.nav-mega-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.nav-mega-item b { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.nav-new { display: inline-flex; align-items: center; min-height: 20px; padding: 0 8px; border-radius: 999px; background: var(--accent); color: #fff !important; font-size: 11px !important; font-weight: 600 !important; }
+/* Icons of the themes and tools (canvas « Menu Thèmes »). */
+.theme-ico { flex: none; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: var(--alt); color: var(--ink-muted); }
+.nav-mega-item.is-featured .theme-ico, .theme-ico.is-featured { background: var(--deep); color: var(--accent-on-deep); }
+.nav-mega-item:hover .theme-ico:not(.is-featured) { background: var(--card); color: var(--accent-text); }
+.drawer-label { display: inline-flex; align-items: center; gap: 12px; }
+.drawer-nav .theme-ico { width: 32px; height: 32px; border-radius: 9px; }
 /* The header links never wrap; a theme's description must (it ran over the next column). */
 .nav-desktop .nav-mega-item, .nav-desktop .nav-mega-item span, .nav-desktop .nav-mega-foot p { white-space: normal; }
 .nav-mega-item b { font-weight: 600; color: var(--ink); font-size: 15px; }
@@ -212,8 +224,8 @@ main > section.section:first-of-type { padding-top: 40px; }
 .nav-mega-foot p { margin: 0; font-size: 12px; color: var(--ink-subtle); line-height: 1.4; }
 .nav .nav-mega-foot a { padding: 0; color: var(--accent-text); font-size: 14px; font-weight: 600; }
 .drawer-nav a { justify-content: space-between; gap: 12px; }
-.drawer-nav .drawer-sub { min-height: 46px; padding-inline-start: 28px; font-size: 17px; }
-.drawer-meta { font-size: 13px; color: var(--ink-subtle); }
+.drawer-nav .drawer-sub { min-height: 50px; padding-inline-start: 16px; font-size: 17px; }
+.drawer-meta { font-size: 13px; color: var(--ink-subtle); white-space: nowrap; }
 .drawer .search-compact { margin: 4px 0 12px; }
 .drawer .search-compact .search-pop { min-width: 0; inset-inline-start: 0; }
 .drawer-links { margin: 12px 16px 0; color: var(--ink-subtle); }
@@ -227,3 +239,4 @@ main > section.section:first-of-type { padding-top: 40px; }
 .grid-even { align-items: stretch; }
 .grid-even > .card { display: flex; flex-direction: column; }
 .grid-even > .card > .src:last-child { margin-top: auto; }
+@media (min-width: 48rem) { .nav-desktop .nav-mega { min-width: 700px; } }
