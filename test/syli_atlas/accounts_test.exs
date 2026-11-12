@@ -204,6 +204,27 @@ defmodule SyliAtlas.AccountsTest do
       refute Session.admin_verified?(session, later)
     end
 
+    test "resetting the administrators' passkeys lets them register a new one" do
+      admin = user_fixture(%{role: "admin"})
+      member = user_fixture()
+      passkey_fixture(admin)
+      passkey_fixture(member)
+
+      assert SyliAtlas.Accounts.Passkeys.reset_admins!() == 1
+      assert Accounts.list_passkeys(admin) == []
+      assert [_] = Accounts.list_passkeys(member)
+
+      # Code, then a new first passkey: the administration opens again.
+      {_token, session} = Sessions.create(admin, :code)
+      key = SoftAuthenticator.new()
+      {:ok, options} = Accounts.passkey_registration_options(admin, session)
+
+      {:ok, _passkey, session} =
+        Accounts.register_passkey(admin, session, SoftAuthenticator.attestation(key, options))
+
+      assert Accounts.admin_session?(admin, session)
+    end
+
     test "an administrator's first passkey needs a fresh code" do
       admin = user_fixture(%{role: "admin"})
       {_token, session} = Sessions.create(admin, :code)

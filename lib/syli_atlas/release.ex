@@ -30,6 +30,14 @@ defmodule SyliAtlas.Release do
 
     {:ok, _, _} =
       Ecto.Migrator.with_repo(SyliAtlas.Repo, fn _repo ->
+        # A lost or broken administrator passkey: set ADMIN_PASSKEY_RESET=true,
+        # restart, sign in with an email code, register a new passkey, then
+        # remove the variable.
+        if System.get_env("ADMIN_PASSKEY_RESET") == "true" do
+          n = SyliAtlas.Accounts.Passkeys.reset_admins!()
+          IO.puts("admin passkeys: #{n} removed (ADMIN_PASSKEY_RESET), remove the variable")
+        end
+
         SyliAtlas.Geo.seed_areas!()
         SyliAtlas.Sources.seed_sources!()
         SyliAtlas.Market.seed!()

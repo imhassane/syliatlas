@@ -16,6 +16,7 @@ defmodule SyliAtlas.Accounts.Passkeys do
     * `list/1`, `remove/2`: the last passkey of an administrator stays.
   """
   import Ecto.Query
+  require Logger
 
   alias SyliAtlas.Accounts.{Passkey, Session, Sessions, User, WebauthnChallenge}
   alias SyliAtlas.Repo
@@ -185,8 +186,44 @@ defmodule SyliAtlas.Accounts.Passkeys do
 
       {:ok, passkey, user}
     else
-      _invalid -> {:error, :invalid_passkey}
+      invalid ->
+        # Why a passkey was refused (wrong host, unknown key, counter...),
+        # without any secret, to understand a failed sign-in from the logs.
+        Logger.warning("passkey refused: #{refusal(invalid)}")
+        {:error, :invalid_passkey}
     end
+  end
+
+  defp refusal(nil), do: "unknown credential"
+  defp refusal(false), do: "key of another account"
+  defp refusal(%User{}), do: "account deactivated"
+  defp refusal({:error, :cloned}), do: "sign counter did not grow"
+  defp refusal({:error, %{__exception__: true} = e}), do: Exception.message(e)
+  defp refusal({:error, reason}), do: inspect(reason)
+  defp refusal(:error), do: "undecodable field"
+  defp refusal(other), do: inspect(other)
+
+  @doc """
+  Removes every administrator's passkeys and closes the sessions opened with
+  them. The administrators then sign in with an email code and register a new
+  passkey. Used when a passkey no longer works (`ADMIN_PASSKEY_RESET=true` at
+  start, see `SyliAtlas.Release.setup/0`). Returns the number removed.
+  """
+  def reset_admins! do
+    keys =
+      Repo.all(
+        from p in Passkey,
+          join: u in User,
+          on: u.id == p.user_id,
+          where: u.role == "admin"
+      )
+
+    Enum.each(keys, fn passkey ->
+      Sessions.revoke_by_passkey(passkey.id)
+      Repo.delete!(passkey)
+    end)
+
+    length(keys)
   end
 
   def list(%User{id: id}),
@@ -243,7 +280,9 @@ defmodule SyliAtlas.Accounts.Passkeys do
            ) do
       {:ok, :erlang.binary_to_term(row.challenge, [:safe])}
     else
-      _invalid -> {:error, :invalid_passkey}
+      _invalid ->
+        Logger.warning("passkey refused: challenge #{purpose} expired, used or unknown")
+        {:error, :invalid_passkey}
     end
   end
 
