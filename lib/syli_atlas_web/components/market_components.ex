@@ -195,7 +195,7 @@ defmodule SyliAtlasWeb.MarketComponents do
           <line :for={t <- @chart.ticks} x1="56" x2="744" y1={t.y} y2={t.y} />
         </g>
         <g class="axis-labels">
-          <text :for={t <- @chart.ticks} x="48" y={t.y + 4} text-anchor="end">
+          <text :for={t <- @chart.ticks} x="48" y={t.label_y} text-anchor="end">
             {price(t.label, @locale)}
           </text>
           <text x="56" y="252">{day(@chart.first, @locale)}</text>
@@ -261,7 +261,12 @@ defmodule SyliAtlasWeb.MarketComponents do
     ticks =
       for i <- 0..3 do
         v = lo + step * i
-        %{y: fmt(y.(v)), label: Float.round(v, if(v >= 100, do: 0, else: 2))}
+
+        %{
+          y: fmt(y.(v)),
+          label_y: fmt(y.(v) + 4),
+          label: Float.round(v, if(v >= 100, do: 0, else: 2))
+        }
       end
 
     {_, end_v} = List.last(points)
