@@ -65,6 +65,19 @@ defmodule SyliAtlasWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  # Files to download (SyliAtlasWeb.ExportController): any Accept header, the
+  # language from the path, no session.
+  pipeline :download do
+    plug SyliAtlasWeb.Plugs.Locale, :from_path
+  end
+
+  # Views framed by other sites (SyliAtlasWeb.EmbedController): no session,
+  # their own Content-Security-Policy (frame-ancestors *), no X-Frame-Options.
+  pipeline :embed do
+    plug :accepts, ["html"]
+    plug SyliAtlasWeb.Plugs.Embed
+  end
+
   pipeline :admin do
     plug SyliAtlasWeb.Plugs.AdminAuth
     plug SyliAtlasWeb.Plugs.AdminShell
@@ -100,6 +113,13 @@ defmodule SyliAtlasWeb.Router do
     get "/og/:version/*path", OgImageController, :show
     # Content-Security-Policy violation reports (SyliAtlasWeb.CSP).
     post "/csp-report", CspReportController, :create
+    # oEmbed: publishing tools turn a pasted profile address into its embed.
+    get "/oembed", OembedController, :show
+  end
+
+  scope "/embed", SyliAtlasWeb do
+    pipe_through [:embed, :public_cache]
+    get "/:locale/:kind/:slug/:view", EmbedController, :frame
   end
 
   scope "/", SyliAtlasWeb do
@@ -203,6 +223,17 @@ defmodule SyliAtlasWeb.Router do
       get "/api", ApiDocController, :show
     end
 
+    # An area's figures as a file (before /:slug/:tab, which would take them).
+    scope "/#{locale}", SyliAtlasWeb do
+      pipe_through [:download, :public_cache]
+
+      for {kind_seg, kind} <- [{seg.(:country), :country}, {seg.(:regions), :region}],
+          format <- [:csv, :xlsx, :json] do
+        get "/#{kind_seg}/:slug/#{seg.(:data)}.#{format}", ExportController, :show,
+          assigns: %{format: format, kind: kind}
+      end
+    end
+
     scope "/#{locale}", SyliAtlasWeb do
       pipe_through [:public, :page_locale, :public_cache]
 
@@ -220,6 +251,13 @@ defmodule SyliAtlasWeb.Router do
       get "/#{seg.(:search)}", SearchController, :index
       get "/#{seg.(:country)}/:slug", AreaController, :show
       get "/#{seg.(:country)}/:slug/#{seg.(:questions)}", CountryQuestionsController, :show
+
+      get "/#{seg.(:country)}/:slug/#{seg.(:embed)}", EmbedController, :builder,
+        assigns: %{kind: :country}
+
+      get "/#{seg.(:regions)}/:slug/#{seg.(:embed)}", EmbedController, :builder,
+        assigns: %{kind: :region}
+
       get "/#{seg.(:country)}/:slug/:tab", AreaController, :show
       get "/#{seg.(:regions)}", RegionsController, :index
       get "/#{seg.(:regions)}/:slug", AreaController, :show

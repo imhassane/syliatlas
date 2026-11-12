@@ -139,6 +139,9 @@ defmodule SyliAtlasWeb.AreaController do
       page_title: title,
       seo:
         Seo.page(locale, paths, answer, %{
+          oembed:
+            SyliAtlasWeb.Endpoint.url() <>
+              "/oembed?url=" <> URI.encode_www_form(Seo.url(paths[locale])),
           json_ld:
             [Seo.breadcrumbs(crumbs)] ++
               datasets(tab, area, name, paths[locale], profile, trade, world_bank, locale) ++

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html
+  lang={SyliAtlas.Locales.tag(@locale)}
+  dir={SyliAtlas.Locales.dir(@locale)}
+  data-theme={start_theme(@theme)}
+  data-embed-theme={@theme}
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>{@title} · Syli Atlas</title>
+    <link rel="canonical" href={@canonical} />
+    <link rel="stylesheet" href={~p"/assets/js/app.css"} />
+    <%!-- Theme first (no flash of the wrong one), then the height sent to the
+         host page (embed.js). A file of the site: the CSP allows it ('self'). --%>
+    <script src={~p"/embed-frame.js"}>
+    </script>
+  </head>
+  <body class="embed-body">
+    <main class="embed card pad" id="embed">
+      <div :if={@show_title} class="card-head">
+        <div>
+          <h1 class="h2">{@title}</h1>
+          <p :if={@subtitle} class="small muted">{@subtitle}</p>
+        </div>
+      </div>
+
+      <h1 :if={!@show_title} class="sr-only">{@title}</h1>
+
+      <p :if={@updated_from} class="embed-note small">
+        {gettext("Figures updated since this article: IMF, %{label}.",
+          label: @profile["edition"]["label"]
+        )}
+      </p>
+
+      <%= if @view == "summary" do %>
+        <dl class="embed-kpis">
+          <div :for={k <- @kpis}>
+            <dt class="eyebrow">{k.label}</dt>
+            <dd class={["num", "embed-kpi-value", k.tone]}>{k.value}</dd>
+            <dd class="small muted">{k.sub}</dd>
+          </div>
+        </dl>
+      <% else %>
+        <Charts.line_chart
+          id="embed-chart"
+          indicator={@view}
+          from={@from}
+          to={@to}
+          locale={@locale}
+          estimate_from={@profile["years"]["estimate_from"]}
+          label={@title}
+          series={@series}
+        />
+        <.chart_legend :if={length(@series) > 1} series={@series} />
+      <% end %>
+
+      <footer class="embed-foot">
+        <span class="src">
+          {gettext("Source: IMF, %{label}", label: @profile["edition"]["label"])}
+        </span>
+        <span class="embed-links">
+          <a href={@data_url} target="_blank" rel="noopener">
+            {gettext("Data")}<span class="sr-only">{gettext("(CSV file, new tab)")}</span>
+          </a>
+          <a href={@page_url} target="_blank" rel="noopener" class="embed-brand">
+            <Layouts.logo size={16} />
+            <span>syli <span class="muted">atlas</span></span>
+            <span class="sr-only">{gettext("(the profile of %{name}, new tab)", names(@name))}</span>
+          </a>
+        </span>
+      </footer>
+    </main>
+  </body>
+</html>
