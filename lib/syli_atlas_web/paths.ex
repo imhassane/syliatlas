@@ -105,6 +105,32 @@ defmodule SyliAtlasWeb.Paths do
 
   def with_period(path, from, to), do: path <> "?from=#{from}&to=#{to}"
 
+  @doc """
+  The figures of an area as a file: `/fr/pays/cote-d-ivoire/donnees.csv`,
+  `/en/regions/west-africa/data.xlsx` (SyliAtlasWeb.ExportController).
+  """
+  def area_data(locale, area, format, from, to) when format in [:csv, :xlsx, :json],
+    do: area(locale, area) <> "/#{segment(locale, :data)}.#{format}?from=#{from}&to=#{to}"
+
+  @doc "The page that builds the code to embed an area's figures elsewhere."
+  def area_embed(locale, area), do: area(locale, area) <> "/" <> segment(locale, :embed)
+
+  @doc """
+  An embeddable view of an area, framed by other sites (SyliAtlasWeb.EmbedController):
+  `/embed/fr/pays/cote-d-ivoire/real_gdp_index?from=2020&to=2025`. `view` is an
+  indicator key or `"summary"` (the key figures).
+  """
+  def embed(locale, area, view, query \\ []) do
+    "/embed" <>
+      area(locale, area) <>
+      "/" <>
+      view <>
+      case query do
+        [] -> ""
+        query -> "?" <> URI.encode_query(query)
+      end
+  end
+
   # Path segments of the public pages; Arabic, Hindi and Chinese use the
   # English ones (SyliAtlas.Locales.base/1).
   @segments %{
@@ -147,6 +173,8 @@ defmodule SyliAtlasWeb.Paths do
     },
     debt: %{"fr" => "dette", "en" => "debt", "es" => "deuda", "pt" => "divida"},
     currencies: %{"fr" => "monnaies", "en" => "currencies", "es" => "monedas", "pt" => "moedas"},
+    data: %{"fr" => "donnees", "en" => "data", "es" => "datos", "pt" => "dados"},
+    embed: %{"fr" => "integrer", "en" => "embed", "es" => "insertar", "pt" => "incorporar"},
     questions: %{
       "fr" => "questions",
       "en" => "questions",

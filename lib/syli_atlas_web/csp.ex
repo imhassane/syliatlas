@@ -16,6 +16,12 @@ defmodule SyliAtlasWeb.CSP do
   Styles: stylesheets from the site; `style="…"` attributes stay allowed
   (`style-src-attr`), they cannot run code.
 
+  Framed views (`/embed/…`, SyliAtlasWeb.Plugs.Embed) get `embed_policy/0`:
+  the same rules, but any site may frame them (`frame-ancestors *`), no
+  inline script at all (their only script is `/embed-frame.js`), no socket
+  and no form. Phoenix's enforced `frame-ancestors 'self'` is never sent
+  there: that pipeline skips `put_secure_browser_headers`.
+
   The mode comes from `CSP_MODE` (config/runtime.exs):
 
     * `:report_only` (default) — Phoenix's enforced policy (base-uri,
@@ -93,6 +99,32 @@ defmodule SyliAtlasWeb.CSP do
   end
 
   @doc """
+  The policy of the framed views: any site may frame them; their only script
+  is a file of the site (`/embed-frame.js`), so no hash is needed.
+  """
+  def embed_policy do
+    Enum.join(
+      [
+        "default-src 'self'",
+        "script-src 'self'",
+        "style-src 'self'",
+        "style-src-attr 'unsafe-inline'",
+        "img-src 'self' data:",
+        "font-src 'self'",
+        "connect-src 'self'",
+        "frame-src 'none'",
+        "object-src 'none'",
+        "base-uri 'self'",
+        "frame-ancestors *",
+        "form-action 'none'",
+        "report-uri #{@report_path}",
+        "report-to csp"
+      ],
+      "; "
+    )
+  end
+
+  @doc """
   Plug: adds the policy to HTML responses, just before they are sent, so it
   covers every page (error pages included) whatever pipeline drew it.
   """
@@ -112,8 +144,10 @@ defmodule SyliAtlasWeb.CSP do
           do: "content-security-policy",
           else: "content-security-policy-report-only"
 
+      policy = if conn.private[:syli_csp] == :embed, do: embed_policy(), else: policy()
+
       conn
-      |> put_resp_header(header, policy())
+      |> put_resp_header(header, policy)
       |> put_resp_header("reporting-endpoints", ~s(csp="#{report_url()}"))
     else
       conn
