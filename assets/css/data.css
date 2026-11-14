@@ -314,11 +314,23 @@ a.entity-kpi:focus-visible { outline: 2px solid var(--accent); outline-offset: -
 .national-val { font-size: 28px; font-weight: 300; letter-spacing: -.02em; }
 .national-sep { border: 0; border-top: 1px solid var(--border-faint); margin: 4px 0; width: 100%; }
 .national-sum { padding-top: 12px; border-top: 1px solid var(--border-faint); }
-.national-sum-total { font-size: 28px; font-weight: 300; letter-spacing: -.02em; }
-.national-bar { position: relative; display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--muted); }
+.national-sum-total { font-size: 40px; font-weight: 300; letter-spacing: -.03em; line-height: 1; }
+.national-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 0; padding: 0; list-style: none; font-size: 13px; }
+.national-legend li { display: inline-flex; align-items: center; gap: 6px; }
+.national-legend i { width: 10px; height: 10px; border-radius: 3px; flex: none; }
+.national-wait > span:last-child { font-size: 14px; line-height: 1.5; }
+.national-more { font-size: 14px; font-weight: 500; align-self: flex-start; }
+/* An amount inside a sentence: converted and published side by side. */
+.national-wait .money, .national-cell .money, .national-wait .money > span:not([hidden]), .national-cell .money > span:not([hidden]) { display: inline; }
+.national-wait .money-local:not([hidden]), .national-cell .money-local:not([hidden]) { margin-inline-start: .4em; }
+.national-wait .money-local:not([hidden])::before { content: "("; }
+.national-wait .money-local:not([hidden])::after { content: ")"; }
+.national-bar { position: relative; display: flex; height: 12px; border-radius: 999px; overflow: hidden; background: var(--muted); }
 .national-bar-nat { background: var(--c2); }
 .national-bar-imf { flex: 1; background: var(--border-strong); }
 .national-bar-wait { background: repeating-linear-gradient(135deg, var(--c2) 0 4px, var(--warning-bg) 4px 8px); }
+.national-legend .national-bar-wait { background: repeating-linear-gradient(135deg, var(--c2) 0 3px, var(--warning-bg) 3px 6px); }
+.national-legend .national-bar-imf { flex: none; }
 .national-wait { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0; }
 .national-row-wait { background: var(--warning-bg); }
 .map-pending { fill: url(#map-pending-hatch); stroke: var(--map-edge); stroke-width: 2; pointer-events: none; }

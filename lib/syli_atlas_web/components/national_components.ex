@@ -260,58 +260,149 @@ defmodule SyliAtlasWeb.NationalComponents do
     """
   end
 
+  @doc """
+  The countries whose official GDP of `year` is being checked, for the home
+  window: name, amount, period and the date of their rebasing if any.
+  """
+  def waiting(doc, year, locale) do
+    case National.africa(doc, year) do
+      %{"rows" => rows} ->
+        codes = for r <- rows, is_number(r["pending"]), do: r
+
+        names =
+          if codes == [],
+            do: %{},
+            else:
+              Map.new(SyliAtlas.Geo.list_areas(), &{&1.code, SyliAtlas.Geo.Area.name(&1, locale)})
+
+        for r <- codes do
+          rebasing = get_in(doc, ["countries", r["code"], "rebasing"])
+
+          %{
+            code: r["code"],
+            name: names[r["code"]] || r["code"],
+            amount: r["pending"],
+            rebased_on: rebasing && rebasing["active"] && rebasing["announced_on"]
+          }
+        end
+
+      _ ->
+        []
+    end
+  end
+
   attr :africa, :map, default: nil
   attr :locale, :string, required: true
+  attr :waiting, :list, default: [], doc: "see waiting/3"
 
-  @doc "The sum of national figures under the IMF's African GDP (home window)."
+  @doc "The sum of national figures in the home window (canvas « Accueil · PIB »)."
   def africa_sum(assigns) do
     ~H"""
-    <div :if={@africa} class="national-sum stack gap-2" id="national-sum">
+    <div :if={@africa} class="national-sum stack gap-3" id="national-sum">
       <div class="stack gap-1">
-        <span class="small muted">{gettext("Sum of national figures")}</span>
+        <span class="national-src">{gettext("Sum of national figures")}</span>
         <span class="num national-sum-total">
           {Format.money_value(@africa["national_total"], "gdp_usd_bn", @locale, @africa["year"])}
         </span>
+        <span class="small muted">
+          {gettext(
+            "Official figure checked when the country publishes one, otherwise the IMF's for the same year"
+          )}
+        </span>
       </div>
-      <div
-        class="national-bar"
-        role="img"
-        aria-label={
-          gettext(
-            "Composition: %{national} % national figures, %{pending} % being checked, the rest IMF figures as fallback",
-            national: Format.number(@africa["national_share_pct"] || 0.0, 0, @locale),
-            pending: Format.number(@africa["pending_share_pct"] || 0.0, 0, @locale)
-          )
-        }
-      >
-        <span class="national-bar-nat" style={"width: #{@africa["national_share_pct"] || 0}%"}></span>
-        <span class="national-bar-imf"></span>
-        <span class="national-bar-wait" style={"width: #{@africa["pending_share_pct"] || 0}%"}></span>
+      <div class="stack gap-2">
+        <div
+          class="national-bar"
+          role="img"
+          aria-label={
+            gettext(
+              "Composition: %{national} % national figures, %{pending} % being checked, the rest IMF figures as fallback",
+              national: Format.number(@africa["national_share_pct"] || 0.0, 0, @locale),
+              pending: Format.number(@africa["pending_share_pct"] || 0.0, 0, @locale)
+            )
+          }
+        >
+          <span class="national-bar-nat" style={"width: #{@africa["national_share_pct"] || 0}%"}></span>
+          <span class="national-bar-imf"></span>
+          <span class="national-bar-wait" style={"width: #{@africa["pending_share_pct"] || 0}%"}></span>
+        </div>
+        <ul class="national-legend" role="list">
+          <li :if={@africa["counted"] > 0}>
+            <i class="national-bar-nat"></i>
+            {ngettext(
+              "1 country with its official figure",
+              "%{count} countries with their official figure",
+              @africa["counted"]
+            )}
+          </li>
+          <li class="muted">
+            <i class="national-bar-imf"></i>
+            {ngettext(
+              "1 country with the IMF figure (fallback)",
+              "%{count} countries with the IMF figure (fallback)",
+              @africa["fallback"]
+            )}
+          </li>
+          <li :if={@africa["pending"] != []}>
+            <i class="national-bar-wait"></i>
+            {ngettext(
+              "1 country being checked",
+              "%{count} countries being checked",
+              length(@africa["pending"] || [])
+            )}
+          </li>
+        </ul>
       </div>
-      <p class="small muted">
-        {ngettext(
-          "1 country with its official figure",
-          "%{count} countries with their official figure",
-          @africa["counted"]
-        )} · {ngettext(
-          "1 with the IMF figure (fallback)",
-          "%{count} with the IMF figure (fallback)",
-          @africa["fallback"]
-        )}
-      </p>
-      <p :if={@africa["after_review_total"]} class="small national-wait">
+      <p :if={@africa["after_review_total"]} class="national-wait">
         <span class="pill pill-warn">{gettext("Being checked")}</span>
-        {rich(
-          gettext("Once checked, the sum will be %{total} (%{gap} from the IMF).",
-            total: "\u0000total\u0000",
-            gap: signed_pct(@africa["after_review_gap_pct"], @locale)
-          ),
-          total:
-            Format.money_value(@africa["after_review_total"], "gdp_usd_bn", @locale, @africa["year"])
-        )}
+        <span>
+          <%= for w <- @waiting do %>
+            {rich(
+              if(w.rebased_on,
+                do:
+                  gettext("%{country}: %{amount} (rebased %{date}).",
+                    country: w.name,
+                    amount: "\u0000amount\u0000",
+                    date: day(w.rebased_on, @locale)
+                  ),
+                else: gettext("%{country}: %{amount}.", country: w.name, amount: "\u0000amount\u0000")
+              ),
+              amount: Format.money_value(w.amount, "gdp_usd_bn", @locale, @africa["year"])
+            )}
+          <% end %>
+          {rich(
+            gettext("Once checked, the sum will be %{total} (%{diff}, %{gap}).",
+              total: "\u0000total\u0000",
+              diff: "\u0000diff\u0000",
+              gap: signed_pct(@africa["after_review_gap_pct"], @locale)
+            ),
+            total:
+              Format.money_value(
+                @africa["after_review_total"],
+                "gdp_usd_bn",
+                @locale,
+                @africa["year"]
+              ),
+            diff:
+              signed_money(
+                @africa["after_review_total"] - @africa["national_total"],
+                @locale,
+                @africa["year"]
+              )
+          )}
+        </span>
       </p>
-      <a class="small" href={Paths.national(@locale)}>{gettext("The total, country by country")} →</a>
+      <a class="national-more" href={Paths.national(@locale)}>
+        {gettext("The total, country by country")} →
+      </a>
     </div>
     """
+  end
+
+  # "+75 Md$": the gap in billions, signed, in the reader's currency.
+  defp signed_money(v, locale, year) do
+    sign = if v >= 0, do: "+", else: "−"
+    money = Format.money_value(abs(v), "gdp_usd_bn", locale, year)
+    {:safe, [sign, Phoenix.HTML.Safe.to_iodata(money)]}
   end
 end
