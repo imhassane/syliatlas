@@ -242,7 +242,17 @@ defmodule SyliAtlasWeb.SitemapController do
     imf = imf_date()
 
     static =
-      for fun <- [:home, :regions, :method, :accessibility, :debt, :budgets, :communities, :api] do
+      for fun <- [
+            :home,
+            :regions,
+            :method,
+            :accessibility,
+            :debt,
+            :national,
+            :budgets,
+            :communities,
+            :api
+          ] do
         {both(&apply(Paths, fun, [&1])), imf}
       end ++
         [{both(&Paths.currencies/1), (SyliAtlas.Fx.latest() || %{})["as_of"] || imf}] ++

@@ -9,6 +9,14 @@
     locale={@locale}
   />
 
+  <NationalComponents.figures_panel
+    :if={@area.kind == "country"}
+    entry={@national}
+    profile={@profile}
+    to={@to}
+    locale={@locale}
+  />
+
   <.card pad>
     <.card_head
       title={indicator_label("gdp_usd_bn")}
@@ -33,6 +41,7 @@
       label={@answer}
       source={gettext("Source: IMF, %{label}", label: @profile["edition"]["label"])}
       series={series}
+      national={national_points(@national, "gdp_usd_bn")}
     />
   </.card>
 

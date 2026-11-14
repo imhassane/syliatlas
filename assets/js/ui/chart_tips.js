@@ -89,7 +89,19 @@ function setup(box, data) {
       li.append(swatch, htmlEl("span", "chart-tip-name", row.name), htmlEl("span", "num", row.text))
       list.append(li)
     })
-    body.append(list)
+    // The country's official figure that year, never joined to the series.
+    if (point.national) {
+      const n = point.national
+      const li = htmlEl("li", "chart-tip-national")
+      const swatch = htmlEl("span", "chart-tip-diamond")
+      li.append(swatch, htmlEl("span", "chart-tip-name", n.label), htmlEl("span", "num", n.text))
+      list.append(li)
+      body.append(list)
+      // Only a figure being checked carries a badge.
+      if (n.wait) body.append(htmlEl("span", "pill pill-warn chart-tip-status", n.status))
+    } else {
+      body.append(list)
+    }
 
     if (point.change) body.append(htmlEl("p", "chart-tip-change", point.change))
     if (data.source) body.append(htmlEl("p", "chart-tip-src", data.source))

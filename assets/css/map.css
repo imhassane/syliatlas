@@ -78,6 +78,16 @@ i.q-none { background: var(--nodata); }
   .map-panel-name { font-size: 28px; }
   .map-panel-change { font-size: 40px; }
   .map-panel-top .pill { font-size: 11px; }
+  /* The drawer: its buttons stay in view at the bottom, the rest scrolls. */
+  .map-panel[popover] { overflow: hidden; padding-bottom: 0; }
+  .map-panel[popover] .map-panel-body {
+    flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+    margin: 0 -20px; padding: 0 20px 8px;
+  }
+  .map-panel[popover] .map-panel-actions {
+    flex: none; margin: 0 -20px; padding: 12px 20px max(16px, env(safe-area-inset-bottom));
+    border-top: 1px solid var(--border-faint); background: var(--card);
+  }
 }
 
 /* With and without JavaScript. */
@@ -108,3 +118,9 @@ html.js .no-js-only { display: none !important; }
 .map-panel-changes dt { font-size: 13px; color: var(--ink-muted); }
 .map-panel-changes dd { margin: 2px 0 0; font-size: 20px; font-variant-numeric: tabular-nums; }
 .map-panel-changes.single { grid-template-columns: 1fr; }
+
+/* Official figure being checked (SyliAtlas.National): a hatched dot. */
+.map-hatch-bg { fill: var(--warning-bg); }
+.map-hatch-fg { fill: var(--c2); }
+.map-pending-key { fill: var(--c2); stroke: var(--warning-bg); stroke-width: 3; }
+.map-pending-note { display: flex; align-items: center; gap: 8px; }

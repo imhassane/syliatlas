@@ -66,6 +66,7 @@ export function initMap() {
     }
     for (const key of ["gdppc", "growth", "inflation", "debt"]) field(key).textContent = c.text[key]
     fillRating(c.rating)
+    fillNational(c)
     field("href").href = c.href
     field("name-vh").textContent = ` : ${c.name}`
     field("name-vh-compare").textContent = ` : ${c.name}`
@@ -81,6 +82,24 @@ export function initMap() {
     body.classList.add("is-entering")
 
     if (open && phone.matches && panel.showPopover && !panel.matches(":popover-open")) panel.showPopover()
+  }
+
+  // The country's latest official GDP (MapComponents.national_text/3).
+  function fillNational(c) {
+    if (!field("national")) return
+    const n = c.national
+    for (const name of ["national-value", "national-period"]) field(name).hidden = !n
+    // Only a figure being checked carries a badge.
+    field("national-status").hidden = !(n && n.status)
+    field("national-none").hidden = !!n
+    if (field("gdp-label") && c.gdp_label) field("gdp-label").textContent = c.gdp_label
+    if (!n) return
+    field("national-value").textContent = n.value
+    field("national-period").textContent = n.period
+    const status = field("national-status")
+    status.textContent = n.status || ""
+    status.classList.remove("pill-warn", "pill-ok", "pill-neutral")
+    status.classList.add(n.status_class)
   }
 
   // The country's sovereign rating (MapComponents.rating_text/2).

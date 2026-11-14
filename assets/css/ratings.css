@@ -213,3 +213,10 @@ dd.rt-inv, dd.rt-spec, dd.rt-high, dd.rt-risk, dd.rt-def, b.rt-inv, b.rt-spec, b
 .adm-more summary { cursor: pointer; color: var(--accent-text); font-size: 14px; list-style: none; }
 .adm-more summary::-webkit-details-marker { display: none; }
 .adm-more[open] summary { margin-bottom: 10px; }
+
+/* Admin: national figures being checked (Admin.NationalController). */
+.adm-national { padding: 20px 24px; border-top: 1px solid var(--border-faint); display: flex; flex-direction: column; gap: 12px; }
+.adm-national-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; align-items: flex-start; }
+.adm-national .adm-checks { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); font-size: 14px; }
+.adm-national .adm-checks .ok { color: var(--success-ink); }
+.adm-national .adm-checks .ko { color: var(--signal-text); }

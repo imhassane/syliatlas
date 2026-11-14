@@ -71,6 +71,7 @@
           {@answer}
         </p>
         <.source_line edition={@profile["edition"]} locale={@locale} />
+        <NationalComponents.rebasing_notice entry={@national} locale={@locale} />
       </div>
     </section>
     <%= if @area.kind != "country" do %>

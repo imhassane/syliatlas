@@ -94,6 +94,9 @@ defmodule SyliAtlasWeb.Paths do
 
   def debt(locale), do: "/#{locale}/#{segment(locale, :debt)}"
 
+  @doc "Africa's GDP, IMF and sum of national figures: /fr/chiffres-nationaux, /en/national-figures."
+  def national(locale), do: "/#{locale}/#{segment(locale, :national)}"
+
   @doc "The state budgets of the 54 countries: /fr/budgets, /en/budgets."
   def budgets(locale), do: "/#{locale}/#{segment(locale, :budgets)}"
 
@@ -179,6 +182,12 @@ defmodule SyliAtlasWeb.Paths do
       "pt" => "comunidades-economicas"
     },
     debt: %{"fr" => "dette", "en" => "debt", "es" => "deuda", "pt" => "divida"},
+    national: %{
+      "fr" => "chiffres-nationaux",
+      "en" => "national-figures",
+      "es" => "cifras-nacionales",
+      "pt" => "numeros-nacionais"
+    },
     budgets: %{
       "fr" => "budgets",
       "en" => "budgets",

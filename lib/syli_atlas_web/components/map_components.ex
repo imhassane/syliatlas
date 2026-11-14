@@ -21,6 +21,7 @@ defmodule SyliAtlasWeb.MapComponents do
   attr :focus, :string, default: nil, doc: "region shown in colour (regions mode)"
   attr :locale, :string, required: true
   attr :label, :string, required: true
+  attr :pending, :list, default: [], doc: "codes with an official figure being checked"
 
   def africa_map(assigns) do
     map = AfricaMap.get()
@@ -41,7 +42,10 @@ defmodule SyliAtlasWeb.MapComponents do
         %{code: code, area: area, country: c, fill: fill}
       end
 
-    assigns = assign(assigns, map: map, shapes: shapes)
+    marks =
+      for code <- assigns.pending, area = map.areas[code], area != nil, do: area
+
+    assigns = assign(assigns, map: map, shapes: shapes, marks: marks)
 
     ~H"""
     <svg
@@ -72,6 +76,20 @@ defmodule SyliAtlasWeb.MapComponents do
           <circle :if={s.area.small} class="isle" cx={s.area.cx} cy={s.area.cy} r="5"></circle>
         </a>
       <% end %>
+      <defs :if={@marks != []}>
+        <pattern
+          id="map-pending-hatch"
+          width="6"
+          height="6"
+          patternUnits="userSpaceOnUse"
+          patternTransform="rotate(45)"
+        >
+          <rect width="6" height="6" class="map-hatch-bg"></rect>
+          <rect width="3" height="6" class="map-hatch-fg"></rect>
+        </pattern>
+      </defs>
+      <circle :for={a <- @marks} class="map-pending" cx={a.cx} cy={a.cy} r="7" aria-hidden="true">
+      </circle>
     </svg>
     """
   end
@@ -113,6 +131,7 @@ defmodule SyliAtlasWeb.MapComponents do
 
   attr :rating, :map, default: nil, doc: "the country's entry of the ratings document"
   attr :rated, :integer, default: 0
+  attr :national, :map, default: nil, doc: "the country's latest official GDP (national_text/3)"
 
   @doc """
   The selected country. Each value carries `data-field` so the script can
@@ -183,7 +202,30 @@ defmodule SyliAtlasWeb.MapComponents do
           <span class="big map-panel-change" data-field="gdp" data-value={@c["gdp"]}>
             {Format.value(@c["gdp"], "gdp_usd_bn", @locale)}
           </span>
-          <span class="muted small">{gettext("GDP in current dollars, %{year} (IMF)", year: @to)}</span>
+          <span class="muted small" data-field="gdp-label">
+            {if @c["gdp_source"] == "national",
+              do: gettext("GDP in current dollars, %{year} (official)", year: @to),
+              else: gettext("GDP in current dollars, %{year} (IMF)", year: @to)}
+          </span>
+        </div>
+        <div class="map-national stack gap-1" data-field="national">
+          <span class="national-src">{gettext("Official GDP")}</span>
+          <span class="national-val num" data-field="national-value" hidden={!@national}>
+            {@national && @national.value}
+          </span>
+          <span class="small muted" data-field="national-period" hidden={!@national}>
+            {@national && @national.period}
+          </span>
+          <span
+            data-field="national-status"
+            class={["pill", (@national && @national.status_class) || "pill-neutral"]}
+            hidden={!(@national && @national.status)}
+          >
+            {@national && @national.status}
+          </span>
+          <span class="small muted" data-field="national-none" hidden={@national != nil}>
+            {gettext("No national figure followed yet: the IMF figure is used in the African total.")}
+          </span>
         </div>
         <dl class="map-panel-changes single">
           <div>
@@ -315,8 +357,75 @@ defmodule SyliAtlasWeb.MapComponents do
   @doc "JSON safe inside a <script> element: no closing tag can appear in it."
   def json_for_script(data), do: data |> Jason.encode!() |> String.replace("</", "<\\/")
 
+  @doc "A country's latest official GDP, as the panel shows it (or nil)."
+  def national_text(doc, code, locale, year \\ nil)
+  def national_text(nil, _code, _locale, _year), do: nil
+
+  def national_text(doc, code, locale, year) do
+    entry = SyliAtlas.National.for_country(doc, code)
+
+    case (year && SyliAtlas.National.figure(entry, "gdp_usd_bn", year)) ||
+           SyliAtlas.National.latest(entry, "gdp_usd_bn") do
+      nil ->
+        nil
+
+      f ->
+        %{
+          value: Format.value(f["value"], "gdp_usd_bn", locale),
+          period: SyliAtlasWeb.NationalComponents.period_text(f),
+          # Only a figure being checked carries a badge.
+          status:
+            if(f["status"] == "pending_review",
+              do: SyliAtlasWeb.NationalComponents.status_label(f["status"])
+            ),
+          status_class: SyliAtlasWeb.NationalComponents.status_class(f["status"])
+        }
+    end
+  end
+
+  @doc "Codes of the countries with an official figure being checked."
+  def pending_codes(nil), do: []
+
+  def pending_codes(doc) do
+    for {code, entry} <- doc["countries"] || %{},
+        figs <- Map.values(entry["figures"] || %{}),
+        f <- Map.values(figs),
+        f["status"] == "pending_review",
+        uniq: true,
+        do: code
+  end
+
+  @doc """
+  The map entries with each country's counted official figures of the year
+  in place of the IMF's (GDP, GDP per capita, debt): the « national
+  figures » colouring. A figure being checked does not count.
+  """
+  def with_national(countries, nil, _year), do: countries
+
+  def with_national(countries, doc, year) do
+    Enum.map(countries, fn c ->
+      entry = SyliAtlas.National.for_country(doc, c["code"])
+      gdp = SyliAtlas.National.figure(entry, "gdp_usd_bn", year)
+      debt = SyliAtlas.National.figure(entry, "public_debt_pct_gdp", year)
+
+      c
+      |> then(
+        &if(gdp && gdp["counted"],
+          do:
+            Map.merge(&1, %{
+              "gdp" => gdp["value"],
+              "gdppc" => gdp["per_capita"] || &1["gdppc"],
+              "gdp_source" => "national"
+            }),
+          else: &1
+        )
+      )
+      |> then(&if(debt && debt["counted"], do: Map.put(&1, "debt", debt["value"]), else: &1))
+    end)
+  end
+
   @doc "Everything the script needs to refill the panel and recolour the map."
-  def client_data(countries, from, to, locale, ratings \\ nil) do
+  def client_data(countries, from, to, locale, ratings \\ nil, national \\ nil) do
     rated = (ratings && ratings["rated"]) || 0
 
     %{
@@ -353,6 +462,12 @@ defmodule SyliAtlasWeb.MapComponents do
                debt: Format.value(c["debt"], "public_debt_pct_gdp", locale)
              },
              rating: rating_text(SyliAtlas.Ratings.for_country(ratings, c["code"]), rated),
+             national: national_text(national, c["code"], locale, to),
+             gdp_label:
+               if(c["gdp_source"] == "national",
+                 do: gettext("GDP in current dollars, %{year} (official)", year: to),
+                 else: gettext("GDP in current dollars, %{year} (IMF)", year: to)
+               ),
              classes: Map.new(MapScale.keys(), &{&1, MapScale.class(&1, c[value_key(&1)])}),
              values: Map.new(MapScale.keys(), &{&1, MapScale.value_text(&1, c, locale)})
            }}
@@ -367,13 +482,15 @@ defmodule SyliAtlasWeb.MapComponents do
   attr :to, :integer, required: true
   attr :locale, :string, required: true
   attr :ratings, :map, default: nil, doc: "the ratings document"
+  attr :national, :map, default: nil, doc: "the national figures document"
+  attr :source, :string, default: "imf", doc: "imf or national: which figures colour the map"
 
   @doc "The home section: indicator switch, map, legend and panel."
   def map_section(assigns) do
     ~H"""
     <div class="map-layout" data-map data-selected={@selected["code"]} data-indicator={@indicator}>
       <script type="application/json" id="map-data">
-        <%= Phoenix.HTML.raw(json_for_script(client_data(@countries, @from, @to, @locale, @ratings))) %>
+        <%= Phoenix.HTML.raw(json_for_script(client_data(@countries, @from, @to, @locale, @ratings, @national))) %>
       </script>
       <.card class="map-card">
         <div class="map-toolbar">
@@ -384,6 +501,18 @@ defmodule SyliAtlasWeb.MapComponents do
               data-map-indicator={k}
               aria-current={k == @indicator && "true"}
             >{MapScale.label(k)}</a>
+          </nav>
+          <nav class="seg" aria-label={gettext("Figures used for the colours")}>
+            <a
+              href={"?carte=#{@indicator}#carte"}
+              aria-current={@source == "imf" && "true"}
+              id="map-source-imf"
+            >{gettext("IMF")}</a>
+            <a
+              href={"?carte=#{@indicator}&source=national#carte"}
+              aria-current={@source == "national" && "true"}
+              id="map-source-national"
+            >{gettext("National figures")}</a>
           </nav>
           <form class="map-goto" action={Paths.search(@locale)} method="get">
             <label for="map-goto" class="vh">{gettext("Go to a country")}</label>
@@ -407,8 +536,24 @@ defmodule SyliAtlasWeb.MapComponents do
           selected={@selected["code"]}
           locale={@locale}
           label={gettext("Map of Africa: choose a country")}
+          pending={pending_codes(@national)}
         />
         <.map_legend key={@indicator} locale={@locale} />
+        <p :if={pending_codes(@national) != []} class="src map-pending-note">
+          <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle
+            cx="7"
+            cy="7"
+            r="6"
+            class="map-pending-key"
+          >
+          </circle></svg>
+          {if @source == "national",
+            do:
+              gettext(
+                "Colours: official figure once checked, else the IMF's. Hatched dot: an official figure being checked, not counted yet."
+              ),
+            else: gettext("Hatched dot: an official figure being checked (touch the country).")}
+        </p>
         <p class="src">
           {gettext(
             "Islands are marked with a dot. Western Sahara has no separate IMF data. Source: IMF, World Economic Outlook."
@@ -426,6 +571,7 @@ defmodule SyliAtlasWeb.MapComponents do
         locale={@locale}
         rating={SyliAtlas.Ratings.for_country(@ratings, @selected["code"])}
         rated={(@ratings && @ratings["rated"]) || 0}
+        national={national_text(@national, @selected["code"], @locale, @to)}
       />
     </div>
     """

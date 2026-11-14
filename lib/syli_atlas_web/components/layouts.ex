@@ -309,6 +309,17 @@ defmodule SyliAtlasWeb.Layouts do
         short: rated && gettext("%{n} rated", n: rated)
       },
       %{
+        key: :national,
+        group: :theme,
+        new: true,
+        current: [:national],
+        label: gettext("National figures"),
+        href: Paths.national(locale),
+        description:
+          gettext("Official figures next to the IMF's · Africa's GDP, country by country"),
+        short: nil
+      },
+      %{
         key: :regions,
         group: :theme,
         new: false,
@@ -392,6 +403,8 @@ defmodule SyliAtlasWeb.Layouts do
             <path d="M4 19l5-6 4 3 7-9" /><path d="M15 7h5v5" />
           <% :currencies -> %>
             <circle cx="9" cy="9" r="5" /><path d="M14.5 9.5a5 5 0 1 1-4.9 5.9" />
+          <% :national -> %>
+            <path d="M4 20V9l8-5 8 5v11" /><path d="M9 20v-6h6v6" /><path d="M4 9h16" />
           <% :compare -> %>
             <path d="M5 20V10M12 20V4M19 20v-7" />
           <% _ -> %>

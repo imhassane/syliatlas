@@ -298,3 +298,35 @@ a.entity-kpi:focus-visible { outline: 2px solid var(--accent); outline-offset: -
 /* One line under the tabs and the period together. */
 .tab-bar-row { border-bottom: 1px solid var(--border); }
 .tab-bar-row .tab-nav { border-bottom: 0; }
+
+/* National figures (SyliAtlas.National): official marks on charts, never
+   joined to the IMF line; the « being checked » ones hatched. */
+.chart .national-mark { fill: var(--c2); stroke: var(--card); stroke-width: 2; }
+.chart .national-mark.is-wait { fill: var(--warning-bg); stroke: var(--c2); stroke-width: 2.2; }
+.chart-tip-diamond { width: 9px; height: 9px; flex: none; margin: 0 1px; transform: rotate(45deg); background: var(--c2); forced-color-adjust: none; }
+.chart-tip-status { align-self: flex-start; }
+.national-notice { margin-top: 12px; padding: 14px 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; width: fit-content; max-width: min(46rem, 100%); }
+.national-notice p { margin: 0; flex: 1 1 22rem; font-size: 15px; line-height: 1.5; }
+.national-figures { margin-bottom: 24px; }
+.national-card { padding: 20px 22px; display: flex; flex-direction: column; gap: 8px; }
+.national-line { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.national-src { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-subtle); }
+.national-val { font-size: 28px; font-weight: 300; letter-spacing: -.02em; }
+.national-sep { border: 0; border-top: 1px solid var(--border-faint); margin: 4px 0; width: 100%; }
+.national-sum { padding-top: 12px; border-top: 1px solid var(--border-faint); }
+.national-sum-total { font-size: 28px; font-weight: 300; letter-spacing: -.02em; }
+.national-bar { position: relative; display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--muted); }
+.national-bar-nat { background: var(--c2); }
+.national-bar-imf { flex: 1; background: var(--border-strong); }
+.national-bar-wait { background: repeating-linear-gradient(135deg, var(--c2) 0 4px, var(--warning-bg) 4px 8px); }
+.national-wait { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0; }
+.national-row-wait { background: var(--warning-bg); }
+.map-pending { fill: url(#map-pending-hatch); stroke: var(--map-edge); stroke-width: 2; pointer-events: none; }
+.map-national { padding-top: 12px; border-top: 1px solid var(--border-faint); }
+.map-national .national-val { font-size: 22px; }
+@media (forced-colors: active) {
+  .chart .national-mark { fill: CanvasText; }
+  .national-bar-nat, .national-bar-wait { background: Highlight; }
+}
+.national-stats { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.map-national [hidden] { display: none !important; }
