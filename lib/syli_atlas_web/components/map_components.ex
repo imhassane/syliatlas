@@ -200,7 +200,7 @@ defmodule SyliAtlasWeb.MapComponents do
         </div>
         <div class="stack gap-1">
           <span class="big map-panel-change" data-field="gdp" data-value={@c["gdp"]}>
-            {Format.value(@c["gdp"], "gdp_usd_bn", @locale)}
+            {Format.money_value(@c["gdp"], "gdp_usd_bn", @locale, @to)}
           </span>
           <span class="muted small" data-field="gdp-label">
             {if @c["gdp_source"] == "national",
@@ -211,7 +211,7 @@ defmodule SyliAtlasWeb.MapComponents do
         <div class="map-national stack gap-1" data-field="national">
           <span class="national-src">{gettext("Official GDP")}</span>
           <span class="national-val num" data-field="national-value" hidden={!@national}>
-            {@national && @national.value}
+            {@national && Format.money_value(@national.amount, "gdp_usd_bn", @locale, @national.year)}
           </span>
           <span class="small muted" data-field="national-period" hidden={!@national}>
             {@national && @national.period}
@@ -372,6 +372,8 @@ defmodule SyliAtlasWeb.MapComponents do
       f ->
         %{
           value: Format.value(f["value"], "gdp_usd_bn", locale),
+          amount: f["value"],
+          year: f["year"],
           period: SyliAtlasWeb.NationalComponents.period_text(f),
           # Only a figure being checked carries a badge.
           status:

@@ -4,6 +4,8 @@
 // the country in the panel instead (a bottom sheet on phones), the
 // indicator switch recolours the map, and the arrows walk the ranking.
 
+import {moneySpan, refreshMoney} from "./money"
+
 const phone = matchMedia("(max-width: 39.99rem)")
 
 export function initMap() {
@@ -57,7 +59,7 @@ export function initMap() {
     field("name").textContent = c.name
     field("meta").textContent = c.meta
     const gdp = field("gdp")
-    gdp.textContent = c.text.gdp
+    setMoney(gdp, c.gdp, data.to, c.text.gdp)
     for (const [name, key] of [["gdp-change", "gdp_change"]]) {
       const el = field(name)
       el.textContent = c.text[key]
@@ -84,6 +86,13 @@ export function initMap() {
     if (open && phone.matches && panel.showPopover && !panel.matches(":popover-open")) panel.showPopover()
   }
 
+  // A GDP in billions of dollars the currency menu rewrites.
+  function setMoney(el, billions, year, text) {
+    if (typeof billions !== "number") { el.textContent = text; return }
+    el.replaceChildren(moneySpan(billions * 1e9, "USD", year, text))
+    refreshMoney()
+  }
+
   // The country's latest official GDP (MapComponents.national_text/3).
   function fillNational(c) {
     if (!field("national")) return
@@ -94,7 +103,7 @@ export function initMap() {
     field("national-none").hidden = !!n
     if (field("gdp-label") && c.gdp_label) field("gdp-label").textContent = c.gdp_label
     if (!n) return
-    field("national-value").textContent = n.value
+    setMoney(field("national-value"), n.amount, n.year, n.value)
     field("national-period").textContent = n.period
     const status = field("national-status")
     status.textContent = n.status || ""

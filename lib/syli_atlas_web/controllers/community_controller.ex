@@ -115,6 +115,9 @@ defmodule SyliAtlasWeb.CommunityController do
         summary: s,
         members: members,
         others: Enum.reject(Communities.all(), &(&1.code == community.code)),
+        national_doc: SyliAtlas.National.document(),
+        national_group:
+          SyliAtlas.National.group(SyliAtlas.National.document(), community.members, @year),
         year: @year,
         answer: answer,
         edition: edition([s])

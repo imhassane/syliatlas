@@ -55,7 +55,10 @@
   </.section>
 
   <.section class="tab-intro">
-    <p class="lead" data-answer>{@answer}</p>
+    <div class="stack gap-3">
+      <p class="lead" data-answer>{@answer}</p>
+      <NationalComponents.group_sum group={@national_group} locale={@locale} />
+    </div>
   </.section>
 
   <.section>
@@ -72,6 +75,16 @@
         </:head>
         <:col :let={m} label={gettext("GDP %{year}", year: @year)}>
           {money_value(m.gdp, "gdp_usd_bn", @locale, @year)}
+          <% nat = member_national(@national_doc, m.code, @year) %>
+          <span :if={nat} class="national-cell small">
+            {gettext("Official · %{period}", period: nat["period"])} : {money_value(
+              nat["value"],
+              "gdp_usd_bn",
+              @locale,
+              nat["year"]
+            )}
+            <NationalComponents.status_badge figure={nat} />
+          </span>
         </:col>
         <:col :let={m} label={gettext("Growth")}>
           <span class={tone(m.growth, "real_gdp_growth")}>{value(
