@@ -106,4 +106,38 @@ defmodule SyliAtlasWeb.NationalPagesTest do
     refute text(doc(build_conn(), "/fr/pays/ethiopie/economie"), "#national-card-gdp_usd_bn") =~
              "201,4"
   end
+
+  test "national amounts are money spans the reader's currency rewrites", %{conn: conn} do
+    d = doc(conn, "/fr/pays/ethiopie/economie")
+    assert count(d, "#national-card-gdp_usd_bn [data-money][data-year=\"2025\"]") == 2
+
+    home = doc(conn, "/fr")
+    # The sum and the sum after review, inside the sentence, escaped around.
+    assert count(home, "#national-sum [data-money]") == 2
+    assert text(home, "#national-sum .national-wait") =~ "Une fois vérifié, la somme passera à"
+
+    assert count(doc(conn, "/fr/chiffres-nationaux"), "main [data-money]") > 50
+  end
+
+  test "regions, the continent and communities show the sum of national figures", %{conn: conn} do
+    east = doc(conn, "/fr/regions/afrique-de-l-est")
+    assert text(east, "#national-group") =~ "Somme des chiffres nationaux"
+    # Ethiopia is being checked: the sum after review goes up.
+    assert text(east, "#national-group .national-wait") =~ "En cours de vérification"
+    assert count(east, "#national-group [data-money]") == 3
+
+    west = doc(conn, "/fr/regions/afrique-de-l-ouest")
+    assert text(west, "#national-group") =~ "Somme des chiffres nationaux"
+    assert count(west, "#national-group .national-wait") == 0
+
+    community = doc(conn, "/fr/communautes/cedeao")
+    assert text(community, "#national-group") =~ "au chiffre FMI (repli)"
+  end
+
+  test "the sum of a group of countries takes the IMF figure as fallback" do
+    group = National.group(National.document(), ["ETH", "KEN"], 2025)
+    assert group["pending"] == ["ETH"]
+    assert group["national_total"] == group["imf_total"]
+    assert group["after_review_total"] > group["imf_total"]
+  end
 end

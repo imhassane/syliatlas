@@ -221,6 +221,44 @@ defmodule SyliAtlas.National do
   def africa(nil, _year), do: nil
   def africa(doc, year), do: get_in(doc, ["africa", Integer.to_string(year)])
 
+  @doc """
+  The same sum for a group of countries (a region, a community): each
+  member's counted official GDP of the year, else the IMF's. Read from the
+  African rows of the document, so it costs no query. Nil without document.
+  """
+  def group(doc, codes, year) do
+    case africa(doc, year) do
+      nil ->
+        nil
+
+      %{"rows" => rows} ->
+        members = MapSet.new(codes)
+        rows = Enum.filter(rows, &MapSet.member?(members, &1["code"]))
+        sum = fn key -> rows |> Enum.map(& &1[key]) |> Enum.filter(&is_number/1) |> Enum.sum() end
+        imf_total = sum.("imf")
+        national_total = sum.("retained")
+        pending = Enum.filter(rows, &is_number(&1["pending"]))
+
+        after_review =
+          national_total + Enum.reduce(pending, 0, &(&1["pending"] - (&1["retained"] || 0) + &2))
+
+        pct = fn a, b -> if is_number(b) and b != 0, do: Float.round((a / b - 1) * 100, 1) end
+
+        %{
+          "year" => year,
+          "imf_total" => Float.round(imf_total * 1.0, 1),
+          "national_total" => Float.round(national_total * 1.0, 1),
+          "gap_pct" => pct.(national_total, imf_total),
+          "counted" => Enum.count(rows, &(&1["source"] == "national")),
+          "fallback" => Enum.count(rows, &(&1["source"] == "imf")),
+          "pending" => Enum.map(pending, & &1["code"]),
+          "after_review_total" => if(pending != [], do: Float.round(after_review * 1.0, 1)),
+          "after_review_gap_pct" => if(pending != [], do: pct.(after_review, imf_total)),
+          "members" => length(rows)
+        }
+    end
+  end
+
   @doc "Is the stored document missing or of an older format than the code?"
   def stale? do
     case load_document() do

@@ -2,6 +2,7 @@ defmodule SyliAtlasWeb.NationalHTML do
   use SyliAtlasWeb, :html
 
   alias SyliAtlasWeb.Format
+  alias SyliAtlasWeb.NationalComponents
 
   embed_templates "national_html/*"
 

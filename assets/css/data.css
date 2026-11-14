@@ -330,3 +330,7 @@ a.entity-kpi:focus-visible { outline: 2px solid var(--accent); outline-offset: -
 }
 .national-stats { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
 .map-national [hidden] { display: none !important; }
+.national-group { margin-top: 12px; padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; width: fit-content; max-width: min(46rem, 100%); }
+.national-group-cols { display: flex; flex-wrap: wrap; gap: 12px 40px; }
+.national-group .national-val { font-size: 24px; }
+.national-cell { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 4px; color: var(--ink-muted); }

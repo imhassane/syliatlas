@@ -34,6 +34,10 @@
 @media (max-width: 760px) {
   .cur-btn { padding-inline: 8px; gap: 4px; }
   .cur-btn .cur-mark { display: none; }
+  /* "As published" is a word, not a code: on a phone the mark stands for it
+     (the word stays for screen readers) so the header keeps to the width. */
+  .cur-menu[data-shown="ORIG"] .cur-btn .cur-mark { display: inline-flex; }
+  .cur-menu[data-shown="ORIG"] [data-cur-label] { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .site-header .brand b { white-space: nowrap; }
   /* On a phone the list opens as a sheet at the bottom of the screen. */
   .cur-pop { position: fixed; inset: auto 12px max(12px, env(safe-area-inset-bottom)) 12px; top: auto; width: auto; max-width: none; z-index: 90; }

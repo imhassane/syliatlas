@@ -91,8 +91,9 @@ defmodule SyliAtlasWeb.NationalComponents do
           figure: fig,
           value_text:
             if(ind == "gdp_per_capita",
-              do: Format.value(fig["per_capita"], "gdp_per_capita_usd", assigns.locale),
-              else: Format.value(fig["value"], ind, assigns.locale)
+              do:
+                Format.money_value(fig["per_capita"], "gdp_per_capita_usd", assigns.locale, year),
+              else: Format.money_value(fig["value"], ind, assigns.locale, year)
             ),
           per_capita?: ind == "gdp_per_capita"
         }
@@ -111,7 +112,7 @@ defmodule SyliAtlasWeb.NationalComponents do
           <p class="eyebrow">{c.label} · {c.year}</p>
           <div class="national-line">
             <span class="national-src">{gettext("IMF")}</span>
-            <span class="national-val num">{Format.value(c.imf, c.imf_key, @locale)}</span>
+            <span class="national-val num">{Format.money_value(c.imf, c.imf_key, @locale, c.year)}</span>
           </div>
           <span class="small muted">{gettext("World Economic Outlook, comparable between countries")}</span>
           <hr class="national-sep" />
@@ -185,10 +186,79 @@ defmodule SyliAtlasWeb.NationalComponents do
   def plain_pct(nil, _locale), do: "—"
   def plain_pct(v, locale), do: Format.number(v * 1.0, 1, locale) <> "\u00A0%"
 
+  @doc """
+  Puts safe HTML (money spans) into a translated sentence: the sentence
+  is translated with `"\\u0000name\\u0000"` markers, then each marker is
+  replaced by its value and the text around it is escaped.
+  """
+  def rich(text, values) do
+    text
+    |> String.split("\u0000")
+    |> Enum.with_index()
+    |> Enum.map(fn
+      {part, i} when rem(i, 2) == 1 -> Keyword.fetch!(values, String.to_existing_atom(part))
+      {part, _} -> Phoenix.HTML.html_escape(part)
+    end)
+    |> then(&{:safe, Enum.map(&1, fn v -> Phoenix.HTML.Safe.to_iodata(v) end)})
+  end
+
   def signed_pct(nil, _locale), do: "—"
 
   def signed_pct(v, locale),
     do: if(v > 0, do: "+", else: "") <> Format.number(v * 1.0, 1, locale) <> " %"
+
+  attr :group, :map, default: nil, doc: "SyliAtlas.National.group/3"
+  attr :locale, :string, required: true
+  attr :id, :string, default: "national-group"
+
+  @doc """
+  A group's GDP twice (a region, a community, the continent): the sum of the
+  members' IMF figures and the sum of their national figures, with what it
+  uses and the figures being checked.
+  """
+  def group_sum(assigns) do
+    ~H"""
+    <div :if={@group && @group["members"] > 0} class="card national-group" id={@id}>
+      <div class="national-group-cols">
+        <div class="stack gap-1">
+          <span class="national-src">{gettext("GDP %{year} · IMF", year: @group["year"])}</span>
+          <span class="national-val num">
+            {Format.money_value(@group["imf_total"], "gdp_usd_bn", @locale, @group["year"])}
+          </span>
+        </div>
+        <div class="stack gap-1">
+          <span class="national-src">{gettext("Sum of national figures")}</span>
+          <span class="national-val num">
+            {Format.money_value(@group["national_total"], "gdp_usd_bn", @locale, @group["year"])}
+          </span>
+        </div>
+      </div>
+      <p class="small muted">
+        {ngettext(
+          "1 country with its official figure",
+          "%{count} countries with their official figure",
+          @group["counted"]
+        )} · {ngettext(
+          "1 with the IMF figure (fallback)",
+          "%{count} with the IMF figure (fallback)",
+          @group["fallback"]
+        )}
+      </p>
+      <p :if={@group["after_review_total"]} class="small national-wait">
+        <span class="pill pill-warn">{gettext("Being checked")}</span>
+        {rich(
+          gettext("Once checked, the sum will be %{total} (%{gap} from the IMF).",
+            total: "\u0000total\u0000",
+            gap: signed_pct(@group["after_review_gap_pct"], @locale)
+          ),
+          total:
+            Format.money_value(@group["after_review_total"], "gdp_usd_bn", @locale, @group["year"])
+        )}
+      </p>
+      <a class="small" href={Paths.national(@locale)}>{gettext("The total, country by country")} →</a>
+    </div>
+    """
+  end
 
   attr :africa, :map, default: nil
   attr :locale, :string, required: true
@@ -200,7 +270,7 @@ defmodule SyliAtlasWeb.NationalComponents do
       <div class="stack gap-1">
         <span class="small muted">{gettext("Sum of national figures")}</span>
         <span class="num national-sum-total">
-          {Format.value(@africa["national_total"], "gdp_usd_bn", @locale)}
+          {Format.money_value(@africa["national_total"], "gdp_usd_bn", @locale, @africa["year"])}
         </span>
       </div>
       <div
@@ -231,9 +301,13 @@ defmodule SyliAtlasWeb.NationalComponents do
       </p>
       <p :if={@africa["after_review_total"]} class="small national-wait">
         <span class="pill pill-warn">{gettext("Being checked")}</span>
-        {gettext("Once checked, the sum will be %{total} (%{gap} from the IMF).",
-          total: Format.value(@africa["after_review_total"], "gdp_usd_bn", @locale),
-          gap: signed_pct(@africa["after_review_gap_pct"], @locale)
+        {rich(
+          gettext("Once checked, the sum will be %{total} (%{gap} from the IMF).",
+            total: "\u0000total\u0000",
+            gap: signed_pct(@africa["after_review_gap_pct"], @locale)
+          ),
+          total:
+            Format.money_value(@africa["after_review_total"], "gdp_usd_bn", @locale, @africa["year"])
         )}
       </p>
       <a class="small" href={Paths.national(@locale)}>{gettext("The total, country by country")} →</a>

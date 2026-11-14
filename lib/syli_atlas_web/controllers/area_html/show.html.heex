@@ -72,6 +72,7 @@
         </p>
         <.source_line edition={@profile["edition"]} locale={@locale} />
         <NationalComponents.rebasing_notice entry={@national} locale={@locale} />
+        <NationalComponents.group_sum group={@national_group} locale={@locale} />
       </div>
     </section>
     <%= if @area.kind != "country" do %>

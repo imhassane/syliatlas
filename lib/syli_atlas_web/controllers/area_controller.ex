@@ -72,8 +72,20 @@ defmodule SyliAtlasWeb.AreaController do
         |> Enum.sort_by(&(-(&1["value"] || -999)))
       end
 
-    national =
-      if country?, do: SyliAtlas.National.for_country(SyliAtlas.National.document(), area.code)
+    national_doc = SyliAtlas.National.document()
+    national = if country?, do: SyliAtlas.National.for_country(national_doc, area.code)
+
+    # A region or the continent: the sum of its members' national figures.
+    national_group =
+      if area.kind in ["region", "continent"] do
+        codes =
+          for a <- Geo.list_areas(),
+              a.kind == "country",
+              area.kind == "continent" or a.region_code == area.code,
+              do: a.code
+
+        SyliAtlas.National.group(national_doc, codes, to)
+      end
 
     ratings = if country?, do: SyliAtlas.Ratings.document()
     rating = SyliAtlas.Ratings.for_country(ratings, area.code)
@@ -186,6 +198,7 @@ defmodule SyliAtlasWeb.AreaController do
       market: market,
       rating: rating,
       national: national,
+      national_group: national_group,
       climate: climate,
       rated: (ratings && ratings["rated"]) || 0,
       comparison: comparison,

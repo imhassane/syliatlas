@@ -22,15 +22,22 @@
     <dl :if={@africa} class="stats national-stats" id="national-stats">
       <div>
         <dt>{gettext("IMF")}</dt>
-        <dd class="big num">{Format.value(@africa["imf_total"], "gdp_usd_bn", @locale)}</dd>
+        <dd class="big num">
+          {Format.money_value(@africa["imf_total"], "gdp_usd_bn", @locale, @year)}
+        </dd>
         <dd class="small muted">{gettext("World Economic Outlook")}</dd>
       </div>
       <div>
         <dt>{gettext("Sum of national figures")}</dt>
-        <dd class="big num">{Format.value(@africa["national_total"], "gdp_usd_bn", @locale)}</dd>
+        <dd class="big num">
+          {Format.money_value(@africa["national_total"], "gdp_usd_bn", @locale, @year)}
+        </dd>
         <dd :if={@africa["after_review_total"]} class="small muted">
-          {gettext("%{total} once the figures being checked are confirmed",
-            total: Format.value(@africa["after_review_total"], "gdp_usd_bn", @locale)
+          {NationalComponents.rich(
+            gettext("%{total} once the figures being checked are confirmed",
+              total: "\u0000total\u0000"
+            ),
+            total: Format.money_value(@africa["after_review_total"], "gdp_usd_bn", @locale, @year)
           )}
         </dd>
       </div>
@@ -78,20 +85,20 @@
                 <span :if={!r["slug"]}>{r["name"] || r["code"]}</span>
               </th>
               <td data-label={gettext("IMF")} class="num">
-                {Format.value(r["imf"], "gdp_usd_bn", @locale)}
+                {Format.money_value(r["imf"], "gdp_usd_bn", @locale, @year)}
               </td>
               <td data-label={gettext("Official")} class="num">
                 <%= cond do %>
                   <% r["national"] -> %>
-                    {Format.value(r["national"], "gdp_usd_bn", @locale)}
+                    {Format.money_value(r["national"], "gdp_usd_bn", @locale, @year)}
                   <% r["pending"] -> %>
-                    {Format.value(r["pending"], "gdp_usd_bn", @locale)}
+                    {Format.money_value(r["pending"], "gdp_usd_bn", @locale, @year)}
                   <% true -> %>
                     <span class="subtle">—</span>
                 <% end %>
               </td>
               <td data-label={gettext("Used")} class="num">
-                {Format.value(r["retained"], "gdp_usd_bn", @locale)}
+                {Format.money_value(r["retained"], "gdp_usd_bn", @locale, @year)}
               </td>
               <td data-label={gettext("Source used")} class="l">
                 <%= cond do %>
@@ -111,10 +118,12 @@
           <tfoot>
             <tr>
               <th scope="row" class="l">{gettext("Total")}</th>
-              <td class="num">{Format.value(@africa["imf_total"], "gdp_usd_bn", @locale)}</td>
+              <td class="num">
+                {Format.money_value(@africa["imf_total"], "gdp_usd_bn", @locale, @year)}
+              </td>
               <td></td>
               <td class="num">
-                {Format.value(@africa["national_total"], "gdp_usd_bn", @locale)}
+                {Format.money_value(@africa["national_total"], "gdp_usd_bn", @locale, @year)}
               </td>
               <td></td>
             </tr>

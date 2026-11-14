@@ -303,6 +303,7 @@ defmodule SyliAtlasWeb.Charts do
     %{
       label: label,
       text: text,
+      money: money(nat["value"], assigns.indicator, nat["year"]),
       status: status,
       wait: nat["status"] == "pending_review",
       y: Float.round(g.y.(nat["value"]) * 1.0, 1),
@@ -316,6 +317,12 @@ defmodule SyliAtlasWeb.Charts do
 
   defp fmt_n(n), do: Float.round(n * 1.0, 1)
 
+  # Amounts in dollars the currency menu rewrites (SyliAtlasWeb.Money);
+  # rates and percentages stay as they are.
+  defp money(v, "gdp_usd_bn", year) when is_number(v), do: %{amount: v * 1.0e9, year: year}
+  defp money(v, "gdp_per_capita_usd", year) when is_number(v), do: %{amount: v * 1.0, year: year}
+  defp money(_v, _indicator, _year), do: nil
+
   defp tip_rows(assigns, g, i) do
     for s <- assigns.series do
       v = Enum.at(s.values, i)
@@ -324,7 +331,8 @@ defmodule SyliAtlasWeb.Charts do
         name: s.name,
         color: s.color,
         y: if(is_number(v), do: Float.round(g.y.(v) * 1.0, 1)),
-        text: Format.value(v, assigns.indicator, assigns.locale)
+        text: Format.value(v, assigns.indicator, assigns.locale),
+        money: money(v, assigns.indicator, i + @first)
       }
     end
   end
