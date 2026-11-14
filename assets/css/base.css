@@ -175,6 +175,8 @@ p { margin: 0; }
 .section-alt { background: var(--alt); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
 .section-deep { background: var(--deep); color: var(--on-deep); }
 .section-deep .eyebrow { color: var(--accent-on-deep); }
+/* Links on the deep band: the light accent (indigo on navy fails, 2.4:1). */
+.section-deep a { color: var(--accent-on-deep); }
 .section-head { display: flex; flex-direction: column; gap: 16px; max-width: 780px; margin-bottom: 48px; }
 .page-head { padding: 40px 0 48px; background: var(--alt); border-bottom: 1px solid var(--border); }
 .feature { background: var(--deep-raised); border-radius: 8px; padding: 32px; display: flex; flex-direction: column; gap: 12px; }
