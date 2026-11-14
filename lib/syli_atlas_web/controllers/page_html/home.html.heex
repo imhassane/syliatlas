@@ -28,7 +28,13 @@
         to={@to}
         locale={@locale}
         national={SyliAtlas.National.africa(@national, @to)}
-        waiting={SyliAtlasWeb.NationalComponents.waiting(@national, @to, @locale)}
+        waiting={
+          SyliAtlasWeb.NationalComponents.waiting(
+            @national,
+            @to,
+            Map.new(@map_countries, &{&1["code"], &1["name"]})
+          )
+        }
       />
     </div>
   </section>
