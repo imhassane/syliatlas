@@ -290,21 +290,47 @@ defmodule SyliAtlasWeb.NationalComponents do
   attr :locale, :string, required: true
   attr :waiting, :list, default: [], doc: "see waiting/3"
 
-  @doc "The sum of national figures in the home window (canvas « Accueil · PIB »)."
+  attr :imf, :any,
+    default: nil,
+    doc:
+      "Africa's IMF GDP of the year: shown beside the sum (home hero, canvas « La carte en vitrine »)"
+
+  @doc """
+  The sum of national figures (canvas « Accueil · PIB »). With `imf`, the
+  IMF's total and the sum stand side by side, as in the home hero.
+  """
   def africa_sum(assigns) do
     ~H"""
-    <div :if={@africa} class="national-sum stack gap-3" id="national-sum">
-      <div class="stack gap-1">
+    <div
+      :if={@africa}
+      class={["national-sum stack gap-3", @imf && "card national-sum-hero"]}
+      id="national-sum"
+    >
+      <div :if={@imf} class="national-sum-pair">
+        <div class="stack gap-1">
+          <span class="national-src">{gettext("GDP of Africa %{year} · IMF", year: @africa["year"])}</span>
+          <span class="num national-sum-total">
+            {Format.money_value(@imf, "gdp_usd_bn", @locale, @africa["year"])}
+          </span>
+        </div>
+        <div class="stack gap-1">
+          <span class="national-src">{gettext("Sum of national figures")}</span>
+          <span class="num national-sum-total">
+            {Format.money_value(@africa["national_total"], "gdp_usd_bn", @locale, @africa["year"])}
+          </span>
+        </div>
+      </div>
+      <div :if={!@imf} class="stack gap-1">
         <span class="national-src">{gettext("Sum of national figures")}</span>
         <span class="num national-sum-total">
           {Format.money_value(@africa["national_total"], "gdp_usd_bn", @locale, @africa["year"])}
         </span>
-        <span class="small muted">
-          {gettext(
-            "Official figure checked when the country publishes one, otherwise the IMF's for the same year"
-          )}
-        </span>
       </div>
+      <span class="small muted">
+        {gettext(
+          "Official figure checked when the country publishes one, otherwise the IMF's for the same year"
+        )}
+      </span>
       <div class="stack gap-2">
         <div
           class="national-bar"

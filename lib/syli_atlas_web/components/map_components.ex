@@ -133,10 +133,202 @@ defmodule SyliAtlasWeb.MapComponents do
   attr :rated, :integer, default: 0
   attr :national, :map, default: nil, doc: "the country's latest official GDP (national_text/3)"
 
+  attr :dialog, :boolean,
+    default: false,
+    doc: "home hero: a <dialog> in the left column from 64rem, a modal drawer below (map.js)"
+
+  attr :open, :boolean, default: false, doc: "dialog: shown at load (a country asked in the URL)"
+
   @doc """
   The selected country. Each value carries `data-field` so the script can
-  refill it; the panel is a popover, shown inline from 40rem (`.sheet`).
+  refill it. In the section, the panel is a popover, shown inline from
+  40rem (`.sheet`). In the hero (`dialog`), it is a `<dialog>`: from 64rem
+  it takes the place of the hero's left column when a country is touched
+  (« Toute l'Afrique » brings the column back); below, a modal drawer. Focus
+  goes to the country's name, Escape or the buttons close it, and focus goes
+  back to the country.
   """
+  def map_panel(%{dialog: true} = assigns) do
+    c = assigns.country
+
+    assigns =
+      assign(assigns, spark: Spark.paths(c["series"] || [], assigns.from, assigns.to), c: c)
+
+    ~H"""
+    <dialog
+      id="map-panel"
+      class="card map-panel map-panel-hero"
+      open={@open}
+      aria-labelledby="map-panel-name"
+    >
+      <button type="button" class="btn btn-quiet map-back js-only" data-map-close>
+        <svg
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          aria-hidden="true"
+        ><path d="M15 6l-6 6 6 6"></path></svg>
+        {gettext("All of Africa")}
+      </button>
+      <div class="map-drawer-head">
+        <span class="sheet-handle" aria-hidden="true"></span>
+      </div>
+      <div class="map-panel-body" data-map-body>
+        <div class="map-panel-title">
+          <div class="stack gap-1">
+            <p class="eyebrow" data-field="meta">{meta(@c)}</p>
+            <h2 id="map-panel-name" class="map-panel-name" data-field="name" tabindex="-1">
+              {@c["name"]}
+            </h2>
+          </div>
+          <button
+            type="button"
+            class="icon-btn map-close"
+            data-map-close
+            aria-label={gettext("Close the figures")}
+          >
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              aria-hidden="true"
+            ><path d="M6 6l12 12M18 6 6 18"></path></svg>
+          </button>
+        </div>
+        <span class="pill p-info map-panel-indicator" data-field="indicator">
+          {MapScale.title(@indicator, @from, @to)} : {MapScale.value_text(@indicator, @c, @locale)}
+        </span>
+        <div class="map-panel-figures">
+          <div class="stack gap-1">
+            <span class="national-src" data-field="gdp-label" data-short>
+              {gdp_short(@c, @to)}
+            </span>
+            <span class="num map-panel-gdp" data-field="gdp" data-value={@c["gdp"]}>
+              {Format.money_value(@c["gdp"], "gdp_usd_bn", @locale, @to)}
+            </span>
+          </div>
+          <div class="map-national stack gap-1" data-field="national">
+            <span class="national-src">{gettext("Official GDP")}</span>
+            <span class="national-val num" data-field="national-value" hidden={!@national}>
+              {@national &&
+                Format.money_value(@national.amount, "gdp_usd_bn", @locale, @national.year)}
+            </span>
+            <span class="small muted" data-field="national-period" hidden={!@national}>
+              {@national && @national.period}
+            </span>
+            <span
+              data-field="national-status"
+              class={["pill", (@national && @national.status_class) || "pill-neutral"]}
+              hidden={!(@national && @national.status)}
+            >
+              {@national && @national.status}
+            </span>
+            <span class="small muted" data-field="national-none" hidden={@national != nil}>
+              {gettext(
+                "No national figure followed yet: the IMF figure is used in the African total."
+              )}
+            </span>
+          </div>
+        </div>
+        <div class="map-panel-more stack gap-3">
+          <dl class="map-panel-changes single">
+            <div>
+              <dt>{gettext("In dollars since %{year}", year: @from)}</dt>
+              <dd class={Format.tone(@c["gdp_change"], "gdp_usd_bn")} data-field="gdp-change">
+                {Format.change(@c["gdp_change"], "gdp_usd_bn", @locale)}
+              </dd>
+            </div>
+          </dl>
+          <svg
+            viewBox="0 0 260 56"
+            class="spark"
+            role="img"
+            aria-label={gettext("GDP in current dollars, 2015 to 2030")}
+          >
+            <line
+              class="spark-base"
+              data-field="spark-base"
+              x1={@spark.base_x}
+              x2={@spark.base_x}
+              y1="0"
+              y2="56"
+            >
+            </line>
+            <g class="draw" data-field="spark-line">
+              <path class="spark-past" data-field="spark-past" d={@spark.past}></path>
+              <path class="spark-future" data-field="spark-future" d={@spark.future}></path>
+            </g>
+            <circle
+              :if={@spark.dot}
+              class="spark-dot"
+              data-field="spark-dot"
+              cx={elem(@spark.dot, 0)}
+              cy={elem(@spark.dot, 1)}
+              r="4.5"
+            >
+            </circle>
+          </svg>
+          <dl class="kv">
+            <div>
+              <dt>{gettext("GDP per capita %{year}", year: @to)}</dt><dd data-field="gdppc">
+                {Format.value(@c["gdppc"], "gdp_per_capita_usd", @locale)}
+              </dd>
+            </div>
+            <div>
+              <dt>{gettext("Real growth %{year}", year: @to)}</dt><dd data-field="growth">
+                {Format.value(@c["growth"], "real_gdp_growth", @locale)}
+              </dd>
+            </div>
+            <div>
+              <dt>{gettext("Inflation %{year}", year: @to)}</dt><dd data-field="inflation">
+                {Format.value(@c["inflation"], "inflation", @locale)}
+              </dd>
+            </div>
+            <div>
+              <dt>{gettext("Public debt %{year}", year: @to)}</dt><dd data-field="debt">
+                {Format.value(@c["debt"], "public_debt_pct_gdp", @locale)}
+              </dd>
+            </div>
+          </dl>
+          <a class="map-rating" href={Paths.ratings(@locale)} data-field="rating">
+            <span class="map-rating-top">
+              <span class="map-rating-title">{gettext("Sovereign rating")}</span>
+              <b class="num" data-field="rating-label">{rating_text(@rating).label}</b>
+              <span class={["rt-badge", rating_text(@rating).class]} data-field="rating-verdict">
+                {rating_text(@rating).verdict}
+              </span>
+            </span>
+            <span class="small muted" data-field="rating-detail">
+              {rating_text(@rating, @rated).detail}
+            </span>
+          </a>
+        </div>
+      </div>
+      <div class="map-panel-actions">
+        <a
+          class="btn btn-primary grow"
+          data-field="href"
+          href={Paths.area(@locale, "country", @c["slug"])}
+        >
+          {gettext("See the full profile")}<span class="vh" data-field="name-vh"> : {@c["name"]}</span>
+          <span aria-hidden="true">→</span>
+        </a>
+        <a class="btn btn-secondary" data-field="compare" href={Paths.compare(@locale, [@c["slug"]])}>
+          {gettext("Compare")}<span class="vh" data-field="name-vh-compare"> : {@c["name"]}</span>
+        </a>
+      </div>
+    </dialog>
+    """
+  end
+
   def map_panel(assigns) do
     c = assigns.country
 
@@ -316,6 +508,13 @@ defmodule SyliAtlasWeb.MapComponents do
     """
   end
 
+  @doc "« PIB 2025 · FMI »: the hero panel's short GDP label."
+  def gdp_short(c, year) do
+    if c["gdp_source"] == "national",
+      do: gettext("GDP %{year} · official", year: year),
+      else: gettext("GDP %{year} · IMF", year: year)
+  end
+
   @doc "What the panel shows of a country's rating (also sent to the script)."
   def rating_text(entry, rated \\ 0)
 
@@ -465,6 +664,7 @@ defmodule SyliAtlasWeb.MapComponents do
              },
              rating: rating_text(SyliAtlas.Ratings.for_country(ratings, c["code"]), rated),
              national: national_text(national, c["code"], locale, to),
+             gdp_short: gdp_short(c, to),
              gdp_label:
                if(c["gdp_source"] == "national",
                  do: gettext("GDP in current dollars, %{year} (official)", year: to),
@@ -487,7 +687,105 @@ defmodule SyliAtlasWeb.MapComponents do
   attr :national, :map, default: nil, doc: "the national figures document"
   attr :source, :string, default: "imf", doc: "imf or national: which figures colour the map"
 
-  @doc "The home section: indicator switch, map, legend and panel."
+  attr :variant, :string,
+    default: "section",
+    values: ["section", "hero"],
+    doc: "hero: the home's first section (canvas « La carte en vitrine »)"
+
+  @doc """
+  The home section: indicator switch, map, legend and panel. In the hero,
+  the page renders the panel itself (`map_panel` with `dialog`), in the
+  hero's left column.
+  """
+  def map_section(%{variant: "hero"} = assigns) do
+    ~H"""
+    <div
+      class="map-hero"
+      data-map
+      data-drawer="(max-width: 63.99rem)"
+      data-selected={@selected["code"]}
+      data-indicator={@indicator}
+    >
+      <script type="application/json" id="map-data">
+        <%= Phoenix.HTML.raw(json_for_script(client_data(@countries, @from, @to, @locale, @ratings, @national))) %>
+      </script>
+      <div class="map-toolbar">
+        <nav class="seg" aria-label={gettext("Map indicator")}>
+          <a
+            :for={k <- MapScale.keys()}
+            href={"?carte=#{k}#carte"}
+            data-map-indicator={k}
+            aria-current={k == @indicator && "true"}
+          >{MapScale.label(k)}</a>
+        </nav>
+        <nav class="seg" aria-label={gettext("Figures used for the colours")}>
+          <a
+            href={"?carte=#{@indicator}#carte"}
+            aria-current={@source == "imf" && "true"}
+            id="map-source-imf"
+          >{gettext("IMF")}</a>
+          <a
+            href={"?carte=#{@indicator}&source=national#carte"}
+            aria-current={@source == "national" && "true"}
+            id="map-source-national"
+          >{gettext("Official")}</a>
+        </nav>
+      </div>
+      <div class="map-stage">
+        <.africa_map
+          id="africa-map"
+          countries={@countries}
+          indicator={@indicator}
+          selected={@selected["code"]}
+          locale={@locale}
+          label={gettext("Map of Africa: choose a country")}
+          pending={pending_codes(@national)}
+        />
+      </div>
+      <div class="map-hero-foot">
+        <.map_legend key={@indicator} locale={@locale} />
+        <form class="map-goto" action={Paths.search(@locale)} method="get">
+          <label for="map-goto">{gettext("Or choose a country")}</label>
+          <select id="map-goto" name="q" class="select" data-map-goto>
+            <option
+              :for={c <- Enum.sort_by(@countries, &SyliAtlas.Geo.Area.normalize(&1["name"]))}
+              value={c["name"]}
+              data-code={c["code"]}
+              selected={c["code"] == @selected["code"]}
+            >
+              {c["name"]}
+            </option>
+          </select>
+          <button type="submit" class="btn btn-secondary no-js-only">{gettext("Go")}</button>
+        </form>
+        <p :if={pending_codes(@national) != []} class="src map-pending-note">
+          <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle
+            cx="7"
+            cy="7"
+            r="6"
+            class="map-pending-key"
+          >
+          </circle></svg>
+          {if @source == "national",
+            do:
+              gettext(
+                "Colours: official figure once checked, else the IMF's. Hatched dot: an official figure being checked, not counted yet."
+              ),
+            else: gettext("Hatched dot: an official figure being checked (touch the country).")}
+        </p>
+        <p class="src">
+          {gettext(
+            "Islands are marked with a dot. Western Sahara has no separate IMF data. Source: IMF, World Economic Outlook."
+          )}
+          <a href={Paths.ranking_main(@locale)}>{gettext(
+            "The same figures as a table: ranking of the 54 countries"
+          )}</a>
+        </p>
+      </div>
+    </div>
+    """
+  end
+
   def map_section(assigns) do
     ~H"""
     <div class="map-layout" data-map data-selected={@selected["code"]} data-indicator={@indicator}>

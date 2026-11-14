@@ -117,8 +117,8 @@ defmodule SyliAtlasWeb.NationalPagesTest do
 
     home = doc(conn, "/fr")
     # The sum and the sum after review, inside the sentence, escaped around.
-    # The sum, the pending figure, the sum after review and the difference.
-    assert count(home, "#national-sum [data-money]") == 4
+    # The IMF total, the sum, the pending figure, the sum after review, the difference.
+    assert count(home, "#national-sum [data-money]") == 5
     assert text(home, "#national-sum .national-wait") =~ "Une fois vérifié, la somme passera à"
 
     assert count(doc(conn, "/fr/chiffres-nationaux"), "main [data-money]") > 50

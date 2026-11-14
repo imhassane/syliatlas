@@ -57,6 +57,8 @@ defmodule SyliAtlasWeb.PageController do
           regions: home["regions"],
           map_countries: map_countries,
           map_selected: map_selected,
+          # A country asked in the URL opens its panel at load.
+          map_asked: map_selected != nil and map_selected["code"] == params["pays"],
           map_from: map["from"],
           map_to: map["to"],
           map_indicator:
