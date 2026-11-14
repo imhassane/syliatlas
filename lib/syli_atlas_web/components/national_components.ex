@@ -262,18 +262,13 @@ defmodule SyliAtlasWeb.NationalComponents do
 
   @doc """
   The countries whose official GDP of `year` is being checked, for the home
-  window: name, amount, period and the date of their rebasing if any.
+  window: name, amount and the date of their rebasing if any. `names`
+  (code → name) comes from the page's snapshot: no query.
   """
-  def waiting(doc, year, locale) do
+  def waiting(doc, year, names) do
     case National.africa(doc, year) do
       %{"rows" => rows} ->
         codes = for r <- rows, is_number(r["pending"]), do: r
-
-        names =
-          if codes == [],
-            do: %{},
-            else:
-              Map.new(SyliAtlas.Geo.list_areas(), &{&1.code, SyliAtlas.Geo.Area.name(&1, locale)})
 
         for r <- codes do
           rebasing = get_in(doc, ["countries", r["code"], "rebasing"])
