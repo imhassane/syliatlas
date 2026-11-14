@@ -41,6 +41,10 @@ defmodule SyliAtlasWeb.Charts do
   attr :label, :string, required: true
   attr :source, :string, default: nil, doc: "source line of the tooltip"
 
+  attr :national, :list,
+    default: [],
+    doc: "official figures of the first series' country: maps with year, value, period, status"
+
   attr :pick, :boolean,
     default: true,
     doc: "the tooltip offers to make the year the end of the period (?to=)"
@@ -115,9 +119,20 @@ defmodule SyliAtlasWeb.Charts do
     g = geometry(assigns, Map.fetch!(@sizes, assigns.size))
     tips = tips(assigns, g)
 
+    marks =
+      for n <- Map.get(assigns, :national, []),
+          is_number(n["value"]) and n["year"] in @first..@last do
+        %{
+          x: fmt_n(g.x.(n["year"])),
+          y: fmt_n(g.y.(n["value"])),
+          wait: n["status"] == "pending_review"
+        }
+      end
+
     assigns =
       assign(assigns,
         g: g,
+        marks: marks,
         tips: tips,
         tips_json: Jason.encode!(tips),
         start: Enum.at(tips.points, tips.start)
@@ -167,6 +182,17 @@ defmodule SyliAtlasWeb.Charts do
             class="series future"
             d={path(s.values, @g, @estimate_from, @g.last)}
             style={"stroke: var(#{s.color}); stroke-width: #{if s[:strong], do: 3, else: 2}"}
+          />
+        </g>
+        <g :if={@marks != []} class="national-marks" aria-hidden="true">
+          <rect
+            :for={m <- @marks}
+            class={["national-mark", m.wait && "is-wait"]}
+            x={m.x - 5}
+            y={m.y - 5}
+            width="10"
+            height="10"
+            transform={"rotate(45 #{m.x} #{m.y})"}
           />
         </g>
         <text
@@ -228,7 +254,10 @@ defmodule SyliAtlasWeb.Charts do
             [] -> nil
           end
 
+        nat = Enum.find(Map.get(assigns, :national, []), &(&1["year"] == year))
+
         %{
+          national: nat && national_tip(nat, assigns, g),
           year: year,
           x: Float.round(g.x.(year) * 1.0, 1),
           title: Integer.to_string(year),
@@ -245,7 +274,7 @@ defmodule SyliAtlasWeb.Charts do
               year: year,
               status: String.downcase(status),
               values: Enum.map_join(rows, "; ", &"#{&1.name} #{&1.text}")
-            )
+            ) <> if(nat, do: "; " <> national_tip(nat, assigns, g).spoken, else: "")
         }
       end
 
@@ -265,6 +294,27 @@ defmodule SyliAtlasWeb.Charts do
       points: points
     }
   end
+
+  defp national_tip(nat, assigns, g) do
+    text = Format.value(nat["value"], assigns.indicator, assigns.locale)
+    label = gettext("Official · %{period}", period: nat["period"])
+    status = SyliAtlasWeb.NationalComponents.status_label(nat["status"])
+
+    %{
+      label: label,
+      text: text,
+      status: status,
+      wait: nat["status"] == "pending_review",
+      y: Float.round(g.y.(nat["value"]) * 1.0, 1),
+      spoken:
+        if(nat["status"] == "pending_review",
+          do: "#{label} #{text} (#{String.downcase(status)})",
+          else: "#{label} #{text}"
+        )
+    }
+  end
+
+  defp fmt_n(n), do: Float.round(n * 1.0, 1)
 
   defp tip_rows(assigns, g, i) do
     for s <- assigns.series do
@@ -307,7 +357,10 @@ defmodule SyliAtlasWeb.Charts do
   end
 
   defp geometry(assigns, size) do
-    values = assigns.series |> Enum.flat_map(& &1.values) |> Enum.filter(&is_number/1)
+    values =
+      (Enum.flat_map(assigns.series, & &1.values) ++
+         Enum.map(Map.get(assigns, :national, []), & &1["value"]))
+      |> Enum.filter(&is_number/1)
 
     floor_with =
       if assigns.indicator in ~w(real_gdp_growth inflation fiscal_balance_pct_gdp current_account_pct_gdp),

@@ -4,6 +4,7 @@ defmodule SyliAtlasWeb.AreaHTML do
   alias SyliAtlasWeb.{
     Charts,
     EconomyComponents,
+    NationalComponents,
     ProfileComponents,
     RatingComponents,
     TradeComponents,
@@ -49,6 +50,16 @@ defmodule SyliAtlasWeb.AreaHTML do
 
   defp kpi_value(k, _data, profile, to, locale),
     do: money_value(PublicData.at(profile["series"][k], to), k, locale, to)
+
+  @doc "A country's official figures of an indicator, as marks for the chart (oldest first)."
+  def national_points(nil, _indicator), do: []
+
+  def national_points(entry, indicator) do
+    (entry["figures"][indicator] || %{})
+    |> Map.values()
+    |> Enum.sort_by(& &1["year"])
+    |> Enum.map(&Map.take(&1, ~w(year value period status)))
+  end
 
   @doc "Series embedded in the page so the browser recomputes the period offline."
   def embedded_json(profile) do

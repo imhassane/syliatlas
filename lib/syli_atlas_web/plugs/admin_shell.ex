@@ -25,6 +25,11 @@ defmodule SyliAtlasWeb.Plugs.AdminShell do
         Review.count_pending() +
           Repo.aggregate(from(r in Rating, where: r.needs_check == true), :count),
       updates: SyliAtlas.Admin.Jobs.failures(7),
+      national:
+        Repo.aggregate(
+          from(f in SyliAtlas.National.Figure, where: f.status == "pending_review"),
+          :count
+        ),
       market: Repo.aggregate(from(q in QualityIssue, where: q.status == "open"), :count),
       budgets:
         Repo.aggregate(

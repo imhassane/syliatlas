@@ -1,0 +1,133 @@
+<Layouts.public locale={@locale} current={:national} alternates={@alternates}>
+  <.section id="national-list" tight={:top}>
+    <nav aria-label={gettext("Breadcrumb")}>
+      <ol class="crumbs">
+        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+        <li aria-current="page">{gettext("National figures")}</li>
+      </ol>
+    </nav>
+
+    <div class="stack gap-2">
+      <h1 class="h1">
+        {gettext("Africa's GDP in %{year}: IMF and national figures", year: @year)}
+      </h1>
+      <p class="lead" data-answer>{@answer}</p>
+      <p class="muted">
+        {gettext(
+          "For each country, the sum takes its official figure of the year once checked. When the country publishes none yet (or we do not follow it yet), it takes the IMF's for the same year."
+        )}
+      </p>
+    </div>
+
+    <dl :if={@africa} class="stats national-stats" id="national-stats">
+      <div>
+        <dt>{gettext("IMF")}</dt>
+        <dd class="big num">{Format.value(@africa["imf_total"], "gdp_usd_bn", @locale)}</dd>
+        <dd class="small muted">{gettext("World Economic Outlook")}</dd>
+      </div>
+      <div>
+        <dt>{gettext("Sum of national figures")}</dt>
+        <dd class="big num">{Format.value(@africa["national_total"], "gdp_usd_bn", @locale)}</dd>
+        <dd :if={@africa["after_review_total"]} class="small muted">
+          {gettext("%{total} once the figures being checked are confirmed",
+            total: Format.value(@africa["after_review_total"], "gdp_usd_bn", @locale)
+          )}
+        </dd>
+      </div>
+      <div>
+        <dt>{gettext("National share of the sum")}</dt>
+        <dd class="big num">
+          {Format.number(@africa["national_share_pct"] || 0.0, 0, @locale)} %
+        </dd>
+        <dd class="small muted">
+          {gettext("%{counted} official · %{pending} being checked · %{fallback} IMF fallback",
+            counted: @africa["counted"],
+            pending: length(@africa["pending"]),
+            fallback: @africa["fallback"]
+          )}
+        </dd>
+      </div>
+    </dl>
+
+    <div :if={@africa} class="card" id="national-table">
+      <div class="table-box">
+        <table class="table table-stack table-wide" id="national-rows">
+          <caption class="vh">
+            {gettext(
+              "GDP %{year} by country: IMF figure, official figure, value used in the sum and its source",
+              year: @year
+            )}
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col" class="l">{gettext("Country")}</th>
+              <th scope="col">{gettext("IMF")}</th>
+              <th scope="col">{gettext("Official")}</th>
+              <th scope="col">{gettext("Used")}</th>
+              <th scope="col" class="l">{gettext("Source used")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              :for={r <- @rows}
+              id={"national-row-#{r["code"]}"}
+              class={r["pending"] && "national-row-wait"}
+            >
+              <th scope="row" class="l">
+                <a :if={r["slug"]} href={Paths.area(@locale, "country", r["slug"])}>{r["name"]}</a>
+                <span :if={!r["slug"]}>{r["name"] || r["code"]}</span>
+              </th>
+              <td data-label={gettext("IMF")} class="num">
+                {Format.value(r["imf"], "gdp_usd_bn", @locale)}
+              </td>
+              <td data-label={gettext("Official")} class="num">
+                <%= cond do %>
+                  <% r["national"] -> %>
+                    {Format.value(r["national"], "gdp_usd_bn", @locale)}
+                  <% r["pending"] -> %>
+                    {Format.value(r["pending"], "gdp_usd_bn", @locale)}
+                  <% true -> %>
+                    <span class="subtle">—</span>
+                <% end %>
+              </td>
+              <td data-label={gettext("Used")} class="num">
+                {Format.value(r["retained"], "gdp_usd_bn", @locale)}
+              </td>
+              <td data-label={gettext("Source used")} class="l">
+                <%= cond do %>
+                  <% r["source"] == "national" -> %>
+                    <span class="pill pill-ok">{gettext("Official")}</span>
+                  <% r["pending"] -> %>
+                    <span class="pill pill-warn">{gettext("Being checked")}</span>
+                    <span class="small muted">{gettext("IMF used meanwhile")}</span>
+                  <% r["source"] == "imf" -> %>
+                    <span class="pill pill-neutral">{gettext("IMF (fallback)")}</span>
+                  <% true -> %>
+                    <span class="small muted">{gettext("No source: outside both totals")}</span>
+                <% end %>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <th scope="row" class="l">{gettext("Total")}</th>
+              <td class="num">{Format.value(@africa["imf_total"], "gdp_usd_bn", @locale)}</td>
+              <td></td>
+              <td class="num">
+                {Format.value(@africa["national_total"], "gdp_usd_bn", @locale)}
+              </td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <p class="src">
+      {gettext(
+        "IMF, World Economic Outlook; national figures: statistics institutes, central banks and ministries, each linked on its country's page. A fiscal year counts for the calendar year the IMF gives it. Converted at the average official rate of the period."
+      )}
+      <a href={Paths.method(@locale)}>{gettext("Method")}</a>
+    </p>
+  </.section>
+</Layouts.public>

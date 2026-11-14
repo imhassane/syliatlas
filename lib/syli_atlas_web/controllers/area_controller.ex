@@ -72,6 +72,9 @@ defmodule SyliAtlasWeb.AreaController do
         |> Enum.sort_by(&(-(&1["value"] || -999)))
       end
 
+    national =
+      if country?, do: SyliAtlas.National.for_country(SyliAtlas.National.document(), area.code)
+
     ratings = if country?, do: SyliAtlas.Ratings.document()
     rating = SyliAtlas.Ratings.for_country(ratings, area.code)
     climate = country? && SyliAtlas.Climate.for_country(area.code)
@@ -182,6 +185,7 @@ defmodule SyliAtlasWeb.AreaController do
       members_max: bar_max(members),
       market: market,
       rating: rating,
+      national: national,
       climate: climate,
       rated: (ratings && ratings["rated"]) || 0,
       comparison: comparison,

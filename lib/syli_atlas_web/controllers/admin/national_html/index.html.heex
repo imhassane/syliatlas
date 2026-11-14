@@ -1,0 +1,123 @@
+<.admin_shell
+  current={:national}
+  counts={@admin_counts}
+  until={@admin_until}
+  key={@admin_key}
+>
+  <header class="adm-head">
+    <div class="adm-intro">
+      <p class="eyebrow">Données</p>
+      <h1 class="adm-title">Chiffres nationaux à vérifier</h1>
+      <p class="muted">
+        Un chiffre publié par un pays se publie seul quand tous les contrôles passent. Sinon il est déjà affiché avec le badge « en cours de vérification », mais il ne compte ni dans la somme africaine, ni dans les classements, ni dans les couleurs de la carte tant qu'une personne ne l'a pas vérifié.
+      </p>
+    </div>
+  </header>
+
+  <dl class="stats" id="adm-national-stats">
+    <div>
+      <dt>À vérifier</dt>
+      <dd class="big num">{length(@pending)}</dd>
+      <dd class="small muted">affichés avec le badge</dd>
+    </div>
+    <div>
+      <dt>Pays suivis</dt>
+      <dd class="big num">{map_size((@doc && @doc["countries"]) || %{})}</dd>
+      <dd class="small muted">avec au moins un chiffre publié</dd>
+    </div>
+  </dl>
+
+  <section class="card adm-list" id="adm-national-pending">
+    <div class="adm-card-head">
+      <h2 class="h2">En cours de vérification</h2>
+    </div>
+    <p :if={@pending == []} class="muted pad">Rien à vérifier.</p>
+    <article :for={f <- @pending} class="adm-national" id={"national-#{f.id}"}>
+      <div class="adm-national-head">
+        <div class="stack gap-1">
+          <p class="eyebrow">{country_name(f.country_code)} · {indicator_name(f.indicator)}</p>
+          <p class="h2">
+            <span class="num">{num(f.value)}</span>
+            <span class="muted small">
+              {f.period_label}{if f.base_year, do: " · base #{f.base_year}"}{if f.value_lcu,
+                do:
+                  " · #{num(SyliAtlas.National.Verify.to_float(f.value_lcu) / 1.0e9)} Md #{f.currency}"}
+            </span>
+          </p>
+          <% fig = imf_of(@doc, f) %>
+          <p :if={fig} class="small">
+            FMI {f.calendar_year} : <b class="num">{num(fig["imf"])}</b>
+            <span :if={fig["gap_pct"]}> · écart {num(fig["gap_pct"])} %</span>
+          </p>
+        </div>
+        <div class="row gap-1">
+          <.form for={%{}} action={~p"/admin/chiffres-nationaux/#{f.id}/verifier"} method="post">
+            <button class="btn btn-primary" type="submit" id={"national-verify-#{f.id}"}>Vérifié</button>
+          </.form>
+          <.form for={%{}} action={~p"/admin/chiffres-nationaux/#{f.id}/rejeter"} method="post">
+            <button class="btn btn-secondary" type="submit" id={"national-reject-#{f.id}"}>Rejeter</button>
+          </.form>
+        </div>
+      </div>
+      <ul class="adm-checks" aria-label="Contrôles automatiques">
+        <li
+          :for={{key, label} <- checks()}
+          class={if(f.checks[key] == true, do: "ok", else: "ko")}
+        >
+          {if f.checks[key] == true, do: "✓", else: "✗"} {label}
+        </li>
+      </ul>
+      <blockquote :if={f.quote} class="adm-quote">« {f.quote} »</blockquote>
+      <p class="small">
+        <a href={f.source_url} rel="noopener">{f.source_name}</a>
+        <span :if={f.published_on} class="muted"> · {f.published_on}</span>
+      </p>
+      <p :if={f.note} class="small muted">{f.note}</p>
+    </article>
+  </section>
+
+  <section :if={@decided != []} class="card adm-list" id="adm-national-decided">
+    <div class="adm-card-head">
+      <h2 class="h2">Publiés ou retirés</h2>
+    </div>
+    <div class="table-box">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="l">Pays</th>
+            <th class="l">Indicateur</th>
+            <th>Valeur</th>
+            <th class="l">Période</th>
+            <th class="l">Statut</th>
+            <th class="l">Le</th>
+            <th class="l"><span class="vh">Action</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={f <- @decided}>
+            <td class="l">{country_name(f.country_code)}</td>
+            <td class="l">{indicator_name(f.indicator)}</td>
+            <td class="num">{num(f.value)}</td>
+            <td class="l">{f.period_label}</td>
+            <td class="l">{status_label(f.status)}</td>
+            <td class="l">{fr_date(f.reviewed_at || f.updated_at)}</td>
+            <td class="l">
+              <.form
+                :if={f.status != "rejected"}
+                for={%{}}
+                action={~p"/admin/chiffres-nationaux/#{f.id}/rejeter"}
+                method="post"
+              >
+                <button class="btn btn-quiet" type="submit">Retirer</button>
+              </.form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="mono subtle small">
+    Contrôles automatiques : source sur un domaine officiel du pays, phrase retrouvée telle quelle dans le document, deux extractions concordantes, arithmétique, écart avec le FMI sous 15 %, pays déjà suivi.
+  </p>
+</.admin_shell>

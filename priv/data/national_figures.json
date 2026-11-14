@@ -1,0 +1,75 @@
+{
+  "_comment": "Chiffres publiés par les pays (SyliAtlas.National). Chaque ligne passe par les contrôles automatiques au démarrage ; une ligne revue par une personne dans l'admin n'est plus réécrite.",
+  "sources": {
+    "ETH": {
+      "name": "Éthiopie : ministère de la Planification et du Développement, ministère des Finances, Banque nationale, service statistique",
+      "domains": [
+        "mopd.gov.et",
+        "mofed.gov.et",
+        "nbe.gov.et",
+        "ess.gov.et"
+      ]
+    }
+  },
+  "figures": [
+    {
+      "country_code": "ETH",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2024/25",
+      "value": "201.42",
+      "value_lcu": "24030000000000",
+      "currency": "ETB",
+      "fx_rate": "119.30",
+      "base_year": "2024/25",
+      "source_name": "Ministère de la Planification et du Développement, présentation du 4 nov. 2026 (rapportée par Reuters)",
+      "source_url": "https://www.businessday.co.za/world/africa/2026-11-05-ethiopias-economy-revised-up-by-60-after-gdp-rebasing/",
+      "published_on": "2026-11-04",
+      "quote": "Ethiopia's 2024/2025 economy was revised up by 59.2% to $201.42bn",
+      "extracted_by": "manual",
+      "note": "Montant en dollars donné par la présentation ; taux implicite : 119,30 birrs par dollar."
+    },
+    {
+      "country_code": "ETH",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2026,
+      "period_label": "2025/26",
+      "value": "210.7",
+      "value_lcu": "31860000000000",
+      "currency": "ETB",
+      "fx_rate": "151.21",
+      "base_year": "2024/25",
+      "source_name": "Ministère de la Planification et du Développement, présentation du 4 nov. 2026 (rapportée par Africa.com)",
+      "source_url": "https://africa.com/top-10-news/ethiopia-becomes-africas-fifth-largest-economy-after-rebasing",
+      "published_on": "2026-11-04",
+      "quote": "increased its measured gross domestic product to $210.7 billion for the 2025/26 fiscal year",
+      "extracted_by": "manual",
+      "note": "Exercice clos en juillet 2026 ; taux implicite : 151,21 birrs par dollar."
+    },
+    {
+      "country_code": "ETH",
+      "indicator": "public_debt_pct_gdp",
+      "calendar_year": 2025,
+      "period_label": "2024/25",
+      "value": "27.4",
+      "base_year": "2024/25",
+      "source_name": "Ministère des Finances, 4 nov. 2026 (rapporté par Ventureburn)",
+      "source_url": "https://ventureburn.com/ethiopia-becomes-africas-fifth-largest-economy-gdp-rebasing/",
+      "published_on": "2026-11-04",
+      "quote": "Debt-to-GDP fell to 27.4%",
+      "extracted_by": "manual",
+      "note": "Année non précisée dans la présentation : rattachée à 2024/25, l'année de base. À confirmer à la revue."
+    }
+  ],
+  "rebasings": [
+    {
+      "country_code": "ETH",
+      "announced_on": "2026-11-04",
+      "old_base": "2015/16",
+      "new_base": "2024/25",
+      "level_change_pct": "59.2",
+      "source_name": "Ministère de la Planification et du Développement (rapporté par Reuters)",
+      "source_url": "https://www.businessday.co.za/world/africa/2026-11-05-ethiopias-economy-revised-up-by-60-after-gdp-rebasing/"
+    }
+  ]
+}

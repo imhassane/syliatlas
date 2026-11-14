@@ -23,6 +23,7 @@ defmodule SyliAtlasWeb.AdminComponents do
          [
            {:updates, "Mises à jour", ~p"/admin/mises-a-jour", :updates},
            {:ratings, "Notations", ~p"/admin/notations", :ratings},
+           {:national, "Chiffres nationaux", ~p"/admin/chiffres-nationaux", :ratings},
            {:budgets, "Budgets et lois", ~p"/admin/budgets", :budgets},
            {:market, "Données de marché", ~p"/admin/marches", :market}
          ]},
