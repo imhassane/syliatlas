@@ -23,7 +23,7 @@ defmodule SyliAtlasWeb.EmbedControllerTest do
 
       assert count(html, "header.site-header, .ticker, nav[role=tablist]") == 0
       assert text(html, "h1") =~ "PIB réel (volume), Côte d'Ivoire"
-      assert count(html, "svg.chart-wide") == 1
+      assert count(html, ".chart-wide > svg.chart") == 1
       # Compared with its region by default.
       assert text(html, ".chart-data caption") != ""
       assert count(html, ".legend li") == 2
@@ -164,7 +164,7 @@ defmodule SyliAtlasWeb.EmbedControllerTest do
         build_conn() |> get("/embed/fr/pays/senegal/inflation") |> html_response(200) |> doc()
 
       assert count(html, "details.chart-data table caption") == 1
-      assert count(html, "svg.chart-wide[role=img][aria-label]") == 1
+      assert count(html, ".chart-wide > svg.chart[role=img][aria-label]") == 1
     end
 
     test "builder: every control labelled, languages named in their own language, copy announced" do
@@ -195,7 +195,7 @@ defmodule SyliAtlasWeb.EmbedControllerTest do
     test "the language menu is named by its visible text (WCAG 2.5.3)" do
       html = build_conn() |> get("/fr") |> html_response(200) |> doc()
       assert html |> LazyHTML.query(".lang-menu summary[aria-label]") |> Enum.count() == 0
-      assert text(html, "#lang-header summary") =~ ~r/Langue\s:\s+Français/u
+      assert text(html, "#lang-header summary") =~ ~r/Langue\s:\s+FR/u
     end
   end
 

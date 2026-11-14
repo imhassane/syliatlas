@@ -91,6 +91,12 @@ defmodule SyliAtlasWeb.CSPTest do
     assert get_resp_header(conn, "content-security-policy-report-only") == []
   end
 
+  test "the site's policy allows Plausible, the embed policy never does" do
+    assert CSP.policy() =~ ~r/script-src 'self'[^;]* https:\/\/plausible\.io/
+    assert CSP.policy() =~ ~r/connect-src 'self'[^;]* https:\/\/plausible\.io/
+    refute CSP.embed_policy() =~ "plausible"
+  end
+
   test "off leaves only Phoenix's policy" do
     mode(:off)
     conn = get(build_conn(), "/en")

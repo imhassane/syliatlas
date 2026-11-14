@@ -1,8 +1,14 @@
 defmodule SyliAtlasWeb.Charts do
   @moduledoc """
   Server-rendered SVG charts, so figures show without JavaScript, offline
-  and for search engines. `assets/js/charts.js` redraws the same chart in
-  the browser when the period changes.
+  and for search engines.
+
+  Each chart also carries its values, already formatted, in
+  `data-chart-tips` (see `tips/2`): `assets/js/ui/chart_tips.js` reads them
+  to show a tooltip on hover, touch and keyboard (a slider over the chart,
+  arrows to move from year to year, Enter to make the year the end of the
+  period). Without JavaScript the reader stays hidden and the table under
+  the chart gives the same figures.
   """
   use Phoenix.Component
   use Gettext, backend: SyliAtlasWeb.Gettext
@@ -33,6 +39,11 @@ defmodule SyliAtlasWeb.Charts do
   attr :estimate_from, :integer, default: 2025
   attr :locale, :string, required: true
   attr :label, :string, required: true
+  attr :source, :string, default: nil, doc: "source line of the tooltip"
+
+  attr :pick, :boolean,
+    default: true,
+    doc: "the tooltip offers to make the year the end of the period (?to=)"
 
   @doc """
   A line chart drawn twice: a wide one with labels at the end of each line,
@@ -45,9 +56,15 @@ defmodule SyliAtlasWeb.Charts do
   """
   def line_chart(assigns) do
     ~H"""
-    <div class="chart-figure">
-      <.chart_svg {assigns} id={@id} size={:wide} class="chart chart-wide" />
-      <.chart_svg {assigns} id={@id <> "-narrow"} size={:narrow} class="chart chart-narrow" />
+    <div class="chart-figure" id={@id <> "-figure"}>
+      <.chart_svg {assigns} id={@id} anchor={@id <> "-figure"} size={:wide} class="chart-wide" />
+      <.chart_svg
+        {assigns}
+        id={@id <> "-narrow"}
+        anchor={@id <> "-figure"}
+        size={:narrow}
+        class="chart-narrow"
+      />
       <.chart_table {assigns} />
     </div>
     """
@@ -95,66 +112,198 @@ defmodule SyliAtlasWeb.Charts do
   }
 
   defp chart_svg(assigns) do
-    assigns = assign(assigns, :g, geometry(assigns, Map.fetch!(@sizes, assigns.size)))
+    g = geometry(assigns, Map.fetch!(@sizes, assigns.size))
+    tips = tips(assigns, g)
+
+    assigns =
+      assign(assigns,
+        g: g,
+        tips: tips,
+        tips_json: Jason.encode!(tips),
+        start: Enum.at(tips.points, tips.start)
+      )
 
     ~H"""
-    <svg
-      id={@id}
-      class={@class}
-      viewBox={"0 0 #{@g.w} #{@g.h}"}
-      role="img"
-      aria-label={@label}
-      data-chart
-    >
-      <rect
-        class="proj"
-        x={@g.x.(@estimate_from)}
-        y={@g.top}
-        width={@g.x.(@g.last) - @g.x.(@estimate_from)}
-        height={@g.bottom - @g.top}
-        rx="4"
-      />
-      <line
-        :for={t <- @g.ticks}
-        class="grid-line"
-        x1={@g.left}
-        x2={@g.right}
-        y1={@g.y.(t)}
-        y2={@g.y.(t)}
-      />
-      <text :for={t <- @g.ticks} x={@g.left - 8} y={@g.y.(t) + 4} text-anchor="end">
-        {tick(t, @indicator, @locale)}
-      </text>
-      <text :for={yr <- [2015, 2020, 2025, 2030]} x={@g.x.(yr)} y={@g.h - 8} text-anchor="middle">
-        {yr}
-      </text>
-      <line class="ref-line" x1={@g.x.(@from)} x2={@g.x.(@from)} y1={@g.top} y2={@g.bottom} />
-      <line class="ref-line" x1={@g.x.(@to)} x2={@g.x.(@to)} y1={@g.top} y2={@g.bottom} />
-      <g :for={s <- Enum.reverse(@series)} class="draw" data-series={s.id}>
-        <path
-          class="series"
-          d={path(s.values, @g, 2015, @estimate_from)}
-          style={"stroke: var(#{s.color}); stroke-width: #{if s[:strong], do: 3, else: 2}"}
-        />
-        <path
-          class="series future"
-          d={path(s.values, @g, @estimate_from, @g.last)}
-          style={"stroke: var(#{s.color}); stroke-width: #{if s[:strong], do: 3, else: 2}"}
-        />
-      </g>
-      <text
-        :for={l <- @g.labels}
-        :if={@g.show_labels}
-        class="label"
-        x={@g.right + 8}
-        y={l.y + 4}
-        style={"fill: var(#{l.color})"}
-        data-series={l.id}
+    <div class={["chart-box", @class]} data-chart-tips={@tips_json}>
+      <svg
+        id={@id}
+        class="chart"
+        viewBox={"0 0 #{@g.w} #{@g.h}"}
+        role="img"
+        aria-label={@label}
+        data-chart
       >
-        {l.text}
-      </text>
-    </svg>
+        <rect
+          class="proj"
+          x={@g.x.(@estimate_from)}
+          y={@g.top}
+          width={@g.x.(@g.last) - @g.x.(@estimate_from)}
+          height={@g.bottom - @g.top}
+          rx="4"
+        />
+        <line
+          :for={t <- @g.ticks}
+          class="grid-line"
+          x1={@g.left}
+          x2={@g.right}
+          y1={@g.y.(t)}
+          y2={@g.y.(t)}
+        />
+        <text :for={t <- @g.ticks} x={@g.left - 8} y={@g.y.(t) + 4} text-anchor="end">
+          {tick(t, @indicator, @locale)}
+        </text>
+        <text :for={yr <- [2015, 2020, 2025, 2030]} x={@g.x.(yr)} y={@g.h - 8} text-anchor="middle">
+          {yr}
+        </text>
+        <line class="ref-line" x1={@g.x.(@from)} x2={@g.x.(@from)} y1={@g.top} y2={@g.bottom} />
+        <line class="ref-line" x1={@g.x.(@to)} x2={@g.x.(@to)} y1={@g.top} y2={@g.bottom} />
+        <g :for={s <- Enum.reverse(@series)} class="draw" data-series={s.id}>
+          <path
+            class="series"
+            d={path(s.values, @g, 2015, @estimate_from)}
+            style={"stroke: var(#{s.color}); stroke-width: #{if s[:strong], do: 3, else: 2}"}
+          />
+          <path
+            class="series future"
+            d={path(s.values, @g, @estimate_from, @g.last)}
+            style={"stroke: var(#{s.color}); stroke-width: #{if s[:strong], do: 3, else: 2}"}
+          />
+        </g>
+        <text
+          :for={l <- @g.labels}
+          :if={@g.show_labels}
+          class="label"
+          x={@g.right + 8}
+          y={l.y + 4}
+          style={"fill: var(#{l.color})"}
+          data-series={l.id}
+        >
+          {l.text}
+        </text>
+      </svg>
+      <div
+        :if={@start}
+        class="chart-reader"
+        role="slider"
+        tabindex="0"
+        hidden
+        aria-label={gettext("Read the chart year by year: %{label}", label: @label)}
+        aria-orientation="horizontal"
+        aria-valuemin="0"
+        aria-valuemax={length(@tips.points) - 1}
+        aria-valuenow={@tips.start}
+        aria-valuetext={@start.valuetext}
+      >
+      </div>
+      <div :if={@start} class="chart-tip" hidden></div>
+    </div>
     """
+  end
+
+  @doc """
+  What the tooltip shows, one point per year with at least one value:
+  where to draw (viewBox units), the values formatted for the locale, the
+  year's status (published, estimate, projection), the change over one year
+  of the first series, and what a screen reader says (`valuetext`).
+  """
+  def tips(assigns, g) do
+    est = assigns.estimate_from
+    pick? = Map.get(assigns, :pick, true)
+
+    points =
+      for year <- @first..@last,
+          i = year - @first,
+          rows = tip_rows(assigns, g, i),
+          Enum.any?(rows, & &1.y) do
+        {status, kind} =
+          cond do
+            year < est -> {gettext("Published"), "data"}
+            year == est -> {gettext("Estimate"), "estimate"}
+            true -> {gettext("Projection"), "projection"}
+          end
+
+        change =
+          case assigns.series do
+            [first | _] -> tip_change(first, i, assigns.indicator, assigns.locale)
+            [] -> nil
+          end
+
+        %{
+          year: year,
+          x: Float.round(g.x.(year) * 1.0, 1),
+          title: Integer.to_string(year),
+          status: status,
+          kind: kind,
+          rows: rows,
+          change: change,
+          pick:
+            if(pick? and year > assigns.from,
+              do: gettext("Show %{year} in the figures", year: year)
+            ),
+          valuetext:
+            gettext("%{year}, %{status}: %{values}",
+              year: year,
+              status: String.downcase(status),
+              values: Enum.map_join(rows, "; ", &"#{&1.name} #{&1.text}")
+            )
+        }
+      end
+
+    start =
+      Enum.find_index(points, &(&1.year == assigns.to)) || max(length(points) - 1, 0)
+
+    %{
+      w: g.w,
+      h: g.h,
+      top: g.top,
+      bottom: g.bottom,
+      from: assigns.from,
+      anchor: Map.get(assigns, :anchor, assigns.id),
+      source: Map.get(assigns, :source),
+      keys: gettext("← →: change year · Enter: show it in the figures"),
+      start: start,
+      points: points
+    }
+  end
+
+  defp tip_rows(assigns, g, i) do
+    for s <- assigns.series do
+      v = Enum.at(s.values, i)
+
+      %{
+        name: s.name,
+        color: s.color,
+        y: if(is_number(v), do: Float.round(g.y.(v) * 1.0, 1)),
+        text: Format.value(v, assigns.indicator, assigns.locale)
+      }
+    end
+  end
+
+  # « Côte d'Ivoire : +10,6 % sur un an »: points for a rate, percent for a level.
+  defp tip_change(_s, 0, _indicator, _locale), do: nil
+
+  defp tip_change(s, i, indicator, locale) do
+    v = Enum.at(s.values, i)
+    prev = Enum.at(s.values, i - 1)
+    rate? = indicator in SyliAtlas.Sources.Indicators.rate_keys()
+
+    delta =
+      cond do
+        not (is_number(v) and is_number(prev)) -> nil
+        rate? -> v - prev
+        prev > 0 and v > 0 -> (v / prev - 1) * 100
+        true -> nil
+      end
+
+    if delta do
+      sign = if delta > 0, do: "+", else: ""
+      unit = if rate?, do: "pt", else: "%"
+
+      gettext("%{name}: %{change} over one year",
+        name: s.name,
+        change: sign <> Format.number(delta, 1, locale) <> "\u00A0" <> unit
+      )
+    end
   end
 
   defp geometry(assigns, size) do

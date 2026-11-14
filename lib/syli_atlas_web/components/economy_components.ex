@@ -107,6 +107,7 @@ defmodule SyliAtlasWeb.EconomyComponents do
             locale={@locale}
             estimate_from={@profile["years"]["estimate_from"]}
             label={finances_lead(@name, @balance, @debt, @current, @to, @locale)}
+            source={gettext("Source: IMF, %{label}", label: @profile["edition"]["label"])}
             series={series}
           />
           <.chart_legend series={series} />
@@ -133,6 +134,7 @@ defmodule SyliAtlasWeb.EconomyComponents do
             locale={@locale}
             estimate_from={@profile["years"]["estimate_from"]}
             label={gettext("Current account balance of %{name}, % of GDP", names(@name))}
+            source={gettext("Source: IMF, %{label}", label: @profile["edition"]["label"])}
             series={[
               %{
                 id: @profile["code"] <> "-current",

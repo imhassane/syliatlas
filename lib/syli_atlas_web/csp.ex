@@ -17,6 +17,12 @@ defmodule SyliAtlasWeb.CSP do
   embed policy) also allows Cloudflare Web Analytics: its beacon script and
   the address it reports to (SyliAtlasWeb.WebAnalytics).
 
+  Plausible (`assets/js/ui/plausible.js`, visit counts without cookies) is
+  allowed in the site's policy only: `https://plausible.io` for its script
+  and for the events it sends. The script itself loads only on
+  syliatlas.com; the framed views never load app.js, and their policy never
+  allows it.
+
   Styles: stylesheets from the site; `style="…"` attributes stay allowed
   (`style-src-attr`), they cannot run code.
 
@@ -167,14 +173,21 @@ defmodule SyliAtlasWeb.CSP do
   end
 
   # Cloudflare Web Analytics (SyliAtlasWeb.WebAnalytics), only when its token
-  # is set. Never in the embed policy: the framed views promise no tracking.
+  # is set, and Plausible. Never in the embed policy: the framed views promise
+  # no tracking.
   defp analytics(kind) do
-    cond do
-      not SyliAtlasWeb.WebAnalytics.enabled?() -> []
-      kind == :script -> [SyliAtlasWeb.WebAnalytics.script_origin()]
-      kind == :connect -> [SyliAtlasWeb.WebAnalytics.connect_origin()]
-    end
+    cloudflare =
+      cond do
+        not SyliAtlasWeb.WebAnalytics.enabled?() -> []
+        kind == :script -> [SyliAtlasWeb.WebAnalytics.script_origin()]
+        kind == :connect -> [SyliAtlasWeb.WebAnalytics.connect_origin()]
+      end
+
+    cloudflare ++ [plausible_origin()]
   end
+
+  @doc "Plausible's script and event endpoint (script-src, connect-src)."
+  def plausible_origin, do: "https://plausible.io"
 
   defp socket_origin(%URI{scheme: scheme} = url) do
     ws = if scheme == "https", do: "wss", else: "ws"

@@ -115,6 +115,8 @@
         history={@history}
         label={@answer}
         locale={@locale}
+        name={@row["name"]}
+        sources={@doc["sources"]}
       />
       <div :if={length(@history) < 2} class="market-empty-chart" id="price-chart-empty">
         <p class="h3">{gettext("History being built")}</p>

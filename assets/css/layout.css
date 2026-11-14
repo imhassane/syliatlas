@@ -129,6 +129,10 @@
 /* Touch screens: 44px targets everywhere. */
 @media (pointer: coarse) {
   .nav a, .crumbs a, .site-footer nav a { min-height: 44px; display: inline-flex; align-items: center; }
+  /* Every crumb on the same line as its links, the current page and the
+     separators included (otherwise the last one sits higher, on its own). */
+  .crumbs { row-gap: 0; }
+  .crumbs li { display: inline-flex; align-items: center; min-height: 44px; }
 }
 .headline-spark { display: block; width: 100%; height: 64px; overflow: visible; }
 
@@ -179,7 +183,12 @@ main > section.section:first-of-type { padding-top: 40px; }
 
 /* Header search, with suggestions (assets/js/ui/search.js). */
 .header-search { flex: 1 1 200px; max-width: 320px; margin-inline-start: auto; }
-.header-search + .header-actions { margin-inline-start: 0; }
+/* Next to a visible search bar only: hidden (phones, 60–72rem), the actions
+   keep base.css's auto margin and stay against the right edge. */
+@media (min-width: 72rem) { .header-search + .header-actions { margin-inline-start: 0; } }
+/* The language menu has no button on phones (it is in the drawer): no empty
+   box, so no double gap between the magnifier and the theme button. */
+@media (max-width: 59.99rem) { .header-actions > .lang-menu:has(> summary.hide-mobile) { display: none; } }
 .search-compact { max-width: none; }
 .search-compact svg { inset-inline-start: 14px; top: 11px; }
 .search-compact input { min-height: 40px; padding: 0 36px 0 40px; font-size: 15px; box-shadow: none; background: var(--muted); }

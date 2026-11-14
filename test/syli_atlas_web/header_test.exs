@@ -20,9 +20,30 @@ defmodule SyliAtlasWeb.HeaderTest do
 
       assert code == unquote(path) |> String.slice(1, 2) |> String.upcase()
 
+      # Named by its visible text (WCAG 2.5.3): no aria-label hiding the code.
+      [summary] = header |> LazyHTML.query("#lang-header summary") |> Enum.take(1)
+
+      assert LazyHTML.attribute(summary, "aria-label") == [nil] or
+               LazyHTML.attribute(summary, "aria-label") == []
+
+      assert LazyHTML.text(summary) =~ code
+
       # Install offer: in the drawer and on the home page, not in the header.
       assert LazyHTML.query(header, "[data-install]") |> Enum.count() == 0
       assert LazyHTML.query(header, "a.search-toggle") |> Enum.count() == 1
     end
+  end
+
+  @layout File.read!(Path.expand("../../assets/css/layout.css", __DIR__))
+
+  test "on phones the header actions stay against the right edge" do
+    # base.css pushes them right with an auto margin; layout.css may only
+    # cancel it where the search bar is shown (72rem and wider).
+    [rule] = Regex.run(~r/^.*\.header-search \+ \.header-actions \{[^}]*\}.*$/m, @layout)
+    assert rule =~ "@media (min-width: 72rem)"
+  end
+
+  test "on touch screens every crumb sits on the same line" do
+    assert @layout =~ ~r/@media \(pointer: coarse\) \{[^@]*\.crumbs li \{[^}]*min-height: 44px/s
   end
 end
