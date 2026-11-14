@@ -1,0 +1,127 @@
+<.admin_shell
+  current={:budgets}
+  counts={@admin_counts}
+  until={@admin_until}
+  key={@admin_key}
+>
+  <header class="adm-head">
+    <div class="adm-intro">
+      <p class="eyebrow">Budgets et lois · fiche pays</p>
+      <h1 class="adm-title">{@name}</h1>
+      <p :if={@profile.notes} class="muted">{@profile.notes}</p>
+    </div>
+    <div class="adm-head-actions">
+      <a href={~p"/admin/budgets/pays"} class="btn btn-secondary">← Les 54 pays</a>
+    </div>
+  </header>
+
+  <section class="card" id="adm-budget-country">
+    <.form
+      for={@form}
+      action={~p"/admin/budgets/pays/#{@profile.country_code}"}
+      method="post"
+      class="adm-form adm-pad"
+      id="budget-country-form"
+    >
+      <label class="adm-wide">
+        Qui vote le budget (français)
+        <input
+          name={@form[:legislature_fr].name}
+          value={@form[:legislature_fr].value}
+          id="c-legislature-fr"
+        />
+      </label>
+      <label class="adm-wide">
+        Qui vote le budget (anglais)
+        <input
+          name={@form[:legislature_en].name}
+          value={@form[:legislature_en].value}
+          id="c-legislature-en"
+        />
+      </label>
+      <label>
+        Type d'organe
+        <select name={@form[:legislature_kind].name} id="c-kind">
+          <option
+            :for={{l, v} <- legislature_kinds()}
+            value={v}
+            selected={@form[:legislature_kind].value == v}
+          >
+            {l}
+          </option>
+        </select>
+      </label>
+      <label>
+        Nom du Journal officiel
+        <input
+          name={@form[:gazette_name].name}
+          value={@form[:gazette_name].value}
+          id="c-gazette-name"
+        />
+      </label>
+      <label class="adm-wide">
+        Site du Journal officiel
+        <input
+          name={@form[:gazette_url].name}
+          type="url"
+          value={@form[:gazette_url].value}
+          id="c-gazette-url"
+        />
+      </label>
+      <label class="adm-wide">
+        Site du ministère des Finances
+        <input
+          name={@form[:finance_url].name}
+          type="url"
+          value={@form[:finance_url].value}
+          id="c-finance-url"
+        />
+      </label>
+      <label class="adm-check">
+        <input type="hidden" name={@form[:verified].name} value="false" />
+        <input
+          type="checkbox"
+          name={@form[:verified].name}
+          value="true"
+          checked={@form[:verified].value in [true, "true"]}
+          id="c-verified"
+        /> Liens vérifiés à la main (affichés sur le site)
+      </label>
+      <label>
+        Collecte
+        <select name={@form[:collection_mode].name} id="c-mode">
+          <option value="manual" selected={@form[:collection_mode].value == "manual"}>
+            Dépôt manuel
+          </option>
+          <option value="auto" selected={@form[:collection_mode].value == "auto"}>
+            Page suivie chaque matin
+          </option>
+        </select>
+      </label>
+      <label class="adm-wide">
+        Page suivie (mode « page suivie »)
+        <input
+          name={@form[:auto_url].name}
+          type="url"
+          value={@form[:auto_url].value}
+          id="c-auto-url"
+        />
+      </label>
+      <label class="adm-wide">
+        Liens à garder (expression régulière ; vide = les PDF)
+        <input
+          name={@form[:auto_pattern].name}
+          value={@form[:auto_pattern].value}
+          placeholder="loi.*finances.*\.pdf"
+          id="c-auto-pattern"
+        />
+      </label>
+      <label class="adm-wide">
+        Notes (admin seulement) <textarea name={@form[:notes].name} rows="3" id="c-notes">{@form[:notes].value}</textarea>
+      </label>
+      <div class="adm-actions">
+        <button class="btn btn-primary" type="submit" id="budget-country-save">Enregistrer</button>
+      </div>
+    </.form>
+  </section>
+</.admin_shell>

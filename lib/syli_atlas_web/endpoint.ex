@@ -46,13 +46,16 @@ defmodule SyliAtlasWeb.Endpoint do
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
 
+  # Multipart up to 25 MB: the budget laws dropped in the admin (PDF).
   plug Plug.Parsers,
-    parsers: [:urlencoded, :multipart, :json],
+    parsers: [:urlencoded, {:multipart, length: 25_000_000}, :json],
     pass: ["*/*"],
     json_decoder: Phoenix.json_library()
 
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
+  # Content-Security-Policy of every HTML response (CSP_MODE).
+  plug SyliAtlasWeb.CSP
   plug SyliAtlasWeb.Router
 end

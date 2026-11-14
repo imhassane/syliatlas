@@ -14,7 +14,7 @@ defmodule SyliAtlasWeb.Paths do
   def area(locale, "country", slug), do: "/#{locale}/#{segment(locale, :country)}/#{slug}"
   def area(locale, _kind, slug), do: "/#{locale}/#{segment(locale, :regions)}/#{slug}"
 
-  @tabs [:overview, :economy, :finances, :trade, :society, :markets]
+  @tabs [:overview, :economy, :finances, :budget, :trade, :society, :markets]
 
   @doc "The tabs of a country profile, in page order."
   def tabs, do: @tabs
@@ -37,6 +37,7 @@ defmodule SyliAtlasWeb.Paths do
       "es" => "finanzas-y-deuda",
       "pt" => "financas-e-divida"
     },
+    budget: %{"fr" => "budget", "en" => "budget", "es" => "presupuesto", "pt" => "orcamento"},
     trade: %{"fr" => "commerce", "en" => "trade", "es" => "comercio", "pt" => "comercio"},
     society: %{"fr" => "societe", "en" => "society", "es" => "sociedad", "pt" => "sociedade"},
     markets: %{"fr" => "marches", "en" => "markets", "es" => "mercados", "pt" => "mercados"}
@@ -93,14 +94,49 @@ defmodule SyliAtlasWeb.Paths do
 
   def debt(locale), do: "/#{locale}/#{segment(locale, :debt)}"
 
+  @doc "The state budgets of the 54 countries: /fr/budgets, /en/budgets."
+  def budgets(locale), do: "/#{locale}/#{segment(locale, :budgets)}"
+
+  @doc "The African currencies and their exchange rates: /fr/monnaies, /en/currencies."
+  def currencies(locale), do: "/#{locale}/#{segment(locale, :currencies)}"
+
   def markets(locale), do: "/#{locale}/#{segment(locale, :markets)}"
   def etfs(locale), do: markets(locale) <> "/etf"
+
+  @doc "The placement simulator: /fr/bourses/simulateur, /en/stock-exchanges/simulator."
+  def simulator(locale), do: markets(locale) <> "/" <> segment(locale, :simulator)
   def exchange(locale, code), do: markets(locale) <> "/" <> code
 
   def security(locale, exchange_code, ticker),
     do: exchange(locale, exchange_code) <> "/" <> String.downcase(ticker)
 
   def with_period(path, from, to), do: path <> "?from=#{from}&to=#{to}"
+
+  @doc """
+  The figures of an area as a file: `/fr/pays/cote-d-ivoire/donnees.csv`,
+  `/en/regions/west-africa/data.xlsx` (SyliAtlasWeb.ExportController).
+  """
+  def area_data(locale, area, format, from, to) when format in [:csv, :xlsx, :json],
+    do: area(locale, area) <> "/#{segment(locale, :data)}.#{format}?from=#{from}&to=#{to}"
+
+  @doc "The page that builds the code to embed an area's figures elsewhere."
+  def area_embed(locale, area), do: area(locale, area) <> "/" <> segment(locale, :embed)
+
+  @doc """
+  An embeddable view of an area, framed by other sites (SyliAtlasWeb.EmbedController):
+  `/embed/fr/pays/cote-d-ivoire/real_gdp_index?from=2020&to=2025`. `view` is an
+  indicator key or `"summary"` (the key figures).
+  """
+  def embed(locale, area, view, query \\ []) do
+    "/embed" <>
+      area(locale, area) <>
+      "/" <>
+      view <>
+      case query do
+        [] -> ""
+        query -> "?" <> URI.encode_query(query)
+      end
+  end
 
   # Path segments of the public pages; Arabic, Hindi and Chinese use the
   # English ones (SyliAtlas.Locales.base/1).
@@ -143,6 +179,21 @@ defmodule SyliAtlasWeb.Paths do
       "pt" => "comunidades-economicas"
     },
     debt: %{"fr" => "dette", "en" => "debt", "es" => "deuda", "pt" => "divida"},
+    budgets: %{
+      "fr" => "budgets",
+      "en" => "budgets",
+      "es" => "presupuestos",
+      "pt" => "orcamentos"
+    },
+    simulator: %{
+      "fr" => "simulateur",
+      "en" => "simulator",
+      "es" => "simulador",
+      "pt" => "simulador"
+    },
+    currencies: %{"fr" => "monnaies", "en" => "currencies", "es" => "monedas", "pt" => "moedas"},
+    data: %{"fr" => "donnees", "en" => "data", "es" => "datos", "pt" => "dados"},
+    embed: %{"fr" => "integrer", "en" => "embed", "es" => "insertar", "pt" => "incorporar"},
     questions: %{
       "fr" => "questions",
       "en" => "questions",

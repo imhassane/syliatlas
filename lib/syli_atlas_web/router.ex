@@ -65,6 +65,19 @@ defmodule SyliAtlasWeb.Router do
     plug :put_secure_browser_headers
   end
 
+  # Files to download (SyliAtlasWeb.ExportController): any Accept header, the
+  # language from the path, no session.
+  pipeline :download do
+    plug SyliAtlasWeb.Plugs.Locale, :from_path
+  end
+
+  # Views framed by other sites (SyliAtlasWeb.EmbedController): no session,
+  # their own Content-Security-Policy (frame-ancestors *), no X-Frame-Options.
+  pipeline :embed do
+    plug :accepts, ["html"]
+    plug SyliAtlasWeb.Plugs.Embed
+  end
+
   pipeline :admin do
     plug SyliAtlasWeb.Plugs.AdminAuth
     plug SyliAtlasWeb.Plugs.AdminShell
@@ -92,12 +105,22 @@ defmodule SyliAtlasWeb.Router do
 
   scope "/", SyliAtlasWeb do
     get "/health", HealthController, :show
+    get "/visitor", VisitorController, :show
     get "/sitemap.xml", SitemapController, :sitemap
     get "/sitemaps/:part", SitemapController, :part
     get "/robots.txt", SitemapController, :robots
     get "/llms.txt", SitemapController, :llms
     get "/llms-full.txt", SitemapController, :llms_full
     get "/og/:version/*path", OgImageController, :show
+    # Content-Security-Policy violation reports (SyliAtlasWeb.CSP).
+    post "/csp-report", CspReportController, :create
+    # oEmbed: publishing tools turn a pasted profile address into its embed.
+    get "/oembed", OembedController, :show
+  end
+
+  scope "/embed", SyliAtlasWeb do
+    pipe_through [:embed, :public_cache]
+    get "/:locale/:kind/:slug/:view", EmbedController, :frame
   end
 
   scope "/", SyliAtlasWeb do
@@ -183,6 +206,9 @@ defmodule SyliAtlasWeb.Router do
     put "/alerts/:id", AccountController, :update_alert
     delete "/alerts/:id", AccountController, :delete_alert
     delete "/passkeys/:id", AccountController, :delete_passkey
+    put "/passkeys/:id", AccountController, :rename_passkey
+    post "/security/code", AccountController, :request_security_code
+    post "/security/code/verify", AccountController, :confirm_security_code
     delete "/sessions/:id", AccountController, :delete_session
     delete "/sessions", AccountController, :delete_other_sessions
     put "/preferences", AccountController, :update_preferences
@@ -199,6 +225,17 @@ defmodule SyliAtlasWeb.Router do
     scope "/#{locale}", SyliAtlasWeb do
       pipe_through [:public, :page_locale]
       get "/api", ApiDocController, :show
+    end
+
+    # An area's figures as a file (before /:slug/:tab, which would take them).
+    scope "/#{locale}", SyliAtlasWeb do
+      pipe_through [:download, :public_cache]
+
+      for {kind_seg, kind} <- [{seg.(:country), :country}, {seg.(:regions), :region}],
+          format <- [:csv, :xlsx, :json] do
+        get "/#{kind_seg}/:slug/#{seg.(:data)}.#{format}", ExportController, :show,
+          assigns: %{format: format, kind: kind}
+      end
     end
 
     scope "/#{locale}", SyliAtlasWeb do
@@ -218,6 +255,13 @@ defmodule SyliAtlasWeb.Router do
       get "/#{seg.(:search)}", SearchController, :index
       get "/#{seg.(:country)}/:slug", AreaController, :show
       get "/#{seg.(:country)}/:slug/#{seg.(:questions)}", CountryQuestionsController, :show
+
+      get "/#{seg.(:country)}/:slug/#{seg.(:embed)}", EmbedController, :builder,
+        assigns: %{kind: :country}
+
+      get "/#{seg.(:regions)}/:slug/#{seg.(:embed)}", EmbedController, :builder,
+        assigns: %{kind: :region}
+
       get "/#{seg.(:country)}/:slug/:tab", AreaController, :show
       get "/#{seg.(:regions)}", RegionsController, :index
       get "/#{seg.(:regions)}/:slug", AreaController, :show
@@ -225,11 +269,14 @@ defmodule SyliAtlasWeb.Router do
       get "/#{seg.(:compare)}/*slugs", CompareController, :show
       get "/#{seg.(:ratings)}", RatingsController, :index
       get "/#{seg.(:debt)}", DebtController, :index
+      get "/#{seg.(:budgets)}", BudgetController, :index
+      get "/#{seg.(:currencies)}", CurrencyController, :index
       get "/#{seg.(:communities)}", CommunityController, :index
       get "/#{seg.(:communities)}/:slug", CommunityController, :show
       get "/#{seg.(:ratings)}/:slug", RatingsController, :show
       get "/#{seg.(:markets)}", MarketController, :index
       get "/#{seg.(:markets)}/etf", MarketController, :etfs
+      get "/#{seg.(:markets)}/#{seg.(:simulator)}", SimulatorController, :index
       get "/#{seg.(:markets)}/:exchange", MarketController, :exchange
       get "/#{seg.(:markets)}/:exchange/:ticker", MarketController, :security
     end
@@ -258,6 +305,16 @@ defmodule SyliAtlasWeb.Router do
     post "/marches/importer", MarketController, :import
     post "/marches/pause", MarketController, :pause
     post "/marches/anomalies/:id", MarketController, :decide
+    get "/budgets", BudgetsController, :index
+    post "/budgets/veille", BudgetsController, :watch
+    post "/budgets/documents", BudgetsController, :upload
+    post "/budgets/documents/:id/relire", BudgetsController, :reread
+    post "/budgets/propositions", BudgetsController, :create
+    post "/budgets/propositions/:id/approuver", BudgetsController, :approve
+    post "/budgets/propositions/:id/rejeter", BudgetsController, :reject
+    get "/budgets/pays", BudgetsController, :countries
+    get "/budgets/pays/:code", BudgetsController, :country
+    post "/budgets/pays/:code", BudgetsController, :update_country
     get "/emails", EmailsController, :index
     post "/membres/:id/sessions", MembersController, :close_sessions
     get "/recherches", SearchMissesController, :index

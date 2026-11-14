@@ -72,7 +72,7 @@ defmodule SyliAtlasWeb.WorldBankComponents do
           :if={@ext}
           id="external-debt"
           label={gettext("External debt · %{year}", year: @ext["year"])}
-          value={usd(@ext["value"], @locale)}
+          value={money_usd(@ext["value"], @ext["year"], @locale)}
         >
           {gettext("public and private · World Bank")}
         </:stat>
@@ -80,7 +80,7 @@ defmodule SyliAtlasWeb.WorldBankComponents do
           :if={@c}
           id="ppg-debt"
           label={gettext("Public external debt · %{year}", year: @c["year"])}
-          value={usd(@c["total_usd"], @locale)}
+          value={money_usd(@c["total_usd"], @c["year"], @locale)}
         >
           {gettext("owed or guaranteed by the State")}
         </:stat>
@@ -219,7 +219,7 @@ defmodule SyliAtlasWeb.WorldBankComponents do
             <p class="big num">{pct(r.share["value"], @locale)}</p>
             <p class="small muted">
               {r.base} · {r.share["year"]}
-              <span :if={r.usd}>· {usd(r.usd["value"], @locale)}</span>
+              <span :if={r.usd}>· {money_usd(r.usd["value"], r.usd["year"], @locale)}</span>
             </p>
             <p class="small muted">{median_text(@doc, r.key, r.share["value"], @locale)}</p>
           <% else %>
@@ -493,6 +493,15 @@ defmodule SyliAtlasWeb.WorldBankComponents do
 
   defp pct(nil, _locale), do: "—"
   defp pct(v, locale), do: number(v, 1, locale) <> " %"
+
+  @doc """
+  `usd/2`, rewritable by the header's currency menu at the average rate of
+  `year` (an annual World Bank amount). For page bodies, not attributes.
+  """
+  def money_usd(v, year, locale) when is_number(v),
+    do: SyliAtlasWeb.Money.amount(usd(v, locale), value: v, currency: "USD", year: year)
+
+  def money_usd(v, _year, locale), do: usd(v, locale)
 
   @doc false
   def usd(nil, _locale), do: "—"

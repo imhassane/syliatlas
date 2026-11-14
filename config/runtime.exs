@@ -23,6 +23,19 @@ end
 config :syli_atlas, SyliAtlasWeb.Endpoint,
   http: [port: String.to_integer(System.get_env("PORT", "4000"))]
 
+# Content-Security-Policy of HTML pages (SyliAtlasWeb.CSP): "report-only" (default:
+# violations are reported to /csp-report, nothing is blocked), "enforce" (the
+# browser blocks them) or "off" (only Phoenix's base-uri/frame-ancestors).
+csp_mode =
+  case System.get_env("CSP_MODE", "report-only") do
+    "enforce" -> :enforce
+    "off" -> :off
+    "report-only" -> :report_only
+    other -> raise "CSP_MODE must be report-only, enforce or off, got: #{inspect(other)}"
+  end
+
+config :syli_atlas, SyliAtlasWeb.CSP, mode: csp_mode
+
 # Market data. The Mansa key is the Railway variable STOCK_EXCHANGE_API_KEY
 # (the lower-case spelling is accepted too: environment variable names are
 # case-sensitive). Without it, the market import cancels itself and the
@@ -56,6 +69,11 @@ end
 # (The administration needs an administrator account: the email code, then
 # a passkey. ADMIN_USER and ADMIN_PASSWORD are no longer read.)
 if config_env() != :test do
+  # The budget laws are read with the same key; BUDGET_EXTRACT_MODEL changes the model.
+  if model = System.get_env("BUDGET_EXTRACT_MODEL") do
+    config :syli_atlas, SyliAtlas.Budgets.Extractor, model: String.trim(model)
+  end
+
   config :syli_atlas, SyliAtlas.Ratings.Extractor,
     api_key:
       (case System.get_env("ANTHROPIC_API_KEY") do
@@ -79,6 +97,10 @@ if config_env() != :test do
   config :syli_atlas, SyliAtlas.Cdn,
     zone_id: env.("CLOUDFLARE_ZONE_ID"),
     api_token: env.("CLOUDFLARE_API_TOKEN")
+
+  # Visit counts without cookies (SyliAtlasWeb.WebAnalytics): the site token
+  # of Cloudflare Web Analytics. Without it, no beacon and no CSP change.
+  config :syli_atlas, SyliAtlasWeb.WebAnalytics, token: env.("CLOUDFLARE_WEB_ANALYTICS_TOKEN")
 
   if limit = env.("RATE_LIMIT_PER_MINUTE") do
     config :syli_atlas, SyliAtlasWeb.Plugs.ApiRateLimit,
@@ -241,6 +263,10 @@ if config_env() == :prod do
     cache_dir: Path.join(Path.dirname(database_path), "og")
 
   config :syli_atlas, og_warm_on_boot: true
+  # First deploy of the exchange rates: import at once rather than at 01:10 UTC.
+  config :syli_atlas, fx_import_on_boot: true
+  # Past closes of the main indices for the simulator, once (7 Mansa calls).
+  config :syli_atlas, index_history_on_boot: true
 
   unless System.get_env("R2_BUCKET") do
     config :syli_atlas, SyliAtlas.Market.RawStore,

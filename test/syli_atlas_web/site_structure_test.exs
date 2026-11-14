@@ -11,12 +11,26 @@ defmodule SyliAtlasWeb.SiteStructureTest do
   defp doc(path), do: build_conn() |> get(path) |> html_response(200) |> LazyHTML.from_document()
   defp hrefs(doc, sel), do: doc |> LazyHTML.query(sel) |> LazyHTML.attribute("href")
 
-  test "the menu: Countries, Exchanges, Themes, Compare, and a search field" do
+  test "the menu: Countries, Exchanges, Themes (with the tools), and a search field" do
     doc = doc("/fr/pays/senegal")
     top = hrefs(doc, "#header-nav > a")
-    assert top == ["/fr/classement/pib", "/fr/bourses", "/fr/comparer/"]
+    assert top == ["/fr/classement/pib", "/fr/bourses"]
     themes = hrefs(doc, "#header-nav details .nav-mega-item")
-    assert themes == ["/fr/dette", "/fr/notations", "/fr/regions"]
+
+    assert themes == [
+             "/fr/dette",
+             "/fr/budgets",
+             "/fr/notations",
+             "/fr/regions",
+             "/fr/bourses/simulateur",
+             "/fr/monnaies",
+             "/fr/comparer/"
+           ]
+
+    # Each entry has its icon; the tools have their own column.
+    assert doc |> LazyHTML.query("#header-nav .nav-mega-item .theme-ico svg") |> Enum.count() == 7
+    assert doc |> LazyHTML.query("#header-nav .nav-mega-col") |> Enum.count() == 2
+
     panel = doc |> LazyHTML.query("#header-nav details") |> LazyHTML.text()
     assert panel =~ "54 pays" and panel =~ "CEDEAO"
     assert hrefs(doc, "#header-nav .nav-mega-foot a") == ["/fr/methode"]

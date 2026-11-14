@@ -270,6 +270,49 @@ defmodule SyliAtlasWeb.AccountTest do
     assert {member.digest, member.security_emails, member.locale} == {"never", false, "en"}
   end
 
+  test "security: an administrator confirms by email code, then manages every passkey" do
+    admin = user_fixture(%{role: "admin"})
+    # Signed in by a passkey that no longer works elsewhere: no fresh code.
+    token = session_token(admin, [:passkey])
+    [broken] = Accounts.list_passkeys(admin)
+
+    html = as(token) |> get("/fr/mon-espace/securite") |> html_response(200)
+    assert html =~ ~s(id="passkey-proof")
+    assert html =~ ~s(id="security-code-request")
+    refute html =~ ~s(id="passkey-register")
+    refute html =~ ~s(id="passkey-delete-#{broken.id}")
+
+    # Refused without the code.
+    conn = as(token) |> delete("/account/passkeys/#{broken.id}")
+    assert redirected_to(conn) == "/fr/mon-espace/securite"
+    assert [_] = Accounts.list_passkeys(admin)
+
+    conn = as(token) |> post("/account/security/code")
+    code_id = get_session(conn, :security_code)
+    code = code_from_email()
+
+    with_code = fn ->
+      Plug.Test.init_test_session(build_conn(), user_token: token, security_code: code_id)
+    end
+
+    assert with_code.() |> get("/fr/mon-espace/securite") |> html_response(200) =~
+             ~s(id="security-code-form")
+
+    conn = with_code.() |> post("/account/security/code/verify", %{"code" => code})
+    assert redirected_to(conn) == "/fr/mon-espace/securite"
+
+    html = as(token) |> get("/fr/mon-espace/securite") |> html_response(200)
+    refute html =~ ~s(id="passkey-proof")
+    assert html =~ ~s(id="passkey-register")
+    assert html =~ ~s(id="passkey-rename-#{broken.id}")
+
+    as(token) |> put("/account/passkeys/#{broken.id}", %{"passkey" => %{"name" => "Ancien PC"}})
+    assert [%{name: "Ancien PC"}] = Accounts.list_passkeys(admin)
+
+    as(token) |> delete("/account/passkeys/#{broken.id}")
+    assert Accounts.list_passkeys(admin) == []
+  end
+
   test "signing out closes the session", %{conn: conn} do
     token = session_token(user_fixture())
     conn = as(token, conn) |> delete("/account/session")

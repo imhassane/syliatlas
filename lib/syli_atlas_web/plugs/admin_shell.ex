@@ -26,6 +26,11 @@ defmodule SyliAtlasWeb.Plugs.AdminShell do
           Repo.aggregate(from(r in Rating, where: r.needs_check == true), :count),
       updates: SyliAtlas.Admin.Jobs.failures(7),
       market: Repo.aggregate(from(q in QualityIssue, where: q.status == "open"), :count),
+      budgets:
+        Repo.aggregate(
+          from(p in SyliAtlas.Budgets.Proposal, where: p.status == "pending"),
+          :count
+        ),
       emails: SyliAtlas.Admin.Emails.failures(7)
     })
     |> assign(:admin_until, session && Session.admin_until(session))

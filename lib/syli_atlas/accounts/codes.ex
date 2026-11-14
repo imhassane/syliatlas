@@ -13,7 +13,7 @@ defmodule SyliAtlas.Accounts.Codes do
   """
   import Ecto.Query
 
-  alias SyliAtlas.Accounts.{Emails, LoginCode, Secrets, Sessions, User}
+  alias SyliAtlas.Accounts.{Emails, LoginCode, Secrets, Session, Sessions, User}
   alias SyliAtlas.Repo
 
   @doc "Sends a code. `{:ok, code_id, email}` or `{:error, reason}`."
@@ -69,6 +69,29 @@ defmodule SyliAtlas.Accounts.Codes do
     else
       nil -> {:error, :invalid_code}
       {:error, :invalid_email} -> {:error, :invalid_code}
+      {:error, _} = error -> error
+    end
+  end
+
+  @doc """
+  Checks a code sent to the account's own address and records it as a
+  fresh proof in the session already open (to manage passkeys). Returns
+  `{:ok, session}` or `{:error, reason}`. Option: `:now`.
+  """
+  def confirm(code_id, %User{email: email}, %Session{} = session, code, opts \\ []) do
+    now = now(opts)
+
+    with %LoginCode{} = row <- get(code_id),
+         :ok <- LoginCode.check(row, now),
+         :ok <- check_code(row, email, code),
+         {1, _} <-
+           Repo.update_all(from(c in LoginCode, where: c.id == ^row.id and is_nil(c.consumed_at)),
+             set: [consumed_at: now]
+           ) do
+      {:ok, Sessions.record(session, :code, now: now)}
+    else
+      nil -> {:error, :invalid_code}
+      {0, _} -> {:error, :already_used}
       {:error, _} = error -> error
     end
   end

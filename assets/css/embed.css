@@ -1,0 +1,65 @@
+/* Export and embed (SyliAtlasWeb.ExportController, SyliAtlasWeb.EmbedController). */
+
+/* « Data » menu of a profile's header: a <details> panel, like the language menu. */
+.entity-actions { gap: 8px; flex-wrap: wrap; align-items: flex-start; }
+.data-menu { position: relative; }
+.data-menu > summary { list-style: none; }
+.data-menu > summary::-webkit-details-marker { display: none; }
+.data-menu[open] > summary { background: var(--muted); }
+.data-menu-panel { position: absolute; top: calc(100% + 8px); inset-inline-end: 0; z-index: 45; width: min(320px, 86vw); padding: 14px; border-radius: 12px; background: var(--card); box-shadow: var(--shadow-pop); display: flex; flex-direction: column; gap: 10px; }
+.data-menu-panel p { margin: 0; }
+.data-menu-panel ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; }
+.data-menu-panel a { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; border-radius: 8px; color: var(--ink); text-decoration: none; }
+/* On the title's line, not in the middle of the item. */
+.data-menu-icon svg { width: 18px; height: 18px; }
+.data-menu-icon { flex: none; display: grid; place-items: center; width: 28px; height: 28px; margin-top: -3px; border-radius: 7px; background: var(--accent-bg); color: var(--accent-text); }
+.data-menu-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.data-menu-panel a:hover, .data-menu-panel a:focus-visible { background: var(--muted); }
+@media (max-width: 40rem) {
+  .entity-actions .data-menu > summary, .entity-actions #embed-link { min-width: 44px; min-height: 44px; padding: 0; }
+  .entity-actions .data-menu > summary span, .entity-actions #embed-link span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
+
+/* The page that writes the code. */
+.embed-builder { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 24px; align-items: start; }
+.embed-builder .select { width: 100%; }
+.embed-period .field { flex: 1; }
+.embed-options { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 0; padding: 0; border: 0; font-size: 15px; }
+.embed-options legend { width: 100%; margin-bottom: 6px; }
+.embed-options label { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; }
+.embed-options input { accent-color: var(--accent); width: 18px; height: 18px; }
+.embed-preview { display: block; border: 0; border-radius: 8px; background: var(--alt); }
+.embed-code { width: 100%; box-sizing: border-box; padding: 12px 14px; border: 0; border-radius: 8px; background: var(--alt); color: var(--ink); font-family: var(--mono); font-size: 12px; line-height: 1.6; resize: vertical; }
+.embed-code-actions { align-items: center; flex-wrap: wrap; }
+.embed-url { font-family: var(--mono); font-size: 13px; overflow-wrap: anywhere; }
+.embed-terms { margin: 0; padding-inline-start: 18px; display: flex; flex-direction: column; gap: 4px; }
+@media (max-width: 60rem) { .embed-builder { grid-template-columns: 1fr; } }
+
+/* A framed view: the card fills the frame; the host page gives the margins. */
+.embed-body { margin: 0; background: transparent; }
+.embed { display: flex; flex-direction: column; gap: 12px; margin: 0; box-shadow: inset 0 0 0 1px var(--border); }
+.embed .card-head { margin: 0; }
+.embed .h2 { margin: 0; }
+.embed-note { margin: 0; padding: 8px 12px; border-radius: 8px; background: var(--accent-bg); color: var(--accent-text); }
+.embed-kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin: 0; overflow: hidden; border-radius: 8px; background: var(--border); }
+.embed-kpis > div { display: flex; flex-direction: column; gap: 4px; padding: 12px 14px; background: var(--card); }
+.embed-kpis dt { margin: 0; }
+.embed-kpis dd { margin: 0; }
+.embed-kpi-value { font-size: 24px; letter-spacing: -.02em; }
+.embed-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 16px; padding-top: 10px; border-top: 1px solid var(--border); }
+.embed-links { display: inline-flex; align-items: center; gap: 14px; font-size: 13px; }
+.embed-brand { display: inline-flex; align-items: center; gap: 6px; color: var(--ink); font-weight: 600; text-decoration: none; }
+@media (max-width: 30rem) { .embed-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* The open « Data » panel passes over the sticky tab bar (z-index 20), a later
+   sibling of the header's section. */
+.profile-head:has(.data-menu[open]), section:has(> .wrap .data-menu[open]) { position: relative; z-index: 25; }
+
+/* A frame is as tall as its card: none of the site's full-height page
+   (body min-height: 100svh), or the frame could grow and never shrink. */
+html:has(.embed-body), .embed-body { min-height: 0; height: auto; }
+.embed-body { display: block; }
+
+/* No entrance animation in a frame: a reader's screenshot or a printed
+   article must never catch a half-drawn line. */
+.embed-body *, .embed-body *::before, .embed-body *::after { animation: none !important; transition: none !important; }

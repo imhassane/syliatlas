@@ -8,6 +8,7 @@ defmodule SyliAtlasWeb.Admin.EmailsHTML do
 
   def kind_label("rating_change"), do: "Alerte notation"
   def kind_label("new_edition"), do: "Alerte nouvelle édition FMI"
+  def kind_label("budget_law"), do: "Alerte loi de finances"
   def kind_label("indicator_above"), do: "Alerte seuil (au-dessus)"
   def kind_label("indicator_below"), do: "Alerte seuil (en dessous)"
   def kind_label("session_move"), do: "Alerte bourse (variation)"

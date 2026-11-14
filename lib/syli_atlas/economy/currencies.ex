@@ -128,4 +128,31 @@ defmodule SyliAtlas.Economy.Currencies do
 
   def zone_members(zone), do: Map.fetch!(@zones, zone)
   def countries, do: Map.keys(@currencies)
+
+  @doc "The ISO 4217 codes of the African currencies, sorted (42)."
+  def codes,
+    do: @currencies |> Map.values() |> Enum.map(&elem(&1, 0)) |> Enum.uniq() |> Enum.sort()
+
+  @doc "The countries using a currency, sorted by code."
+  def countries_using(code),
+    do: for({country, {^code, _, _}} <- @currencies, do: country) |> Enum.sort()
+
+  @doc "A currency's name in a language, from its code, or nil."
+  def name_of(code, locale \\ "fr") do
+    Enum.find_value(@currencies, fn
+      {_country, {^code, fr, en}} -> name(code, fr, en, locale)
+      _ -> nil
+    end)
+  end
+
+  @doc "The fixed peg of a currency: `%{anchor, rate}` or nil."
+  def peg(code) do
+    case Map.fetch(@pegs, code) do
+      {:ok, {anchor, rate}} -> %{anchor: anchor, rate: rate}
+      :error -> nil
+    end
+  end
+
+  @doc "Every fixed peg: `%{code => {anchor, rate}}`."
+  def pegs, do: @pegs
 end

@@ -127,6 +127,15 @@
             locale={@locale}
           />
           <ProfileComponents.related_links ctx={@ctx} />
+        <% :budget -> %>
+          <SyliAtlasWeb.BudgetComponents.country_budget
+            doc={@budget}
+            name={@name}
+            fx={@budget_fx}
+            locale={@locale}
+            year={@budget_year}
+          />
+          <ProfileComponents.related_links ctx={@ctx} />
         <% :trade -> %>
           <TradeComponents.trade_section
             entry={@trade}

@@ -7,15 +7,17 @@ defmodule SyliAtlas.Accounts.Passkeys do
 
     * a challenge per ceremony, kept in the database, used once, 2 minutes;
     * `register/4`: a signed-in account adds one (its public key only). An
-      administrator without any passkey may add the first one only right
-      after an email code; adding more needs the administration open;
+      administrator adds one right after an email code, or with the
+      administration open;
     * `sign_in/2`: a discoverable credential (nothing to type), its counter
       checked against cloning. For an administrator this opens a member
       session: the administration also needs the email code;
     * `confirm/3`: the second proof of an administrator signed in by code;
-    * `list/1`, `remove/2`: the last passkey of an administrator stays.
+    * `list/1`, `rename/5`, `remove/4`: for an administrator, after an
+      email code or with the administration open (`may_manage?/3`).
   """
   import Ecto.Query
+  require Logger
 
   alias SyliAtlas.Accounts.{Passkey, Session, Sessions, User, WebauthnChallenge}
   alias SyliAtlas.Repo
@@ -65,15 +67,22 @@ defmodule SyliAtlas.Accounts.Passkeys do
     end
   end
 
-  # Members: any session. Administrators: their first passkey right after a
-  # code; more passkeys with the administration open.
-  defp may_register?(%User{role: "admin"}, session, [], now),
-    do: Session.fresh_code?(session, now)
+  # Members: any session. Administrators: right after an email code, or
+  # with the administration open (`may_manage?/3`).
+  defp may_register?(user, session, _keys, now), do: may_manage?(user, session, now)
 
-  defp may_register?(%User{role: "admin"}, session, _keys, now),
-    do: Session.admin_verified?(session, now)
+  @doc """
+  Whether this session may add, rename or remove the account's passkeys.
+  Members: always. Administrators: with the administration open, or within
+  minutes of an email code given in this session, so a lost or broken
+  passkey can be replaced with the email code alone.
+  """
+  def may_manage?(user, session, now \\ DateTime.utc_now(:second))
 
-  defp may_register?(_member, _session, _keys, _now), do: true
+  def may_manage?(%User{role: "admin"}, %Session{} = session, now),
+    do: Session.fresh_code?(session, now) or Session.admin_verified?(session, now)
+
+  def may_manage?(%User{}, %Session{}, _now), do: true
 
   @doc """
   Params: `challenge_id`, `attestation_object`, `client_data_json`
@@ -185,30 +194,62 @@ defmodule SyliAtlas.Accounts.Passkeys do
 
       {:ok, passkey, user}
     else
-      _invalid -> {:error, :invalid_passkey}
+      invalid ->
+        # Why a passkey was refused (wrong host, unknown key, counter...),
+        # without any secret, to understand a failed sign-in from the logs.
+        Logger.warning("passkey refused: #{refusal(invalid)}")
+        {:error, :invalid_passkey}
     end
   end
+
+  defp refusal(nil), do: "unknown credential"
+  defp refusal(false), do: "key of another account"
+  defp refusal(%User{}), do: "account deactivated"
+  defp refusal({:error, :cloned}), do: "sign counter did not grow"
+  defp refusal({:error, %{__exception__: true} = e}), do: Exception.message(e)
+  defp refusal({:error, reason}), do: inspect(reason)
+  defp refusal(:error), do: "undecodable field"
+  defp refusal(other), do: inspect(other)
 
   def list(%User{id: id}),
     do: Passkey |> where(user_id: ^id) |> order_by(:inserted_at) |> Repo.all()
 
-  @doc "Removes a passkey and closes the sessions opened with it."
-  def remove(%User{} = user, passkey_id) do
-    keys = list(user)
+  @doc """
+  Removes a passkey and closes the other sessions opened with it. An
+  administrator may remove all of them (`may_manage?/3`): the administration
+  then asks for a new one after the next email code.
+  """
+  def remove(%User{} = user, %Session{} = session, passkey_id, opts \\ []) do
+    cond do
+      not may_manage?(user, session, now(opts)) ->
+        {:error, :proof_required}
 
-    case Enum.find(keys, &(to_string(&1.id) == to_string(passkey_id))) do
-      nil ->
-        {:error, :not_found}
-
-      _passkey when user.role == "admin" and length(keys) == 1 ->
-        {:error, :last_admin_passkey}
-
-      passkey ->
-        Sessions.revoke_by_passkey(passkey.id)
+      passkey = find(user, passkey_id) ->
+        Sessions.revoke_by_passkey(passkey.id, except: session)
         Repo.delete!(passkey)
         :ok
+
+      true ->
+        {:error, :not_found}
     end
   end
+
+  @doc "Renames a passkey of the account."
+  def rename(%User{} = user, %Session{} = session, passkey_id, new_name, opts \\ []) do
+    cond do
+      not may_manage?(user, session, now(opts)) ->
+        {:error, :proof_required}
+
+      passkey = find(user, passkey_id) ->
+        {:ok, passkey |> Ecto.Changeset.change(name: name(new_name)) |> Repo.update!()}
+
+      true ->
+        {:error, :not_found}
+    end
+  end
+
+  defp find(user, passkey_id),
+    do: Enum.find(list(user), &(to_string(&1.id) == to_string(passkey_id)))
 
   # A counter that does not grow means a copied key; synced passkeys keep 0.
   defp check_counter(stored, received) when stored > 0 and received <= stored,
@@ -243,7 +284,9 @@ defmodule SyliAtlas.Accounts.Passkeys do
            ) do
       {:ok, :erlang.binary_to_term(row.challenge, [:safe])}
     else
-      _invalid -> {:error, :invalid_passkey}
+      _invalid ->
+        Logger.warning("passkey refused: challenge #{purpose} expired, used or unknown")
+        {:error, :invalid_passkey}
     end
   end
 

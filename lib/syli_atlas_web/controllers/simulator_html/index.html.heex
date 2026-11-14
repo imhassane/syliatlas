@@ -1,0 +1,334 @@
+<Layouts.public locale={@locale} current={:simulator} alternates={@alternates}>
+  <section class="sim-hero" id="simulator-hero">
+    <div class="wrap sim-hero-wrap">
+      <nav aria-label={gettext("Breadcrumb")}>
+        <ol class="crumbs">
+          <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+          <li><a href={Paths.markets(@locale)}>{gettext("Stock exchanges")}</a></li>
+          <li aria-current="page">{gettext("Placement simulator")}</li>
+        </ol>
+      </nav>
+      <p class="sim-kicker">{gettext("Placement simulator")}</p>
+      <h1 class="sim-h1">{gettext("What would your money be worth today?")}</h1>
+
+      <form
+        :if={@sim}
+        id="simulator-form"
+        class="sim-sentence"
+        method="get"
+        action={Paths.simulator(@locale)}
+      >
+        <span>{gettext("If I had put")}</span>
+        <input
+          id="sim-amount"
+          name="montant"
+          inputmode="decimal"
+          autocomplete="off"
+          aria-label={gettext("Amount")}
+          value={@sim.query["montant"]}
+          class="sim-field sim-amount"
+        />
+        <select id="sim-currency" name="devise" aria-label={gettext("Currency")} class="sim-field">
+          <option :for={c <- @sim.currencies} value={c} selected={c == @sim.currency}>
+            {currency_label(c)}
+          </option>
+        </select>
+        <span>{gettext("in the")}</span>
+        <select id="sim-index" name="indice" aria-label={gettext("Index")} class="sim-field">
+          <option
+            :for={a <- @available}
+            value={a.exchange.code}
+            selected={a.exchange.code == @sim.exchange.code}
+          >
+            {index_name(a.exchange)} ({a.exchange.short_name})
+          </option>
+        </select>
+        <span>{gettext("on")}</span>
+        <input
+          id="sim-start"
+          type="date"
+          name="depuis"
+          aria-label={gettext("Start date")}
+          min={Date.to_iso8601(@sim.first)}
+          max={Date.to_iso8601(@sim.latest_start)}
+          value={@sim.query["depuis"]}
+          class="sim-field"
+        />
+        <button type="submit" class="btn btn-on-deep" id="simulator-submit">
+          {gettext("Simulate")}
+        </button>
+      </form>
+
+      <nav :if={@sim} class="sim-presets" id="simulator-presets" aria-label={gettext("Start")}>
+        <a
+          :for={{label, d} <- @sim.presets}
+          href={sim_href(@locale, @sim.query, "depuis", Date.to_iso8601(d))}
+          class={["sim-chip", d == @sim.start && "on"]}
+          aria-current={d == @sim.start && "true"}
+        >
+          {preset_label(label)}
+        </a>
+      </nav>
+
+      <div :if={@sim && @sim.result} class="sim-result" id="simulator-result">
+        <p class="sim-today">
+          {gettext("I would have, on %{date}", date: day(@sim.result.end, @locale))}
+        </p>
+        <p class="sim-final num" id="sim-final">
+          {money(@sim.result.final, @sim.currency, @locale)}
+        </p>
+        <p class="sim-gain">
+          <b class={["num", tone(@sim.result.gain_pct)]} id="sim-gain">
+            {signed(@sim.result.gain_pct, @locale)}
+          </b>
+          <span :if={@sim.result.cagr} class="num" id="sim-cagr">
+            · {gettext("%{rate} a year on average", rate: signed(@sim.result.cagr, @locale))}
+          </span>
+          <span class="sim-note">· {gettext("dividends not included")}</span>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <.section :if={!@sim} id="simulator-empty">
+    <div class="card pad stack gap-2">
+      <h2 class="h2">{gettext("Figures on their way")}</h2>
+      <p class="muted">
+        {gettext(
+          "The simulator needs at least three years of closes of an index. The history is being imported."
+        )}
+      </p>
+    </div>
+  </.section>
+
+  <.section :if={@sim && !@sim.result} id="simulator-none">
+    <div class="card pad stack gap-2">
+      <h2 class="h2">{gettext("No result for these settings")}</h2>
+      <p class="muted">{gettext("Try another day or another index.")}</p>
+    </div>
+  </.section>
+
+  <.section
+    :if={@sim && @sim.result}
+    id="simulator-detail"
+    class="sim-detail"
+    tight={:top}
+  >
+    <p :if={@sim.fx_missing} class="sim-warn" id="sim-fx-missing">
+      {gettext(
+        "Conversion into %{currency} is available for placements started from %{date}: the result is shown in %{index_currency}, for the same amount at today's rate.",
+        currency: currency_label(@sim.fx_missing),
+        date: (@sim.fx_from && day(@sim.fx_from, @locale)) || "—",
+        index_currency: @sim.exchange.currency
+      )}
+    </p>
+
+    <div class="card pad sim-chart-card" id="simulator-chart">
+      <div class="sim-chart-head">
+        <h2 class="h2">
+          {gettext("%{amount} placed on %{date}",
+            amount: money(@sim.result.amount, @sim.currency, @locale),
+            date: day(@sim.result.start, @locale)
+          )}
+        </h2>
+        <span class="small muted">
+          {index_name(@sim.exchange)} · {gettext("value of the placement, weekly")}
+        </span>
+      </div>
+      <%= if c = chart(@sim.result) do %>
+        <svg
+          class={["sim-chart", if(c.up?, do: "is-up", else: "is-down")]}
+          viewBox={"0 0 #{c.w} #{c.h}"}
+          role="img"
+          aria-label={
+            gettext("From %{start} to %{final}",
+              start: money(@sim.result.amount, @sim.currency, @locale),
+              final: money(@sim.result.final, @sim.currency, @locale)
+            )
+          }
+        >
+          <line
+            :for={t <- c.ticks}
+            x1={t.x}
+            x2={t.x}
+            y1="8"
+            y2={c.bottom}
+            class="sim-grid"
+          />
+          <text :for={t <- c.ticks} x={t.x} y={c.h - 8} class="sim-tick">{t.label}</text>
+          <path d={c.area} class="sim-area" />
+          <line x1="0" x2={c.w} y1={c.base_y} y2={c.base_y} class="sim-base" />
+          <path d={c.line} class="sim-line" />
+          <circle cx={c.end_x} cy={c.end_y} r="4" class="sim-dot" />
+        </svg>
+        <p class="small muted sim-legend">
+          <span class="sim-key sim-key-base"></span>{gettext("amount put in")} · {gettext(
+            "highest: %{value} (%{date})",
+            value: money(c.peak.v, @sim.currency, @locale),
+            date: day(c.peak.d, @locale)
+          )} · {gettext("lowest: %{value} (%{date})",
+            value: money(c.low.v, @sim.currency, @locale),
+            date: day(c.low.d, @locale)
+          )}
+        </p>
+      <% end %>
+
+      <dl class="stats stats-4 sim-stats" id="simulator-stats">
+        <div>
+          <dt>{gettext("Gain or loss")}</dt>
+          <dd class={["num", tone(@sim.result.gain_pct)]}>
+            {money(@sim.result.final - @sim.result.amount, @sim.currency, @locale)}
+          </dd>
+        </div>
+        <div>
+          <dt>{gettext("Average per year")}</dt>
+          <dd class={["num", tone(@sim.result.cagr)]}>{signed(@sim.result.cagr, @locale)}</dd>
+        </div>
+        <div>
+          <dt>{gettext("Worst fall on the way")}</dt>
+          <dd class="num down">{signed(@sim.result.drawdown, @locale)}</dd>
+        </div>
+        <div>
+          <dt>
+            {if @sim.fixed_parity,
+              do: gettext("Index change"),
+              else: gettext("Index / exchange rate")}
+          </dt>
+          <dd class="num">
+            {signed(@sim.result.index_change, @locale)}
+            <span
+              :if={!@sim.fixed_parity}
+              class={["small", tone(@sim.result.fx_effect)]}
+            >
+              {gettext("%{points} pts from the currency",
+                points: signed(@sim.result.fx_effect, @locale) |> String.replace(" %", "")
+              )}
+            </span>
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="grid grid-3 grid-even sim-cards" id="simulator-cards">
+      <div class="card pad stack gap-2" id="sim-entry">
+        <h3 class="h3">{gettext("The day you start matters")}</h3>
+        <p class="small muted">
+          {gettext("The same amount placed on 1 January of each year, kept until %{date}:",
+            date: day(@sim.result.end, @locale)
+          )}
+        </p>
+        <ul class="sim-others">
+          <li :for={o <- @sim.others}>
+            <a href={sim_href(@locale, @sim.query, "depuis", "#{o.year}-01-01")}>{o.year}</a>
+            <span class="num">{money(o.final, @sim.currency, @locale)}</span>
+            <span class={["num small", tone(o.cagr)]}>
+              {if o.cagr, do: gettext("%{rate}/yr", rate: signed(o.cagr, @locale)), else: "—"}
+            </span>
+          </li>
+        </ul>
+      </div>
+      <div class="card pad stack gap-2" id="sim-not-counted">
+        <h3 class="h3">{gettext("What is not counted")}</h3>
+        <ul class="sim-list small">
+          <li>{gettext("Broker and custody fees, taxes on gains.")}</li>
+          <li>
+            {gettext(
+              "Liquidity: on smaller exchanges, buying every share of the index at its price is not always possible."
+            )}
+          </li>
+          <li>
+            {gettext(
+              "The exchange rate of your bank: we use the market rate of the first and last day."
+            )}
+          </li>
+        </ul>
+      </div>
+      <div class="card pad stack gap-2" id="sim-dividends">
+        <h3 class="h3">{gettext("Dividends not included")}</h3>
+        <p class="small muted">
+          {gettext(
+            "The index follows prices only. African shares often pay high dividends (several % a year on the BRVM): reinvested, they would add to this result."
+          )}
+        </p>
+      </div>
+    </div>
+
+    <div class="card market-table" id="simulator-years">
+      <div class="market-toolbar">
+        <div class="market-toolbar-title">
+          <h2 class="h2">{gettext("Year by year")}</h2>
+        </div>
+      </div>
+      <div class="table-box table-scroll">
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">{gettext("Year")}</th>
+              <th scope="col" class="num">{gettext("Index")}</th>
+              <th scope="col" class="sim-bar-col">
+                <span class="sr-only">{gettext("Change")}</span>
+              </th>
+              <th scope="col" class="num">
+                {gettext("Value at year end (%{currency})", currency: @sim.currency)}
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={y <- Enum.reverse(@sim.result.years)} id={"sim-year-#{y.year}"}>
+              <th scope="row">
+                {y.year}<span :if={y.partial} class="small muted"> · {gettext("partial")}</span>
+              </th>
+              <td class={["num", tone(y.change)]}>{signed(y.change, @locale)}</td>
+              <td class="sim-bar-col">
+                <span
+                  class={["sim-bar", if(y.change >= 0, do: "up", else: "down")]}
+                  style={"width: #{bar_width(y.change, @sim.result.years)}%"}
+                ></span>
+              </td>
+              <td class="num">{money(y.value, @sim.currency, @locale)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="sim-share" id="simulator-share">
+      <p class="small muted">{gettext("This result has its own address:")}</p>
+      <input class="sim-share-url" readonly value={@share_url} aria-label={gettext("Link")} />
+      <a
+        class="btn btn-secondary"
+        id="sim-whatsapp"
+        rel="noopener"
+        href={
+          whatsapp_href(
+            gettext("%{amount} placed in the %{index} on %{date} would be worth %{final} today.",
+              amount: money(@sim.result.amount, @sim.currency, @locale),
+              index: index_name(@sim.exchange),
+              date: day(@sim.result.start, @locale),
+              final: money(@sim.result.final, @sim.currency, @locale)
+            ),
+            @share_url
+          )
+        }
+      >
+        WhatsApp
+      </a>
+      <a class="btn btn-secondary" href={Paths.exchange(@locale, @sim.exchange.code)}>
+        {gettext("See the %{exchange}", exchange: @sim.exchange.short_name)} →
+      </a>
+    </div>
+
+    <p class="src" id="simulator-source">
+      {gettext("Index closes:")}
+      <MarketComponents.credit
+        sources={[%{"code" => "mansa", "rank" => 1}]}
+        date={Date.to_iso8601(@sim.result.end)}
+        locale={@locale}
+      /> · {gettext("exchange rates:")}
+      <a href={Paths.currencies(@locale)}>{gettext("African currencies")}</a>
+      · {gettext(
+        "past performance does not predict future results; information, not investment advice"
+      )}
+    </p>
+  </.section>
+</Layouts.public>

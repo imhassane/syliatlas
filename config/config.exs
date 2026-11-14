@@ -31,7 +31,7 @@ config :phoenix_live_view,
 config :syli_atlas, Oban,
   engine: Oban.Engines.Lite,
   repo: SyliAtlas.Repo,
-  queues: [imports: 1, computations: 2, seo: 1, alerts: 2, moderation: 1, market: 1],
+  queues: [imports: 1, computations: 2, seo: 1, alerts: 2, moderation: 1, market: 1, budgets: 1],
   plugins: [
     {Oban.Plugins.Pruner, max_age: 60 * 60 * 24 * 30},
     {Oban.Plugins.Cron,
@@ -53,6 +53,12 @@ config :syli_atlas, Oban,
        # Country recaps without an account (docs/recap.md): purge of the
        # addresses never confirmed, then the recaps due today.
        {"45 6 * * *", SyliAtlas.Workers.RecapWorker},
+       # Exchange rates (SyliAtlas.Fx): the sources update once a day, around
+       # midnight UTC.
+       {"10 1 * * *", SyliAtlas.Workers.FxImportWorker},
+       # Budget laws (SyliAtlas.Budgets): the official pages set to « auto »
+       # in the admin, read every morning; new files go to the AI.
+       {"30 5 * * *", SyliAtlas.Workers.BudgetFetchWorker},
        # Server time of the public API: a probe, then the finished hours written.
        {"5 * * * *", SyliAtlas.Workers.ApiTimingWorker}
      ]}

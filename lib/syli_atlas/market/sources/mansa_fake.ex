@@ -60,6 +60,7 @@ defmodule SyliAtlas.Market.Sources.MansaFake do
         ["api", "v1", "markets", "exchanges"] -> exchanges(day)
         ["api", "v1", "markets", "indices"] -> indices(day)
         ["api", "v1", "markets", "forex"] -> forex(day)
+        ["api", "v1", "markets", "indices", code, "history"] -> history(code, day)
         ["api", "v1", "markets", "exchanges", "NGX", "etfs"] -> etfs(day)
         ["api", "v1", "markets", "exchanges", id, "stocks"] -> stocks(id, day, conn.query_params)
         _ -> nil
@@ -94,6 +95,40 @@ defmodule SyliAtlas.Market.Sources.MansaFake do
       end
 
     %{"success" => true, "data" => data}
+  end
+
+  @history %{
+    "brvm-ci" => "ivory-coast",
+    "ngx-asi" => "nigeria",
+    "jse-asi" => "south-africa",
+    "gse-ci" => "ghana",
+    "egx-30" => "egypt",
+    "masi" => "morocco",
+    "nsx-oi" => "namibia"
+  }
+
+  @doc false
+  def history(code, day) do
+    case Map.fetch(@history, code) do
+      {:ok, id} ->
+        {^id, currency, base, _count} = List.keyfind(@exchanges, id, 0)
+
+        points =
+          for d <- Date.range(~D[2012-01-02], day), Date.day_of_week(d) in 1..5 do
+            # The fake level drifts upward over the years, like a real index.
+            drift = :math.pow(1.06, Date.diff(d, ~D[2020-01-01]) / 365)
+            %{"date" => Date.to_iso8601(d), "close" => Float.round(level(id, base, d) * drift, 2)}
+          end
+
+        %{
+          "success" => true,
+          "data" => %{"index_code" => code, "currency" => currency, "points" => points},
+          "meta" => %{"count" => length(points)}
+        }
+
+      :error ->
+        nil
+    end
   end
 
   @doc false

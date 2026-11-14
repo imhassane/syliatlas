@@ -66,6 +66,23 @@ config :syli_atlas, SyliAtlas.Ratings.Extractor,
   api_key: "test-key",
   req_options: [plug: {Req.Test, SyliAtlas.Ratings.Extractor}, retry: false]
 
+config :syli_atlas, SyliAtlas.Budgets.Extractor,
+  api_key: "test-key",
+  req_options: [plug: {Req.Test, SyliAtlas.Budgets.Extractor}, retry: false]
+
+config :syli_atlas, SyliAtlas.Workers.BudgetFetchWorker,
+  req_options: [plug: {Req.Test, SyliAtlas.Workers.BudgetFetchWorker}, retry: false]
+
+config :syli_atlas, SyliAtlas.Budgets.Imf,
+  req_options: [plug: {Req.Test, SyliAtlas.Budgets.Imf}, retry: false]
+
 config :syli_atlas, SyliAtlas.Ratings.Watch,
   feeds: [{"test", "https://feeds.test/ratings.xml"}],
   req_options: [plug: {Req.Test, SyliAtlas.Ratings.Watch}, retry: false]
+
+# Exchange rates: both sources stubbed (Req.Test).
+config :syli_atlas, SyliAtlas.Fx.Sources.ExchangeApi,
+  req_options: [plug: {Req.Test, SyliAtlas.Fx.Sources.ExchangeApi}, retry: false]
+
+config :syli_atlas, SyliAtlas.Fx.Sources.ErApi,
+  req_options: [plug: {Req.Test, SyliAtlas.Fx.Sources.ErApi}, retry: false]

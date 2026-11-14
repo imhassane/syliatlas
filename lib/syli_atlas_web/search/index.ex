@@ -230,6 +230,28 @@ defmodule SyliAtlasWeb.Search.Index do
          "creditors",
          "chine dette"
        ]},
+      {:budgets, &Paths.budgets/1,
+       %{
+         "fr" => "Budgets des États africains",
+         "en" => "State budgets of African countries",
+         "es" => "Presupuestos de los países africanos",
+         "pt" => "Orçamentos dos países africanos",
+         "ar" => "ميزانيات الدول الأفريقية",
+         "hi" => "अफ़्रीकी देशों के बजट",
+         "zh" => "非洲国家预算"
+       },
+       [
+         "budget",
+         "budgets",
+         "loi de finances",
+         "lois de finances",
+         "finance law",
+         "depenses publiques",
+         "recettes publiques",
+         "public spending",
+         "presupuesto",
+         "orcamento"
+       ]},
       {:ratings, &Paths.ratings/1,
        %{
          "fr" => "Notations souveraines",

@@ -74,6 +74,7 @@ defmodule SyliAtlasWeb.Layouts do
               aria-hidden="true"
             ><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
           </a>
+          <SyliAtlasWeb.CurrencyMenu.currency_menu locale={@locale} />
           <.lang_link
             :if={@other_lang}
             langs={@other_lang}
@@ -185,18 +186,20 @@ defmodule SyliAtlasWeb.Layouts do
             @exchanges
           )}</span>
         </a>
-        <p class="drawer-group">{gettext("Themes")}</p>
-        <a
-          :for={t <- @themes}
-          href={t.href}
-          aria-current={@current in t.current && "page"}
-          class="drawer-sub"
-        >
-          <span>{t.label}</span><span :if={t.short} class="drawer-meta">{t.short}</span>
-        </a>
-        <a href={Paths.compare(@locale, [])} aria-current={@current == :compare && "page"}>{gettext(
-          "Compare"
-        )}</a>
+        <%= for {group, title} <- [theme: gettext("Themes"), tool: gettext("Tools")] do %>
+          <p class="drawer-group">{title}</p>
+          <a
+            :for={t <- Enum.filter(@themes, &(&1.group == group))}
+            href={t.href}
+            aria-current={@current in t.current && "page"}
+            class="drawer-sub"
+          >
+            <span class="drawer-label">
+              <.theme_icon key={t.key} featured={t.key == :simulator} />{t.label}
+            </span>
+            <span :if={t.short} class="drawer-meta">{t.short}</span>
+          </a>
+        <% end %>
       <% else %>
         <a
           href={SyliAtlasWeb.Topics.ranking_path(@locale, "gdp_usd_bn")}
@@ -208,19 +211,43 @@ defmodule SyliAtlasWeb.Layouts do
           aria-current={@current == :markets && "page"}
         >{gettext("Stock exchanges")}</a>
         <details class="nav-menu" data-nav-menu>
-          <summary aria-current={@current in [:debt, :ratings, :regions, :themes, :method] && "true"}>
+          <summary aria-current={
+            @current in [
+              :debt,
+              :budgets,
+              :ratings,
+              :regions,
+              :currencies,
+              :simulator,
+              :compare,
+              :themes,
+              :method
+            ] &&
+              "true"
+          }>
             {gettext("Themes")}
           </summary>
           <div class="nav-menu-pop nav-mega">
-            <a
-              :for={t <- @themes}
-              href={t.href}
-              aria-current={@current in t.current && "page"}
-              class="nav-mega-item"
+            <div
+              :for={{group, title} <- [theme: gettext("Themes"), tool: gettext("Tools")]}
+              class="nav-mega-col"
             >
-              <b>{t.label}</b>
-              <span>{t.description}</span>
-            </a>
+              <p class="nav-mega-head">{title}</p>
+              <a
+                :for={t <- Enum.filter(@themes, &(&1.group == group))}
+                href={t.href}
+                aria-current={@current in t.current && "page"}
+                class={["nav-mega-item", t.key == :simulator && "is-featured"]}
+              >
+                <.theme_icon key={t.key} featured={t.key == :simulator} />
+                <span class="nav-mega-text">
+                  <b>
+                    {t.label}<span :if={t.new} class="nav-new">{gettext("New")}</span>
+                  </b>
+                  <span>{t.description}</span>
+                </span>
+              </a>
+            </div>
             <div class="nav-mega-foot">
               <p>
                 {gettext(
@@ -233,21 +260,24 @@ defmodule SyliAtlasWeb.Layouts do
             </div>
           </div>
         </details>
-        <a href={Paths.compare(@locale, [])} aria-current={@current == :compare && "page"}>{gettext(
-          "Compare"
-        )}</a>
       <% end %>
     </nav>
     """
   end
 
-  # The themes of the menu, with live counts (both from memory: no query).
+  # The simulator is marked « New » for its first month.
+  @simulator_new_until ~D[2026-12-12]
+
+  # The themes of the menu (each compares the 54 countries), then the tools,
+  # with live counts (both from memory: no query).
   defp themes(locale) do
     rated = (SyliAtlas.Ratings.document() || %{})["rated"]
 
     [
       %{
         key: :debt,
+        group: :theme,
+        new: false,
         current: [:debt],
         label: gettext("Debt"),
         href: Paths.debt(locale),
@@ -255,7 +285,19 @@ defmodule SyliAtlasWeb.Layouts do
         short: gettext("54 countries")
       },
       %{
+        key: :budgets,
+        group: :theme,
+        new: false,
+        current: [:budgets],
+        label: gettext("State budgets"),
+        href: Paths.budgets(locale),
+        description: gettext("Revenue, expenditure, finance laws voted · 54 countries"),
+        short: gettext("54 countries")
+      },
+      %{
         key: :ratings,
+        group: :theme,
+        new: false,
         current: [:ratings],
         label: gettext("Ratings"),
         href: Paths.ratings(locale),
@@ -268,13 +310,96 @@ defmodule SyliAtlasWeb.Layouts do
       },
       %{
         key: :regions,
+        group: :theme,
+        new: false,
         current: [:regions, :themes],
         label: gettext("Regions and communities"),
         href: Paths.regions(locale),
         description: gettext("AU regions, ECOWAS, AES, WAEMU, CEMAC, EAC, SADC"),
         short: nil
       }
-    ]
+    ] ++
+      if SyliAtlas.Market.public?() do
+        [
+          %{
+            key: :simulator,
+            group: :tool,
+            new: Date.compare(Date.utc_today(), @simulator_new_until) == :lt,
+            current: [:simulator],
+            label: gettext("Placement simulator"),
+            href: Paths.simulator(locale),
+            description:
+              gettext("What an amount placed in the BRVM or another African index would be worth"),
+            short: nil
+          }
+        ]
+      else
+        []
+      end ++
+      [
+        %{
+          key: :currencies,
+          group: :tool,
+          new: false,
+          current: [:currencies],
+          label: gettext("African currencies"),
+          href: Paths.currencies(locale),
+          description:
+            gettext("Daily rates of the 42 currencies against the dollar, the euro and the yuan"),
+          short: gettext("42 currencies")
+        },
+        %{
+          key: :compare,
+          group: :tool,
+          new: false,
+          current: [:compare],
+          label: gettext("Compare countries"),
+          href: Paths.compare(locale, []),
+          description: gettext("From 2 to 6 countries, an address to share"),
+          short: nil
+        }
+      ]
+  end
+
+  attr :key, :atom, required: true
+  attr :featured, :boolean, default: false
+
+  # The icon of a theme or tool (canvas « Menu Thèmes »): a thin line drawing
+  # in a tile; the simulator's tile is dark.
+  defp theme_icon(assigns) do
+    ~H"""
+    <span class={["theme-ico", @featured && "is-featured"]} aria-hidden="true">
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <%= case @key do %>
+          <% :debt -> %>
+            <path d="M3 10h18" /><path d="M5 10v8M9.5 10v8M14.5 10v8M19 10v8" /><path d="M3 20h18" /><path d="M12 3l9 5H3z" />
+          <% :budgets -> %>
+            <path d="M7 3h7l5 5v13H7z" /><path d="M14 3v5h5" /><path d="M10 13h6M10 17h6" />
+          <% :ratings -> %>
+            <path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" />
+          <% :regions -> %>
+            <path d="M9 4l-6 2v14l6-2 6 2 6-2V4l-6 2z" /><path d="M9 4v14M15 6v14" />
+          <% :simulator -> %>
+            <path d="M4 19l5-6 4 3 7-9" /><path d="M15 7h5v5" />
+          <% :currencies -> %>
+            <circle cx="9" cy="9" r="5" /><path d="M14.5 9.5a5 5 0 1 1-4.9 5.9" />
+          <% :compare -> %>
+            <path d="M5 20V10M12 20V4M19 20v-7" />
+          <% _ -> %>
+            <circle cx="12" cy="12" r="8" />
+        <% end %>
+      </svg>
+    </span>
+    """
   end
 
   attr :locale, :string, required: true
@@ -382,7 +507,6 @@ defmodule SyliAtlasWeb.Layouts do
           <h2>{gettext("Explore")}</h2>
           <a :for={t <- @themes} href={t.href}>{t.label}</a>
           <a href={Paths.communities(@locale)}>{gettext("Economic communities")}</a>
-          <a href={Paths.compare(@locale, [])}>{gettext("Compare")}</a>
           <a href={SyliAtlasWeb.Topics.questions_path(@locale)}>{gettext("Questions")}</a>
           <a href={SyliAtlasWeb.GlossaryController.index_path(@locale)}>{gettext("Glossary")}</a>
         </div>
@@ -592,18 +716,9 @@ defmodule SyliAtlasWeb.Layouts do
   defp lang_link(assigns) do
     ~H"""
     <details class={["lang-menu", @up && "lang-menu-up"]} id={@id}>
-      <summary
-        class={@class}
-        aria-label={
-          gettext("Language: %{current}",
-            current:
-              if(@short,
-                do: String.upcase(@locale),
-                else: SyliAtlas.Locales.native(@locale)
-              )
-          )
-        }
-      >
+      <%!-- Named by its visible text with « Language » before it (WCAG 2.5.3:
+           an aria-label that drops the visible « Français » fails voice control). --%>
+      <summary class={@class}>
         <svg
           width="16"
           height="16"
@@ -614,6 +729,7 @@ defmodule SyliAtlasWeb.Layouts do
           aria-hidden="true"
         ><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z">
         </path></svg>
+        <span class="sr-only">{gettext("Language")} :</span>
         <span :if={@short} title={SyliAtlas.Locales.native(@locale)}>{String.upcase(@locale)}</span>
         <span :if={!@short}>{SyliAtlas.Locales.native(@locale)}</span>
       </summary>

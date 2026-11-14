@@ -1,0 +1,73 @@
+<.admin_shell
+  current={:budgets}
+  counts={@admin_counts}
+  until={@admin_until}
+  key={@admin_key}
+>
+  <header class="adm-head">
+    <div class="adm-intro">
+      <p class="eyebrow">Budgets et lois</p>
+      <h1 class="adm-title">Les 54 pays</h1>
+      <p class="muted">
+        Qui vote le budget, où paraissent les lois, comment Syli Atlas les collecte. Seuls les liens vérifiés s'affichent sur le site ; une fiche modifiée ici n'est plus écrasée par le fichier livré.
+      </p>
+    </div>
+    <div class="adm-head-actions">
+      <a href={~p"/admin/budgets"} class="btn btn-secondary">← File d'attente</a>
+    </div>
+  </header>
+
+  <section class="card" id="adm-budget-countries">
+    <div class="table-box">
+      <table class="table adm-table">
+        <caption class="vh">Les 54 pays : organe législatif et sources</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="l">Pays</th>
+            <th scope="col" class="l">Qui vote</th>
+            <th scope="col" class="l">Journal officiel</th>
+            <th scope="col" class="l">Collecte</th>
+            <th scope="col" class="l">Sur le site</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={p <- @profiles} id={"budget-country-#{p.country_code}"}>
+            <th scope="row" class="l">
+              <a href={~p"/admin/budgets/pays/#{p.country_code}"}>{country_name(
+                @countries,
+                p.country_code
+              )}</a>
+              <span :if={p.edited_at} class="small subtle block">modifiée le {fr_date(p.edited_at)}</span>
+            </th>
+            <td class="l small">
+              {p.legislature_fr}
+              <span class="block subtle">{label(legislature_kinds(), p.legislature_kind)}</span>
+            </td>
+            <td class="l small">
+              {p.gazette_name || "—"}
+              <a
+                :if={p.gazette_url}
+                href={p.gazette_url}
+                rel="noopener noreferrer"
+                target="_blank"
+                class="block"
+              >{URI.parse(p.gazette_url).host}</a>
+              <span class={["pill no-dot", if(p.verified, do: "pill-ok", else: "pill-warn")]}>
+                {if p.verified, do: "Liens vérifiés", else: "À vérifier"}
+              </span>
+            </td>
+            <td class="l small">
+              {if p.collection_mode == "auto", do: "Page suivie", else: "Dépôt manuel"}
+              <span :if={p.collection_mode == "auto"} class="block subtle">{p.auto_url &&
+                URI.parse(p.auto_url).host}</span>
+            </td>
+            <td class="l">
+              <% {l, c} = level(@overview, p.country_code) %>
+              <span class={["pill", c]}>{l}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</.admin_shell>

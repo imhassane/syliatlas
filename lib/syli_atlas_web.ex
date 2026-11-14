@@ -17,7 +17,8 @@ defmodule SyliAtlasWeb do
   those modules here.
   """
 
-  def static_paths, do: ~w(assets fonts images favicon.ico sw.js manifest.webmanifest)
+  def static_paths,
+    do: ~w(assets fonts images favicon.ico sw.js manifest.webmanifest embed.js embed-frame.js)
 
   def router do
     quote do

@@ -25,7 +25,7 @@
       <:kpi
         id="gdp"
         label={gettext("GDP %{year}", year: @year)}
-        value={value(@summary.gdp, "gdp_usd_bn", @locale)}
+        value={money_value(@summary.gdp, "gdp_usd_bn", @locale, @year)}
       >
         {gettext("sum of the members")}
       </:kpi>
@@ -71,7 +71,7 @@
           <a href={Paths.area(@locale, "country", m.slug)}>{m.name}</a>
         </:head>
         <:col :let={m} label={gettext("GDP %{year}", year: @year)}>
-          {value(m.gdp, "gdp_usd_bn", @locale)}
+          {money_value(m.gdp, "gdp_usd_bn", @locale, @year)}
         </:col>
         <:col :let={m} label={gettext("Growth")}>
           <span class={tone(m.growth, "real_gdp_growth")}>{value(

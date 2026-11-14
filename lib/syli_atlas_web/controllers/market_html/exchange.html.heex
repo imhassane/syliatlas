@@ -27,6 +27,16 @@
           path={SyliAtlasWeb.Paths.exchange(@locale, @e["code"])}
           alert_market={{@e["code"], nil}}
         />
+        <a
+          :if={@simulable}
+          class="btn btn-secondary"
+          id="exchange-simulate"
+          href={
+            Paths.simulator(@locale) <> "?" <> URI.encode_query(%{"indice" => @e["code"]})
+          }
+        >
+          {gettext("Simulate a placement")}
+        </a>
       </:actions>
       <:chips>
         <span class="pill pill-neutral no-dot">
@@ -72,7 +82,7 @@
       <:kpi
         id="traded"
         label={gettext("Traded that day")}
-        value={amount(@doc["session"]["value"], @e["currency"], @locale)}
+        value={money_amount(@doc["session"]["value"], @e["currency"], @locale)}
       >
         {usd(SyliAtlas.Market.to_usd(@doc["session"]["value"], @e["currency"], @fx), @locale)}
         <span :if={@doc["session"]["top"]}>
@@ -217,7 +227,7 @@
               </td>
               <td class="num" data-label={gettext("Volume")}>{integer(r["volume"], @locale)}</td>
               <td class="num" data-label={gettext("Value traded")}>
-                {amount(r["value"], @e["currency"], @locale)}
+                {money_amount(r["value"], @e["currency"], @locale)}
               </td>
             </tr>
           </tbody>

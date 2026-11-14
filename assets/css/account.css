@@ -47,3 +47,8 @@ fieldset.stack { border: 0; margin: 0; padding: 0; }
 .follow-star { display: inline-flex; gap: 8px; align-items: center; }
 .follow-star[aria-pressed="true"] { color: var(--accent-text); }
 .follow-star[aria-pressed="true"] svg { fill: currentColor; }
+
+/* Security: rename a passkey in place, confirm with an email code. */
+.passkey-name-input { max-width: 18rem; min-height: 36px; padding-block: 4px; flex: 1 1 10rem; }
+#security-code-form { align-items: flex-end; }
+#security-code-form .field { flex: 0 1 12rem; }

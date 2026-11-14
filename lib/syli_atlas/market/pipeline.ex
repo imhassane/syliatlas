@@ -91,23 +91,18 @@ defmodule SyliAtlas.Market.Pipeline do
       nil ->
         :skipped
 
+      # A past close never replaces a session already published (which
+      # carries its daily change): the history only fills the years before.
+      exchange_id when is_map_key(r, :history) and is_map_key(r, :as_of) ->
+        if Repo.exists?(
+             from v in SyliAtlas.Market.IndexValue,
+               where: v.exchange_id == ^exchange_id and v.trade_date == ^trade_date(r, ctx)
+           ),
+           do: :skipped,
+           else: take_index(r, exchange_id, ctx)
+
       exchange_id ->
-        date = trade_date(r, ctx)
-        {verdict, issues, checked} = Quality.check_index(r)
-        checked = if is_nil(r.ytd_pct), do: checked -- ["suspect_change"], else: checked
-        Quality.sync!("index", exchange_id, date, issues, checked)
-
-        if verdict == :reject do
-          :skipped
-        else
-          insert_observation!("index", exchange_id, date, r, ctx, %{
-            close: r.value,
-            change_pct: r.change_pct,
-            ytd_pct: r.ytd_pct
-          })
-
-          {:stored, {:index, exchange_id, date}}
-        end
+        take_index(r, exchange_id, ctx)
     end
   end
 
@@ -222,6 +217,38 @@ defmodule SyliAtlas.Market.Pipeline do
       on_conflict: :replace_all,
       conflict_target: [:subject_type, :subject_id, :trade_date, :source, :raw_payload_id]
     )
+  end
+
+  defp take_index(r, exchange_id, ctx) do
+    case exchange_id do
+      nil ->
+        :skipped
+
+      exchange_id ->
+        date = trade_date(r, ctx)
+        {verdict, issues, checked} = Quality.check_index(r)
+        checked = if is_nil(r.ytd_pct), do: checked -- ["suspect_change"], else: checked
+
+        # Past closes (index history) are old by nature: never « stale ».
+        {issues, checked} =
+          if r[:history],
+            do: {Enum.reject(issues, &(&1.rule == "stale")), checked -- ["stale"]},
+            else: {issues, checked}
+
+        Quality.sync!("index", exchange_id, date, issues, checked)
+
+        if verdict == :reject do
+          :skipped
+        else
+          insert_observation!("index", exchange_id, date, r, ctx, %{
+            close: r.value,
+            change_pct: r.change_pct,
+            ytd_pct: r.ytd_pct
+          })
+
+          {:stored, {:index, exchange_id, date}}
+        end
+    end
   end
 
   defp trade_date(%{as_of: %DateTime{} = dt}, _ctx), do: DateTime.to_date(dt)

@@ -36,6 +36,13 @@ defmodule SyliAtlas.Accounts.AlertEvents do
   def market_published,
     do: %{"type" => "market"} |> AlertEventWorker.new() |> Oban.insert!()
 
+  @doc "A budget law was approved and its documents rebuilt."
+  def budget_law_published(law_id),
+    do:
+      %{"type" => "budget_law", "law_id" => law_id}
+      |> AlertEventWorker.new()
+      |> Oban.insert!()
+
   @doc "A new IMF edition is online."
   def edition_published(edition_id),
     do:
@@ -73,13 +80,40 @@ defmodule SyliAtlas.Accounts.AlertEvents do
   end
 
   @doc """
+  Records the deliveries of a budget law: one per alert on its country and
+  per stage reached (a law voted, then published, alerts twice).
+  """
+  def on_budget_law(law_id) do
+    case SyliAtlas.Budgets.get_law(law_id) do
+      nil ->
+        0
+
+      law ->
+        key =
+          "budget_law:#{law.country_code}:#{law.fiscal_year}:#{law.kind}:#{law.sequence}:#{law.stage}"
+
+        doc = SyliAtlas.Budgets.law_doc(law)
+
+        payload =
+          doc
+          |> Map.take(~w(fiscal_year kind sequence stage reference title legislature last_date
+                         revenue expenditure currency source_name source_url))
+          |> Map.put("country_code", law.country_code)
+
+        from(a in active(), where: a.kind == "budget_law" and a.area_code == ^law.country_code)
+        |> Repo.all()
+        |> Enum.count(&record(&1, key, payload))
+    end
+  end
+
+  @doc """
   Records the deliveries of a new edition: « new figures » alerts, and
   thresholds crossed since the value each alert last saw. Option `:today`.
   """
   def on_edition(edition_id, opts \\ []) do
     edition = Sources.get_edition!(edition_id)
     year = AlertRules.watched_year(Keyword.get_lazy(opts, :today, &Date.utc_today/0))
-    alerts = Repo.all(from a in active(), where: a.kind != "rating_change")
+    alerts = Repo.all(from a in active(), where: a.kind not in ["rating_change", "budget_law"])
     values = values(edition.id, Enum.map(alerts, & &1.area_code), year)
     key = "edition:" <> edition.code
 

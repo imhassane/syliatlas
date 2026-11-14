@@ -35,14 +35,14 @@ defmodule SyliAtlasWeb.TradeComponents do
         <:stat
           id="exports"
           label={gettext("Exports of goods · %{year}", year: @doc["year"])}
-          value={WorldBankComponents.usd(@entry["exports_usd"], @locale)}
+          value={WorldBankComponents.money_usd(@entry["exports_usd"], @doc["year"], @locale)}
         >
           {trend_text(@entry["exports_by_year"], @locale)}
         </:stat>
         <:stat
           id="imports"
           label={gettext("Imports of goods · %{year}", year: @doc["year"])}
-          value={WorldBankComponents.usd(@entry["imports_usd"], @locale)}
+          value={WorldBankComponents.money_usd(@entry["imports_usd"], @doc["year"], @locale)}
         >
           {balance_text(@entry, @locale)}
         </:stat>

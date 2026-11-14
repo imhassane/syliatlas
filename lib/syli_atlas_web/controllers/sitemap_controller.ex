@@ -103,6 +103,7 @@ defmodule SyliAtlasWeb.SitemapController do
 
     - [Ranking of the 54 countries](#{Seo.url(Paths.ranking_main("en"))})
     - [Debt of African countries](#{Seo.url(Paths.debt("en"))})
+    - [State budgets of African countries](#{Seo.url(Paths.budgets("en"))}): revenue, expenditure, finance laws
     - [Sovereign credit ratings](#{Seo.url(Paths.ratings("en"))})
     - [Economic communities](#{Seo.url(Paths.communities("en"))})
     - [Regions of Africa](#{Seo.url(Paths.regions("en"))})
@@ -241,9 +242,10 @@ defmodule SyliAtlasWeb.SitemapController do
     imf = imf_date()
 
     static =
-      for fun <- [:home, :regions, :method, :accessibility, :debt, :communities, :api] do
+      for fun <- [:home, :regions, :method, :accessibility, :debt, :budgets, :communities, :api] do
         {both(&apply(Paths, fun, [&1])), imf}
       end ++
+        [{both(&Paths.currencies/1), (SyliAtlas.Fx.latest() || %{})["as_of"] || imf}] ++
         for(p <- SyliAtlasWeb.Topics.sitemap_pages(), do: {p, imf})
 
     # A country is listed once per tab that has data: each tab has its
@@ -295,7 +297,11 @@ defmodule SyliAtlasWeb.SitemapController do
       day = overview["as_of"] && String.slice(overview["as_of"], 0, 10)
 
       markets =
-        [{both(&Paths.markets/1), day}, {both(&Paths.etfs/1), day}] ++
+        [
+          {both(&Paths.markets/1), day},
+          {both(&Paths.etfs/1), day},
+          {both(&Paths.simulator/1), day}
+        ] ++
           for x <- exchanges, code = x["exchange"]["code"] do
             {both(&Paths.exchange(&1, code)), x["index"]["date"] || day}
           end

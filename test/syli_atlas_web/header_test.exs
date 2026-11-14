@@ -15,14 +15,18 @@ defmodule SyliAtlasWeb.HeaderTest do
         html |> LazyHTML.from_document() |> LazyHTML.query(".site-header") |> Enum.take(1)
 
       # The language as its code; its name stays in the menu and the tooltip.
-      [code] = header |> LazyHTML.query("#lang-header summary span") |> Enum.map(&LazyHTML.text/1)
+      [code] =
+        header |> LazyHTML.query("#lang-header summary span[title]") |> Enum.map(&LazyHTML.text/1)
+
       assert code == unquote(path) |> String.slice(1, 2) |> String.upcase()
 
-      # Its accessible name contains the visible code (WCAG 2.5.3).
-      [label] =
-        header |> LazyHTML.query("#lang-header summary") |> LazyHTML.attribute("aria-label")
+      # Named by its visible text (WCAG 2.5.3): no aria-label hiding the code.
+      [summary] = header |> LazyHTML.query("#lang-header summary") |> Enum.take(1)
 
-      assert label =~ code
+      assert LazyHTML.attribute(summary, "aria-label") == [nil] or
+               LazyHTML.attribute(summary, "aria-label") == []
+
+      assert LazyHTML.text(summary) =~ code
 
       # Install offer: in the drawer and on the home page, not in the header.
       assert LazyHTML.query(header, "[data-install]") |> Enum.count() == 0
