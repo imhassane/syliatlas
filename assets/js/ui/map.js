@@ -21,6 +21,11 @@ export function initMap() {
   const field = name => panel.querySelector(`[data-field="${name}"]`)
   let selected = root.dataset.selected
   let indicator = root.dataset.indicator
+  // Home hero: the panel is a <dialog>, a modal drawer below 64rem.
+  const isDialog = panel.tagName === "DIALOG"
+  const drawer = root.dataset.drawer ? matchMedia(root.dataset.drawer) : phone
+  let opener = null
+  let quiet = false // closing to re-lay the dialog: no focus move
 
   function setIndicator(key) {
     indicator = key
@@ -83,7 +88,68 @@ export function initMap() {
     void body.offsetWidth
     body.classList.add("is-entering")
 
-    if (open && phone.matches && panel.showPopover && !panel.matches(":popover-open")) panel.showPopover()
+    if (!open) return
+    if (isDialog) showDialog()
+    else if (drawer.matches && panel.showPopover && !panel.matches(":popover-open")) panel.showPopover()
+  }
+
+  // Home hero (a <dialog>): from 64rem the country takes the place of the
+  // left column; below, a modal drawer (the page behind is inert, Escape
+  // closes it). Either way focus goes to the country's name, and back to
+  // the country (or the list) when it closes.
+  function showDialog() {
+    if (drawer.matches) {
+      if (panel.matches(":modal")) return
+      opener = document.activeElement
+      if (panel.open) shut()
+      panel.showModal()
+    } else {
+      if (panel.open) return
+      opener = document.activeElement
+      panel.show()
+    }
+    field("name").focus({preventScroll: drawer.matches})
+    if (!drawer.matches) panel.scrollIntoView({block: "nearest"})
+  }
+
+  // On resize, a drawer left open becomes the column, and back.
+  function layDialog() {
+    if (!isDialog || !panel.open) return
+    if (drawer.matches && !panel.matches(":modal")) shut()
+    else if (!drawer.matches && panel.matches(":modal")) { shut(); panel.show() }
+  }
+
+  function shut() {
+    if (!panel.open) return
+    // The close event comes later (a task): the handler resets the flag.
+    quiet = true
+    panel.close()
+  }
+
+  if (isDialog) {
+    // A country asked in the URL: in the column, never a drawer at load.
+    if (drawer.matches) shut()
+    drawer.addEventListener("change", layDialog)
+    panel.querySelectorAll("[data-map-close]").forEach(button => button.addEventListener("click", () => panel.close()))
+    // Escape also closes the column (the modal drawer does it natively).
+    panel.addEventListener("keydown", event => {
+      if (event.key === "Escape" && !panel.matches(":modal")) { event.preventDefault(); panel.close() }
+    })
+    // A tap on the backdrop (the dialog box itself, outside its content).
+    panel.addEventListener("click", event => {
+      if (event.target !== panel || !panel.matches(":modal")) return
+      const r = panel.getBoundingClientRect()
+      const inside = event.clientX >= r.left && event.clientX <= r.right && event.clientY >= r.top && event.clientY <= r.bottom
+      if (!inside) panel.close()
+    })
+    panel.addEventListener("close", () => {
+      if (quiet) { quiet = false; return }
+      const back = svg.querySelector(`.cty[data-code="${selected}"]`)
+      // Back to the list if the country was chosen there, else to the country.
+      const target = opener && opener === goto ? goto : back
+      target?.focus()
+      opener = null
+    })
   }
 
   // A GDP in billions of dollars the currency menu rewrites.
@@ -101,7 +167,8 @@ export function initMap() {
     // Only a figure being checked carries a badge.
     field("national-status").hidden = !(n && n.status)
     field("national-none").hidden = !!n
-    if (field("gdp-label") && c.gdp_label) field("gdp-label").textContent = c.gdp_label
+    const label = field("gdp-label")
+    if (label && c.gdp_label) label.textContent = "short" in label.dataset ? c.gdp_short : c.gdp_label
     if (!n) return
     setMoney(field("national-value"), n.amount, n.year, n.value)
     field("national-period").textContent = n.period
