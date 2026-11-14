@@ -592,7 +592,18 @@ defmodule SyliAtlasWeb.Layouts do
   defp lang_link(assigns) do
     ~H"""
     <details class={["lang-menu", @up && "lang-menu-up"]} id={@id}>
-      <summary class={@class} aria-label={gettext("Language")}>
+      <summary
+        class={@class}
+        aria-label={
+          gettext("Language: %{current}",
+            current:
+              if(@short,
+                do: String.upcase(@locale),
+                else: SyliAtlas.Locales.native(@locale)
+              )
+          )
+        }
+      >
         <svg
           width="16"
           height="16"

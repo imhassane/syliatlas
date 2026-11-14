@@ -1,5 +1,5 @@
 // Syli Atlas: the script of every page. It holds the site's own behaviour
-// (map, drawer, sticky header and band, page transitions, filter sheets, toasts, updates, install, offline pages, motion, recap dialog) and nothing
+// (map, drawer, sticky header and band, page transitions, filter sheets, toasts, updates, install, offline pages, motion, recap dialog, chart tooltips, visit counts) and nothing
 // heavy: the LiveView client lives in live.js, loaded only by LiveView pages
 // (see SyliAtlasWeb.LiveAssets), so public pages never download it.
 
@@ -26,6 +26,8 @@ import {initHeader} from "./ui/header"
 import {initTransitions} from "./ui/transitions"
 import {initFlashToasts} from "./ui/toasts"
 import {initRecap, initRecapPage} from "./ui/recap"
+import {initChartTips} from "./ui/chart_tips"
+import {initPlausible} from "./ui/plausible"
 
 initTheme()
 initDrawer()
@@ -47,6 +49,8 @@ initTransitions()
 initFlashToasts()
 initRecap()
 initRecapPage()
+initChartTips()
+initPlausible()
 
 // The lines below enable quality of life phoenix_live_reload
 // development features:

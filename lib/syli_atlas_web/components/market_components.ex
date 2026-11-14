@@ -179,6 +179,8 @@ defmodule SyliAtlasWeb.MarketComponents do
   attr :history, :list, required: true, doc: "[[iso_date, value_string], …], oldest first"
   attr :label, :string, required: true
   attr :locale, :string, required: true
+  attr :name, :string, default: nil, doc: "what the line is (index or share), for the tooltip"
+  attr :sources, :list, default: [], doc: "market sources: their credit goes in the tooltip"
 
   @doc """
   The index over time, drawn from the sessions received. A gap of more than
@@ -186,24 +188,49 @@ defmodule SyliAtlasWeb.MarketComponents do
   like a straight move.
   """
   def index_chart(assigns) do
-    assigns = assign(assigns, :chart, chart(assigns.history))
+    chart = chart(assigns.history)
+    tips = chart_tips(chart, assigns)
+
+    assigns =
+      assign(assigns,
+        chart: chart,
+        tips: tips,
+        tips_json: Jason.encode!(tips),
+        start: List.last(tips.points)
+      )
 
     ~H"""
     <figure class="market-chart" id={@id}>
-      <svg viewBox="0 0 760 260" role="img" aria-label={@label}>
-        <g class="grid-lines">
-          <line :for={t <- @chart.ticks} x1="56" x2="744" y1={t.y} y2={t.y} />
-        </g>
-        <g class="axis-labels">
-          <text :for={t <- @chart.ticks} x="48" y={t.label_y} text-anchor="end">
-            {price(t.label, @locale)}
-          </text>
-          <text x="56" y="252">{day(@chart.first, @locale)}</text>
-          <text x="744" y="252" text-anchor="end">{day(@chart.last, @locale)}</text>
-        </g>
-        <path :for={d <- @chart.paths} d={d} class="line" />
-        <circle cx={@chart.end_x} cy={@chart.end_y} r="4.5" class="dot" />
-      </svg>
+      <div class="chart-box" data-chart-tips={@tips_json}>
+        <svg viewBox="0 0 760 260" role="img" aria-label={@label}>
+          <g class="grid-lines">
+            <line :for={t <- @chart.ticks} x1="56" x2="744" y1={t.y} y2={t.y} />
+          </g>
+          <g class="axis-labels">
+            <text :for={t <- @chart.ticks} x="48" y={t.label_y} text-anchor="end">
+              {price(t.label, @locale)}
+            </text>
+            <text x="56" y="252">{day(@chart.first, @locale)}</text>
+            <text x="744" y="252" text-anchor="end">{day(@chart.last, @locale)}</text>
+          </g>
+          <path :for={d <- @chart.paths} d={d} class="line" />
+          <circle cx={@chart.end_x} cy={@chart.end_y} r="4.5" class="dot" />
+        </svg>
+        <div
+          class="chart-reader"
+          role="slider"
+          tabindex="0"
+          hidden
+          aria-label={gettext("Read the chart session by session: %{label}", label: @label)}
+          aria-orientation="horizontal"
+          aria-valuemin="0"
+          aria-valuemax={length(@tips.points) - 1}
+          aria-valuenow={@tips.start}
+          aria-valuetext={@start.valuetext}
+        >
+        </div>
+        <div class="chart-tip" hidden></div>
+      </div>
       <figcaption :if={@chart.gaps > 0} class="small muted">
         {ngettext(
           "One stretch without data: the line is broken there.",
@@ -272,6 +299,8 @@ defmodule SyliAtlasWeb.MarketComponents do
     {_, end_v} = List.last(points)
 
     %{
+      points:
+        for({d, v} <- points, do: %{date: Date.to_iso8601(d), value: v, x: x.(d), y: y.(v)}),
       paths: paths,
       ticks: ticks,
       first: Date.to_iso8601(first),
@@ -283,6 +312,55 @@ defmodule SyliAtlasWeb.MarketComponents do
   end
 
   defp fmt(n), do: :erlang.float_to_binary(n * 1.0, decimals: 1)
+
+  # The tooltip's data (see SyliAtlasWeb.Charts.tips/2): one point per session
+  # received, the close, its change from the previous session received, and
+  # the credit the source's licence requires.
+  defp chart_tips(chart, assigns) do
+    name = assigns.name || gettext("Closing value")
+    credits = assigns.sources |> used_sources() |> Enum.map(&Catalog.attribution(&1["code"]))
+
+    points =
+      chart.points
+      |> Enum.with_index()
+      |> Enum.map(fn {p, i} ->
+        text = price(p.value, assigns.locale)
+        date = day(p.date, assigns.locale)
+        prev = if i > 0, do: Enum.at(chart.points, i - 1)
+
+        change =
+          if prev && prev.value > 0 do
+            gettext("Change from the previous session: %{change}",
+              change: pct((p.value / prev.value - 1) * 100, assigns.locale)
+            )
+          end
+
+        %{
+          year: nil,
+          x: Float.round(p.x * 1.0, 1),
+          title: date,
+          status: gettext("Closing value"),
+          kind: "data",
+          rows: [%{name: name, color: "--c1", y: Float.round(p.y * 1.0, 1), text: text}],
+          change: change,
+          pick: nil,
+          valuetext: "#{date}, #{name} #{text}"
+        }
+      end)
+
+    %{
+      w: 760,
+      h: 260,
+      top: 16,
+      bottom: 224,
+      from: nil,
+      anchor: assigns.id,
+      source: Enum.join(credits ++ [gettext("end of day, not live")], " · "),
+      keys: gettext("← →: change session"),
+      start: length(points) - 1,
+      points: points
+    }
+  end
 
   # Sources --------------------------------------------------------------------------
 
