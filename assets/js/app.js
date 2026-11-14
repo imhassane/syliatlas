@@ -28,7 +28,6 @@ import {initFlashToasts} from "./ui/toasts"
 import {initRecap, initRecapPage} from "./ui/recap"
 import {initCurrencyPickers} from "./ui/currency_picker"
 import {initCopyButtons} from "./ui/copy"
-import {initAnalytics} from "./ui/analytics"
 import {initMoney} from "./ui/money"
 import {initChartTips} from "./ui/chart_tips"
 import {initPlausible} from "./ui/plausible"
@@ -55,7 +54,6 @@ initFlashToasts()
 initRecap()
 initRecapPage()
 initCopyButtons()
-initAnalytics()
 initMoney()
 initChartTips()
 initPlausible()

@@ -13,10 +13,6 @@ defmodule SyliAtlasWeb.CSP do
   `<script type="application/json">` and `application/ld+json` blocks are
   data, never run, and need nothing here.
 
-  When `CLOUDFLARE_WEB_ANALYTICS_TOKEN` is set, the site's policy (never the
-  embed policy) also allows Cloudflare Web Analytics: its beacon script and
-  the address it reports to (SyliAtlasWeb.WebAnalytics).
-
   Plausible (`assets/js/ui/plausible.js`, visit counts without cookies) is
   allowed in the site's policy only: `https://plausible.io` for its script
   and for the events it sends. The script itself loads only on
@@ -172,19 +168,8 @@ defmodule SyliAtlasWeb.CSP do
     SyliAtlasWeb.Endpoint.struct_url() |> Map.put(:path, @report_path) |> URI.to_string()
   end
 
-  # Cloudflare Web Analytics (SyliAtlasWeb.WebAnalytics), only when its token
-  # is set, and Plausible. Never in the embed policy: the framed views promise
-  # no tracking.
-  defp analytics(kind) do
-    cloudflare =
-      cond do
-        not SyliAtlasWeb.WebAnalytics.enabled?() -> []
-        kind == :script -> [SyliAtlasWeb.WebAnalytics.script_origin()]
-        kind == :connect -> [SyliAtlasWeb.WebAnalytics.connect_origin()]
-      end
-
-    cloudflare ++ [plausible_origin()]
-  end
+  # Plausible. Never in the embed policy: the framed views promise no tracking.
+  defp analytics(_kind), do: [plausible_origin()]
 
   @doc "Plausible's script and event endpoint (script-src, connect-src)."
   def plausible_origin, do: "https://plausible.io"
