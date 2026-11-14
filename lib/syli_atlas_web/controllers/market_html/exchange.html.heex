@@ -111,6 +111,8 @@
           history={@doc["history"]}
           label={@answer}
           locale={@locale}
+          name={@e["index_name"]}
+          sources={@doc["sources"]}
         />
         <div :if={length(@doc["history"]) < 2} class="market-empty-chart" id="index-chart-empty">
           <p class="h3">{gettext("History being built")}</p>
