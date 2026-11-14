@@ -49,10 +49,14 @@ defmodule SyliAtlasWeb.NationalPagesTest do
     d = doc(conn, "/fr")
     sum = text(d, "#national-sum")
     assert sum =~ "Somme des chiffres nationaux"
-    assert sum =~ "0 pays au chiffre officiel"
-    assert sum =~ "53 au chiffre FMI (repli)"
-    assert sum =~ "En cours de vérification"
+    # As in the canvas: legend of the bar, the pending country and its date.
+    refute sum =~ "au chiffre officiel"
+    assert sum =~ "53 pays au chiffre FMI (repli)"
+    assert sum =~ "1 pays en cours de vérification"
+    assert sum =~ "Éthiopie : 201,4"
+    assert sum =~ "rebasage du 4 nov. 2026"
     assert sum =~ "3 252"
+    assert sum =~ "+75,1"
     assert count(d, "#national-sum a[href='/fr/chiffres-nationaux']") == 1
   end
 
@@ -113,7 +117,8 @@ defmodule SyliAtlasWeb.NationalPagesTest do
 
     home = doc(conn, "/fr")
     # The sum and the sum after review, inside the sentence, escaped around.
-    assert count(home, "#national-sum [data-money]") == 2
+    # The sum, the pending figure, the sum after review and the difference.
+    assert count(home, "#national-sum [data-money]") == 4
     assert text(home, "#national-sum .national-wait") =~ "Une fois vérifié, la somme passera à"
 
     assert count(doc(conn, "/fr/chiffres-nationaux"), "main [data-money]") > 50
