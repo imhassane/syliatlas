@@ -213,3 +213,37 @@ dd.rt-inv, dd.rt-spec, dd.rt-high, dd.rt-risk, dd.rt-def, b.rt-inv, b.rt-spec, b
 .adm-more summary { cursor: pointer; color: var(--accent-text); font-size: 14px; list-style: none; }
 .adm-more summary::-webkit-details-marker { display: none; }
 .adm-more[open] summary { margin-bottom: 10px; }
+
+/* Admin · Recherche Google (Admin.SearchConsoleHTML): a sentence first, the
+   figures explained, a chart, where the pages stand, what to do, one table
+   with tabs. */
+.gsc-brief { padding: 28px 32px; display: flex; flex-direction: column; gap: 14px; }
+.gsc-brief-text { margin: 0; font-size: 21px; line-height: 1.5; max-width: 60rem; }
+.gsc-warn { margin: 0; padding: 12px 16px; border-radius: 8px; background: var(--warning-bg); color: var(--warning-ink); font-size: 14px; }
+.gsc-section { padding: 24px 28px; display: flex; flex-direction: column; gap: 14px; }
+.gsc-section-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.gsc-section-head p { margin: 4px 0 0; }
+.gsc-chart { display: block; }
+.gsc-chart rect:hover { opacity: .8; }
+.gsc-bands-bar { display: flex; height: 36px; border-radius: 8px; overflow: hidden; background: var(--alt); }
+.gsc-bands { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.gsc-bands > div { display: flex; flex-direction: column; gap: 2px; }
+.gsc-band-name { display: flex; gap: 8px; align-items: center; font-weight: 500; font-size: 14px; }
+.gsc-band-name i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.gsc-band-count { font-size: 22px; }
+.gsc-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+.gsc-card { padding: 20px 22px; display: flex; flex-direction: column; gap: 10px; }
+.gsc-card p { margin: 0; }
+.gsc-card.is-done { opacity: .72; }
+.gsc-card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; font-size: 17px; }
+.gsc-card-actions { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: auto; flex-wrap: wrap; }
+.gsc-help { padding: 18px 26px; }
+.gsc-help summary { font-weight: 500; cursor: pointer; }
+.gsc-help ul { margin: 12px 0 0; padding-inline-start: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 15px; }
+@media (max-width: 760px) {
+  .gsc-bands { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .gsc-brief-text { font-size: 18px; }
+}
+.gsc-import p { margin: 0; }
+.gsc-import.is-done { background: var(--success-bg); color: var(--success-ink); }
+.gsc-import.is-retrying, .gsc-import.is-failed, .gsc-import.is-stuck { background: var(--warning-bg); color: var(--warning-ink); }

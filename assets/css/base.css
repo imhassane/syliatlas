@@ -216,6 +216,12 @@ html.can-install .install-card[data-install] { display: flex; }
 .admin-side a { display: flex; align-items: center; gap: 12px; min-height: 40px; padding: 0 14px; border-radius: 999px; color: var(--ink-muted); text-decoration: none; font-size: 14px; font-weight: 500; }
 .admin-side a[aria-current="page"] { color: var(--ink); background: var(--muted); }
 .admin-main { flex: 999 1 640px; min-width: 0; padding: 36px clamp(20px, 3vw, 56px) 64px; }
+/* Side by side (from about 920px), the menu stays in place while the page
+   scrolls; it scrolls on its own if taller than the window. Stacked on
+   narrow screens, it scrolls with the page. */
+@media (min-width: 920px) {
+  .admin-side { position: sticky; top: 0; align-self: flex-start; height: 100vh; height: 100dvh; overflow-y: auto; overscroll-behavior: contain; }
+}
 .admin-main > div { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
 .budget-bar { position: relative; height: 16px; background: var(--muted); border-radius: 6px; min-width: 160px; }
 .budget-bar span { position: absolute; top: 4px; height: 8px; border-radius: 4px; background: var(--accent); }

@@ -20,6 +20,9 @@ defmodule SyliAtlas.SearchConsole do
   alias SyliAtlas.Repo
 
   @dimensions ~w(query page device country)
+  # Query and page together, to say which page a query shows: stored as
+  # dimension "query_page", key "query\tpage".
+  @pairs "query_page"
   @scope "https://www.googleapis.com/auth/webmasters.readonly"
   @token_url "https://oauth2.googleapis.com/token"
   @api "https://searchconsole.googleapis.com/webmasters/v3/sites/"
@@ -55,8 +58,8 @@ defmodule SyliAtlas.SearchConsole do
   defp import_day(token, day) do
     results =
       for dim <- @dimensions do
-        {dim, query(token, day, dim)}
-      end
+        {dim, query(token, day, [dim])}
+      end ++ [{@pairs, query(token, day, ["query", "page"])}]
 
     case Enum.find(results, &match?({_, {:error, _}}, &1)) do
       {_, error} ->
@@ -90,11 +93,11 @@ defmodule SyliAtlas.SearchConsole do
     end
   end
 
-  defp query(token, day, dim) do
+  defp query(token, day, dims) do
     body = %{
       "startDate" => Date.to_iso8601(day),
       "endDate" => Date.to_iso8601(day),
-      "dimensions" => [dim],
+      "dimensions" => dims,
       "rowLimit" => @row_limit,
       "dataState" => "all"
     }
@@ -104,9 +107,9 @@ defmodule SyliAtlas.SearchConsole do
     case Req.post(req(), url: url, json: body, auth: {:bearer, token}) do
       {:ok, %{status: 200, body: %{} = b}} ->
         {:ok,
-         for r <- b["rows"] || [], [k | _] = r["keys"] do
+         for r <- b["rows"] || [], keys = r["keys"], keys != [] do
            %{
-             key: String.slice(k, 0, 500),
+             key: keys |> Enum.join("\t") |> String.slice(0, 500),
              clicks: round(r["clicks"] || 0),
              impressions: round(r["impressions"] || 0),
              position: r["position"]
@@ -201,6 +204,59 @@ defmodule SyliAtlas.SearchConsole do
     |> Req.merge(config()[:req_options] || [])
   end
 
+  @doc """
+  The latest import job, to show on the admin page: `%{state, at, error}`
+  (state: waiting, running, done, retrying, failed) or nil.
+  """
+  def last_import do
+    worker = inspect(SyliAtlas.Workers.SearchConsoleWorker)
+
+    job =
+      Repo.one(
+        from j in Oban.Job,
+          where: j.worker == ^worker,
+          order_by: [desc: j.id],
+          limit: 1
+      )
+
+    if job do
+      state = import_state(job.state)
+
+      # An import takes a minute: still « executing » after ten, it was cut
+      # (a redeploy) and will be rescued; a new click starts another.
+      state =
+        if (state == :running and job.attempted_at) &&
+             DateTime.diff(DateTime.utc_now(), job.attempted_at, :minute) >= 10,
+           do: :stuck,
+           else: state
+
+      %{
+        state: state,
+        at: job.completed_at || job.attempted_at || job.scheduled_at || job.inserted_at,
+        error: last_error(job.errors),
+        attempt: job.attempt,
+        max: job.max_attempts
+      }
+    end
+  end
+
+  defp import_state(s) when s in ["available", "scheduled"], do: :waiting
+  defp import_state("executing"), do: :running
+  defp import_state("completed"), do: :done
+  defp import_state("retryable"), do: :retrying
+  defp import_state(_), do: :failed
+
+  defp last_error([_ | _] = errors) do
+    error = List.last(errors)["error"] || ""
+
+    case Regex.run(~r/"([^"]{10,})"/, error) do
+      [_, message] -> message
+      _ -> String.slice(error, 0, 300)
+    end
+  end
+
+  defp last_error(_), do: nil
+
   # ---------------------------------------------------------------------------
   # Reading
 
@@ -248,7 +304,9 @@ defmodule SyliAtlas.SearchConsole do
             select: %{
               date: type(r.date, :date),
               clicks: sum(r.clicks),
-              impressions: sum(r.impressions)
+              impressions: sum(r.impressions),
+              position:
+                fragment("sum(? * ?) / max(sum(?), 1)", r.position, r.impressions, r.impressions)
             }
         )
     end
@@ -278,12 +336,99 @@ defmodule SyliAtlas.SearchConsole do
     end
   end
 
-  @doc "Queries on the first page (position ≤ 12) without a click: what to work on."
+  @doc """
+  Queries on the first page (position ≤ 12) without a click: what to work
+  on, with the page Google shows most for each and whether an admin marked
+  it handled. Open ones first.
+  """
   def opportunities(days \\ 28, limit \\ 30) do
+    pages = query_pages(days)
+    done = actions()
+
     "query"
     |> top(days, 2000)
     |> Enum.filter(&(&1.clicks == 0 and is_number(&1.position) and &1.position <= 12))
+    |> Enum.map(&Map.merge(&1, %{page: pages[&1.key], done: done[&1.key]}))
+    |> Enum.sort_by(&if(&1.done, do: 1, else: 0))
     |> Enum.take(limit)
+  end
+
+  # The page with the most impressions for each query.
+  defp query_pages(days) do
+    case window(days) do
+      nil ->
+        %{}
+
+      {from, to} ->
+        Repo.all(
+          from r in "search_console_rows",
+            where: r.dimension == @pairs and r.date >= ^from and r.date <= ^to,
+            group_by: r.key,
+            select: {r.key, sum(r.impressions)}
+        )
+        |> Enum.map(fn {k, n} ->
+          [q, page] = Enum.take(String.split(k, "\t", parts: 2) ++ [nil], 2)
+          {q, page, n}
+        end)
+        |> Enum.group_by(&elem(&1, 0))
+        |> Map.new(fn {q, rows} -> {q, rows |> Enum.max_by(&elem(&1, 2)) |> elem(1)} end)
+    end
+  end
+
+  @doc "Handled queries: `%{query => %{by, at}}`."
+  def actions do
+    Repo.all(
+      from a in "seo_actions",
+        select: {a.query, a.done_by, type(a.done_at, :utc_datetime)}
+    )
+    |> Map.new(fn {q, by, at} -> {q, %{by: by, at: at}} end)
+  end
+
+  @doc "Marks a query handled, or reopens it (`done?` false)."
+  def mark!(query, by, true) do
+    Repo.insert_all(
+      "seo_actions",
+      [
+        %{
+          query: String.slice(query, 0, 500),
+          done_by: String.slice(by, 0, 80),
+          done_at: DateTime.utc_now() |> DateTime.truncate(:second)
+        }
+      ],
+      on_conflict: {:replace, [:done_by, :done_at]},
+      conflict_target: [:query]
+    )
+
+    :ok
+  end
+
+  def mark!(query, _by, false) do
+    Repo.delete_all(from a in "seo_actions", where: a.query == ^query)
+    :ok
+  end
+
+  @doc """
+  Pages by band of average position: top 3, first page (4–10), second page
+  (11–20), further. `[%{band, pages, impressions}]`.
+  """
+  def bands(days \\ 28) do
+    rows = top("page", days, 100_000)
+
+    for {band, lo, hi} <- [
+          {:top3, 0, 3},
+          {:page1, 3, 10},
+          {:page2, 10, 20},
+          {:further, 20, 1.0e9}
+        ] do
+      in_band =
+        Enum.filter(rows, &(is_number(&1.position) and &1.position > lo and &1.position <= hi))
+
+      %{
+        band: band,
+        pages: length(in_band),
+        impressions: in_band |> Enum.map(& &1.impressions) |> Enum.sum()
+      }
+    end
   end
 
   @doc "Pages grouped by language and by section of the address (`/pt/bolsas/…` → pt, bolsas)."

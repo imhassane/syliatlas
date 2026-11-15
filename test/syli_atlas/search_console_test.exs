@@ -43,7 +43,7 @@ defmodule SyliAtlas.SearchConsoleTest do
           assert conn.request_path =~ "sc-domain%3Asyliatlas.com"
           assert Plug.Conn.get_req_header(conn, "authorization") == ["Bearer token-1"]
           {:ok, body, conn} = Plug.Conn.read_body(conn)
-          [dim] = Jason.decode!(body)["dimensions"]
+          dim = Jason.decode!(body)["dimensions"] |> Enum.join("+")
           Req.Test.json(conn, %{"rows" => Map.get(rows_by_dimension, dim, [])})
       end
     end)
@@ -73,19 +73,42 @@ defmodule SyliAtlas.SearchConsoleTest do
         %{"keys" => ["DESKTOP"], "clicks" => 1, "impressions" => 816, "position" => 29.5},
         %{"keys" => ["MOBILE"], "clicks" => 2, "impressions" => 255, "position" => 13.0}
       ],
-      "country" => [%{"keys" => ["bra"], "clicks" => 0, "impressions" => 291, "position" => 13.1}]
+      "country" => [%{"keys" => ["bra"], "clicks" => 0, "impressions" => 291, "position" => 13.1}],
+      "query+page" => [
+        %{
+          "keys" => ["sbsw", "https://syliatlas.com/pt/bolsas/jse/ssw"],
+          "clicks" => 0,
+          "impressions" => 80,
+          "position" => 7.0
+        },
+        %{
+          "keys" => ["sbsw", "https://syliatlas.com/en/stock-exchanges/jse/ssw"],
+          "clicks" => 0,
+          "impressions" => 5,
+          "position" => 9.0
+        }
+      ]
     })
 
-    assert {:ok, 7} = SearchConsole.import_days([~D[2026-11-13]])
+    assert {:ok, 9} = SearchConsole.import_days([~D[2026-11-13]])
     assert_received {:claims, %{"iss" => "bot@project.iam.gserviceaccount.com", "scope" => scope}}
     assert scope =~ "webmasters.readonly"
 
     # The same day again: replaced, not added.
-    assert {:ok, 7} = SearchConsole.import_days([~D[2026-11-13]])
+    assert {:ok, 9} = SearchConsole.import_days([~D[2026-11-13]])
 
     t = SearchConsole.totals(28)
     assert t.clicks == 3 and t.impressions == 1071
-    assert [%{key: "sbsw"}] = SearchConsole.opportunities()
+    # The page Google shows most for the query, and the handled state.
+    assert [%{key: "sbsw", page: "https://syliatlas.com/pt/bolsas/jse/ssw", done: nil}] =
+             SearchConsole.opportunities()
+
+    SearchConsole.mark!("sbsw", "admin@example.com", true)
+    assert [%{done: %{by: "admin@example.com"}}] = SearchConsole.opportunities()
+    SearchConsole.mark!("sbsw", "admin@example.com", false)
+    assert [%{done: nil}] = SearchConsole.opportunities()
+
+    assert [%{band: :top3, pages: 0}, %{band: :page1, pages: 2} | _] = SearchConsole.bands()
     assert [%{lang: "pt", section: "bolsas", impressions: 156} | _] = SearchConsole.by_section()
 
     [pt, ar] = SearchConsole.pages_to_review()
@@ -124,6 +147,49 @@ defmodule SyliAtlas.SearchConsoleTest do
 
     html = admin |> get("/admin/recherche-google") |> html_response(200)
     assert html =~ ~s(id="gsc-stats")
+    assert html =~ ~s(id="gsc-brief")
+    assert html =~ ~s(id="gsc-chart-svg")
+    assert html =~ ~s(id="gsc-where")
+    assert html =~ ~s(id="gsc-detail")
+
+    assert admin |> get("/admin/recherche-google?onglet=pages") |> html_response(200) =~
+             "gsc-detail-table"
+
+    for tab <- ~w(pages langues appareils pays) do
+      assert admin
+             |> get("/admin/recherche-google?onglet=#{tab}&mesure=rang&jours=90")
+             |> html_response(200) =~
+               ~s(id="gsc-chart-svg")
+    end
+
+    assert admin
+           |> post("/admin/recherche-google/action", %{"query" => "x", "done" => "1"})
+           |> redirected_to() =~
+             "/admin/recherche-google"
+
+    assert SearchConsole.actions()["x"]
+
+    # An import asked from the page shows its state at the top.
+    assert admin |> post("/admin/recherche-google/importer") |> redirected_to() ==
+             "/admin/recherche-google"
+
+    assert %{state: state} = SearchConsole.last_import()
+    assert state in [:waiting, :running, :done]
+
+    assert admin |> get("/admin/recherche-google") |> html_response(200) =~
+             ~s(id="gsc-import-status")
+
+    # A job left « executing » by a redeploy: shown as cut, and a click still
+    # starts a new import.
+    SyliAtlas.Repo.update_all(Oban.Job,
+      set: [state: "executing", attempted_at: DateTime.add(DateTime.utc_now(), -20, :minute)]
+    )
+
+    assert %{state: :stuck} = SearchConsole.last_import()
+    before = SyliAtlas.Repo.aggregate(Oban.Job, :count)
+    post(admin, "/admin/recherche-google/importer")
+    assert SyliAtlas.Repo.aggregate(Oban.Job, :count) == before + 1
+
     assert html =~ ~s(id="admin-nav-search_console")
 
     tr = admin |> get("/admin/traductions") |> html_response(200)
