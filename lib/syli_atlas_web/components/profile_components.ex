@@ -362,6 +362,11 @@ defmodule SyliAtlasWeb.ProfileComponents do
   attr :ctx, :map, required: true, doc: "everything the profile knows (see AreaController)"
   attr :region, :any, default: nil, doc: "the continent, for the breadcrumb"
   attr :members, :integer, default: 0, doc: "how many countries the area groups"
+
+  attr :national, :map,
+    default: nil,
+    doc: "the members' official GDP sum (SyliAtlas.National.group/3)"
+
   attr :path, :string, required: true
 
   @doc """
@@ -382,7 +387,11 @@ defmodule SyliAtlasWeb.ProfileComponents do
           else: []
         ) ++ [{ctx.name, nil}]
 
-    assigns = assign(assigns, crumbs: crumbs, kpis: region_kpis(ctx, assigns.members))
+    assigns =
+      assign(assigns,
+        crumbs: crumbs,
+        kpis: region_kpis(ctx, assigns.members) |> with_official(assigns[:national], locale)
+      )
 
     ~H"""
     <.entity_head crumbs={@crumbs} title={@ctx.name} kpis_id="region-kpis" class="region-head">
@@ -415,6 +424,34 @@ defmodule SyliAtlasWeb.ProfileComponents do
     </.entity_head>
     """
   end
+
+  # The sum of the members' official GDP beside the IMF's (SyliAtlas.National.group/3),
+  # once a member has an official figure, counted or being checked: in the
+  # GDP tile itself, so the row keeps its six tiles.
+  defp with_official([gdp | rest], %{"counted" => counted, "pending" => pending} = g, l)
+       when counted > 0 or pending != [] do
+    official =
+      if counted > 0,
+        do:
+          gettext("official: %{total}",
+            total: SyliAtlasWeb.Format.value(g["national_total"], "gdp_usd_bn", l)
+          ),
+        else:
+          gettext("official: %{total} once checked",
+            total: SyliAtlasWeb.Format.value(g["after_review_total"], "gdp_usd_bn", l)
+          )
+
+    [
+      %{
+        gdp
+        | label: gettext("GDP %{year} · IMF", year: g["year"]),
+          sub: gdp.sub <> " · " <> official
+      }
+      | rest
+    ]
+  end
+
+  defp with_official(kpis, _group, _locale), do: kpis
 
   defp area_kind_label("continent"), do: gettext("Continent")
   defp area_kind_label(_), do: gettext("African Union region")
