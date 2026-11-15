@@ -19,7 +19,7 @@ defmodule SyliAtlasWeb.NationalPagesTest do
   test "the Ethiopian page shows the rebasing, both figures and the badge", %{conn: conn} do
     d = doc(conn, "/fr/pays/ethiopie/economie")
 
-    assert text(d, "#national-rebasing") =~ "2024/25 au lieu de 2015/16"
+    assert text(d, "#rebasage") =~ "2024/25 (au lieu de 2015/16)"
     assert text(d, "#national-card-gdp_usd_bn") =~ "201,4"
     assert text(d, "#national-card-gdp_usd_bn") =~ "126,4"
     assert text(d, "#national-card-gdp_usd_bn") =~ "En cours de vérification"
@@ -42,7 +42,7 @@ defmodule SyliAtlasWeb.NationalPagesTest do
   test "a country without national figures shows none", %{conn: conn} do
     d = doc(conn, "/fr/pays/tchad/economie")
     assert count(d, "#national-figures") == 0
-    assert count(d, "#national-rebasing") == 0
+    assert count(d, "#rebasage") == 0
   end
 
   test "the home window shows the sum, the composition and the pending figure", %{conn: conn} do

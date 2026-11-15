@@ -76,6 +76,122 @@
     </article>
   </section>
 
+  <section class="card adm-list" id="adm-rebasings">
+    <div class="adm-card-head">
+      <h2 class="h2">Rebasages</h2>
+      <.form for={%{}} action={~p"/admin/chiffres-nationaux/rebasages/veille"} method="post">
+        <button class="btn btn-secondary" type="submit" id="rebasing-watch">Lancer la veille</button>
+      </.form>
+    </div>
+    <p class="muted pad-sm">
+      La veille lit l'actualité chaque matin et propose ici les rebasages annoncés. Rien n'est publié sans toi : complète si besoin, puis publie. L'alerte se ferme seule quand une édition du FMI intègre le rebasage.
+      <span :if={@watch_ran}>Dernier passage : {fr_date(@watch_ran)}.</span>
+      <span :if={!@watch_ready}>
+        <b>Clé ANTHROPIC_API_KEY absente : la veille collecte les articles sans les lire.</b>
+      </span>
+    </p>
+
+    <h3 class="h3 pad-sm">Proposés ({length(@proposed)})</h3>
+    <p :if={@proposed == []} class="muted pad-sm">Aucune proposition.</p>
+    <article :for={r <- @proposed} class="adm-national" id={"rebasing-#{r.id}"}>
+      <p class="eyebrow">{country_name(r.country_code)} · {r.announced_on}</p>
+      <blockquote :if={r.excerpt} class="adm-quote">« {r.excerpt} »</blockquote>
+      <p :if={r.article_url} class="small">
+        <a href={r.article_url} rel="noopener">{r.article_title || r.article_url}</a>
+      </p>
+      <.form
+        for={%{}}
+        as={:rebasing}
+        action={~p"/admin/chiffres-nationaux/rebasages/#{r.id}/publier"}
+        method="post"
+        class="adm-rebasing-form"
+      >
+        <.rebasing_fields r={r} />
+        <div class="row gap-1">
+          <button class="btn btn-primary" type="submit" id={"rebasing-publish-#{r.id}"}>Publier</button>
+        </div>
+      </.form>
+      <.form
+        for={%{}}
+        action={~p"/admin/chiffres-nationaux/rebasages/#{r.id}/ecarter"}
+        method="post"
+      >
+        <button class="btn btn-quiet" type="submit" id={"rebasing-reject-#{r.id}"}>Écarter</button>
+      </.form>
+    </article>
+
+    <h3 class="h3 pad-sm">En ligne ({length(@rebasings)})</h3>
+    <div :if={@rebasings != []} class="table-box">
+      <table class="table" id="adm-rebasing-list">
+        <thead>
+          <tr>
+            <th class="l">Pays</th>
+            <th class="l">Annoncé</th>
+            <th class="l">Base</th>
+            <th>Révision</th>
+            <th class="l">FMI</th>
+            <th class="l"><span class="vh">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={r <- @rebasings}>
+            <td class="l">{country_name(r.country_code)}</td>
+            <td class="l">{r.announced_on}</td>
+            <td class="l">{r.old_base} → {r.new_base}</td>
+            <td class="num">{if r.level_change_pct, do: "#{r.level_change_pct} %", else: "—"}</td>
+            <td class="l">
+              {if r.integrated_edition,
+                do: "Intégré (#{r.integrated_edition})",
+                else:
+                  "Alerte active · FMI #{r.imf_edition} : #{r.imf_before || "—"} Md$ en #{r.reference_year}"}
+            </td>
+            <td class="l row gap-1">
+              <.form
+                :if={is_nil(r.integrated_edition)}
+                for={%{}}
+                action={~p"/admin/chiffres-nationaux/rebasages/#{r.id}/integre"}
+                method="post"
+              >
+                <button class="btn btn-quiet" type="submit">Intégré par le FMI</button>
+              </.form>
+              <.form
+                for={%{}}
+                action={~p"/admin/chiffres-nationaux/rebasages/#{r.id}/ecarter"}
+                method="post"
+              >
+                <button class="btn btn-quiet" type="submit">Retirer</button>
+              </.form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <details class="pad-sm" id="rebasing-new">
+      <summary class="btn btn-secondary">Ajouter un rebasage à la main</summary>
+      <.form
+        for={%{}}
+        as={:rebasing}
+        action={~p"/admin/chiffres-nationaux/rebasages"}
+        method="post"
+        class="adm-rebasing-form"
+      >
+        <label>
+          Pays (code ISO3)
+          <input
+            type="text"
+            name="rebasing[country_code]"
+            required
+            pattern="[A-Z]{3}"
+            maxlength="3"
+          />
+        </label>
+        <.rebasing_fields r={%SyliAtlas.National.Rebasing{}} />
+        <button class="btn btn-primary" type="submit">Publier</button>
+      </.form>
+    </details>
+  </section>
+
   <section :if={@decided != []} class="card adm-list" id="adm-national-decided">
     <div class="adm-card-head">
       <h2 class="h2">Publiés ou retirés</h2>

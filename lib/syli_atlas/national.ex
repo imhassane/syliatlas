@@ -20,7 +20,7 @@ defmodule SyliAtlas.National do
   import Ecto.Query
 
   alias SyliAtlas.Repo
-  alias SyliAtlas.National.{Figure, Rebasing, Snapshot, Verify}
+  alias SyliAtlas.National.{Figure, Snapshot, Verify}
 
   @key "national"
   @doc_key {__MODULE__, :document}
@@ -50,12 +50,7 @@ defmodule SyliAtlas.National do
       end
     end
 
-    for r <- data["rebasings"] || [] do
-      (Repo.get_by(Rebasing, country_code: r["country_code"], announced_on: r["announced_on"]) ||
-         %Rebasing{})
-      |> Rebasing.changeset(r)
-      |> Repo.insert_or_update!()
-    end
+    SyliAtlas.National.Rebasings.seed!(data["rebasings"] || [])
 
     rebuild!()
     length(data["figures"] || [])
@@ -162,6 +157,8 @@ defmodule SyliAtlas.National do
 
   @doc "Rebuilds the document the pages read."
   def rebuild! do
+    # Alerts the IMF has caught up with close first (after an IMF edition).
+    SyliAtlas.National.Rebasings.check_integration!()
     now = DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601()
 
     Repo.query!(
@@ -201,6 +198,17 @@ defmodule SyliAtlas.National do
   def for_country(nil, _code), do: nil
   def for_country(%{"countries" => countries}, code), do: countries[code]
   def for_country(_doc, _code), do: nil
+
+  @doc """
+  A country's rebasing notice (its latest published rebasing, active or
+  taken in by the IMF), or nil. Any country, with or without figures.
+  """
+  def rebasing(%{"rebasings" => by_code}, code), do: by_code[code]
+  def rebasing(_doc, _code), do: nil
+
+  @doc "Every published rebasing, newest first."
+  def rebasing_list(%{"rebasing_list" => list}), do: list
+  def rebasing_list(_doc), do: []
 
   @doc "A country's figure for an indicator and year (or nil)."
   def figure(entry, indicator, year) do

@@ -219,6 +219,14 @@ defmodule SyliAtlasWeb.ProfileComponents do
           {SyliAtlas.Locales.pick(c.short, @locale)}
         </a>
         <a
+          :if={@ctx[:rebasing] && @ctx[:rebasing]["active"]}
+          class="pill pill-warn rebasing-chip"
+          id="rebasing-chip"
+          href={Paths.area_tab(@locale, @area, :economy) <> @ctx.period_query <> "#rebasage"}
+        >
+          {SyliAtlasWeb.RebasingComponents.chip_label(@ctx[:rebasing], @locale)}
+        </a>
+        <a
           :if={@ctx.currency}
           class="pill pill-neutral no-dot"
           href={Paths.area_tab(@locale, @area, :finances) <> @ctx.period_query <> "#monnaie"}
@@ -540,12 +548,19 @@ defmodule SyliAtlasWeb.ProfileComponents do
     since = gettext("since %{year}", year: ctx.from)
     rating = ctx.rating
 
+    # While a rebasing is not taken in by the IMF, its GDP figures are on
+    # the former base.
+    former =
+      if ctx[:rebasing] && ctx[:rebasing]["active"],
+        do: " · " <> gettext("former base"),
+        else: ""
+
     [
       %{
         id: "gdp",
         label: gettext("GDP %{year}", year: ctx.to),
         value: money_value(at.("gdp_usd_bn"), "gdp_usd_bn", l, ctx.to),
-        sub: change(changes["gdp_usd_bn"], "gdp_usd_bn", l) <> " " <> since,
+        sub: change(changes["gdp_usd_bn"], "gdp_usd_bn", l) <> " " <> since <> former,
         tone: nil,
         href: tab.(:economy)
       },
@@ -565,7 +580,7 @@ defmodule SyliAtlasWeb.ProfileComponents do
         id: "gdp-per-capita",
         label: gettext("GDP per capita"),
         value: money_value(at.("gdp_per_capita_usd"), "gdp_per_capita_usd", l, ctx.to),
-        sub: to_string(ctx.to),
+        sub: to_string(ctx.to) <> former,
         tone: nil,
         href: tab.(:economy)
       },
@@ -573,7 +588,7 @@ defmodule SyliAtlasWeb.ProfileComponents do
         id: "debt",
         label: gettext("Public debt"),
         value: value(at.("public_debt_pct_gdp"), "public_debt_pct_gdp", l),
-        sub: gettext("of GDP, %{year}", year: ctx.to),
+        sub: gettext("of GDP, %{year}", year: ctx.to) <> former,
         tone: nil,
         href: tab.(:finances)
       },

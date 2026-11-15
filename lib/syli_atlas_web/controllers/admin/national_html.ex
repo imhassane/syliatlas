@@ -16,6 +16,59 @@ defmodule SyliAtlasWeb.Admin.NationalHTML do
 
   def checks, do: @checks
 
+  attr :r, :any, required: true
+
+  @doc "The fields of a rebasing, prefilled with what the watch found."
+  def rebasing_fields(assigns) do
+    ~H"""
+    <div class="adm-rebasing-fields">
+      <label>
+        Annoncé le
+        <input type="date" name="rebasing[announced_on]" value={@r.announced_on} required />
+      </label>
+      <label>
+        Ancienne base <input type="text" name="rebasing[old_base]" value={@r.old_base} required />
+      </label>
+      <label>
+        Nouvelle base <input type="text" name="rebasing[new_base]" value={@r.new_base} required />
+      </label>
+      <label>
+        Révision du PIB (%)
+        <input
+          type="text"
+          name="rebasing[level_change_pct]"
+          value={@r.level_change_pct}
+          inputmode="decimal"
+        />
+      </label>
+      <label>
+        Année du PIB révisé
+        <input
+          type="number"
+          name="rebasing[reference_year]"
+          value={@r.reference_year}
+          min="2000"
+          max="2035"
+          placeholder="année précédant l'annonce"
+        />
+      </label>
+      <label class="wide">
+        Source (nom)
+        <input type="text" name="rebasing[source_name]" value={@r.source_name} required />
+      </label>
+      <label class="wide">
+        Source (lien https, de préférence l'institut)
+        <input
+          type="url"
+          name="rebasing[source_url]"
+          value={@r.source_url || @r.article_url}
+          required
+        />
+      </label>
+    </div>
+    """
+  end
+
   def indicator_name("gdp_usd_bn"), do: "PIB, milliards de dollars"
   def indicator_name("public_debt_pct_gdp"), do: "Dette publique, % du PIB"
   def indicator_name(other), do: other

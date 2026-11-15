@@ -346,3 +346,36 @@ a.entity-kpi:focus-visible { outline: 2px solid var(--accent); outline-offset: -
 .national-group-cols { display: flex; flex-wrap: wrap; gap: 12px 40px; }
 .national-group .national-val { font-size: 24px; }
 .national-cell { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; margin-top: 4px; color: var(--ink-muted); }
+
+/* Rebasing alert (decisions of 15 Nov. 2026): a chip in the header, a folded
+   panel in the Economy tab, a note on Public finances. */
+.rebasing-chip { text-decoration: none; }
+.rebasing-chip:hover { text-decoration: underline; }
+.rebasing-panel { margin-top: 12px; max-width: 60rem; border: 1px solid color-mix(in srgb, var(--warning-ink) 35%, transparent); background: var(--warning-bg); border-radius: 12px; padding: 0 18px; scroll-margin-top: calc(var(--sticky-top, 0px) + 72px); }
+.rebasing-panel > summary { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 12px; min-height: 52px; padding: 8px 0; cursor: pointer; list-style: none; font-size: 15px; line-height: 1.45; color: var(--ink); }
+.rebasing-panel > summary::-webkit-details-marker { display: none; }
+.rebasing-panel > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
+.rebasing-line { flex: 1 1 24rem; }
+.rebasing-more { margin-left: auto; font-size: 14px; font-weight: 500; color: var(--accent-text); white-space: nowrap; }
+.rebasing-more::after { content: " ▾"; }
+.rebasing-panel[open] .rebasing-more::after { content: " ▴"; }
+.rebasing-body { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 20px 28px; padding: 14px 0 18px; border-top: 1px solid color-mix(in srgb, var(--warning-ink) 25%, transparent); font-size: 15px; line-height: 1.55; }
+.rebasing-body p { margin: 0; }
+.rebasing-title { margin: 0; font-size: 17px; font-weight: 600; }
+.rebasing-links { display: flex; flex-wrap: wrap; gap: 6px 20px; font-weight: 500; }
+.rebasing-facts { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 6px 16px; font-size: 14px; align-self: start; }
+.rebasing-facts dt { font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-subtle); padding-top: 3px; }
+.rebasing-facts dd { margin: 0; }
+.rebasing-note { margin: 8px 0 0; color: var(--warning-ink); }
+.rebasing-history { margin: 8px 0 0; }
+@media (max-width: 47.99rem) {
+  .rebasing-panel { padding: 0 14px; }
+  .rebasing-body { grid-template-columns: 1fr; }
+  .rebasing-more { margin-left: 0; }
+}
+.rebasing-explain { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 20px; }
+@media (max-width: 47.99rem) { .rebasing-explain { grid-template-columns: 1fr; } }
+.adm-rebasing-form { display: flex; flex-direction: column; gap: 12px; margin: 10px 0; }
+.adm-rebasing-fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(12rem, 1fr)); gap: 10px 14px; }
+.adm-rebasing-fields label, .adm-rebasing-form > label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+.adm-rebasing-fields .wide { grid-column: 1 / -1; }

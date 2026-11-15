@@ -7,6 +7,7 @@ defmodule SyliAtlasWeb.AreaHTML do
     NationalComponents,
     ProfileComponents,
     RatingComponents,
+    RebasingComponents,
     TradeComponents,
     WorldBankComponents
   }
