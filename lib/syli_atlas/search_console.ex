@@ -135,9 +135,14 @@ defmodule SyliAtlas.SearchConsole do
       form = [grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer", assertion: assertion]
 
       case Req.post(req(), url: @token_url, form: form) do
-        {:ok, %{status: 200, body: %{"access_token" => t}}} -> {:ok, t}
-        {:ok, %{status: s, body: b}} -> {:error, {:token, s, b["error_description"] || b["error"]}}
-        {:error, reason} -> {:error, reason}
+        {:ok, %{status: 200, body: %{"access_token" => t}}} ->
+          {:ok, t}
+
+        {:ok, %{status: s, body: b}} ->
+          {:error, {:token, s, b["error_description"] || b["error"]}}
+
+        {:error, reason} ->
+          {:error, reason}
       end
     end
   end
@@ -266,7 +271,8 @@ defmodule SyliAtlas.SearchConsole do
               key: r.key,
               clicks: sum(r.clicks),
               impressions: sum(r.impressions),
-              position: fragment("sum(? * ?) / max(sum(?), 1)", r.position, r.impressions, r.impressions)
+              position:
+                fragment("sum(? * ?) / max(sum(?), 1)", r.position, r.impressions, r.impressions)
             }
         )
     end

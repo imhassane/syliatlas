@@ -4,7 +4,11 @@ defmodule SyliAtlas.Market.SecurityStatsTest do
 
   defp sessions(closes_and_volumes) do
     for {{c, v}, i} <- Enum.with_index(closes_and_volumes) do
-      %{"date" => Date.to_iso8601(Date.add(~D[2026-11-02], i)), "close" => to_string(c), "volume" => v}
+      %{
+        "date" => Date.to_iso8601(Date.add(~D[2026-11-02], i)),
+        "close" => to_string(c),
+        "volume" => v
+      }
     end
   end
 

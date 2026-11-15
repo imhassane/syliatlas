@@ -175,7 +175,16 @@ defmodule SyliAtlasWeb.MarketController do
       for r <- doc["securities"], r["ticker"] in peer_tickers, do: r
 
     answer = security_answer(row, e, listings, locale)
-    faq = security_faq(row, e, listings, usd, Profiles.about(e["code"], row["ticker"], locale), locale)
+
+    faq =
+      security_faq(
+        row,
+        e,
+        listings,
+        usd,
+        Profiles.about(e["code"], row["ticker"], locale),
+        locale
+      )
 
     render(conn, :security,
       page_title: security_title(row, e, listings),
@@ -267,10 +276,11 @@ defmodule SyliAtlasWeb.MarketController do
            )
            | for(
                l <- listings,
-               do: gettext("On the %{exchange} under the code %{ticker}.",
-                 exchange: l["exchange"],
-                 ticker: l["ticker"]
-               )
+               do:
+                 gettext("On the %{exchange} under the code %{ticker}.",
+                   exchange: l["exchange"],
+                   ticker: l["ticker"]
+                 )
              )
          ],
          " "

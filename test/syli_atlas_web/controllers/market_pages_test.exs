@@ -148,11 +148,15 @@ defmodule SyliAtlasWeb.MarketPagesTest do
     assert html |> LazyHTML.query("#price-chart") |> Enum.count() == 0
     # Syli Atlas calculations, the country box and the questions.
     assert html |> LazyHTML.query("#security-stats-rows tr") |> Enum.count() >= 3
+
     assert html |> LazyHTML.query("#security-alert-suggest") |> LazyHTML.attribute("href") |> hd() =~
              "threshold=5"
+
     assert html |> LazyHTML.query("#security-faq details") |> Enum.count() >= 2
+
     assert html |> LazyHTML.query(~s(script[type="application/ld+json"])) |> LazyHTML.text() =~
              "FAQPage"
+
     assert conn |> get("/fr/bourses/brvm/ALPT") |> redirected_to(301) == "/fr/bourses/brvm/alpt"
   end
 

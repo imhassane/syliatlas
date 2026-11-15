@@ -145,7 +145,7 @@ defmodule SyliAtlasWeb.RatingsController do
 
         r ->
           [
-            {gettext("When did the rating of %{name} last change?", name: name),
+            {gettext("When did the rating of %{name} last change?", names(name)),
              gettext("%{agency}, %{date}: %{decision}, %{rating}, %{outlook}.",
                agency: RatingComponents.agency_name(r.agency),
                date: RatingComponents.date_text(r.action_date, locale),
@@ -159,7 +159,7 @@ defmodule SyliAtlasWeb.RatingsController do
     gap =
       if is_integer(entry["notches"]) and entry["notches"] > 0 do
         [
-          {gettext("How far is %{name} from investment grade?", name: name),
+          {gettext("How far is %{name} from investment grade?", names(name)),
            RatingComponents.gap_text(entry) <> "."}
         ]
       else

@@ -10,7 +10,12 @@ defmodule SyliAtlas.SearchConsoleTest do
       |> List.wrap()
       |> :public_key.pem_encode()
 
-    key = Jason.encode!(%{"client_email" => "bot@project.iam.gserviceaccount.com", "private_key" => pem})
+    key =
+      Jason.encode!(%{
+        "client_email" => "bot@project.iam.gserviceaccount.com",
+        "private_key" => pem
+      })
+
     previous = Application.get_env(:syli_atlas, SearchConsole)
 
     Application.put_env(
@@ -51,8 +56,18 @@ defmodule SyliAtlas.SearchConsoleTest do
         %{"keys" => ["notation senegal"], "clicks" => 1, "impressions" => 4, "position" => 6.5}
       ],
       "page" => [
-        %{"keys" => ["https://syliatlas.com/pt/bolsas/jse/ssw"], "clicks" => 0, "impressions" => 156, "position" => 8.2},
-        %{"keys" => ["https://syliatlas.com/ar/debt"], "clicks" => 1, "impressions" => 10, "position" => 5.9}
+        %{
+          "keys" => ["https://syliatlas.com/pt/bolsas/jse/ssw"],
+          "clicks" => 0,
+          "impressions" => 156,
+          "position" => 8.2
+        },
+        %{
+          "keys" => ["https://syliatlas.com/ar/debt"],
+          "clicks" => 1,
+          "impressions" => 10,
+          "position" => 5.9
+        }
       ],
       "device" => [
         %{"keys" => ["DESKTOP"], "clicks" => 1, "impressions" => 816, "position" => 29.5},
@@ -76,7 +91,9 @@ defmodule SyliAtlas.SearchConsoleTest do
     [pt, ar] = SearchConsole.pages_to_review()
     assert pt.path == "/pt/bolsas/jse/ssw" and is_nil(pt.review)
     SearchConsole.review!("/ar/debt", "Amina")
-    assert %{reviewer: "Amina"} = Enum.find(SearchConsole.pages_to_review(), &(&1 == ar or &1.path == "/ar/debt")).review
+
+    assert %{reviewer: "Amina"} =
+             Enum.find(SearchConsole.pages_to_review(), &(&1 == ar or &1.path == "/ar/debt")).review
   end
 
   test "a refused token stops the import" do
@@ -90,8 +107,17 @@ defmodule SyliAtlas.SearchConsoleTest do
   end
 
   test "the admin pages", %{conn: conn} do
-    stub(%{"page" => [%{"keys" => ["https://syliatlas.com/zh/glossary/sovereign-rating"], "clicks" => 0, "impressions" => 4, "position" => 6.5}],
-           "device" => [%{"keys" => ["MOBILE"], "clicks" => 0, "impressions" => 4, "position" => 6.5}]})
+    stub(%{
+      "page" => [
+        %{
+          "keys" => ["https://syliatlas.com/zh/glossary/sovereign-rating"],
+          "clicks" => 0,
+          "impressions" => 4,
+          "position" => 6.5
+        }
+      ],
+      "device" => [%{"keys" => ["MOBILE"], "clicks" => 0, "impressions" => 4, "position" => 6.5}]
+    })
 
     {:ok, _} = SearchConsole.import_days([~D[2026-11-13]])
     admin = SyliAtlas.AccountsFixtures.admin_conn(conn)

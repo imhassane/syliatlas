@@ -139,22 +139,26 @@ defmodule SyliAtlasWeb.IndicatorYearController do
         gettext("GDP of %{name} in %{year}: %{value} (IMF)", names(name, year: year, value: v))
 
       "gdp_per_capita_usd" ->
-        gettext("GDP per capita of %{name} in %{year}: %{value} (IMF)",
+        gettext(
+          "GDP per capita of %{name} in %{year}: %{value} (IMF)",
           names(name, year: year, value: v)
         )
 
       "real_gdp_growth" ->
-        gettext("Economic growth of %{name} in %{year}: %{value} (IMF)",
+        gettext(
+          "Economic growth of %{name} in %{year}: %{value} (IMF)",
           names(name, year: year, value: v)
         )
 
       "inflation" ->
-        gettext("Inflation in %{name} in %{year}: %{value} (IMF)",
+        gettext(
+          "Inflation in %{name} in %{year}: %{value} (IMF)",
           names(name, year: year, value: v)
         )
 
       "public_debt_pct_gdp" ->
-        gettext("Public debt of %{name} in %{year}: %{value} (IMF)",
+        gettext(
+          "Public debt of %{name} in %{year}: %{value} (IMF)",
           names(name, year: year, value: v)
         )
     end

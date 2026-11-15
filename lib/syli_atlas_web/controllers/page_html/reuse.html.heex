@@ -30,7 +30,8 @@
               SyliAtlasWeb.Seo.url(
                 if(@example, do: Paths.area(@locale, @example), else: Paths.home(@locale))
               ),
-            date: SyliAtlasWeb.Dates.day_month_year(@today.day, @today.month, @today.year, @locale)
+            date:
+              SyliAtlasWeb.Dates.day_month_year(@today.day, @today.month, @today.year, @locale)
           )}
         </p>
       </.card>
@@ -80,7 +81,9 @@
           </thead>
           <tbody>
             <tr>
-              <td class="l">{gettext("Syli Atlas calculations (real GDP index, regional totals)")}</td>
+              <td class="l">
+                {gettext("Syli Atlas calculations (real GDP index, regional totals)")}
+              </td>
               <td class="l">{gettext("Free, CC BY 4.0: credit Syli Atlas with a link")}</td>
             </tr>
             <tr>
@@ -89,7 +92,9 @@
             </tr>
             <tr>
               <td class="l">{gettext("Sovereign ratings")}</td>
-              <td class="l">{gettext("The agencies': quote them, do not republish them in bulk")}</td>
+              <td class="l">
+                {gettext("The agencies': quote them, do not republish them in bulk")}
+              </td>
             </tr>
             <tr>
               <td class="l">{gettext("Stock prices")}</td>

@@ -41,7 +41,11 @@
         <a class="pill pill-neutral no-dot" href={Paths.exchange(@locale, @e["code"])}>
           {gettext("listed on the %{exchange}", exchange: @e["short_name"])}
         </a>
-        <span :for={l <- @listings} class="pill pill-neutral no-dot mono" id={"listing-#{l["ticker"]}"}>
+        <span
+          :for={l <- @listings}
+          class="pill pill-neutral no-dot mono"
+          id={"listing-#{l["ticker"]}"}
+        >
           {l["ticker"]} · {l["exchange"]}
         </span>
         <span :if={@sector} class="pill pill-neutral no-dot">{@sector}</span>
@@ -128,13 +132,17 @@
               </td>
             </tr>
             <tr>
-              <th scope="row" class="l">{gettext("Volume against the average of previous sessions")}</th>
+              <th scope="row" class="l">
+                {gettext("Volume against the average of previous sessions")}
+              </th>
               <td class="num">
                 <%= if @stats["volume_ratio"] do %>
                   {number(@stats["volume_ratio"], 1, @locale)} ×
                 <% else %>
                   <span class="muted small">
-                    {gettext("from %{n} sessions", n: SyliAtlas.Market.SecurityStats.min_avg_sessions() + 1)}
+                    {gettext("from %{n} sessions",
+                      n: SyliAtlas.Market.SecurityStats.min_avg_sessions() + 1
+                    )}
                   </span>
                 <% end %>
               </td>
@@ -147,7 +155,9 @@
                 <%= if @stats["performance"] do %>
                   <span class={tone(@stats["performance"])}>{pct(@stats["performance"], @locale)}</span>
                   <span :if={@stats["index_performance"]} class="muted small">
-                    · {gettext("index %{change}", change: pct(@stats["index_performance"], @locale))}
+                    · {gettext("index %{change}",
+                      change: pct(@stats["index_performance"], @locale)
+                    )}
                   </span>
                 <% else %>
                   —
@@ -157,7 +167,9 @@
             <tr :if={@stats["high"]}>
               <th scope="row" class="l">{gettext("Highest and lowest close since then")}</th>
               <td class="num">
-                {price(@stats["high"], @locale)} / {price(@stats["low"], @locale)} {@row["currency"]}
+                {price(@stats["high"], @locale)} / {price(@stats["low"], @locale)} {@row[
+                  "currency"
+                ]}
               </td>
             </tr>
           </tbody>
@@ -195,10 +207,14 @@
           <caption class="vh">{@context.name}</caption>
           <tbody>
             <tr :for={a <- (@context.rating && @context.rating["agencies"]) || []}>
-              <th scope="row" class="l">{SyliAtlasWeb.RatingComponents.agency_name(a["agency"])}</th>
+              <th scope="row" class="l">
+                {SyliAtlasWeb.RatingComponents.agency_name(a["agency"])}
+              </th>
               <td>
                 <b class="num">{SyliAtlas.Ratings.Scale.display(a["rating"])}</b>
-                <span class="muted small">{SyliAtlasWeb.RatingComponents.outlook_label(a["outlook"])}</span>
+                <span class="muted small">{SyliAtlasWeb.RatingComponents.outlook_label(
+                  a["outlook"]
+                )}</span>
               </td>
             </tr>
             <tr :if={is_number(@context.growth)}>
@@ -218,7 +234,9 @@
           </tbody>
         </table>
         <p class="small muted">
-          {gettext("IMF, World Economic Outlook")}<span :if={@context.status != "actual"}> · {gettext("estimate")}</span>
+          {gettext("IMF, World Economic Outlook")}<span :if={@context.status != "actual"}> · {gettext(
+            "estimate"
+          )}</span>
           · <a href={Paths.rating(@locale, @context.slug)}>{gettext("Sovereign rating")}</a>
         </p>
       </.card>

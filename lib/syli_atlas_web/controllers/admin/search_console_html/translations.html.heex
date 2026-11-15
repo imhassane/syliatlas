@@ -29,7 +29,11 @@
   </dl>
 
   <nav class="seg" aria-label="Langue">
-    <a class="btn btn-sm btn-quiet" href={~p"/admin/traductions"} aria-current={is_nil(@lang) && "page"}>
+    <a
+      class="btn btn-sm btn-quiet"
+      href={~p"/admin/traductions"}
+      aria-current={is_nil(@lang) && "page"}
+    >
       Toutes
     </a>
     <a
@@ -46,7 +50,9 @@
     <p :if={@pages == []} class="adm-empty muted">Aucune page à afficher.</p>
     <table :if={@pages != []} class="table">
       <thead>
-        <tr><th>Page</th><th>Impressions</th><th>Position</th><th>Relecture</th></tr>
+        <tr>
+          <th>Page</th><th>Impressions</th><th>Position</th><th>Relecture</th>
+        </tr>
       </thead>
       <tbody>
         <tr :for={{p, i} <- Enum.with_index(@pages)}>
@@ -59,10 +65,23 @@
                 {p.review.reviewer}, {Calendar.strftime(p.review.reviewed_at, "%d/%m/%Y")}
               </span>
             <% else %>
-              <.form for={%{}} action={~p"/admin/traductions/relue"} method="post" id={"review-#{i}"} class="adm-inline">
+              <.form
+                for={%{}}
+                action={~p"/admin/traductions/relue"}
+                method="post"
+                id={"review-#{i}"}
+                class="adm-inline"
+              >
                 <input type="hidden" name="path" value={p.path} />
                 <label class="vh" for={"reviewer-#{i}"}>Relecteur</label>
-                <input class="input input-sm" type="text" name="reviewer" id={"reviewer-#{i}"} placeholder="Relecteur" required />
+                <input
+                  class="input input-sm"
+                  type="text"
+                  name="reviewer"
+                  id={"reviewer-#{i}"}
+                  placeholder="Relecteur"
+                  required
+                />
                 <button class="btn btn-sm btn-secondary" type="submit">Marquer relue</button>
               </.form>
             <% end %>

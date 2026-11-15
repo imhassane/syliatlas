@@ -273,7 +273,8 @@ defmodule SyliAtlasWeb.SitemapController do
 
     figures =
       for area <- Geo.list_countries(),
-          series = (SyliAtlasWeb.PublicData.area(area.code, from, to) || %{})["profile"]["series"],
+          series =
+            (SyliAtlasWeb.PublicData.area(area.code, from, to) || %{})["profile"]["series"],
           is_map(series),
           key <- SyliAtlasWeb.IndicatorYear.keys(),
           year <- SyliAtlasWeb.IndicatorYear.indexed_years(),

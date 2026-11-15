@@ -79,7 +79,9 @@ defmodule SyliAtlasWeb.Admin.SearchConsoleController do
         reviewed: Enum.count(rows, & &1.review),
         position:
           if(impressions > 0,
-            do: (rows |> Enum.map(&((&1.position || 0) * &1.impressions)) |> Enum.sum()) / impressions
+            do:
+              (rows |> Enum.map(&((&1.position || 0) * &1.impressions)) |> Enum.sum()) /
+                impressions
           )
       }
     end

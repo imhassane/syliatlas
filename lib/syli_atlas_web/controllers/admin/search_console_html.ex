@@ -10,7 +10,9 @@ defmodule SyliAtlasWeb.Admin.SearchConsoleHTML do
   def n(v) when is_float(v), do: SyliAtlasWeb.Format.number(v, 1, "fr")
 
   def ctr(_clicks, 0), do: "—"
-  def ctr(clicks, impressions), do: SyliAtlasWeb.Format.number(clicks / impressions * 100, 1, "fr") <> " %"
+
+  def ctr(clicks, impressions),
+    do: SyliAtlasWeb.Format.number(clicks / impressions * 100, 1, "fr") <> " %"
 
   def day(%Date{} = d), do: Calendar.strftime(d, "%d/%m")
   def day(_), do: ""

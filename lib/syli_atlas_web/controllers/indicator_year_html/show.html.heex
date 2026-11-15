@@ -67,7 +67,9 @@
         <p :if={@rank} class="big num">{@rank} / {@ranked}</p>
         <p class="muted">{gettext("Rank among African countries, highest first.")}</p>
         <a href={Paths.area(@locale, @area)}>{gettext("Profile of %{name}", name: @name)} →</a>
-        <a href={SyliAtlasWeb.Topics.ranking_path(@locale, @key)}>{gettext("The ranking of the 54 countries")} →</a>
+        <a href={SyliAtlasWeb.Topics.ranking_path(@locale, @key)}>{gettext(
+          "The ranking of the 54 countries"
+        )} →</a>
       </.card>
     </div>
   </.section>

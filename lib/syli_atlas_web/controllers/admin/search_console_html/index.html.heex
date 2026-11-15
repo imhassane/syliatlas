@@ -1,4 +1,9 @@
-<.admin_shell current={:search_console} counts={@admin_counts} until={@admin_until} key={@admin_key}>
+<.admin_shell
+  current={:search_console}
+  counts={@admin_counts}
+  until={@admin_until}
+  key={@admin_key}
+>
   <header class="adm-head">
     <div class="adm-intro">
       <p class="eyebrow">Site · Google Search Console</p>
@@ -70,10 +75,14 @@
     </dl>
 
     <section class="card adm-list" id="gsc-daily">
-      <div class="adm-card-head"><h2 class="h3">Par jour</h2></div>
+      <div class="adm-card-head">
+        <h2 class="h3">Par jour</h2>
+      </div>
       <table class="table">
         <thead>
-          <tr><th>Jour</th><th>Impressions</th><th>Clics</th></tr>
+          <tr>
+            <th>Jour</th><th>Impressions</th><th>Clics</th>
+          </tr>
         </thead>
         <tbody>
           <tr :for={d <- Enum.reverse(@daily)}>
@@ -88,12 +97,16 @@
     <section class="card adm-list" id="gsc-opportunities">
       <div class="adm-card-head">
         <h2 class="h3">Opportunités : première page, aucun clic</h2>
-        <p class="small muted">Position 12 ou mieux. Revoir le titre et la description de la page.</p>
+        <p class="small muted">
+          Position 12 ou mieux. Revoir le titre et la description de la page.
+        </p>
       </div>
       <p :if={@opportunities == []} class="adm-empty muted">Aucune.</p>
       <table :if={@opportunities != []} class="table">
         <thead>
-          <tr><th>Requête</th><th>Impressions</th><th>Position</th></tr>
+          <tr>
+            <th>Requête</th><th>Impressions</th><th>Position</th>
+          </tr>
         </thead>
         <tbody>
           <tr :for={q <- @opportunities}>
@@ -107,10 +120,14 @@
 
     <div class="adm-split">
       <section class="card adm-list" id="gsc-devices">
-        <div class="adm-card-head"><h2 class="h3">Par appareil</h2></div>
+        <div class="adm-card-head">
+          <h2 class="h3">Par appareil</h2>
+        </div>
         <table class="table">
           <thead>
-            <tr><th>Appareil</th><th>Impressions</th><th>Clics</th><th>Position</th></tr>
+            <tr>
+              <th>Appareil</th><th>Impressions</th><th>Clics</th><th>Position</th>
+            </tr>
           </thead>
           <tbody>
             <tr :for={d <- @devices}>
@@ -123,10 +140,14 @@
         </table>
       </section>
       <section class="card adm-list" id="gsc-countries">
-        <div class="adm-card-head"><h2 class="h3">Par pays du lecteur</h2></div>
+        <div class="adm-card-head">
+          <h2 class="h3">Par pays du lecteur</h2>
+        </div>
         <table class="table">
           <thead>
-            <tr><th>Pays</th><th>Impressions</th><th>Clics</th><th>Position</th></tr>
+            <tr>
+              <th>Pays</th><th>Impressions</th><th>Clics</th><th>Position</th>
+            </tr>
           </thead>
           <tbody>
             <tr :for={c <- @countries}>
@@ -141,10 +162,16 @@
     </div>
 
     <section class="card adm-list" id="gsc-sections">
-      <div class="adm-card-head"><h2 class="h3">Par langue et rubrique</h2></div>
+      <div class="adm-card-head">
+        <h2 class="h3">Par langue et rubrique</h2>
+      </div>
       <table class="table">
         <thead>
-          <tr><th>Langue</th><th>Rubrique</th><th>Pages</th><th>Impressions</th><th>Clics</th><th>Position</th></tr>
+          <tr>
+            <th>Langue</th><th>Rubrique</th><th>Pages</th><th>Impressions</th><th>Clics</th><th>
+              Position
+            </th>
+          </tr>
         </thead>
         <tbody>
           <tr :for={s <- @sections}>
@@ -160,10 +187,14 @@
     </section>
 
     <section class="card adm-list" id="gsc-queries">
-      <div class="adm-card-head"><h2 class="h3">Requêtes les plus vues</h2></div>
+      <div class="adm-card-head">
+        <h2 class="h3">Requêtes les plus vues</h2>
+      </div>
       <table class="table">
         <thead>
-          <tr><th>Requête</th><th>Impressions</th><th>Clics</th><th>Position</th></tr>
+          <tr>
+            <th>Requête</th><th>Impressions</th><th>Clics</th><th>Position</th>
+          </tr>
         </thead>
         <tbody>
           <tr :for={q <- @queries}>

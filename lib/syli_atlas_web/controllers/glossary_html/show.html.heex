@@ -39,7 +39,9 @@
         <h2 class="h2">{@countries.title}</h2>
       </div>
       <.data_table id="term-countries-table" caption={@countries.title} rows={@countries.rows}>
-        <:head :let={{label, _v, href}} label={gettext("Country")}><a href={href}>{label}</a></:head>
+        <:head :let={{label, _v, href}} label={gettext("Country")}>
+          <a href={href}>{label}</a>
+        </:head>
         <:col :let={{_l, v, _h}} label={gettext("Value")}>{v}</:col>
       </.data_table>
     </.card>

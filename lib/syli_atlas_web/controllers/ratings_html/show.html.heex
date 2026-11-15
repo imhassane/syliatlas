@@ -23,7 +23,10 @@
           alert_area={@entry["code"]}
         />
         <p class="small muted">
-          {gettext("An email at the next decision of an agency on %{name}.", name: @name)}
+          {gettext(
+            "An email at the next decision of an agency on %{name}.",
+            SyliAtlasWeb.Format.names(@name)
+          )}
         </p>
         <div :if={@context} class="stack gap-1" id="rating-figures">
           <h2 class="h3">{gettext("The figures behind the rating")}</h2>
@@ -54,7 +57,10 @@
     </div>
     <nav class="chips" aria-label={gettext("See also")} id="rating-see-also">
       <a class="chip" href={Paths.ratings(@locale)}>{gettext("All African ratings")}</a>
-      <a class="chip" href={Paths.area(@locale, "country", SyliAtlas.Locales.pick(@entry["slug"], @locale))}>
+      <a
+        class="chip"
+        href={Paths.area(@locale, "country", SyliAtlas.Locales.pick(@entry["slug"], @locale))}
+      >
         {gettext("Profile of %{name}", name: @name)}
       </a>
       <a class="chip" href={Paths.debt(@locale)}>{gettext("Public debt in Africa")}</a>

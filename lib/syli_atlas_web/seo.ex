@@ -200,7 +200,9 @@ defmodule SyliAtlasWeb.Seo do
           String.trim(
             text <>
               " " <>
-              gettext("Figures compiled by Syli Atlas from named public sources, with their edition.")
+              gettext(
+                "Figures compiled by Syli Atlas from named public sources, with their edition."
+              )
           ),
         else: text
 
@@ -271,7 +273,9 @@ defmodule SyliAtlasWeb.Seo do
             "propertyID" => "ISIN",
             "value" => isin
           })
-        _ -> m
+
+        _ ->
+          m
       end
     end)
   end
