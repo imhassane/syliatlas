@@ -25,8 +25,22 @@ defmodule SyliAtlasWeb.AccountController do
   end
 
   def alerts(conn, params) do
+    # A security page can suggest an alert (« variation of 5 % or more »):
+    # kind and threshold come prefilled, the reader still confirms.
+    kind =
+      if params["kind"] in Accounts.Alert.market_kinds(),
+        do: params["kind"],
+        else: if(params["ticker"], do: "price_above", else: "session_move")
+
+    threshold =
+      case Decimal.parse(params["threshold"] || "") do
+        {d, ""} -> if(Decimal.gt?(d, 0), do: d)
+        _ -> nil
+      end
+
     market = %Accounts.Alert{
-      kind: if(params["ticker"], do: "price_above", else: "session_move"),
+      kind: kind,
+      threshold: threshold,
       exchange_code: params["exchange"],
       ticker: params["ticker"]
     }

@@ -215,14 +215,33 @@ defmodule SyliAtlasWeb.Seo do
   end
 
   @doc "A listed company: `Corporation` with its ticker on its exchange."
-  def corporation(name, ticker, exchange, path) do
+  def corporation(name, ticker, exchange, path, opts \\ []) do
+    others = for {x, t} <- Keyword.get(opts, :listings, []), do: "#{x} #{t}"
+
+    symbols =
+      case others do
+        [] -> "#{exchange} #{ticker}"
+        _ -> ["#{exchange} #{ticker}" | others]
+      end
+
     %{
       "@context" => "https://schema.org",
       "@type" => "Corporation",
       "name" => name,
-      "tickerSymbol" => "#{exchange} #{ticker}",
+      "tickerSymbol" => symbols,
       "url" => url(path)
     }
+    |> then(fn m ->
+      case Keyword.get(opts, :isin) do
+        isin when is_binary(isin) ->
+          Map.put(m, "identifier", %{
+            "@type" => "PropertyValue",
+            "propertyID" => "ISIN",
+            "value" => isin
+          })
+        _ -> m
+      end
+    end)
   end
 
   @doc "A community of states (ECOWAS, WAEMU…) and its members."

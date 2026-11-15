@@ -41,6 +41,10 @@
         <a class="pill pill-neutral no-dot" href={Paths.exchange(@locale, @e["code"])}>
           {gettext("listed on the %{exchange}", exchange: @e["short_name"])}
         </a>
+        <span :for={l <- @listings} class="pill pill-neutral no-dot mono" id={"listing-#{l["ticker"]}"}>
+          {l["ticker"]} · {l["exchange"]}
+        </span>
+        <span :if={@sector} class="pill pill-neutral no-dot">{@sector}</span>
         <span
           :if={security_flag(@row)}
           class={[
@@ -99,6 +103,128 @@
     </div>
   </.section>
 
+  <.section id="security-stats">
+    <div class="grid grid-2">
+      <.card>
+        <div class="pad">
+          <.card_head
+            title={gettext("What the sessions say")}
+            subtitle={gettext("Syli Atlas calculations, from the closes it recorded")}
+          />
+        </div>
+        <table class="table" id="security-stats-rows">
+          <caption class="vh">{gettext("What the sessions say")}</caption>
+          <tbody>
+            <tr>
+              <th scope="row" class="l">{gettext("Rank on the exchange by value traded")}</th>
+              <td class="num">
+                {if @stats["rank"],
+                  do:
+                    gettext("%{rank} of %{count}",
+                      rank: @stats["rank"],
+                      count: @stats["traded"]
+                    ),
+                  else: "—"}
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="l">{gettext("Volume against the average of previous sessions")}</th>
+              <td class="num">
+                <%= if @stats["volume_ratio"] do %>
+                  {number(@stats["volume_ratio"], 1, @locale)} ×
+                <% else %>
+                  <span class="muted small">
+                    {gettext("from %{n} sessions", n: SyliAtlas.Market.SecurityStats.min_avg_sessions() + 1)}
+                  </span>
+                <% end %>
+              </td>
+            </tr>
+            <tr>
+              <th scope="row" class="l">
+                {gettext("Since %{date}", date: day(@stats["first_date"], @locale))}
+              </th>
+              <td class="num">
+                <%= if @stats["performance"] do %>
+                  <span class={tone(@stats["performance"])}>{pct(@stats["performance"], @locale)}</span>
+                  <span :if={@stats["index_performance"]} class="muted small">
+                    · {gettext("index %{change}", change: pct(@stats["index_performance"], @locale))}
+                  </span>
+                <% else %>
+                  —
+                <% end %>
+              </td>
+            </tr>
+            <tr :if={@stats["high"]}>
+              <th scope="row" class="l">{gettext("Highest and lowest close since then")}</th>
+              <td class="num">
+                {price(@stats["high"], @locale)} / {price(@stats["low"], @locale)} {@row["currency"]}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="pad small muted">
+          {gettext("%{n} sessions recorded. 52-week figures come after a year of sessions.",
+            n: @stats["sessions"]
+          )}
+          <a
+            id="security-alert-suggest"
+            href={
+              Paths.account(@locale, :alerts) <>
+                "?" <>
+                URI.encode_query(%{
+                  "exchange" => @e["code"],
+                  "ticker" => @row["ticker"],
+                  "kind" => "session_move",
+                  "threshold" => "5"
+                }) <> "#market-alert"
+            }
+          >
+            {gettext("Get an email when %{ticker} moves 5 % or more in a session",
+              ticker: @row["ticker"]
+            )} →
+          </a>
+        </p>
+      </.card>
+
+      <.card :if={@context} pad class="stack gap-2" id="security-country">
+        <p class="eyebrow">{gettext("The country of listing")}</p>
+        <h2 class="h3">
+          <a href={Paths.area(@locale, "country", @context.slug)}>{@context.name}</a>
+        </h2>
+        <table class="table">
+          <caption class="vh">{@context.name}</caption>
+          <tbody>
+            <tr :for={a <- (@context.rating && @context.rating["agencies"]) || []}>
+              <th scope="row" class="l">{SyliAtlasWeb.RatingComponents.agency_name(a["agency"])}</th>
+              <td>
+                <b class="num">{SyliAtlas.Ratings.Scale.display(a["rating"])}</b>
+                <span class="muted small">{SyliAtlasWeb.RatingComponents.outlook_label(a["outlook"])}</span>
+              </td>
+            </tr>
+            <tr :if={is_number(@context.growth)}>
+              <th scope="row" class="l">
+                {gettext("Real growth %{year}", year: @context.year)}
+              </th>
+              <td class="num">{number(@context.growth, 1, @locale)} %</td>
+            </tr>
+            <tr :if={is_number(@context.inflation)}>
+              <th scope="row" class="l">{gettext("Inflation %{year}", year: @context.year)}</th>
+              <td class="num">{number(@context.inflation, 1, @locale)} %</td>
+            </tr>
+            <tr :if={is_number(@context.debt)}>
+              <th scope="row" class="l">{gettext("Public debt %{year}", year: @context.year)}</th>
+              <td class="num">{number(@context.debt, 0, @locale)} % {gettext("of GDP")}</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="small muted">
+          {gettext("IMF, World Economic Outlook")}<span :if={@context.status != "actual"}> · {gettext("estimate")}</span>
+          · <a href={Paths.rating(@locale, @context.slug)}>{gettext("Sovereign rating")}</a>
+        </p>
+      </.card>
+    </div>
+  </.section>
+
   <.section>
     <.card pad>
       <.card_head
@@ -110,7 +236,7 @@
         }
       />
       <.index_chart
-        :if={length(@history) >= 2}
+        :if={length(@history) >= 5}
         id="price-chart"
         history={@history}
         label={@answer}
@@ -118,7 +244,27 @@
         name={@row["name"]}
         sources={@doc["sources"]}
       />
-      <div :if={length(@history) < 2} class="market-empty-chart" id="price-chart-empty">
+      <table :if={length(@sessions) in 1..4} class="table" id="price-sessions">
+        <caption class="vh">{gettext("Closes recorded")}</caption>
+        <thead>
+          <tr>
+            <th scope="col" class="l">{gettext("Session")}</th>
+            <th scope="col">{gettext("Closing price")}</th>
+            <th scope="col">{gettext("Change")}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={s <- Enum.reverse(@sessions)}>
+            <td class="l">{day(s["date"], @locale)}</td>
+            <td class="num">{price(s["close"], @locale)} {@row["currency"]}</td>
+            <td class={["num", tone(s["change_pct"])]}>{pct(s["change_pct"], @locale)}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p :if={length(@sessions) in 1..4} class="small muted">
+        {gettext("The chart appears from 5 sessions.")}
+      </p>
+      <div :if={@sessions == []} class="market-empty-chart" id="price-chart-empty">
         <p class="h3">{gettext("History being built")}</p>
         <p class="muted small">
           {gettext(
@@ -130,7 +276,10 @@
 
     <div class="grid grid-2">
       <.card>
-        <div class="pad"><.card_head title={gettext("Security")} /></div>
+        <div class="pad stack gap-2">
+          <.card_head title={gettext("Security")} />
+          <p :if={@about} id="security-about">{@about}</p>
+        </div>
         <table class="table">
           <caption class="vh">{gettext("Security")} {@row["ticker"]}</caption>
           <tbody>
@@ -163,8 +312,17 @@
             <tr :if={@row["issuer"]}>
               <th scope="row" class="l">{gettext("Issuer")}</th><td>{@row["issuer"]}</td>
             </tr>
-            <tr :if={@row["isin"]}>
-              <th scope="row" class="l">ISIN</th><td class="mono">{@row["isin"]}</td>
+            <tr :for={l <- @listings}>
+              <th scope="row" class="l">{gettext("Also listed")}</th>
+              <td>
+                {l["exchange"]} · <span class="mono">{l["ticker"]}</span>
+                <span :if={l["shares_per_receipt"]} class="muted small">
+                  {gettext("1 receipt = %{n} shares", n: l["shares_per_receipt"])}
+                </span>
+              </td>
+            </tr>
+            <tr :if={@isin}>
+              <th scope="row" class="l">ISIN</th><td class="mono">{@isin}</td>
             </tr>
           </tbody>
         </table>
@@ -184,6 +342,57 @@
           exchange: @e["short_name"]
         )} →</a>
       </.card>
+    </div>
+  </.section>
+
+  <.section :if={@peers != []} id="security-peers">
+    <.card>
+      <div class="pad">
+        <.card_head
+          title={gettext("Comparable securities on the %{exchange}", exchange: @e["short_name"])}
+          subtitle={@sector}
+        />
+      </div>
+      <div class="table-box">
+        <table class="table">
+          <caption class="vh">
+            {gettext("Comparable securities on the %{exchange}", exchange: @e["short_name"])}
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col" class="l">{gettext("Security")}</th>
+              <th scope="col">{gettext("Closing price")}</th>
+              <th scope="col">{gettext("Session")}</th>
+              <th scope="col">{gettext("Value traded")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={r <- [@row | @peers]} class={r["ticker"] == @row["ticker"] && "is-current"}>
+              <td class="l">
+                <%= if r["ticker"] == @row["ticker"] do %>
+                  <b>{r["name"]}</b>
+                <% else %>
+                  <a href={Paths.security(@locale, @e["code"], r["ticker"])}>{r["name"]}</a>
+                <% end %>
+                <span class="mono small muted">{r["ticker"]}</span>
+              </td>
+              <td class="num">{price(r["close"], @locale)}</td>
+              <td class={["num", tone(r["change_pct"])]}>{pct(r["change_pct"], @locale)}</td>
+              <td class="num">{money_amount(r["value"], r["currency"], @locale)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="pad small muted">
+        <.credit sources={@doc["sources"]} date={@row["trade_date"]} locale={@locale} />
+      </p>
+    </.card>
+  </.section>
+
+  <.section :if={@faq != []} id="security-faq">
+    <div class="stack gap-3">
+      <h2 class="h2">{gettext("Questions")}</h2>
+      <.faq items={@faq} />
     </div>
   </.section>
 </Layouts.public>
