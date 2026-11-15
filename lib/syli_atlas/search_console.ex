@@ -204,6 +204,49 @@ defmodule SyliAtlas.SearchConsole do
     |> Req.merge(config()[:req_options] || [])
   end
 
+  @doc """
+  The latest import job, to show on the admin page: `%{state, at, error}`
+  (state: waiting, running, done, retrying, failed) or nil.
+  """
+  def last_import do
+    worker = inspect(SyliAtlas.Workers.SearchConsoleWorker)
+
+    job =
+      Repo.one(
+        from j in Oban.Job,
+          where: j.worker == ^worker,
+          order_by: [desc: j.id],
+          limit: 1
+      )
+
+    if job do
+      %{
+        state: import_state(job.state),
+        at: job.completed_at || job.attempted_at || job.scheduled_at || job.inserted_at,
+        error: last_error(job.errors),
+        attempt: job.attempt,
+        max: job.max_attempts
+      }
+    end
+  end
+
+  defp import_state(s) when s in ["available", "scheduled"], do: :waiting
+  defp import_state("executing"), do: :running
+  defp import_state("completed"), do: :done
+  defp import_state("retryable"), do: :retrying
+  defp import_state(_), do: :failed
+
+  defp last_error([_ | _] = errors) do
+    error = List.last(errors)["error"] || ""
+
+    case Regex.run(~r/"([^"]{10,})"/, error) do
+      [_, message] -> message
+      _ -> String.slice(error, 0, 300)
+    end
+  end
+
+  defp last_error(_), do: nil
+
   # ---------------------------------------------------------------------------
   # Reading
 

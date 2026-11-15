@@ -22,6 +22,7 @@ defmodule SyliAtlasWeb.Admin.SearchConsoleController do
       configured: SearchConsole.configured?(),
       site: SearchConsole.site(),
       last_day: SearchConsole.last_day(),
+      last_import: SearchConsole.last_import(),
       days: days,
       periods: @periods,
       tab: tab,
@@ -99,7 +100,10 @@ defmodule SyliAtlasWeb.Admin.SearchConsoleController do
       Oban.insert!(SyliAtlas.Workers.SearchConsoleWorker.new(%{"days" => 28}))
 
       conn
-      |> put_flash(:info, "Import des 28 derniers jours demandé.")
+      |> put_flash(
+        :info,
+        "Import des 28 derniers jours demandé : l'état s'affiche en haut de la page."
+      )
       |> redirect(to: ~p"/admin/recherche-google")
     else
       conn
