@@ -246,4 +246,4 @@ dd.rt-inv, dd.rt-spec, dd.rt-high, dd.rt-risk, dd.rt-def, b.rt-inv, b.rt-spec, b
 }
 .gsc-import p { margin: 0; }
 .gsc-import.is-done { background: var(--success-bg); color: var(--success-ink); }
-.gsc-import.is-retrying, .gsc-import.is-failed { background: var(--warning-bg); color: var(--warning-ink); }
+.gsc-import.is-retrying, .gsc-import.is-failed, .gsc-import.is-stuck { background: var(--warning-bg); color: var(--warning-ink); }
