@@ -105,10 +105,6 @@ if config_env() != :test do
     key: env.("GOOGLE_SEARCH_CONSOLE_KEY"),
     site: env.("GOOGLE_SEARCH_CONSOLE_SITE")
 
-  # Visit counts without cookies (SyliAtlasWeb.WebAnalytics): the site token
-  # of Cloudflare Web Analytics. Without it, no beacon and no CSP change.
-  config :syli_atlas, SyliAtlasWeb.WebAnalytics, token: env.("CLOUDFLARE_WEB_ANALYTICS_TOKEN")
-
   if limit = env.("RATE_LIMIT_PER_MINUTE") do
     config :syli_atlas, SyliAtlasWeb.Plugs.ApiRateLimit,
       enabled: true,

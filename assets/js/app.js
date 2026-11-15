@@ -28,10 +28,10 @@ import {initFlashToasts} from "./ui/toasts"
 import {initRecap, initRecapPage} from "./ui/recap"
 import {initCurrencyPickers} from "./ui/currency_picker"
 import {initCopyButtons} from "./ui/copy"
-import {initAnalytics} from "./ui/analytics"
 import {initMoney} from "./ui/money"
 import {initChartTips} from "./ui/chart_tips"
 import {initPlausible} from "./ui/plausible"
+import {initDetailsTarget} from "./ui/details_target"
 
 initTheme()
 initDrawer()
@@ -55,10 +55,10 @@ initFlashToasts()
 initRecap()
 initRecapPage()
 initCopyButtons()
-initAnalytics()
 initMoney()
 initChartTips()
 initPlausible()
+initDetailsTarget()
 
 // The lines below enable quality of life phoenix_live_reload
 // development features:

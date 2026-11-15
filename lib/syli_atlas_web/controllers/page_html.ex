@@ -10,6 +10,8 @@ defmodule SyliAtlasWeb.PageHTML do
   attr :from, :integer, required: true
   attr :to, :integer, required: true
   attr :locale, :string, required: true
+  attr :national, :map, default: nil, doc: "the sum of national figures of the year"
+  attr :waiting, :list, default: []
 
   @doc "The hero's window: Africa's GDP in current dollars, its change, a sparkline."
   def headline_window(assigns) do
@@ -63,6 +65,11 @@ defmodule SyliAtlasWeb.PageHTML do
           />
         </div>
         <p class="src">{gettext("IMF, at market exchange rates · dashed: projections")}</p>
+        <SyliAtlasWeb.NationalComponents.africa_sum
+          africa={@national}
+          waiting={@waiting}
+          locale={@locale}
+        />
       </div>
     </div>
     """

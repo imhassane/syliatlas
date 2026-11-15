@@ -95,6 +95,12 @@ defmodule SyliAtlasWeb.Paths do
 
   def debt(locale), do: "/#{locale}/#{segment(locale, :debt)}"
 
+  @doc "Every rebasing of national accounts in Africa: /fr/rebasages-pib, /en/gdp-rebasings."
+  def rebasings(locale), do: "/#{locale}/#{segment(locale, :rebasings)}"
+
+  @doc "Africa's GDP, IMF and sum of national figures: /fr/chiffres-nationaux, /en/national-figures."
+  def national(locale), do: "/#{locale}/#{segment(locale, :national)}"
+
   @doc "The state budgets of the 54 countries: /fr/budgets, /en/budgets."
   def budgets(locale), do: "/#{locale}/#{segment(locale, :budgets)}"
 
@@ -181,6 +187,18 @@ defmodule SyliAtlasWeb.Paths do
       "pt" => "comunidades-economicas"
     },
     debt: %{"fr" => "dette", "en" => "debt", "es" => "deuda", "pt" => "divida"},
+    rebasings: %{
+      "fr" => "rebasages-pib",
+      "en" => "gdp-rebasings",
+      "es" => "rebases-del-pib",
+      "pt" => "rebaseamentos-do-pib"
+    },
+    national: %{
+      "fr" => "chiffres-nationaux",
+      "en" => "national-figures",
+      "es" => "cifras-nacionales",
+      "pt" => "numeros-nacionais"
+    },
     budgets: %{
       "fr" => "budgets",
       "en" => "budgets",

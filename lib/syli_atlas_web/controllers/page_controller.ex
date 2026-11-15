@@ -23,6 +23,14 @@ defmodule SyliAtlasWeb.PageController do
         map = home["map"] || %{"countries" => [], "from" => home["from"], "to" => home["to"]}
         map_countries = map["countries"]
 
+        national = SyliAtlas.National.document()
+        map_source = if params["source"] == "national", do: "national", else: "imf"
+
+        map_countries =
+          if map_source == "national",
+            do: SyliAtlasWeb.MapComponents.with_national(map_countries, national, map["to"]),
+            else: map_countries
+
         map_selected =
           Enum.find(map_countries, &(&1["code"] == params["pays"])) ||
             Enum.find(map_countries, &(&1["code"] == @default_map_country)) ||
@@ -49,12 +57,16 @@ defmodule SyliAtlasWeb.PageController do
           regions: home["regions"],
           map_countries: map_countries,
           map_selected: map_selected,
+          # A country asked in the URL opens its panel at load.
+          map_asked: map_selected != nil and map_selected["code"] == params["pays"],
           map_from: map["from"],
           map_to: map["to"],
           map_indicator:
             if(SyliAtlasWeb.MapScale.valid?(params["carte"]), do: params["carte"], else: "gdp"),
           popular: home["popular"],
           ratings: SyliAtlas.Ratings.document(),
+          national: national,
+          map_source: map_source,
           edition: home["edition"],
           last_checked_at: home["last_checked_at"]
         )

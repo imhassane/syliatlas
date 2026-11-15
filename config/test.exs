@@ -90,3 +90,10 @@ config :syli_atlas, SyliAtlas.Fx.Sources.ErApi,
 # Google Search Console, stubbed (Req.Test); key and site set by the tests.
 config :syli_atlas, SyliAtlas.SearchConsole,
   req_options: [plug: {Req.Test, SyliAtlas.SearchConsole}, retry: false]
+
+config :syli_atlas, SyliAtlas.National.RebasingExtractor,
+  req_options: [plug: {Req.Test, SyliAtlas.National.RebasingExtractor}, retry: false]
+
+config :syli_atlas, SyliAtlas.National.Watch,
+  feeds: [{"test", "https://feeds.test/rebasing.xml"}],
+  req_options: [plug: {Req.Test, SyliAtlas.National.Watch}, retry: false]

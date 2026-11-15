@@ -21,6 +21,7 @@ defmodule SyliAtlasWeb.SiteStructureTest do
              "/fr/dette",
              "/fr/budgets",
              "/fr/notations",
+             "/fr/chiffres-nationaux",
              "/fr/regions",
              "/fr/bourses/simulateur",
              "/fr/monnaies",
@@ -28,7 +29,7 @@ defmodule SyliAtlasWeb.SiteStructureTest do
            ]
 
     # Each entry has its icon; the tools have their own column.
-    assert doc |> LazyHTML.query("#header-nav .nav-mega-item .theme-ico svg") |> Enum.count() == 7
+    assert doc |> LazyHTML.query("#header-nav .nav-mega-item .theme-ico svg") |> Enum.count() == 8
     assert doc |> LazyHTML.query("#header-nav .nav-mega-col") |> Enum.count() == 2
 
     panel = doc |> LazyHTML.query("#header-nav details") |> LazyHTML.text()

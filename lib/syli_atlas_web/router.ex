@@ -270,6 +270,8 @@ defmodule SyliAtlasWeb.Router do
       get "/#{seg.(:compare)}/*slugs", CompareController, :show
       get "/#{seg.(:ratings)}", RatingsController, :index
       get "/#{seg.(:debt)}", DebtController, :index
+      get "/#{seg.(:national)}", NationalController, :index
+      get "/#{seg.(:rebasings)}", NationalController, :rebasings
       get "/#{seg.(:budgets)}", BudgetController, :index
       get "/#{seg.(:currencies)}", CurrencyController, :index
       get "/#{seg.(:communities)}", CommunityController, :index
@@ -294,6 +296,14 @@ defmodule SyliAtlasWeb.Router do
     post "/notations/:id/approuver", RatingsController, :approve
     post "/notations/:id/rejeter", RatingsController, :reject
     post "/notations/verifier/:id", RatingsController, :check
+    get "/chiffres-nationaux", NationalController, :index
+    post "/chiffres-nationaux/:id/verifier", NationalController, :verify
+    post "/chiffres-nationaux/:id/rejeter", NationalController, :reject
+    post "/chiffres-nationaux/rebasages", NationalController, :create_rebasing
+    post "/chiffres-nationaux/rebasages/veille", NationalController, :watch
+    post "/chiffres-nationaux/rebasages/:id/publier", NationalController, :publish_rebasing
+    post "/chiffres-nationaux/rebasages/:id/ecarter", NationalController, :reject_rebasing
+    post "/chiffres-nationaux/rebasages/:id/integre", NationalController, :integrated_rebasing
     get "/mises-a-jour", UpdatesController, :index
     post "/mises-a-jour/verifier", UpdatesController, :check
     post "/mises-a-jour/mesurer", UpdatesController, :measure

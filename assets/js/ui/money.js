@@ -101,6 +101,31 @@ async function visitorCurrency() {
   }
 }
 
+// An amount the menu can rewrite, built in the browser (chart tooltips, the
+// map panel): the same markup as SyliAtlasWeb.Money.amount/2. After adding
+// some, dispatch "money:refresh" on document so they follow the reader's
+// currency.
+export function moneySpan(amount, currency, year, text) {
+  const el = document.createElement("span")
+  el.className = "money"
+  el.dataset.money = String(amount)
+  el.dataset.currency = currency
+  if (year) el.dataset.year = String(year)
+  const main = document.createElement("span")
+  main.dataset.moneyMain = ""
+  main.textContent = text
+  const local = document.createElement("span")
+  local.className = "money-local"
+  local.dataset.moneyLocal = ""
+  local.hidden = true
+  el.append(main, local)
+  return el
+}
+
+export function refreshMoney() {
+  document.dispatchEvent(new CustomEvent("money:refresh"))
+}
+
 export function initMoney() {
   const menu = document.querySelector("[data-currency-menu]")
   const selects = [...document.querySelectorAll("[data-money-picker]")]
@@ -131,6 +156,9 @@ export function initMoney() {
       if (code && [...s.options].some(o => o.value === code)) s.value = code
     })
   }
+
+  // Amounts added after the page loaded (tooltips, map panel).
+  document.addEventListener("money:refresh", render)
 
   const choose = code => {
     write(localStorage, KEY, code)
@@ -248,6 +276,7 @@ function setupMenu(root, choose) {
     options.forEach(o => o.setAttribute("aria-selected", String(o.dataset.value === (chosen || "auto"))))
     const option = options.find(o => o.dataset.value === (shown || "ORIG"))
     label.textContent = option ? option.dataset.short : ""
+    root.dataset.shown = option ? option.dataset.value : "ORIG"
     const m = option?.querySelector(".cur-mark")
     mark.replaceChildren(...(m ? [...m.cloneNode(true).childNodes] : []))
   }

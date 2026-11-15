@@ -245,6 +245,46 @@ defmodule SyliAtlasWeb.PublicPagesTest do
 
     assert doc |> LazyHTML.query(~s(#map-panel [data-field="gdp"])) |> LazyHTML.text() =~ "Md$"
     assert doc |> LazyHTML.query("#map-data") |> Enum.count() == 1
+
+    # The map is the hero (canvas « La carte en vitrine »): one map, the
+    # country's panel a closed <dialog> until a country is touched.
+    assert doc |> LazyHTML.query("section#carte.hero-map h1") |> LazyHTML.text() =~
+             "Touchez un pays"
+
+    assert doc |> LazyHTML.query(".map") |> Enum.count() == 1
+
+    assert doc
+           |> LazyHTML.query("dialog#map-panel[aria-labelledby=map-panel-name]")
+           |> Enum.count() == 1
+
+    assert doc |> LazyHTML.query("dialog#map-panel[open]") |> Enum.count() == 0
+    assert doc |> LazyHTML.query("#map-panel [data-map-close]") |> Enum.count() == 2
+
+    assert doc |> LazyHTML.query("label[for=map-goto]") |> LazyHTML.text() =~
+             "Ou choisissez un pays"
+  end
+
+  test "home map: the panel can show another year (series of every figure)", %{conn: conn} do
+    doc = conn |> get("/fr") |> html_response(200) |> LazyHTML.from_document()
+    [json] = doc |> LazyHTML.query("#map-data") |> Enum.map(&LazyHTML.text/1)
+    data = Jason.decode!(json)
+    eth = data["countries"]["ETH"]
+    assert length(eth["series"]) == 16
+    assert Enum.all?(~w(gdppc growth inflation debt), &(length(eth["more"][&1]) == 16))
+    assert data["countries"]["EGY"]["nationals"]["2026"]["amount"] == 436.61
+    assert data["labels"]["gdp_imf"] =~ "%Y"
+    assert doc |> LazyHTML.query("#map-panel [data-map-spark]") |> Enum.count() == 1
+
+    assert doc
+           |> LazyHTML.query(~s(#map-panel [data-map-year-step="1"][aria-label]))
+           |> Enum.count() == 1
+  end
+
+  test "home map: a country asked in the URL opens its panel, without JavaScript", %{conn: conn} do
+    doc = conn |> get("/fr?pays=ETH") |> html_response(200) |> LazyHTML.from_document()
+    assert doc |> LazyHTML.query("dialog#map-panel[open]") |> Enum.count() == 1
+    assert doc |> LazyHTML.query("#map-panel-name") |> LazyHTML.text() =~ "Éthiopie"
+    assert doc |> LazyHTML.query(~s(#map-panel a[href="/fr/pays/ethiopie"])) |> Enum.count() == 1
   end
 
   test "home map: another indicator through the URL, without JavaScript", %{conn: conn} do

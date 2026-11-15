@@ -1,0 +1,111 @@
+<Layouts.public locale={@locale} current={:national} alternates={@alternates}>
+  <.section id="rebasing-list" tight={:top}>
+    <nav aria-label={gettext("Breadcrumb")}>
+      <ol class="crumbs">
+        <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+        <li aria-current="page">{gettext("GDP rebasings")}</li>
+      </ol>
+    </nav>
+
+    <div class="stack gap-2">
+      <h1 class="h1">{gettext("GDP rebasings in Africa")}</h1>
+      <p class="lead" data-answer>{@answer}</p>
+      <p class="muted">
+        {gettext(
+          "Rebasing means changing the reference year of the national accounts to measure today's economy better (new sectors, new prices). The GDP is often revised up markedly. The IMF takes these revisions in a few months later: this list says where it stands for each country."
+        )}
+      </p>
+    </div>
+
+    <dl class="stats" id="rebasing-stats">
+      <div>
+        <dt>{gettext("Rebasings followed")}</dt>
+        <dd class="big num">{length(@rows)}</dd>
+      </div>
+      <div>
+        <dt>{gettext("Not yet taken in by the IMF")}</dt>
+        <dd class="big num">{@active}</dd>
+      </div>
+      <div>
+        <dt>{gettext("Next IMF edition")}</dt>
+        <dd class="big">{RebasingComponents.next_edition(@locale)}</dd>
+        <dd class="small muted">{gettext("World Economic Outlook")}</dd>
+      </div>
+    </dl>
+
+    <div :if={@rows != []} class="card" id="rebasing-table">
+      <div class="table-box">
+        <table class="table">
+          <caption class="sr-only">
+            {gettext("GDP rebasings in Africa: date, base years, revision, taken in by the IMF")}
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col" class="l">{gettext("Country")}</th>
+              <th scope="col" class="l">{gettext("Announced")}</th>
+              <th scope="col" class="l">{gettext("Base")}</th>
+              <th scope="col">{gettext("Revision of the GDP")}</th>
+              <th scope="col" class="l">{gettext("IMF")}</th>
+              <th scope="col" class="l">{gettext("Source")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={r <- @rows} id={"rebasing-row-#{r["country_code"]}"}>
+              <th scope="row" class="l"><a href={r["href"]}>{r["name"]}</a></th>
+              <td class="l">{RebasingComponents.day(r["announced_on"], @locale)}</td>
+              <td class="l">{r["old_base"]} → {r["new_base"]}</td>
+              <td class="num">
+                {if is_number(r["level_change_pct"]),
+                  do: RebasingComponents.signed_pct(r["level_change_pct"], @locale),
+                  else: "—"}
+              </td>
+              <td class="l">
+                <span :if={r["active"]} class="pill pill-warn">
+                  {gettext("Not yet · expected %{edition}",
+                    edition: RebasingComponents.next_edition(@locale)
+                  )}
+                </span>
+                <span :if={!r["active"]} class="pill pill-neutral">
+                  {gettext("Taken in · %{edition}",
+                    edition: RebasingComponents.edition(r["integrated_edition"], @locale)
+                  )}
+                </span>
+              </td>
+              <td class="l"><a href={r["source_url"]} rel="noopener">{r["source_name"]}</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="grid-3 rebasing-explain">
+      <div class="card pad stack gap-1">
+        <h2 class="h3">{gettext("Why the GDP goes up")}</h2>
+        <p class="muted small">
+          {gettext(
+            "The former base misses the sectors that have appeared since (mobile telephony, mobile money, construction) and weighs activities with old prices. The new base measures them better."
+          )}
+        </p>
+      </div>
+      <div class="card pad stack gap-1">
+        <h2 class="h3">{gettext("What changes too")}</h2>
+        <p class="muted small">
+          {gettext(
+            "Every ratio to GDP: debt, deficit, tax revenue. The amount of the debt does not move, but it weighs less against a larger GDP."
+          )}
+        </p>
+      </div>
+      <div class="card pad stack gap-1">
+        <h2 class="h3">{gettext("What Syli Atlas does")}</h2>
+        <p class="muted small">
+          {gettext(
+            "Country pages show the IMF's figures, with an alert as long as the IMF has not taken the rebasing in. Then the alert becomes a line of history here and on the country page."
+          )}
+        </p>
+      </div>
+    </div>
+    <p class="small muted">
+      <a href={Paths.national(@locale)}>{gettext("Africa's GDP: IMF and national figures")} →</a>
+    </p>
+  </.section>
+</Layouts.public>

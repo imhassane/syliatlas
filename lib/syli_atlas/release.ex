@@ -45,6 +45,10 @@ defmodule SyliAtlas.Release do
           IO.puts("IMF edition #{edition.code} online")
         end
 
+        # Figures published by the countries (after the IMF profiles, which
+        # the checks and the sum of national figures read).
+        SyliAtlas.National.seed!()
+
         # Indicators added since the online edition was imported.
         case SyliAtlas.Imports.missing_indicators() do
           [] ->

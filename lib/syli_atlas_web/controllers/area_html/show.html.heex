@@ -39,6 +39,7 @@
         region={@region}
         members={@members.total}
         path={@path}
+        national={@national_group}
       />
     </.section>
 
@@ -71,6 +72,20 @@
           {@answer}
         </p>
         <.source_line edition={@profile["edition"]} locale={@locale} />
+        <RebasingComponents.panel
+          :if={@tab == :economy}
+          notice={@ctx[:rebasing]}
+          name={@name}
+          official={NationalComponents.official_gdp(@national)}
+          locale={@locale}
+        />
+        <RebasingComponents.ratio_note
+          :if={@tab == :finances}
+          notice={@ctx[:rebasing]}
+          href={Paths.area_tab(@locale, @area, :economy) <> @ctx.period_query <> "#rebasage"}
+          locale={@locale}
+        />
+        <NationalComponents.group_sum group={@national_group} locale={@locale} />
       </div>
     </section>
     <%= if @area.kind != "country" do %>

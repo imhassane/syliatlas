@@ -16,6 +16,8 @@
 // Without JavaScript the reader stays hidden: no extra tab stop, and the
 // table under each chart gives every value.
 
+import {moneySpan, refreshMoney} from "./money"
+
 const SVG_NS = "http://www.w3.org/2000/svg"
 const DOCK_BELOW = 520 // px: narrower boxes get the reading under the chart
 
@@ -86,10 +88,22 @@ function setup(box, data) {
       const li = htmlEl("li", k === 0 ? "is-first" : "")
       const swatch = htmlEl("span", "chart-tip-swatch")
       swatch.style.background = `var(${row.color})`
-      li.append(swatch, htmlEl("span", "chart-tip-name", row.name), htmlEl("span", "num", row.text))
+      li.append(swatch, htmlEl("span", "chart-tip-name", row.name), amountEl(row))
       list.append(li)
     })
-    body.append(list)
+    // The country's official figure that year, never joined to the series.
+    if (point.national) {
+      const n = point.national
+      const li = htmlEl("li", "chart-tip-national")
+      const swatch = htmlEl("span", "chart-tip-diamond")
+      li.append(swatch, htmlEl("span", "chart-tip-name", n.label), amountEl(n))
+      list.append(li)
+      body.append(list)
+      // Only a figure being checked carries a badge.
+      if (n.wait) body.append(htmlEl("span", "pill pill-warn chart-tip-status", n.status))
+    } else {
+      body.append(list)
+    }
 
     if (point.change) body.append(htmlEl("p", "chart-tip-change", point.change))
     if (data.source) body.append(htmlEl("p", "chart-tip-src", data.source))
@@ -102,6 +116,16 @@ function setup(box, data) {
       parts.push(link)
     }
     tip.replaceChildren(...parts)
+    // Amounts follow the currency chosen in the header.
+    if (tip.querySelector("[data-money]")) refreshMoney()
+  }
+
+  // An amount in dollars the currency menu can rewrite; anything else as text.
+  function amountEl(row) {
+    const el = htmlEl("span", "num")
+    if (row.money) el.append(moneySpan(row.money.amount, "USD", row.money.year, row.text))
+    else el.textContent = row.text
+    return el
   }
 
   function place(point) {

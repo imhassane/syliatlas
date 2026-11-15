@@ -1,27 +1,63 @@
 <Layouts.public locale={@locale} current={:home} alternates={@alternates}>
-  <section class="hero">
-    <div class="band" aria-hidden="true"></div>
-    <div class="wrap hero-grid">
-      <div class="stack gap-4">
-        <p class="eyebrow">{gettext("IMF data · 54 countries · checked every day")}</p>
-        <h1 class="display">{gettext("African economies, country by country.")}</h1>
+  <section class="hero hero-map" id="carte" aria-labelledby="hero-title">
+    <div class="wrap hero-map-grid">
+      <div class="hero-copy stack gap-4">
+        <p class="eyebrow">{gettext("54 countries · IMF and official figures")}</p>
+        <h1 id="hero-title" class="display hero-title">
+          {gettext("Touch a country, see its economy.")}
+        </h1>
         <p class="lead">
           {gettext(
-            "Growth, living standards, debt and inflation: sourced figures for every African country, from 2015 to the 2030 projections, to compare freely."
+            "GDP, growth, debt and inflation of every African country, from 2015 to the 2030 projections. The country's official figure is shown beside the IMF's."
           )}
         </p>
         <.search_form locale={@locale} />
-        <div class="row gap-1">
-          <span class="subtle small">{gettext("Often viewed:")}</span>
-          <a :for={a <- @popular} class="chip" href={Paths.area(@locale, "country", a["slug"])}>
-            {a["name"]}
-            <RatingComponents.rating_chip entry={
-              SyliAtlas.Ratings.for_country(@ratings, a["code"])
-            } />
-          </a>
-        </div>
+      </div>
+      <div :if={@map_selected} class="hero-map-col">
+        <.map_section
+          variant="hero"
+          countries={@map_countries}
+          indicator={@map_indicator}
+          selected={@map_selected}
+          from={@map_from}
+          to={@map_to}
+          locale={@locale}
+          ratings={@ratings}
+          national={@national}
+          source={@map_source}
+        />
+      </div>
+      <div class="hero-totals">
+        <SyliAtlasWeb.NationalComponents.africa_sum
+          :if={@national}
+          africa={SyliAtlas.National.africa(@national, @to)}
+          imf={PublicData.at(@africa["profile"]["series"]["gdp_usd_bn"], @to)}
+          waiting={
+            SyliAtlasWeb.NationalComponents.waiting(
+              @national,
+              @to,
+              Map.new(@map_countries, &{&1["code"], &1["name"]})
+            )
+          }
+          locale={@locale}
+        />
+      </div>
+      <div :if={@map_selected} class="hero-country">
+        <.map_panel
+          dialog
+          open={@map_asked}
+          country={@map_selected}
+          indicator={@map_indicator}
+          from={@map_from}
+          to={@map_to}
+          locale={@locale}
+          rating={SyliAtlas.Ratings.for_country(@ratings, @map_selected["code"])}
+          rated={(@ratings && @ratings["rated"]) || 0}
+          national={national_text(@national, @map_selected["code"], @locale, @map_to)}
+        />
       </div>
       <.headline_window
+        :if={!@map_selected}
         africa={@africa}
         world={@world}
         from={@from}
@@ -41,23 +77,6 @@
       <a class="strip-link" href={Paths.method(@locale)}>{gettext("How we update")} →</a>
     </div>
   </div>
-
-  <.section :if={@map_selected} id="carte">
-    <.section_head eyebrow={gettext("The map")} title={gettext("Africa at a glance.")}>
-      <:intro>
-        {gettext("Touch a country to see its figures. The colour follows the chosen indicator.")}
-      </:intro>
-    </.section_head>
-    <.map_section
-      countries={@map_countries}
-      indicator={@map_indicator}
-      selected={@map_selected}
-      from={@map_from}
-      to={@map_to}
-      locale={@locale}
-      ratings={@ratings}
-    />
-  </.section>
 
   <.section variant="alt">
     <.section_head

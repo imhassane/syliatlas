@@ -50,6 +50,8 @@ config :syli_atlas, Oban,
        # Ratings news watch: proposals for /admin/notations (agencies often
        # publish on Friday evenings, so the Saturday run catches them).
        {"20 7 * * *", SyliAtlas.Workers.RatingsWatchWorker},
+       # Rebasings of national accounts: proposals for /admin/chiffres-nationaux.
+       {"35 7 * * *", SyliAtlas.Workers.RebasingWatchWorker},
        # Digests of favourites: Mondays, and the 1st for monthly ones (the
        # worker picks who is due), after the morning check of the sources.
        {"40 6 * * *", SyliAtlas.Workers.DigestWorker},

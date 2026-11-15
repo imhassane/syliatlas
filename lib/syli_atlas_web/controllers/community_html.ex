@@ -1,7 +1,7 @@
 defmodule SyliAtlasWeb.CommunityHTML do
   use SyliAtlasWeb, :html
 
-  alias SyliAtlasWeb.ProfileComponents
+  alias SyliAtlasWeb.{NationalComponents, ProfileComponents}
 
   embed_templates "community_html/*"
 
@@ -12,4 +12,12 @@ defmodule SyliAtlasWeb.CommunityHTML do
   def status_mark(:met), do: "✓"
   def status_mark(:missed), do: "✗"
   def status_mark(_), do: "—"
+
+  @doc "A member's official GDP of the year, else its latest (or nil)."
+  def member_national(doc, code, year) do
+    entry = SyliAtlas.National.for_country(doc, code)
+
+    SyliAtlas.National.figure(entry, "gdp_usd_bn", year) ||
+      SyliAtlas.National.latest(entry, "gdp_usd_bn")
+  end
 end
