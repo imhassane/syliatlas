@@ -31,6 +31,7 @@ import {initCopyButtons} from "./ui/copy"
 import {initMoney} from "./ui/money"
 import {initChartTips} from "./ui/chart_tips"
 import {initPlausible} from "./ui/plausible"
+import {initDetailsTarget} from "./ui/details_target"
 
 initTheme()
 initDrawer()
@@ -57,6 +58,7 @@ initCopyButtons()
 initMoney()
 initChartTips()
 initPlausible()
+initDetailsTarget()
 
 // The lines below enable quality of life phoenix_live_reload
 // development features:

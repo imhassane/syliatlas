@@ -3,6 +3,7 @@ defmodule SyliAtlasWeb.NationalHTML do
 
   alias SyliAtlasWeb.Format
   alias SyliAtlasWeb.NationalComponents
+  alias SyliAtlasWeb.RebasingComponents
 
   embed_templates "national_html/*"
 

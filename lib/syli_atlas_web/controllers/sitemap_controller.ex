@@ -241,6 +241,13 @@ defmodule SyliAtlasWeb.SitemapController do
     as_of = ratings && ratings["as_of"]
     imf = imf_date()
 
+    # Countries whose rebasing alert is on: %{code => announced_on}.
+    rebased =
+      for n <- SyliAtlas.National.rebasing_list(SyliAtlas.National.document()),
+          n["active"],
+          into: %{},
+          do: {n["country_code"], n["announced_on"]}
+
     static =
       for fun <- [
             :home,
@@ -256,13 +263,15 @@ defmodule SyliAtlasWeb.SitemapController do
         {both(&apply(Paths, fun, [&1])), imf}
       end ++
         [{both(&Paths.currencies/1), (SyliAtlas.Fx.latest() || %{})["as_of"] || imf}] ++
+        [{both(&Paths.rebasings/1), latest_date([imf | Map.values(rebased)])}] ++
         for(p <- SyliAtlasWeb.Topics.sitemap_pages(), do: {p, imf})
 
     # A country is listed once per tab that has data: each tab has its
     # own canonical URL, title and answer.
     areas =
       for area <- Geo.list_areas(), tab <- SyliAtlasWeb.AreaController.tabs_for(area) do
-        {both(&Paths.area_tab(&1, area, tab)), imf}
+        # A rebasing announced after the IMF edition: the page changed then.
+        {both(&Paths.area_tab(&1, area, tab)), latest_date([imf, rebased[area.code]])}
       end ++
         for area <- Geo.list_countries() do
           {both(&SyliAtlasWeb.CountryQuestionsController.questions_path(&1, area)), imf}
@@ -369,4 +378,12 @@ defmodule SyliAtlasWeb.SitemapController do
   end
 
   defp esc(s), do: s |> Plug.HTML.html_escape() |> IO.iodata_to_binary()
+
+  # The latest of ISO dates (or datetimes), ignoring nils.
+  defp latest_date(dates) do
+    dates
+    |> Enum.reject(&is_nil/1)
+    |> Enum.map(&to_string/1)
+    |> Enum.max(fn -> nil end)
+  end
 end

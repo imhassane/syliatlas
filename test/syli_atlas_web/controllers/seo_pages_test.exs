@@ -24,8 +24,11 @@ defmodule SyliAtlasWeb.SeoPagesTest do
 
   describe "titles and sentences" do
     test "French titles carry the article and the words people search" do
-      assert text(doc("/fr/pays/senegal"), "title") =~
-               "Sénégal : PIB, croissance, dette et inflation"
+      assert text(doc("/fr/pays/kenya"), "title") =~
+               "Kenya : PIB, croissance, dette et inflation"
+
+      # A rebasing the IMF has not taken in yet goes where people search.
+      assert text(doc("/fr/pays/senegal"), "title") =~ ~r/^Sénégal\s:\sPIB rebasé \(\+13,5/u
 
       assert text(doc("/fr/notations/senegal"), "title") =~ "Note souveraine du Sénégal"
 

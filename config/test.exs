@@ -86,3 +86,10 @@ config :syli_atlas, SyliAtlas.Fx.Sources.ExchangeApi,
 
 config :syli_atlas, SyliAtlas.Fx.Sources.ErApi,
   req_options: [plug: {Req.Test, SyliAtlas.Fx.Sources.ErApi}, retry: false]
+
+config :syli_atlas, SyliAtlas.National.RebasingExtractor,
+  req_options: [plug: {Req.Test, SyliAtlas.National.RebasingExtractor}, retry: false]
+
+config :syli_atlas, SyliAtlas.National.Watch,
+  feeds: [{"test", "https://feeds.test/rebasing.xml"}],
+  req_options: [plug: {Req.Test, SyliAtlas.National.Watch}, retry: false]

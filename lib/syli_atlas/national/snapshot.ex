@@ -9,12 +9,9 @@ defmodule SyliAtlas.National.Snapshot do
   alias SyliAtlas.Repo
   alias SyliAtlas.National.{Figure, Rebasing}
 
-  @format 1
+  @format 2
   @first 2015
   @last 2030
-  # A rebasing notice stays until an IMF edition is within 5 % of the
-  # country's figure.
-  @notice_gap 5.0
 
   def format, do: @format
 
@@ -27,7 +24,15 @@ defmodule SyliAtlas.National.Snapshot do
       )
 
     imf = imf_series()
-    rebasings = Repo.all(from r in Rebasing, order_by: [desc: r.announced_on])
+
+    rebasings =
+      Repo.all(
+        from r in Rebasing,
+          where: r.status == "published",
+          order_by: [desc: r.announced_on, asc: r.country_code]
+      )
+
+    notices = Enum.map(rebasings, &notice/1)
 
     countries =
       figures
@@ -41,13 +46,15 @@ defmodule SyliAtlas.National.Snapshot do
             {ind, Map.new(fs, &{Integer.to_string(&1.calendar_year), figure_doc(&1, series)})}
           end)
 
-        {code, %{"figures" => figs, "rebasing" => rebasing(code, rebasings, figs)}}
+        {code, %{"figures" => figs, "rebasing" => latest_notice(notices, code)}}
       end)
 
     %{
       "format" => @format,
       "built_at" => DateTime.utc_now() |> DateTime.truncate(:second) |> DateTime.to_iso8601(),
       "countries" => countries,
+      "rebasings" => notices |> Enum.reverse() |> Map.new(&{&1["country_code"], &1}),
+      "rebasing_list" => notices,
       "pending" => Enum.count(figures, &(&1.status == "pending_review")),
       "africa" =>
         Map.new(@first..@last, fn year ->
@@ -87,28 +94,27 @@ defmodule SyliAtlas.National.Snapshot do
     }
   end
 
-  defp rebasing(code, rebasings, figs) do
-    case Enum.find(rebasings, &(&1.country_code == code)) do
-      nil ->
-        nil
+  defp latest_notice(notices, code), do: Enum.find(notices, &(&1["country_code"] == code))
 
-      r ->
-        latest =
-          (figs["gdp_usd_bn"] || %{}) |> Map.values() |> Enum.max_by(& &1["year"], fn -> nil end)
-
-        gap = latest && latest["gap_pct"]
-
-        %{
-          "announced_on" => r.announced_on,
-          "old_base" => r.old_base,
-          "new_base" => r.new_base,
-          "level_change_pct" => to_float(r.level_change_pct),
-          "source_name" => r.source_name,
-          "source_url" => r.source_url,
-          # The IMF caught up (or nothing to compare yet): no more notice.
-          "active" => gap == nil or abs(gap) >= @notice_gap
-        }
-    end
+  # What the pages show of a published rebasing. Active until an IMF
+  # edition takes it in (see `SyliAtlas.National.Rebasings`).
+  defp notice(%Rebasing{} = r) do
+    %{
+      "id" => r.id,
+      "country_code" => r.country_code,
+      "announced_on" => r.announced_on,
+      "old_base" => r.old_base,
+      "new_base" => r.new_base,
+      "level_change_pct" => to_float(r.level_change_pct),
+      "reference_year" => r.reference_year,
+      "imf_before" => to_float(r.imf_before),
+      "imf_edition" => r.imf_edition,
+      "source_name" => r.source_name,
+      "source_url" => r.source_url,
+      "integrated_edition" => r.integrated_edition,
+      "integrated_on" => r.integrated_on,
+      "active" => is_nil(r.integrated_edition)
+    }
   end
 
   @doc """

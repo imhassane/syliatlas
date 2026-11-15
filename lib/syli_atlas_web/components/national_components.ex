@@ -35,29 +35,17 @@ defmodule SyliAtlasWeb.NationalComponents do
     """
   end
 
-  attr :entry, :map, default: nil
-  attr :locale, :string, required: true
+  @doc """
+  A country's latest counted official GDP figure (verified, or published
+  by the checks), or nil: what the rebasing panel compares with the IMF.
+  """
+  def official_gdp(nil), do: nil
 
-  @doc "The notice of a change of base year, until an IMF edition catches up."
-  def rebasing_notice(assigns) do
-    assigns = assign(assigns, :r, assigns.entry && assigns.entry["rebasing"])
-
-    ~H"""
-    <div :if={@r && @r["active"]} class="card national-notice" role="note" id="national-rebasing">
-      <span class="pill pill-warn">
-        {gettext("GDP rebased, %{date}", date: day(@r["announced_on"], @locale))}
-      </span>
-      <p>
-        {gettext(
-          "The national accounts have a new base year (%{new} instead of %{old}). The official GDP is revised by %{change}. The IMF has not taken it in yet: the official figure is shown now, and counts in the African total and the rankings once checked.",
-          new: @r["new_base"],
-          old: @r["old_base"],
-          change: plain_pct(@r["level_change_pct"], @locale)
-        )}
-      </p>
-      <a href={@r["source_url"]} rel="noopener">{gettext("The source")} →</a>
-    </div>
-    """
+  def official_gdp(entry) do
+    (get_in(entry, ["figures", "gdp_usd_bn"]) || %{})
+    |> Map.values()
+    |> Enum.filter(&(&1["counted"] and is_number(&1["value"]) and is_number(&1["imf"])))
+    |> Enum.max_by(& &1["year"], fn -> nil end)
   end
 
   attr :entry, :map, default: nil

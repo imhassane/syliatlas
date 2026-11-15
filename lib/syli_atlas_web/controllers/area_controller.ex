@@ -74,6 +74,8 @@ defmodule SyliAtlasWeb.AreaController do
 
     national_doc = SyliAtlas.National.document()
     national = if country?, do: SyliAtlas.National.for_country(national_doc, area.code)
+    rebasing = if country?, do: SyliAtlas.National.rebasing(national_doc, area.code)
+    rebasing_active = !!(rebasing && rebasing["active"])
 
     # A region or the continent: the sum of its members' national figures.
     national_group =
@@ -148,13 +150,29 @@ defmodule SyliAtlasWeb.AreaController do
       communities: communities,
       region_name: region && Area.name(region, locale),
       region_peers: if(country?, do: nearest(peers, area.code), else: []),
-      slugs: country_slugs(locale)
+      slugs: country_slugs(locale),
+      rebasing: rebasing
     }
 
     title =
-      if tab == :budget,
-        do: budget_title(name, budget),
-        else: title(tab, area, name, to, SyliAtlas.Trade.document())
+      cond do
+        tab == :budget ->
+          budget_title(name, budget)
+
+        rebasing_active and tab in [:overview, :economy] ->
+          rebasing_title(tab, name, rebasing, locale)
+
+        true ->
+          title(tab, area, name, to, SyliAtlas.Trade.document())
+      end
+
+    # While the IMF has not taken a rebasing in, the description and the
+    # structured data say it first (decisions of 15 Nov. 2026).
+    rebasing_sentence =
+      if rebasing_active and tab in [:overview, :economy, :finances],
+        do: SyliAtlasWeb.RebasingComponents.summary(rebasing, name, locale)
+
+    description = if rebasing_sentence, do: rebasing_sentence <> " " <> answer, else: answer
 
     crumbs =
       breadcrumbs(area, region, locale) ++
@@ -163,13 +181,14 @@ defmodule SyliAtlasWeb.AreaController do
     render(conn, :show,
       page_title: title,
       seo:
-        Seo.page(locale, paths, answer, %{
+        Seo.page(locale, paths, description, %{
           oembed:
             SyliAtlasWeb.Endpoint.url() <>
               "/oembed?url=" <> URI.encode_www_form(Seo.url(paths[locale])),
           json_ld:
             [Seo.breadcrumbs(crumbs)] ++
-              datasets(tab, area, name, paths[locale], profile, trade, world_bank, locale) ++
+              (datasets(tab, area, name, paths[locale], profile, trade, world_bank, locale)
+               |> with_rebasing(rebasing_sentence, rebasing)) ++
               if(tab == :overview, do: [Seo.faq(faq)], else: [])
         }),
       alternates: Seo.alternates_for_header(paths),
@@ -241,6 +260,46 @@ defmodule SyliAtlasWeb.AreaController do
       "State budget of %{name} %{year}: revenue, expenditure, finance laws",
       title_names(name, year: year)
     )
+  end
+
+  # The usual title, with the rebasing where people search for the GDP.
+  defp rebasing_title(:overview, name, rebasing, locale) do
+    case rebasing["level_change_pct"] do
+      v when is_number(v) ->
+        gettext("%{name}: GDP rebased (%{change}), growth, debt and inflation (IMF)",
+          name: usual(name),
+          change: SyliAtlasWeb.RebasingComponents.signed_pct(v, locale)
+        )
+
+      _ ->
+        gettext("%{name}: GDP rebased, growth, debt and inflation (IMF)", name: usual(name))
+    end
+  end
+
+  defp rebasing_title(:economy, name, rebasing, locale) do
+    case rebasing["level_change_pct"] do
+      v when is_number(v) ->
+        gettext(
+          "GDP of %{name} rebased (%{change}): growth and GDP per capita",
+          title_names(name, change: SyliAtlasWeb.RebasingComponents.signed_pct(v, locale))
+        )
+
+      _ ->
+        gettext("GDP of %{name} rebased: growth and GDP per capita", title_names(name))
+    end
+  end
+
+  defp with_rebasing(datasets, nil, _rebasing), do: datasets
+
+  defp with_rebasing(datasets, sentence, rebasing) do
+    Enum.map(datasets, fn d ->
+      modified =
+        Enum.max([to_string(d["dateModified"] || ""), rebasing["announced_on"]])
+
+      d
+      |> Map.update("description", sentence, &(sentence <> " " <> &1))
+      |> Map.put("dateModified", modified)
+    end)
   end
 
   # One Dataset per source, on the page that shows it: the IMF series on the
