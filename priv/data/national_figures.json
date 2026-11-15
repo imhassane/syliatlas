@@ -9,6 +9,64 @@
         "nbe.gov.et",
         "ess.gov.et"
       ]
+    },
+    "ZAF": {
+      "name": "Afrique du Sud : Stats SA, Trésor national, Banque de réserve",
+      "domains": [
+        "statssa.gov.za",
+        "treasury.gov.za",
+        "resbank.co.za"
+      ]
+    },
+    "EGY": {
+      "name": "Égypte : ministère de la Planification, ministère des Finances, CAPMAS, Banque centrale",
+      "domains": [
+        "mped.gov.eg",
+        "moic.gov.eg",
+        "mof.gov.eg",
+        "capmas.gov.eg",
+        "cbe.org.eg"
+      ]
+    },
+    "NGA": {
+      "name": "Nigeria : Bureau national des statistiques, Banque centrale, ministère des Finances",
+      "domains": [
+        "nigerianstat.gov.ng",
+        "cbn.gov.ng",
+        "finance.gov.ng"
+      ]
+    },
+    "DZA": {
+      "name": "Algérie : Office national des statistiques, ministère des Finances, Banque d'Algérie",
+      "domains": [
+        "ons.dz",
+        "mf.gov.dz",
+        "bank-of-algeria.dz"
+      ]
+    },
+    "MAR": {
+      "name": "Maroc : Haut-Commissariat au Plan, ministère de l'Économie et des Finances, Bank Al-Maghrib",
+      "domains": [
+        "hcp.ma",
+        "finances.gov.ma",
+        "bkam.ma"
+      ]
+    },
+    "AGO": {
+      "name": "Angola : Institut national de statistique, ministère des Finances, Banque nationale",
+      "domains": [
+        "ine.gov.ao",
+        "minfin.gov.ao",
+        "bna.ao"
+      ]
+    },
+    "KEN": {
+      "name": "Kenya : Bureau national des statistiques, Trésor national, Banque centrale",
+      "domains": [
+        "knbs.or.ke",
+        "treasury.go.ke",
+        "centralbank.go.ke"
+      ]
     }
   },
   "figures": [
@@ -59,6 +117,135 @@
       "quote": "Debt-to-GDP fell to 27.4%",
       "extracted_by": "manual",
       "note": "Année non précisée dans la présentation : rattachée à 2024/25, l'année de base. À confirmer à la revue."
+    },
+    {
+      "country_code": "ZAF",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "449.74",
+      "value_lcu": "8044000000000",
+      "currency": "ZAR",
+      "fx_rate": "17.885956",
+      "source_name": "Stats SA, PIB rebasé et recalé (rapport 04-04-04), 29 oct. 2026 (rapporté par Business Day)",
+      "source_url": "https://www.businessday.co.za/economy/2026-10-29-rebasing-lifts-the-size-of-south-africas-economy-53-to-r8044-trillion/",
+      "quote": "adjusted 5.3% higher to R8.044-trillion in 2025",
+      "extracted_by": "manual",
+      "note": "Document officiel : communiqué de Stats SA (statssa.gov.za, rapport 04-04-04). Converti au taux moyen 2025 : 17,885956 ZAR pour un dollar.",
+      "base_year": "2022",
+      "published_on": "2026-10-29"
+    },
+    {
+      "country_code": "NGA",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "290.85",
+      "value_lcu": "441500000000000",
+      "currency": "NGN",
+      "fx_rate": "1517.961482",
+      "source_name": "Bureau national des statistiques (NBS), rapport PIB du 4e trimestre 2025, 27 févr. 2026 (rapporté par Reuters)",
+      "source_url": "https://www.timeslive.co.za/news/business/2026-10-29-sa-economy-5-bigger-after-rebasing-moving-further-ahead-of-nigeria/",
+      "quote": "recorded nominal GDP of 441.5-trillion naira ($328bn) last year",
+      "extracted_by": "manual",
+      "note": "Document officiel : rapport PIB T4 2025 du NBS (nigerianstat.gov.ng). Le dollar cité par Reuters (328 Md$) suit un autre taux. Converti au taux moyen 2025 : 1517,961482 NGN pour un dollar.",
+      "base_year": "2019",
+      "published_on": "2026-02-27"
+    },
+    {
+      "country_code": "KEN",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "136.08",
+      "value_lcu": "17580000000000",
+      "currency": "KES",
+      "fx_rate": "129.190099",
+      "source_name": "Bureau national des statistiques (KNBS), Economic Survey 2026, 29 avr. 2026 (rapporté par Capital FM)",
+      "source_url": "https://www.capitalfm.co.ke/business/2026/04/kenya-growth-slows-to-4-6pc-on-weak-agriculture-manufacturing/",
+      "quote": "Nominal GDP rose to Sh17.58 trillion in 2025 from Sh16.23 trillion in 2024",
+      "extracted_by": "manual",
+      "note": "Document officiel : https://www.knbs.or.ke/wp-content/uploads/2026/04/2026-Economic-Survey.pdf. Converti au taux moyen 2025 : 129,190099 KES pour un dollar.",
+      "base_year": "2016",
+      "published_on": "2026-04-29"
+    },
+    {
+      "country_code": "DZA",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "287.04",
+      "value_lcu": "37792600000000",
+      "currency": "DZD",
+      "fx_rate": "131.661069",
+      "source_name": "Ministre des Finances, rencontre nationale avec les opérateurs économiques (rapporté par la Radio algérienne)",
+      "source_url": "https://www.upgrowth.dz/actualites/algeria-finance-minister-presents-gdp-investment-and-bank-credit-figures",
+      "quote": "Le PIB est passé de 36.103,5 milliards de dinars en 2024 à 37.792,6 milliards de dinars en 2025.",
+      "extracted_by": "manual",
+      "note": "Chiffre du ministre ; à rapprocher des comptes annuels de l'ONS (ons.dz) à la revue. Converti au taux moyen 2025 : 131,661069 DZD pour un dollar."
+    },
+    {
+      "country_code": "MAR",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "183.90",
+      "value_lcu": "1720000000000",
+      "currency": "MAD",
+      "fx_rate": "9.352828",
+      "source_name": "Haut-Commissariat au Plan, comptes nationaux provisoires 2025, 9 juin 2026 (rapporté par Le Desk)",
+      "source_url": "https://ledesk.ma/?p=310093",
+      "quote": "Aux prix courants, le PIB s'est établi à 1 720 milliards de dirhams (MMDH)",
+      "extracted_by": "manual",
+      "note": "Document officiel : « Les comptes nationaux provisoires 2025, Base 2014 » (hcp.ma). Montant arrondi au milliard par la presse. Converti au taux moyen 2025 : 9,352828 MAD pour un dollar.",
+      "base_year": "2014",
+      "published_on": "2026-06-09"
+    },
+    {
+      "country_code": "AGO",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "139.52",
+      "value_lcu": "128302020000000",
+      "currency": "AOA",
+      "fx_rate": "919.574152",
+      "source_name": "Institut national de statistique (INE), comptes nationaux annuels préliminaires 2025, mai 2026 (rapporté par Ver Angola)",
+      "source_url": "https://www.verangola.net/va/pt/052026/Economia/48693/Poupança-nacional-de-Angola-cai-para-mínimo-de-cinco-anos-em-2025.htm",
+      "quote": "O PIB a preços correntes fixou-se em 128.302,02 mil milhões de kwanzas",
+      "extracted_by": "manual",
+      "note": "Document officiel : contas nacionais anuais preliminares (ine.gov.ao). Converti au taux moyen 2025 : 919,574152 AOA pour un dollar.",
+      "base_year": "2015"
+    },
+    {
+      "country_code": "EGY",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2024/25",
+      "value": "359.08",
+      "value_lcu": "18140000000000",
+      "currency": "EGP",
+      "fx_rate": "50.517399",
+      "source_name": "Ministère de la Planification et du Développement économique, notes trimestrielles du PIB (rapporté par Arab Finance)",
+      "source_url": "https://arabfinance.com/en/news/newdetails/an-overview-of-egypt-gdp-in-fy-2025-2026",
+      "quote": "GDP at current prices rose to EGP 21.47 trillion in FY2025/26 from EGP 18.14 trillion in FY2024/25",
+      "extracted_by": "manual",
+      "note": "Exercice juillet–juin, rattaché à l'année que lui donne le FMI. Converti au taux moyen janv.–juin 2025 (seule partie de l'exercice dans nos données de change) : 50,517399 livres pour un dollar."
+    },
+    {
+      "country_code": "EGY",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2026,
+      "period_label": "2025/26",
+      "value": "436.61",
+      "value_lcu": "21470000000000",
+      "currency": "EGP",
+      "fx_rate": "49.174",
+      "source_name": "Ministère de la Planification et du Développement économique, notes trimestrielles du PIB (rapporté par Arab Finance)",
+      "source_url": "https://arabfinance.com/en/news/newdetails/an-overview-of-egypt-gdp-in-fy-2025-2026",
+      "quote": "GDP at current prices rose to EGP 21.47 trillion in FY2025/26 from EGP 18.14 trillion in FY2024/25",
+      "extracted_by": "manual",
+      "note": "Exercice juillet–juin, rattaché à l'année que lui donne le FMI. Converti au taux moyen de l'exercice, sept. 2025 – juin 2026 dans nos données de change : 49,174 livres pour un dollar."
     }
   ],
   "rebasings": [
@@ -70,6 +257,15 @@
       "level_change_pct": "59.2",
       "source_name": "Ministère de la Planification et du Développement (rapporté par Reuters)",
       "source_url": "https://www.businessday.co.za/world/africa/2026-11-05-ethiopias-economy-revised-up-by-60-after-gdp-rebasing/"
+    },
+    {
+      "country_code": "ZAF",
+      "announced_on": "2026-10-29",
+      "old_base": "2015",
+      "new_base": "2022",
+      "level_change_pct": "5.3",
+      "source_name": "Stats SA, PIB rebasé et recalé (rapporté par Business Day)",
+      "source_url": "https://www.businessday.co.za/economy/2026-10-29-rebasing-lifts-the-size-of-south-africas-economy-53-to-r8044-trillion/"
     }
   ]
 }
