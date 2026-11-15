@@ -32,7 +32,12 @@ defmodule SyliAtlasWeb.AdminComponents do
            {:members, "Membres", ~p"/admin/membres", :members},
            {:emails, "E-mails envoyés", ~p"/admin/emails", :emails}
          ]},
-        {"Site", [{:searches, "Recherches", ~p"/admin/recherches", :searches}]}
+        {"Site",
+         [
+           {:search_console, "Recherche Google", ~p"/admin/recherche-google", :searches},
+           {:translations, "Traductions", ~p"/admin/traductions", :searches},
+           {:searches, "Recherches sans résultat", ~p"/admin/recherches", :searches}
+         ]}
       ])
 
     ~H"""

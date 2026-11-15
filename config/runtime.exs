@@ -98,6 +98,13 @@ if config_env() != :test do
     zone_id: env.("CLOUDFLARE_ZONE_ID"),
     api_token: env.("CLOUDFLARE_API_TOKEN")
 
+  # Google Search Console (SyliAtlas.SearchConsole): a service account's JSON
+  # key (raw or base64) and the property (sc-domain:syliatlas.com or the
+  # URL prefix). Without them, the daily import does nothing.
+  config :syli_atlas, SyliAtlas.SearchConsole,
+    key: env.("GOOGLE_SEARCH_CONSOLE_KEY"),
+    site: env.("GOOGLE_SEARCH_CONSOLE_SITE")
+
   if limit = env.("RATE_LIMIT_PER_MINUTE") do
     config :syli_atlas, SyliAtlasWeb.Plugs.ApiRateLimit,
       enabled: true,

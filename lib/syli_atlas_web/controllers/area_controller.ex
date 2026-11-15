@@ -25,6 +25,21 @@ defmodule SyliAtlasWeb.AreaController do
   def show(conn, %{"slug" => slug} = params) do
     locale = conn.assigns.locale
     area = Geo.get_area_by_slug(slug, locale) || raise NotFoundError
+
+    # « /fr/pays/mauritanie/pib-2025 »: one indicator, one year.
+    case area.kind == "country" && SyliAtlasWeb.IndicatorYear.parse(params["tab"]) do
+      {key, year} ->
+        conn
+        |> put_view(html: SyliAtlasWeb.IndicatorYearHTML)
+        |> SyliAtlasWeb.IndicatorYearController.show(area, key, year)
+
+      _ ->
+        show_profile(conn, area, params)
+    end
+  end
+
+  defp show_profile(conn, area, params) do
+    locale = conn.assigns.locale
     tab = tab(params["tab"])
     if area.kind != "country" and tab != :overview, do: raise(NotFoundError)
 

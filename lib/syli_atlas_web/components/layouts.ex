@@ -42,7 +42,7 @@ defmodule SyliAtlasWeb.Layouts do
 
     ~H"""
     <a class="skip" href="#main">{gettext("Skip to content")}</a>
-    <div class="offline-banner" role="status">
+    <div class="offline-banner" role="status" data-nosnippet>
       {gettext("You are offline. Figures shown are the ones saved on this device.")}
     </div>
     <div class="read-progress" aria-hidden="true"></div>
@@ -242,7 +242,7 @@ defmodule SyliAtlasWeb.Layouts do
                 <.theme_icon key={t.key} featured={t.key == :simulator} />
                 <span class="nav-mega-text">
                   <b>
-                    {t.label}<span :if={t.new} class="nav-new">{gettext("New")}</span>
+                    {t.label} <span :if={t.new} class="nav-new">{gettext("New")}</span>
                   </b>
                   <span>{t.description}</span>
                 </span>
@@ -536,6 +536,7 @@ defmodule SyliAtlasWeb.Layouts do
           <h2>{gettext("The project")}</h2>
           <a href={Paths.about(@locale)}>{gettext("About")}</a>
           <a href={Paths.method(@locale)}>{gettext("Method and sources")}</a>
+          <a href={Paths.reuse(@locale)} id="footer-reuse">{gettext("Reuse our figures")}</a>
           <a href={Paths.api(@locale)}>{gettext("Public API")}</a>
           <a href={Paths.accessibility(@locale)} id="footer-accessibility">
             {accessibility_mention()}
@@ -593,13 +594,20 @@ defmodule SyliAtlasWeb.Layouts do
   # JSON and shows the second step. Closed, it is never painted.
   defp recap_dialog(assigns) do
     ~H"""
-    <dialog class="recap-dialog" id="recap-dialog" aria-labelledby="recap-dialog-title">
+    <dialog
+      class="recap-dialog"
+      id="recap-dialog"
+      aria-labelledby="recap-dialog-title"
+      data-nosnippet
+    >
       <div class="recap-dialog-sun" aria-hidden="true"></div>
       <div class="recap-dialog-body">
         <div class="recap-dialog-head">
           <ol class="auth-steps" aria-label={gettext("Steps")}>
-            <li data-recap-step="1" aria-current="step"><span>1</span>{gettext("Your countries")}</li>
-            <li data-recap-step="2"><span>2</span>{gettext("Confirmation")}</li>
+            <li data-recap-step="1" aria-current="step">
+              <span aria-hidden="true">1</span>{gettext("Your countries")}
+            </li>
+            <li data-recap-step="2"><span aria-hidden="true">2</span>{gettext("Confirmation")}</li>
           </ol>
           <button type="button" class="icon-btn" data-recap-close aria-label={gettext("Close")}>
             <svg
@@ -742,7 +750,7 @@ defmodule SyliAtlasWeb.Layouts do
           aria-hidden="true"
         ><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z">
         </path></svg>
-        <span class="sr-only">{gettext("Language")} :</span>
+        <span class="sr-only">{gettext("Language:")}</span>
         <span :if={@short} title={SyliAtlas.Locales.native(@locale)}>{String.upcase(@locale)}</span>
         <span :if={!@short}>{SyliAtlas.Locales.native(@locale)}</span>
       </summary>

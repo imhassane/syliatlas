@@ -143,7 +143,20 @@ defmodule SyliAtlasWeb.MarketPagesTest do
     assert text =~ "Alpha Télécom Sénégal"
     assert text =~ "4 000 XOF"
     assert text =~ "≈ 6,7 $"
-    assert html |> LazyHTML.query("#price-chart-empty") |> Enum.count() == 1
+    # One session recorded: its close in a table, no chart yet.
+    assert html |> LazyHTML.query("#price-sessions tbody tr") |> Enum.count() == 1
+    assert html |> LazyHTML.query("#price-chart") |> Enum.count() == 0
+    # Syli Atlas calculations, the country box and the questions.
+    assert html |> LazyHTML.query("#security-stats-rows tr") |> Enum.count() >= 3
+
+    assert html |> LazyHTML.query("#security-alert-suggest") |> LazyHTML.attribute("href") |> hd() =~
+             "threshold=5"
+
+    assert html |> LazyHTML.query("#security-faq details") |> Enum.count() >= 2
+
+    assert html |> LazyHTML.query(~s(script[type="application/ld+json"])) |> LazyHTML.text() =~
+             "FAQPage"
+
     assert conn |> get("/fr/bourses/brvm/ALPT") |> redirected_to(301) == "/fr/bourses/brvm/alpt"
   end
 

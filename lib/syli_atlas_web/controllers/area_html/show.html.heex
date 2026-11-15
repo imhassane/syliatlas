@@ -190,4 +190,27 @@
       <% end %>
     <% end %>
   </div>
+
+  <section :if={@area.kind == "country"} class="section" id="figures-by-year">
+    <div class="wrap stack gap-2">
+      <h2 class="h3">{gettext("Figures by year")}</h2>
+      <nav aria-label={gettext("Figures by year")} class="stack gap-1">
+        <p :for={key <- SyliAtlasWeb.IndicatorYear.keys()} class="small">
+          <span class="muted">{SyliAtlasWeb.IndicatorYearController.label(key)} ·</span>
+          <a
+            :for={
+              y <-
+                Enum.filter(
+                  SyliAtlasWeb.IndicatorYear.indexed_years(),
+                  &is_number(SyliAtlasWeb.PublicData.at(@data["profile"]["series"][key], &1))
+                )
+            }
+            href={SyliAtlasWeb.IndicatorYear.path(@locale, @area, key, y)}
+          >
+            {y}
+          </a>
+        </p>
+      </nav>
+    </div>
+  </section>
 </Layouts.public>

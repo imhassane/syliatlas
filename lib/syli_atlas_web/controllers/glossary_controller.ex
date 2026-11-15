@@ -116,6 +116,7 @@ defmodule SyliAtlasWeb.GlossaryController do
         short: short(id),
         long: long(id),
         figures: figures,
+        countries: countries(id, locale),
         links: links(id, locale),
         others: for(o <- terms(), o != id, do: {name(o), term_path(locale, o)})
       )
@@ -455,6 +456,64 @@ defmodule SyliAtlasWeb.GlossaryController do
            Paths.area(l, SyliAtlas.Geo.get_area_by_code("africa"))}
         ]
     end
+  end
+
+  # The countries behind a notion, each linked to its page for the year:
+  # for an indicator, the five highest and the five lowest; for the CFA
+  # franc, its 14 countries with their inflation.
+  @indicator_of %{
+    "gdp" => "gdp_usd_bn",
+    "gdp_per_capita" => "gdp_per_capita_usd",
+    "real_growth" => "real_gdp_growth",
+    "inflation" => "inflation",
+    "public_debt" => "public_debt_pct_gdp"
+  }
+
+  defp countries("cfa_franc", l) do
+    members =
+      for code <- ~w(waemu cemac),
+          c = Enum.find(SyliAtlas.Economy.Communities.all(), &(&1.code == code)),
+          c,
+          m <- c.members,
+          do: m
+
+    rows =
+      for row <- PublicData.ranking("inflation", year(), year(), mode: "value", locale: l),
+          row["code"] in members,
+          do: row
+
+    %{
+      title: gettext("The 14 countries of the CFA franc, inflation %{year}", year: year()),
+      rows: Enum.map(rows, &country_row(&1, "inflation", l))
+    }
+  end
+
+  defp countries(id, l) when is_map_key(@indicator_of, id) do
+    key = @indicator_of[id]
+
+    ranked =
+      key
+      |> PublicData.ranking(year(), year(), mode: "value", locale: l)
+      |> Enum.filter(&is_number(&1["value"]))
+
+    rows =
+      if length(ranked) > 10,
+        do: Enum.take(ranked, 5) ++ Enum.take(ranked, -5),
+        else: ranked
+
+    %{
+      title: gettext("Highest and lowest in %{year}", year: year()),
+      rows: Enum.map(rows, &country_row(&1, key, l))
+    }
+  end
+
+  defp countries(_id, _l), do: nil
+
+  defp country_row(row, key, l) do
+    area = SyliAtlas.Geo.get_area_by_code(row["code"])
+
+    {row["name"], value(row["value"], key, l),
+     SyliAtlasWeb.IndicatorYear.path(l, area, key, year())}
   end
 
   # Pages that use the notion.

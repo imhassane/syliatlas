@@ -86,3 +86,7 @@ config :syli_atlas, SyliAtlas.Fx.Sources.ExchangeApi,
 
 config :syli_atlas, SyliAtlas.Fx.Sources.ErApi,
   req_options: [plug: {Req.Test, SyliAtlas.Fx.Sources.ErApi}, retry: false]
+
+# Google Search Console, stubbed (Req.Test); key and site set by the tests.
+config :syli_atlas, SyliAtlas.SearchConsole,
+  req_options: [plug: {Req.Test, SyliAtlas.SearchConsole}, retry: false]
