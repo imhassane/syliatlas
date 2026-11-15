@@ -168,6 +168,17 @@ defmodule SyliAtlas.SearchConsoleTest do
              "/admin/recherche-google"
 
     assert SearchConsole.actions()["x"]
+
+    # An import asked from the page shows its state at the top.
+    assert admin |> post("/admin/recherche-google/importer") |> redirected_to() ==
+             "/admin/recherche-google"
+
+    assert %{state: state} = SearchConsole.last_import()
+    assert state in [:waiting, :running, :done]
+
+    assert admin |> get("/admin/recherche-google") |> html_response(200) =~
+             ~s(id="gsc-import-status")
+
     assert html =~ ~s(id="admin-nav-search_console")
 
     tr = admin |> get("/admin/traductions") |> html_response(200)

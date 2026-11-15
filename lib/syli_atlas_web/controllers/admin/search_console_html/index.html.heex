@@ -30,6 +30,29 @@
     </div>
   </header>
 
+  <div
+    :if={@last_import}
+    class={["card adm-banner gsc-import", "is-#{@last_import.state}"]}
+    role="status"
+    id="gsc-import-status"
+  >
+    <p>
+      <b>Dernier import : {import_label(@last_import.state)}</b>
+      <span :if={@last_import.at} class="muted">
+        · {Calendar.strftime(@last_import.at, "%d/%m à %H:%M")} UTC
+      </span>
+      <span :if={@last_import.state in [:waiting, :running]} class="muted">
+        · rechargez la page dans une minute
+      </span>
+    </p>
+    <p :if={@last_import.error && @last_import.state in [:retrying, :failed]} class="small">
+      Réponse de Google : <span class="mono">{@last_import.error}</span>
+      <span :if={@last_import.state == :retrying}>
+        · nouvel essai automatique ({@last_import.attempt}/{@last_import.max})
+      </span>
+    </p>
+  </div>
+
   <div :if={!@configured} class="card adm-banner" role="alert" id="gsc-no-key">
     <p>
       <b>Compte de service absent.</b>
