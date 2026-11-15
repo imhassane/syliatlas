@@ -104,6 +104,12 @@ defmodule SyliAtlasWeb.NationalPagesTest do
     home = doc(build_conn(), "/fr")
     assert text(home, "#national-sum") =~ "1 pays au chiffre officiel"
 
+    # The region's GDP tile says the official sum once a member's figure counts.
+    east = doc(build_conn(), "/fr/regions/afrique-de-l-est")
+    assert text(east, "#region-kpis") =~ "PIB 2025 · FMI"
+    assert text(east, "#region-kpis") =~ "officiel : 609,0 Md$"
+    assert text(east, "#national-group") =~ "1 pays au chiffre officiel"
+
     admin |> post("/admin/chiffres-nationaux/#{figure.id}/rejeter") |> redirected_to()
     assert National.get!(figure.id).status == "rejected"
 
