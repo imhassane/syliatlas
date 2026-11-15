@@ -126,7 +126,9 @@ defmodule SyliAtlas.NationalTest do
       assert africa["national_total"] == africa["imf_total"]
       assert africa["counted"] == 0
       # The eight largest economies are followed, all waiting for a person.
-      assert africa["pending"] == ~w(AGO DZA EGY ETH KEN MAR NGA ZAF)
+      assert africa["pending"] ==
+               ~w(AGO CMR COD DZA EGY ETH GAB GHA KEN MAR MRT MUS NAM NER NGA RWA SEN TGO TZA UGA ZAF ZMB ZWE)
+
       assert africa["missing"] == ["ERI"]
       assert africa["after_review_total"] - africa["imf_total"] > 201.42 - fig["imf"]
     end
@@ -173,6 +175,18 @@ defmodule SyliAtlas.NationalTest do
                  National.figure(National.for_country(doc, code), "gdp_usd_bn", 2025)["gap_pct"]
                ) < 6
       end
+
+      # The rest of the continent: within 15 % of the IMF, except Senegal,
+      # rebased in 2025 (+13.5 %); Guinea has only its rebased 2024 figure.
+      for code <- ~w(GHA TZA UGA ZMB ZWE RWA COD CMR NAM MUS GAB TGO MRT NER) do
+        gap = National.figure(National.for_country(doc, code), "gdp_usd_bn", 2025)["gap_pct"]
+        assert abs(gap) < 15, "#{code}: #{gap}"
+      end
+
+      assert National.figure(National.for_country(doc, "SEN"), "gdp_usd_bn", 2025)["gap_pct"] > 15
+
+      assert National.figure(National.for_country(doc, "GIN"), "gdp_usd_bn", 2024)["value"] ==
+               36.3
     end
 
     test "a reviewed figure is not overwritten by the bundled file" do
