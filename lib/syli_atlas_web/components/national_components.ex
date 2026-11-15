@@ -377,7 +377,7 @@ defmodule SyliAtlasWeb.NationalComponents do
       <p :if={@africa["after_review_total"]} class="national-wait">
         <span class="pill pill-warn">{gettext("Being checked")}</span>
         <span>
-          <%= for w <- @waiting do %>
+          <%= for w <- shown_waiting(@waiting) do %>
             {rich(
               if(w.rebased_on,
                 do:
@@ -391,8 +391,18 @@ defmodule SyliAtlasWeb.NationalComponents do
               amount: Format.money_value(w.amount, "gdp_usd_bn", @locale, @africa["year"])
             )}
           <% end %>
+          <span :if={hidden_waiting(@waiting) > 0}>
+            {ngettext(
+              "And 1 other country.",
+              "And %{count} other countries.",
+              hidden_waiting(@waiting)
+            )}
+          </span>
           {rich(
-            gettext("Once checked, the sum will be %{total} (%{diff}, %{gap}).",
+            ngettext(
+              "Once checked, the sum will be %{total} (%{diff}, %{gap}).",
+              "Once they are checked, the sum will be %{total} (%{diff}, %{gap}).",
+              max(length(@waiting), 1),
               total: "\u0000total\u0000",
               diff: "\u0000diff\u0000",
               gap: signed_pct(@africa["after_review_gap_pct"], @locale)
@@ -419,6 +429,18 @@ defmodule SyliAtlasWeb.NationalComponents do
     </div>
     """
   end
+
+  # The home window names at most two countries being checked: those with a
+  # rebasing first (they move the sum most), then the largest; the rest is a
+  # count.
+  @shown_waiting 2
+  defp shown_waiting(waiting) do
+    waiting
+    |> Enum.sort_by(&{!&1.rebased_on, -(&1.amount || 0)})
+    |> Enum.take(@shown_waiting)
+  end
+
+  defp hidden_waiting(waiting), do: max(length(waiting) - @shown_waiting, 0)
 
   # "+75 Md$": the gap in billions, signed, in the reader's currency.
   defp signed_money(v, locale, year) do

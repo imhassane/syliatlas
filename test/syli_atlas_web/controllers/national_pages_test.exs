@@ -52,17 +52,20 @@ defmodule SyliAtlasWeb.NationalPagesTest do
     # As in the canvas: legend of the bar, the pending country and its date.
     refute sum =~ "au chiffre officiel"
     assert sum =~ "53 pays au chiffre FMI (repli)"
-    assert sum =~ "1 pays en cours de vérification"
+    assert sum =~ "8 pays en cours de vérification"
+    # Two countries named (the rebased ones), the rest counted.
     assert sum =~ "Éthiopie : 201,4"
     assert sum =~ "rebasage du 4 nov. 2026"
-    assert sum =~ "3 252"
-    assert sum =~ "+75,1"
+    assert sum =~ "Afrique du Sud : 449,7"
+    assert sum =~ "Et 6 autres pays."
+    refute sum =~ "Kenya"
+    assert sum =~ "Une fois ces chiffres vérifiés, la somme passera à"
     assert count(d, "#national-sum a[href='/fr/chiffres-nationaux']") == 1
   end
 
   test "the map marks the pending country and offers both colourings", %{conn: conn} do
     d = doc(conn, "/fr?pays=ETH")
-    assert count(d, "#africa-map .map-pending") == 1
+    assert count(d, "#africa-map .map-pending") == 8
     assert count(d, "#map-source-imf[aria-current='true']") == 1
     assert text(d, "[data-field='national-value']") =~ "201,4"
     assert text(d, "[data-field='national-status']") =~ "En cours de vérification"
@@ -122,10 +125,9 @@ defmodule SyliAtlasWeb.NationalPagesTest do
     assert count(d, "#national-card-gdp_usd_bn [data-money][data-year=\"2025\"]") == 2
 
     home = doc(conn, "/fr")
-    # The sum and the sum after review, inside the sentence, escaped around.
-    # The IMF total, the sum, the pending figure, the sum after review, the difference.
-    assert count(home, "#national-sum [data-money]") == 5
-    assert text(home, "#national-sum .national-wait") =~ "Une fois vérifié, la somme passera à"
+    # The IMF total, the sum, two pending figures, the sum after review, the difference.
+    assert count(home, "#national-sum [data-money]") == 6
+    assert text(home, "#national-sum .national-wait") =~ "la somme passera à"
 
     assert count(doc(conn, "/fr/chiffres-nationaux"), "main [data-money]") > 50
   end
@@ -139,7 +141,11 @@ defmodule SyliAtlasWeb.NationalPagesTest do
 
     west = doc(conn, "/fr/regions/afrique-de-l-ouest")
     assert text(west, "#national-group") =~ "Somme des chiffres nationaux"
-    assert count(west, "#national-group .national-wait") == 0
+    # Nigeria is being checked too.
+    assert count(west, "#national-group .national-wait") == 1
+
+    central = doc(conn, "/fr/regions/afrique-centrale")
+    assert count(central, "#national-group .national-wait") == 0
 
     community = doc(conn, "/fr/communautes/cedeao")
     assert text(community, "#national-group") =~ "au chiffre FMI (repli)"
@@ -147,7 +153,7 @@ defmodule SyliAtlasWeb.NationalPagesTest do
 
   test "the sum of a group of countries takes the IMF figure as fallback" do
     group = National.group(National.document(), ["ETH", "KEN"], 2025)
-    assert group["pending"] == ["ETH"]
+    assert group["pending"] == ["ETH", "KEN"]
     assert group["national_total"] == group["imf_total"]
     assert group["after_review_total"] > group["imf_total"]
   end

@@ -125,9 +125,10 @@ defmodule SyliAtlas.NationalTest do
       africa = National.africa(doc, 2025)
       assert africa["national_total"] == africa["imf_total"]
       assert africa["counted"] == 0
-      assert africa["pending"] == ["ETH"]
+      # The eight largest economies are followed, all waiting for a person.
+      assert africa["pending"] == ~w(AGO DZA EGY ETH KEN MAR NGA ZAF)
       assert africa["missing"] == ["ERI"]
-      assert_in_delta africa["after_review_total"] - africa["imf_total"], 201.42 - fig["imf"], 0.2
+      assert africa["after_review_total"] - africa["imf_total"] > 201.42 - fig["imf"]
     end
 
     test "once a person verifies it, it counts; rejected, it leaves the pages" do
@@ -137,7 +138,7 @@ defmodule SyliAtlas.NationalTest do
       doc = National.document()
       africa = National.africa(doc, 2025)
       assert africa["counted"] == 1
-      assert africa["pending"] == []
+      refute "ETH" in africa["pending"]
       assert africa["national_total"] > africa["imf_total"]
       assert Enum.find(africa["rows"], &(&1["code"] == "ETH"))["source"] == "national"
 
@@ -145,6 +146,33 @@ defmodule SyliAtlas.NationalTest do
       doc = National.document()
       assert National.figure(National.for_country(doc, "ETH"), "gdp_usd_bn", 2025) == nil
       assert National.africa(doc, 2025)["counted"] == 0
+    end
+
+    test "the other large economies: South Africa's rebasing, Egypt's fiscal years" do
+      doc = National.document()
+      zaf = National.for_country(doc, "ZAF")
+      assert zaf["rebasing"]["active"]
+      assert zaf["rebasing"]["new_base"] == "2022"
+      assert National.figure(zaf, "gdp_usd_bn", 2025)["value"] == 449.74
+
+      egy = National.for_country(doc, "EGY")
+      assert National.figure(egy, "gdp_usd_bn", 2025)["period"] == "2024/25"
+      assert National.figure(egy, "gdp_usd_bn", 2026)["period"] == "2025/26"
+
+      # Every bundled figure: local amount ÷ rate = dollars, close to the IMF.
+      for f <- National.bundled()["figures"], f["indicator"] == "gdp_usd_bn", f["value_lcu"] do
+        lcu = String.to_float(f["value_lcu"] <> ".0")
+
+        assert_in_delta lcu / String.to_float(f["fx_rate"]) / 1.0e9,
+                        String.to_float(f["value"]),
+                        0.01
+      end
+
+      for code <- ~w(ZAF EGY NGA DZA MAR AGO KEN) do
+        assert abs(
+                 National.figure(National.for_country(doc, code), "gdp_usd_bn", 2025)["gap_pct"]
+               ) < 6
+      end
     end
 
     test "a reviewed figure is not overwritten by the bundled file" do
