@@ -21,6 +21,12 @@ defmodule SyliAtlasWeb.Admin.SearchConsoleHTML do
   def long_day(%Date{} = d), do: "#{d.day} #{Enum.at(@months, d.month - 1)}"
   def long_day(_), do: ""
 
+  def import_label(:waiting), do: "en attente"
+  def import_label(:running), do: "en cours"
+  def import_label(:done), do: "réussi"
+  def import_label(:retrying), do: "échec, nouvel essai prévu"
+  def import_label(:failed), do: "échec"
+
   def lang_name("pt"), do: "Portugais"
   def lang_name("es"), do: "Espagnol"
   def lang_name("ar"), do: "Arabe"

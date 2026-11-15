@@ -30,7 +30,8 @@ defmodule SyliAtlas.Workers.SearchConsoleWorker do
           {:error, reason}
       end
     else
-      :ok
+      Logger.warning("search console: no key or property set, nothing imported")
+      {:cancel, :not_configured}
     end
   end
 end
