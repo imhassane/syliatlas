@@ -271,7 +271,7 @@ defmodule SyliAtlasWeb.PublicPagesTest do
     eth = data["countries"]["ETH"]
     assert length(eth["series"]) == 16
     assert Enum.all?(~w(gdppc growth inflation debt), &(length(eth["more"][&1]) == 16))
-    assert eth["nationals"]["2026"]["amount"] == 210.7
+    assert data["countries"]["EGY"]["nationals"]["2026"]["amount"] == 436.61
     assert data["labels"]["gdp_imf"] =~ "%Y"
     assert doc |> LazyHTML.query("#map-panel [data-map-spark]") |> Enum.count() == 1
 

@@ -1,15 +1,6 @@
 {
-  "_comment": "Chiffres publiés par les pays (SyliAtlas.National). Chaque ligne passe par les contrôles automatiques au démarrage ; une ligne revue par une personne dans l'admin n'est plus réécrite.",
+  "_comment": "Chiffres publiés par les pays (SyliAtlas.National). Chaque ligne passe par les contrôles automatiques au démarrage ; une ligne revue par une personne dans l'admin n'est plus réécrite. « tracked » : les seuls pays dont on suit le chiffre officiel (institut qui publie un document officiel, à une adresse stable, avec le PIB nominal annuel ; décision du 15 nov. 2026). Les chiffres des autres pays sont retirés au démarrage ; pour eux, seule l'alerte de rebasage.",
   "sources": {
-    "ETH": {
-      "name": "Éthiopie : ministère de la Planification et du Développement, ministère des Finances, Banque nationale, service statistique",
-      "domains": [
-        "mopd.gov.et",
-        "mofed.gov.et",
-        "nbe.gov.et",
-        "ess.gov.et"
-      ]
-    },
     "ZAF": {
       "name": "Afrique du Sud : Stats SA, Trésor national, Banque de réserve",
       "domains": [
@@ -52,14 +43,6 @@
         "bkam.ma"
       ]
     },
-    "AGO": {
-      "name": "Angola : Institut national de statistique, ministère des Finances, Banque nationale",
-      "domains": [
-        "ine.gov.ao",
-        "minfin.gov.ao",
-        "bna.ao"
-      ]
-    },
     "KEN": {
       "name": "Kenya : Bureau national des statistiques, Trésor national, Banque centrale",
       "domains": [
@@ -98,13 +81,6 @@
         "finance.go.ug"
       ]
     },
-    "ZMB": {
-      "name": "Zambie : ZamStats",
-      "domains": [
-        "zamstats.gov.zm",
-        "zambiamonitor.com"
-      ]
-    },
     "ZWE": {
       "name": "Zimbabwe : ZIMSTAT",
       "domains": [
@@ -115,14 +91,6 @@
       "name": "Rwanda : NISR",
       "domains": [
         "statistics.gov.rw"
-      ]
-    },
-    "COD": {
-      "name": "RD Congo : Banque centrale du Congo, INS",
-      "domains": [
-        "bcc.cd",
-        "ins.cd",
-        "acp.cd"
       ]
     },
     "CMR": {
@@ -144,92 +112,9 @@
         "statsmauritius.govmu.org",
         "allafrica.com"
       ]
-    },
-    "GAB": {
-      "name": "Gabon : ministère de l'Économie, DGEPF",
-      "domains": [
-        "economie.gouv.ga",
-        "gabonreview.com"
-      ]
-    },
-    "GIN": {
-      "name": "Guinée : INS, ministère du Plan",
-      "domains": [
-        "stat-guinee.org",
-        "allafrica.com"
-      ]
-    },
-    "TGO": {
-      "name": "Togo : INSEED",
-      "domains": [
-        "inseed.tg",
-        "togofirst.com"
-      ]
-    },
-    "MRT": {
-      "name": "Mauritanie : Banque centrale, ANSADE",
-      "domains": [
-        "bcm.mr",
-        "ansade.mr",
-        "lapresse.tn"
-      ]
-    },
-    "NER": {
-      "name": "Niger : INS",
-      "domains": [
-        "stat-niger.org"
-      ]
     }
   },
   "figures": [
-    {
-      "country_code": "ETH",
-      "indicator": "gdp_usd_bn",
-      "calendar_year": 2025,
-      "period_label": "2024/25",
-      "value": "201.42",
-      "value_lcu": "24030000000000",
-      "currency": "ETB",
-      "fx_rate": "119.30",
-      "base_year": "2024/25",
-      "source_name": "Ministère de la Planification et du Développement, présentation du 4 nov. 2026 (rapportée par Reuters)",
-      "source_url": "https://www.businessday.co.za/world/africa/2026-11-05-ethiopias-economy-revised-up-by-60-after-gdp-rebasing/",
-      "published_on": "2026-11-04",
-      "quote": "Ethiopia's 2024/2025 economy was revised up by 59.2% to $201.42bn",
-      "extracted_by": "manual",
-      "note": "Montant en dollars donné par la présentation ; taux implicite : 119,30 birrs par dollar."
-    },
-    {
-      "country_code": "ETH",
-      "indicator": "gdp_usd_bn",
-      "calendar_year": 2026,
-      "period_label": "2025/26",
-      "value": "210.7",
-      "value_lcu": "31860000000000",
-      "currency": "ETB",
-      "fx_rate": "151.21",
-      "base_year": "2024/25",
-      "source_name": "Ministère de la Planification et du Développement, présentation du 4 nov. 2026 (rapportée par Africa.com)",
-      "source_url": "https://africa.com/top-10-news/ethiopia-becomes-africas-fifth-largest-economy-after-rebasing",
-      "published_on": "2026-11-04",
-      "quote": "increased its measured gross domestic product to $210.7 billion for the 2025/26 fiscal year",
-      "extracted_by": "manual",
-      "note": "Exercice clos en juillet 2026 ; taux implicite : 151,21 birrs par dollar."
-    },
-    {
-      "country_code": "ETH",
-      "indicator": "public_debt_pct_gdp",
-      "calendar_year": 2025,
-      "period_label": "2024/25",
-      "value": "27.4",
-      "base_year": "2024/25",
-      "source_name": "Ministère des Finances, 4 nov. 2026 (rapporté par Ventureburn)",
-      "source_url": "https://ventureburn.com/ethiopia-becomes-africas-fifth-largest-economy-gdp-rebasing/",
-      "published_on": "2026-11-04",
-      "quote": "Debt-to-GDP fell to 27.4%",
-      "extracted_by": "manual",
-      "note": "Année non précisée dans la présentation : rattachée à 2024/25, l'année de base. À confirmer à la revue."
-    },
     {
       "country_code": "ZAF",
       "indicator": "gdp_usd_bn",
@@ -312,22 +197,6 @@
       "note": "Document officiel : « Les comptes nationaux provisoires 2025, Base 2014 » (hcp.ma). Montant arrondi au milliard par la presse. Converti au taux moyen 2025 : 9,352828 MAD pour un dollar.",
       "base_year": "2014",
       "published_on": "2026-06-09"
-    },
-    {
-      "country_code": "AGO",
-      "indicator": "gdp_usd_bn",
-      "calendar_year": 2025,
-      "period_label": "2025",
-      "value": "139.52",
-      "value_lcu": "128302020000000",
-      "currency": "AOA",
-      "fx_rate": "919.574152",
-      "source_name": "Institut national de statistique (INE), comptes nationaux annuels préliminaires 2025, mai 2026 (rapporté par Ver Angola)",
-      "source_url": "https://www.verangola.net/va/pt/052026/Economia/48693/Poupança-nacional-de-Angola-cai-para-mínimo-de-cinco-anos-em-2025.htm",
-      "quote": "O PIB a preços correntes fixou-se em 128.302,02 mil milhões de kwanzas",
-      "extracted_by": "manual",
-      "note": "Document officiel : contas nacionais anuais preliminares (ine.gov.ao). Converti au taux moyen 2025 : 919,574152 AOA pour un dollar.",
-      "base_year": "2015"
     },
     {
       "country_code": "EGY",
@@ -424,21 +293,6 @@
       "note": "Exercice juillet–juin, rattaché à l'année que lui donne le FMI. Converti au taux moyen 2025 : 3600,721082 UGX pour un dollar."
     },
     {
-      "country_code": "ZMB",
-      "indicator": "gdp_usd_bn",
-      "calendar_year": 2025,
-      "period_label": "2025",
-      "value": "28.84",
-      "value_lcu": "725641400000",
-      "currency": "ZMW",
-      "fx_rate": "25.161947",
-      "source_name": "ZamStats, PIB annuel 2025 (rapporté par Zambia Monitor)",
-      "source_url": "https://www.zambiamonitor.com/?p=83277",
-      "quote": "GDP at current prices for 2025 was estimated at K725.64 billion, up from K662.09 billion in 2024.",
-      "extracted_by": "manual",
-      "note": "Converti au taux moyen 2025 : 25,161947 ZMW pour un dollar."
-    },
-    {
       "country_code": "ZWE",
       "indicator": "gdp_usd_bn",
       "calendar_year": 2025,
@@ -470,18 +324,6 @@
       "extracted_by": "manual",
       "note": "Base 2024. Converti au taux moyen 2025 : 1431,126669 RWF pour un dollar.",
       "published_on": "2026-03-16"
-    },
-    {
-      "country_code": "COD",
-      "indicator": "gdp_usd_bn",
-      "calendar_year": 2025,
-      "period_label": "2025",
-      "value": "92.80",
-      "source_name": "Banque centrale du Congo, note de conjoncture (rapporté par l'ACP)",
-      "source_url": "https://acp.cd/economie/rdc-le-pib-nominal-attendu-a-1204-milliards-usd-en-2026/",
-      "quote": "Le PIB nominal devrait s’établir à 120,4 milliards USD en 2026, contre 92,8 milliards en 2025",
-      "extracted_by": "manual",
-      "note": "Montant publié directement en dollars par la Banque centrale."
     },
     {
       "country_code": "CMR",
@@ -528,83 +370,6 @@
       "extracted_by": "manual",
       "note": "Année de référence portée de 2018 à 2023 en octobre 2026. Converti au taux moyen 2025 : 45,853547 MUR pour un dollar.",
       "base_year": "2023"
-    },
-    {
-      "country_code": "GAB",
-      "indicator": "gdp_usd_bn",
-      "calendar_year": 2025,
-      "period_label": "2025",
-      "value": "23.75",
-      "value_lcu": "13822000000000",
-      "currency": "XAF",
-      "fx_rate": "582.010311433",
-      "source_name": "Ministère de l'Économie et des Finances, communiqué du 13 sept. 2026 (rapporté par Gabonreview)",
-      "source_url": "https://www.gabonreview.com/dette-publique-laudit-efface-plus-de-2-175-milliards-de-fcfa-de-lestimation-initiale/",
-      "quote": "Le gouvernement évalue le produit intérieur brut (PIB) du Gabon à 13 822 milliards de FCFA en 2025.",
-      "extracted_by": "manual",
-      "note": "Première estimation issue du rebasage des comptes nationaux. Converti au taux moyen 2025 : 582,010311433 XAF pour un dollar.",
-      "published_on": "2026-09-13"
-    },
-    {
-      "country_code": "GIN",
-      "indicator": "gdp_usd_bn",
-      "calendar_year": 2024,
-      "period_label": "2024",
-      "value": "36.30",
-      "value_lcu": "311898000000000",
-      "currency": "GNF",
-      "fx_rate": "8592.231405",
-      "source_name": "INS et ministère du Plan, rebasage du PIB (rapporté par AllAfrica)",
-      "source_url": "https://fr.allafrica.com/stories/202510210113.html",
-      "quote": "PIB 2024 : 311 898 milliards GNF, soit environ 36,3 milliards USD",
-      "extracted_by": "manual",
-      "note": "Base 2018 depuis le rebasage d'octobre 2025 (+51,2 % sur 2018). Pas encore de chiffre officiel 2025 ; dollars donnés par la présidence. Seul le PIB 2024 rebasé est publié ; converti au taux implicite donné par l'INS (36,3 Md$).",
-      "published_on": "2025-10-21"
-    },
-    {
-      "country_code": "TGO",
-      "indicator": "gdp_usd_bn",
-      "calendar_year": 2025,
-      "period_label": "2025",
-      "value": "11.89",
-      "value_lcu": "6919100000000",
-      "currency": "XOF",
-      "fx_rate": "582.010311433",
-      "source_name": "INSEED, comptes nationaux provisoires 2025 (rapporté par Togo First)",
-      "source_url": "https://www.togofirst.com/en/economic-governance/2605-19068-togo-nears-lower-middle-income-status-as-gdp-per-capita-reaches-1-400",
-      "quote": "Nominal gross domestic product reached 6,919.1 billion CFA francs",
-      "extracted_by": "manual",
-      "note": "Converti au taux moyen 2025 : 582,010311433 XOF pour un dollar."
-    },
-    {
-      "country_code": "MRT",
-      "indicator": "gdp_usd_bn",
-      "calendar_year": 2025,
-      "period_label": "2025",
-      "value": "11.87",
-      "value_lcu": "472560000000",
-      "currency": "MRU",
-      "fx_rate": "39.828006",
-      "source_name": "Banque centrale de Mauritanie, rapport annuel 2025 (rapporté par La Presse)",
-      "source_url": "https://www.lapresse.tn/2026/08/07/mauritanie-la-croissance-resiste-a-40-linflation-tombe-a-16/",
-      "quote": "En valeur nominale, le PIB a atteint 472,56 milliards MRU, en progression de 9,4 %.",
-      "extracted_by": "manual",
-      "note": "Converti au taux moyen 2025 : 39,828006 MRU pour un dollar."
-    },
-    {
-      "country_code": "NER",
-      "indicator": "gdp_usd_bn",
-      "calendar_year": 2025,
-      "period_label": "2025",
-      "value": "21.23",
-      "value_lcu": "12354116000000",
-      "currency": "XOF",
-      "fx_rate": "582.010311433",
-      "source_name": "INS Niger, comptes économiques de la nation rapides 2025",
-      "source_url": "https://www.stat-niger.org/wp-content/uploads/rapport_economique/cna/cna_rapides_2025_VF.pdf",
-      "quote": "PIB nominal 11 963 063 12 354 116",
-      "extracted_by": "manual",
-      "note": "Tableau 2 libellé « en milliers de FCFA » mais les annexes donnent les mêmes montants en millions : 12 354 milliards FCFA. Estimation rapide, révisable. Converti au taux moyen 2025 : 582,010311433 XOF pour un dollar."
     }
   ],
   "rebasings": [
@@ -656,5 +421,22 @@
       "source_name": "ANSD, Comptes nationaux du Sénégal (base 2021)",
       "source_url": "https://www.ansd.sn/Indicateur/comptes-nationaux-du-senegal-base-2021"
     }
+  ],
+  "tracked": [
+    "CMR",
+    "DZA",
+    "EGY",
+    "GHA",
+    "KEN",
+    "MAR",
+    "MUS",
+    "NAM",
+    "NGA",
+    "RWA",
+    "SEN",
+    "TZA",
+    "UGA",
+    "ZAF",
+    "ZWE"
   ]
 }

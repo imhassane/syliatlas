@@ -16,17 +16,16 @@ defmodule SyliAtlasWeb.NationalPagesTest do
   defp text(doc, sel), do: doc |> LazyHTML.query(sel) |> LazyHTML.text()
   defp count(doc, sel), do: doc |> LazyHTML.query(sel) |> Enum.count()
 
-  test "the Ethiopian page shows the rebasing, both figures and the badge", %{conn: conn} do
-    d = doc(conn, "/fr/pays/ethiopie/economie")
+  test "South Africa's page shows the rebasing, both figures and the badge", %{conn: conn} do
+    d = doc(conn, "/fr/pays/afrique-du-sud/economie")
 
-    assert text(d, "#rebasage") =~ "2024/25 (au lieu de 2015/16)"
-    assert text(d, "#national-card-gdp_usd_bn") =~ "201,4"
-    assert text(d, "#national-card-gdp_usd_bn") =~ "126,4"
+    assert text(d, "#rebasage") =~ "2022 (au lieu de 2015)"
+    assert text(d, "#national-card-gdp_usd_bn") =~ "449,7"
+    assert text(d, "#national-card-gdp_usd_bn") =~ "427,1"
     assert text(d, "#national-card-gdp_usd_bn") =~ "En cours de vérification"
-    assert text(d, "#national-card-public_debt_pct_gdp") =~ "27,4"
     assert text(d, "#national-card-gdp_per_capita") =~ "calcul Syli Atlas"
     # Official marks on the chart, never a point of the IMF line.
-    assert count(d, "#area-chart .national-mark.is-wait") == 2
+    assert count(d, "#area-chart .national-mark.is-wait") == 1
 
     [tips | _] =
       d
@@ -34,9 +33,15 @@ defmodule SyliAtlasWeb.NationalPagesTest do
       |> LazyHTML.attribute("data-chart-tips")
 
     p2025 = tips |> Jason.decode!() |> Map.fetch!("points") |> Enum.find(&(&1["year"] == 2025))
-    assert p2025["national"]["text"] =~ "201,4"
+    assert p2025["national"]["text"] =~ "449,7"
     assert p2025["national"]["wait"]
-    assert p2025["valuetext"] =~ "Officiel · 2024/25"
+    assert p2025["valuetext"] =~ "Officiel · 2025"
+  end
+
+  test "Ethiopia, no longer followed: the rebasing alert alone", %{conn: conn} do
+    d = doc(conn, "/fr/pays/ethiopie/economie")
+    assert text(d, "#rebasage") =~ "2024/25 (au lieu de 2015/16)"
+    assert count(d, "#national-figures") == 0
   end
 
   test "a country without national figures shows none", %{conn: conn} do
@@ -52,22 +57,22 @@ defmodule SyliAtlasWeb.NationalPagesTest do
     # As in the canvas: legend of the bar, the pending country and its date.
     refute sum =~ "au chiffre officiel"
     assert sum =~ "53 pays au chiffre FMI (repli)"
-    assert sum =~ "23 pays en cours de vérification"
-    # Two countries named (the rebased ones), the rest counted.
-    assert sum =~ "Éthiopie : 201,4"
-    assert sum =~ "rebasage du 4 nov. 2026"
+    assert sum =~ "15 pays en cours de vérification"
+    # Two countries named (the rebased ones first), the rest counted.
     assert sum =~ "Afrique du Sud : 449,7"
-    assert sum =~ "Et 21 autres pays."
+    assert sum =~ "rebasage du 29 oct. 2026"
+    assert sum =~ "Tanzanie : 95,1"
+    assert sum =~ "Et 13 autres pays."
     refute sum =~ "Kenya"
     assert sum =~ "Une fois ces chiffres vérifiés, la somme passera à"
     assert count(d, "#national-sum a[href='/fr/chiffres-nationaux']") == 1
   end
 
   test "the map marks the pending country and offers both colourings", %{conn: conn} do
-    d = doc(conn, "/fr?pays=ETH")
-    assert count(d, "#africa-map .map-pending") == 24
+    d = doc(conn, "/fr?pays=ZAF")
+    assert count(d, "#africa-map .map-pending") == 15
     assert count(d, "#map-source-imf[aria-current='true']") == 1
-    assert text(d, "[data-field='national-value']") =~ "201,4"
+    assert text(d, "[data-field='national-value']") =~ "449,7"
     assert text(d, "[data-field='national-status']") =~ "En cours de vérification"
 
     d = doc(conn, "/fr?pays=TCD&source=national")
@@ -81,7 +86,8 @@ defmodule SyliAtlasWeb.NationalPagesTest do
     d = doc(conn, "/fr/chiffres-nationaux")
     assert text(d, "h1") =~ "FMI et chiffres nationaux"
     assert count(d, "#national-rows tbody tr") == 54
-    assert text(d, "#national-row-ETH") =~ "En cours de vérification"
+    assert text(d, "#national-row-ZAF") =~ "En cours de vérification"
+    assert text(d, "#national-row-ETH") =~ "FMI (repli)"
     assert text(d, "#national-row-TCD") =~ "FMI (repli)"
     assert text(d, "#national-row-GHA") =~ "En cours de vérification"
     assert text(d, "#national-row-ERI") =~ "hors des deux totaux"
@@ -96,7 +102,7 @@ defmodule SyliAtlasWeb.NationalPagesTest do
     assert redirected_to(get(conn, "/admin/chiffres-nationaux")) == "/fr/connexion"
 
     d = doc(admin, "/admin/chiffres-nationaux")
-    figure = National.get("ETH", "gdp_usd_bn", 2025)
+    figure = National.get("ZAF", "gdp_usd_bn", 2025)
     assert count(d, "#national-#{figure.id}") == 1
     assert text(d, "#national-#{figure.id}") =~ "Source officielle"
     assert count(d, "#admin-nav-national .admin-cnt") == 1
@@ -109,20 +115,23 @@ defmodule SyliAtlasWeb.NationalPagesTest do
     assert text(home, "#national-sum") =~ "1 pays au chiffre officiel"
 
     # The region's GDP tile says the official sum once a member's figure counts.
-    east = doc(build_conn(), "/fr/regions/afrique-de-l-est")
-    assert text(east, "#region-kpis") =~ "PIB 2025 · FMI"
-    assert text(east, "#region-kpis") =~ "officiel : 609,0 Md$"
-    assert text(east, "#national-group") =~ "1 pays au chiffre officiel"
+    south = doc(build_conn(), "/fr/regions/afrique-australe")
+    assert text(south, "#region-kpis") =~ "PIB 2025 · FMI"
+    assert text(south, "#region-kpis") =~ ~r/officiel : [\d\s\x{00A0}\x{202F},]+ Md\$/u
+    assert text(south, "#national-group") =~ "1 pays au chiffre officiel"
 
     admin |> post("/admin/chiffres-nationaux/#{figure.id}/rejeter") |> redirected_to()
     assert National.get!(figure.id).status == "rejected"
 
-    refute text(doc(build_conn(), "/fr/pays/ethiopie/economie"), "#national-card-gdp_usd_bn") =~
-             "201,4"
+    refute text(
+             doc(build_conn(), "/fr/pays/afrique-du-sud/economie"),
+             "#national-card-gdp_usd_bn"
+           ) =~
+             "449,7"
   end
 
   test "national amounts are money spans the reader's currency rewrites", %{conn: conn} do
-    d = doc(conn, "/fr/pays/ethiopie/economie")
+    d = doc(conn, "/fr/pays/afrique-du-sud/economie")
     assert count(d, "#national-card-gdp_usd_bn [data-money][data-year=\"2025\"]") == 2
 
     home = doc(conn, "/fr")
@@ -136,17 +145,17 @@ defmodule SyliAtlasWeb.NationalPagesTest do
   test "regions, the continent and communities show the sum of national figures", %{conn: conn} do
     east = doc(conn, "/fr/regions/afrique-de-l-est")
     assert text(east, "#national-group") =~ "Somme des chiffres nationaux"
-    # Ethiopia is being checked: the sum after review goes up.
+    # Kenya is being checked: the sum after review goes up.
     assert text(east, "#national-group .national-wait") =~ "En cours de vérification"
     assert count(east, "#national-group [data-money]") == 3
 
     west = doc(conn, "/fr/regions/afrique-de-l-ouest")
     assert text(west, "#national-group") =~ "Somme des chiffres nationaux"
-    # Nigeria is being checked too.
+    # Nigeria, Ghana and Senegal are being checked too.
     assert count(west, "#national-group .national-wait") == 1
 
     central = doc(conn, "/fr/regions/afrique-centrale")
-    # Cameroon, Gabon and the DR Congo are being checked.
+    # Cameroon is being checked.
     assert count(central, "#national-group .national-wait") == 1
 
     community = doc(conn, "/fr/communautes/cedeao")
@@ -155,7 +164,7 @@ defmodule SyliAtlasWeb.NationalPagesTest do
 
   test "the sum of a group of countries takes the IMF figure as fallback" do
     group = National.group(National.document(), ["ETH", "KEN"], 2025)
-    assert group["pending"] == ["ETH", "KEN"]
+    assert group["pending"] == ["KEN"]
     assert group["national_total"] == group["imf_total"]
     assert group["after_review_total"] > group["imf_total"]
   end
