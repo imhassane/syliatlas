@@ -84,8 +84,12 @@ defmodule SyliAtlasWeb.RatingsController do
         Paths.rating(l, SyliAtlas.Locales.pick(entry["slug"], l))
       end)
 
-    faq = RatingComponents.faq_items(name, entry, doc)
+    history = Ratings.history(entry["code"])
+    faq = RatingComponents.faq_items(name, entry, doc) ++ more_faq(name, entry, history, locale)
     description = description(entry, name)
+    context = SyliAtlasWeb.CountryContext.get(entry["code"], locale)
+    same_band = same_band(doc, entry, locale)
+    communities = SyliAtlas.Economy.Communities.for_country(entry["code"])
 
     render(conn, :show,
       page_title: title(entry, name),
@@ -106,9 +110,63 @@ defmodule SyliAtlasWeb.RatingsController do
       doc: doc,
       entry: entry,
       name: name,
-      history: Ratings.history(entry["code"]),
-      faq: faq
+      history: history,
+      faq: faq,
+      context: context,
+      same_band: same_band,
+      communities: communities
     )
+  end
+
+  # Other countries in the same band (« Critical rating »…), best first.
+  defp same_band(_doc, %{"band" => nil}, _locale), do: []
+
+  defp same_band(doc, entry, locale) do
+    for code <- doc["ranking"],
+        code != entry["code"],
+        e = doc["countries"][code],
+        e["band"] == entry["band"] do
+      %{
+        name: SyliAtlas.Locales.pick(e["name"], locale),
+        slug: SyliAtlas.Locales.pick(e["slug"], locale),
+        label: e["label"]
+      }
+    end
+  end
+
+  # The latest decision, and the gap to investment grade, as questions.
+  defp more_faq(_name, %{"band" => nil}, _history, _locale), do: []
+
+  defp more_faq(name, entry, history, locale) do
+    latest =
+      case Enum.find(history, &(&1.action_date not in [nil, ""])) do
+        nil ->
+          []
+
+        r ->
+          [
+            {gettext("When did the rating of %{name} last change?", name: name),
+             gettext("%{agency}, %{date}: %{decision}, %{rating}, %{outlook}.",
+               agency: RatingComponents.agency_name(r.agency),
+               date: RatingComponents.date_text(r.action_date, locale),
+               decision: String.downcase(RatingComponents.action_label(r.action_type)),
+               rating: SyliAtlas.Ratings.Scale.display(r.rating),
+               outlook: RatingComponents.outlook_label(r.outlook)
+             )}
+          ]
+      end
+
+    gap =
+      if is_integer(entry["notches"]) and entry["notches"] > 0 do
+        [
+          {gettext("How far is %{name} from investment grade?", name: name),
+           RatingComponents.gap_text(entry) <> "."}
+        ]
+      else
+        []
+      end
+
+    latest ++ gap
   end
 
   # « Note souveraine du Sénégal : S&P CC, Moody's Ca »: the ratings
@@ -222,13 +280,25 @@ defmodule SyliAtlasWeb.RatingsController do
       "@type" => "Dataset",
       "name" => gettext("Sovereign credit ratings of African countries"),
       "description" =>
-        gettext(
-          "Long-term foreign-currency ratings by S&P, Moody's and Fitch, latest decision of each agency."
+        Seo.dataset_description(
+          gettext(
+            "Long-term foreign-currency ratings by S&P, Moody's and Fitch, latest decision of each agency."
+          )
         ),
       "spatialCoverage" => "Africa",
       "dateModified" => doc["as_of"],
       "isBasedOn" => "S&P Global Ratings, Moody's Ratings, Fitch Ratings",
-      "url" => Seo.url(path)
+      "url" => Seo.url(path),
+      "creator" => Seo.organization(),
+      "publisher" => Seo.organization(),
+      "isAccessibleForFree" => true,
+      # The ratings are the agencies': cited, not relicensed. The terms are
+      # set out, source by source, on the method page.
+      "license" => %{
+        "@type" => "CreativeWork",
+        "name" => gettext("Sources and terms of use"),
+        "url" => Seo.url(Paths.method(Gettext.get_locale(SyliAtlasWeb.Gettext)))
+      }
     }
   end
 end

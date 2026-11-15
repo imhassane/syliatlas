@@ -49,7 +49,7 @@ defmodule SyliAtlasWeb.Seo do
         "name" => "Syli Atlas",
         "url" => home,
         "inLanguage" => locale,
-        "publisher" => %{"@id" => url("/#organization")},
+        "publisher" => organization(),
         "potentialAction" => %{
           "@type" => "SearchAction",
           "target" => %{
@@ -137,12 +137,12 @@ defmodule SyliAtlasWeb.Seo do
       "@context" => "https://schema.org",
       "@type" => "Dataset",
       "name" => opts.name,
-      "description" => opts.description,
+      "description" => dataset_description(opts.description),
       "url" => url(opts.path),
       "inLanguage" => locale,
       "isAccessibleForFree" => true,
-      "creator" => %{"@id" => url("/#organization")},
-      "publisher" => %{"@id" => url("/#organization")},
+      "creator" => organization(),
+      "publisher" => organization(),
       "license" => license_url(),
       "creditText" => "Syli Atlas"
     }
@@ -173,6 +173,38 @@ defmodule SyliAtlasWeb.Seo do
           %{"@type" => "DataDownload", "encodingFormat" => format, "contentUrl" => url(path)}
         end)
     )
+  end
+
+  @doc """
+  The publisher as Google's rich results want it inside each item: a typed
+  `Organization` with its name (a bare `@id` reference is reported as
+  « invalid object type »), still pointing at the home page's node.
+  """
+  def organization do
+    %{
+      "@type" => "Organization",
+      "@id" => url("/#organization"),
+      "name" => "Syli Atlas",
+      "url" => url("/")
+    }
+  end
+
+  # Google Dataset Search wants 50 to 5000 characters.
+  @doc false
+  def dataset_description(text) do
+    text = text || ""
+
+    text =
+      if String.length(text) < 50,
+        do:
+          String.trim(
+            text <>
+              " " <>
+              gettext("Figures compiled by Syli Atlas from named public sources, with their edition.")
+          ),
+        else: text
+
+    String.slice(text, 0, 5000)
   end
 
   defp place(area), do: %{"@type" => "Place", "name" => area.name}
