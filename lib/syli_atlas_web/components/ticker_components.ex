@@ -40,6 +40,7 @@ defmodule SyliAtlasWeb.TickerComponents do
       role="region"
       aria-label={gettext("Stock exchanges and sovereign ratings")}
       data-ticker
+      data-nosnippet
     >
       <button
         type="button"
