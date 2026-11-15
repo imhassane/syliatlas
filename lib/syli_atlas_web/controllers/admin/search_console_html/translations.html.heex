@@ -1,0 +1,74 @@
+<.admin_shell current={:translations} counts={@admin_counts} until={@admin_until} key={@admin_key}>
+  <header class="adm-head">
+    <div class="adm-intro">
+      <p class="eyebrow">Site · traductions</p>
+      <h1 class="adm-title">Traductions à faire relire</h1>
+      <p class="muted">
+        Pages des autres langues classées par impressions Google sur {@days} jours :
+        on fait relire d'abord ce que les gens voient. Le catalogue est complet pour les pages publiques
+        (test <code>translations_test.exs</code>) ; la relecture vérifie le ton et le sens.
+      </p>
+    </div>
+  </header>
+
+  <div :if={!@configured} class="card adm-banner" role="alert" id="tr-no-key">
+    <p>
+      <b>Données Search Console absentes.</b>
+      Posez la clé du compte de service (voir « Recherche Google ») pour classer les pages.
+    </p>
+  </div>
+
+  <dl class="stats" id="tr-langs">
+    <div :for={l <- @by_lang}>
+      <dt>{lang_name(l.lang)}</dt>
+      <dd class="big num adm-big-sm">{n(l.impressions)}</dd>
+      <dd class="small muted">
+        impressions · {l.pages} pages · {l.reviewed} relues · position {n(l.position)}
+      </dd>
+    </div>
+  </dl>
+
+  <nav class="seg" aria-label="Langue">
+    <a class="btn btn-sm btn-quiet" href={~p"/admin/traductions"} aria-current={is_nil(@lang) && "page"}>
+      Toutes
+    </a>
+    <a
+      :for={l <- ~w(pt es ar zh hi)}
+      class="btn btn-sm btn-quiet"
+      href={~p"/admin/traductions?langue=#{l}"}
+      aria-current={@lang == l && "page"}
+    >
+      {l}
+    </a>
+  </nav>
+
+  <section class="card adm-list" id="tr-pages">
+    <p :if={@pages == []} class="adm-empty muted">Aucune page à afficher.</p>
+    <table :if={@pages != []} class="table">
+      <thead>
+        <tr><th>Page</th><th>Impressions</th><th>Position</th><th>Relecture</th></tr>
+      </thead>
+      <tbody>
+        <tr :for={{p, i} <- Enum.with_index(@pages)}>
+          <td class="mono small"><a href={p.path} rel="noopener">{p.path}</a></td>
+          <td class="num">{n(p.impressions)}</td>
+          <td class="num">{n(p.position)}</td>
+          <td>
+            <%= if p.review do %>
+              <span class="small">
+                {p.review.reviewer}, {Calendar.strftime(p.review.reviewed_at, "%d/%m/%Y")}
+              </span>
+            <% else %>
+              <.form for={%{}} action={~p"/admin/traductions/relue"} method="post" id={"review-#{i}"} class="adm-inline">
+                <input type="hidden" name="path" value={p.path} />
+                <label class="vh" for={"reviewer-#{i}"}>Relecteur</label>
+                <input class="input input-sm" type="text" name="reviewer" id={"reviewer-#{i}"} placeholder="Relecteur" required />
+                <button class="btn btn-sm btn-secondary" type="submit">Marquer relue</button>
+              </.form>
+            <% end %>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</.admin_shell>

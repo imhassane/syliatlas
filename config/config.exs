@@ -56,6 +56,9 @@ config :syli_atlas, Oban,
        # Exchange rates (SyliAtlas.Fx): the sources update once a day, around
        # midnight UTC.
        {"10 1 * * *", SyliAtlas.Workers.FxImportWorker},
+       # Google Search Console (SyliAtlas.SearchConsole): the days Google has
+       # published, about two days late. Does nothing without a key.
+       {"0 7 * * *", SyliAtlas.Workers.SearchConsoleWorker},
        # Budget laws (SyliAtlas.Budgets): the official pages set to « auto »
        # in the admin, read every morning; new files go to the AI.
        {"30 5 * * *", SyliAtlas.Workers.BudgetFetchWorker},

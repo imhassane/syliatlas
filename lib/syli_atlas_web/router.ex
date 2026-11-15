@@ -319,6 +319,10 @@ defmodule SyliAtlasWeb.Router do
     get "/emails", EmailsController, :index
     post "/membres/:id/sessions", MembersController, :close_sessions
     get "/recherches", SearchMissesController, :index
+    get "/recherche-google", SearchConsoleController, :index
+    post "/recherche-google/importer", SearchConsoleController, :import
+    get "/traductions", SearchConsoleController, :translations
+    post "/traductions/relue", SearchConsoleController, :review
     get "/membres", MembersController, :index
     post "/membres/:id/role", MembersController, :role
     post "/membres/:id/actif", MembersController, :active
