@@ -33,6 +33,9 @@ defmodule SyliAtlas.National do
     |> Jason.decode!()
   end
 
+  @doc "Countries whose official figures we follow (the bundled list), or nil for all."
+  def tracked, do: bundled()["tracked"]
+
   @doc "Official domains of a country's sources (statistics, central bank, ministries)."
   def domains(code), do: get_in(bundled(), ["sources", code, "domains"]) || []
 
@@ -42,6 +45,12 @@ defmodule SyliAtlas.National do
   """
   def seed! do
     data = bundled()
+
+    # Only the countries we follow keep official figures (decisions of
+    # 15 Nov. 2026): the others' figures leave, even reviewed ones.
+    if tracked = data["tracked"] do
+      Repo.delete_all(from f in Figure, where: f.country_code not in ^tracked)
+    end
 
     for f <- data["figures"] || [] do
       case get(f["country_code"], f["indicator"], f["calendar_year"]) do
