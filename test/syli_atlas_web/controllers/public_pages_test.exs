@@ -264,6 +264,22 @@ defmodule SyliAtlasWeb.PublicPagesTest do
              "Ou choisissez un pays"
   end
 
+  test "home map: the panel can show another year (series of every figure)", %{conn: conn} do
+    doc = conn |> get("/fr") |> html_response(200) |> LazyHTML.from_document()
+    [json] = doc |> LazyHTML.query("#map-data") |> Enum.map(&LazyHTML.text/1)
+    data = Jason.decode!(json)
+    eth = data["countries"]["ETH"]
+    assert length(eth["series"]) == 16
+    assert Enum.all?(~w(gdppc growth inflation debt), &(length(eth["more"][&1]) == 16))
+    assert eth["nationals"]["2026"]["amount"] == 210.7
+    assert data["labels"]["gdp_imf"] =~ "%Y"
+    assert doc |> LazyHTML.query("#map-panel [data-map-spark]") |> Enum.count() == 1
+
+    assert doc
+           |> LazyHTML.query(~s(#map-panel [data-map-year-step="1"][aria-label]))
+           |> Enum.count() == 1
+  end
+
   test "home map: a country asked in the URL opens its panel, without JavaScript", %{conn: conn} do
     doc = conn |> get("/fr?pays=ETH") |> html_response(200) |> LazyHTML.from_document()
     assert doc |> LazyHTML.query("dialog#map-panel[open]") |> Enum.count() == 1

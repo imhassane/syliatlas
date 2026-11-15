@@ -13,7 +13,7 @@ defmodule SyliAtlas.Profiles.HomeSnapshot do
   alias SyliAtlas.Geo.Area
   alias SyliAtlas.Profiles.{Builder, Queries}
 
-  @format 1
+  @format 2
   @popular ~w(CIV NGA ETH SEN KEN)
 
   def format, do: @format
