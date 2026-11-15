@@ -67,6 +67,118 @@
         "treasury.go.ke",
         "centralbank.go.ke"
       ]
+    },
+    "SEN": {
+      "name": "Sénégal : ANSD, ministère des Finances",
+      "domains": [
+        "ansd.sn",
+        "finances.gouv.sn",
+        "apanews.net"
+      ]
+    },
+    "GHA": {
+      "name": "Ghana : Ghana Statistical Service",
+      "domains": [
+        "statsghana.gov.gh",
+        "gna.org.gh"
+      ]
+    },
+    "TZA": {
+      "name": "Tanzanie : NBS, OCGS Zanzibar",
+      "domains": [
+        "nbs.go.tz",
+        "ocgs.go.tz",
+        "thecitizen.co.tz"
+      ]
+    },
+    "UGA": {
+      "name": "Ouganda : UBOS, ministère des Finances",
+      "domains": [
+        "ubos.org",
+        "finance.go.ug"
+      ]
+    },
+    "ZMB": {
+      "name": "Zambie : ZamStats",
+      "domains": [
+        "zamstats.gov.zm",
+        "zambiamonitor.com"
+      ]
+    },
+    "ZWE": {
+      "name": "Zimbabwe : ZIMSTAT",
+      "domains": [
+        "zimstat.co.zw"
+      ]
+    },
+    "RWA": {
+      "name": "Rwanda : NISR",
+      "domains": [
+        "statistics.gov.rw"
+      ]
+    },
+    "COD": {
+      "name": "RD Congo : Banque centrale du Congo, INS",
+      "domains": [
+        "bcc.cd",
+        "ins.cd",
+        "acp.cd"
+      ]
+    },
+    "CMR": {
+      "name": "Cameroun : INS",
+      "domains": [
+        "ins-cameroun.cm"
+      ]
+    },
+    "NAM": {
+      "name": "Namibie : Namibia Statistics Agency",
+      "domains": [
+        "nsa.org.na",
+        "observer24.com.na"
+      ]
+    },
+    "MUS": {
+      "name": "Maurice : Statistics Mauritius",
+      "domains": [
+        "statsmauritius.govmu.org",
+        "allafrica.com"
+      ]
+    },
+    "GAB": {
+      "name": "Gabon : ministère de l'Économie, DGEPF",
+      "domains": [
+        "economie.gouv.ga",
+        "gabonreview.com"
+      ]
+    },
+    "GIN": {
+      "name": "Guinée : INS, ministère du Plan",
+      "domains": [
+        "stat-guinee.org",
+        "allafrica.com"
+      ]
+    },
+    "TGO": {
+      "name": "Togo : INSEED",
+      "domains": [
+        "inseed.tg",
+        "togofirst.com"
+      ]
+    },
+    "MRT": {
+      "name": "Mauritanie : Banque centrale, ANSADE",
+      "domains": [
+        "bcm.mr",
+        "ansade.mr",
+        "lapresse.tn"
+      ]
+    },
+    "NER": {
+      "name": "Niger : INS",
+      "domains": [
+        "stat-niger.org"
+      ]
     }
   },
   "figures": [
@@ -246,6 +358,253 @@
       "quote": "GDP at current prices rose to EGP 21.47 trillion in FY2025/26 from EGP 18.14 trillion in FY2024/25",
       "extracted_by": "manual",
       "note": "Exercice juillet–juin, rattaché à l'année que lui donne le FMI. Converti au taux moyen de l'exercice, sept. 2025 – juin 2026 dans nos données de change : 49,174 livres pour un dollar."
+    },
+    {
+      "country_code": "SEN",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "44.27",
+      "value_lcu": "25767300000000",
+      "currency": "XOF",
+      "fx_rate": "582.010311433",
+      "source_name": "ANSD, comptes nationaux provisoires 2025 (rapporté par APA)",
+      "source_url": "https://fr.apanews.net/?p=321735",
+      "quote": "En valeur courante, le PIB s’est établi à 25 767,3 milliards de FCFA en 2025.",
+      "extracted_by": "manual",
+      "note": "Base 2021 depuis le rebasage de novembre 2025 (+13,5 %). Converti au taux moyen 2025 : 582,010311433 XOF pour un dollar.",
+      "base_year": "2021"
+    },
+    {
+      "country_code": "GHA",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "114.58",
+      "value_lcu": "1434100000000",
+      "currency": "GHS",
+      "fx_rate": "12.516686",
+      "source_name": "Ghana Statistical Service, PIB annuel provisoire 2025 (rapporté par GNA)",
+      "source_url": "https://gna.org.gh/2026/03/ghanas-economy-grows-by-six-per-cent-in-2025-gss/",
+      "quote": "The nominal GDP for 2025 was GHS 1,434.1 billion",
+      "extracted_by": "manual",
+      "note": "Converti au taux moyen 2025 : 12,516686 GHS pour un dollar.",
+      "published_on": "2026-03-17"
+    },
+    {
+      "country_code": "TZA",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "95.10",
+      "value_lcu": "243346000000000",
+      "currency": "TZS",
+      "fx_rate": "2558.719357",
+      "source_name": "NBS et OCGS Zanzibar, comptes nationaux base 2019 (rapporté par The Citizen)",
+      "source_url": "https://thecitizen.co.tz/tanzania/business/tanzania-s-combined-gdp-reaches-sh243-3-trillion-92-billion-after-rebasing-5625332",
+      "quote": "The combined nominal GDP of Mainland Tanzania and Zanzibar reached Sh243.346 trillion in 2025.",
+      "extracted_by": "manual",
+      "note": "République unie (continent + Zanzibar). Rebasage 2015 → 2019 publié en juin 2026. Converti au taux moyen 2025 : 2558,719357 TZS pour un dollar.",
+      "base_year": "2019",
+      "published_on": "2026-06-11"
+    },
+    {
+      "country_code": "UGA",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2024/25",
+      "value": "62.86",
+      "value_lcu": "226344000000000",
+      "currency": "UGX",
+      "fx_rate": "3600.721082",
+      "source_name": "UBOS, estimations préliminaires, via le rapport du ministère des Finances sur la performance de l'économie (mai 2025)",
+      "source_url": "https://mepd.finance.go.ug/documents/POE/2025/POE-2025-05-MAY.html",
+      "quote": "226,344 billion in FY2024/25, from Shs. 203,708 billion registered in FY 2023/24.",
+      "extracted_by": "manual",
+      "note": "Exercice juillet–juin, rattaché à l'année que lui donne le FMI. Converti au taux moyen 2025 : 3600,721082 UGX pour un dollar."
+    },
+    {
+      "country_code": "ZMB",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "28.84",
+      "value_lcu": "725641400000",
+      "currency": "ZMW",
+      "fx_rate": "25.161947",
+      "source_name": "ZamStats, PIB annuel 2025 (rapporté par Zambia Monitor)",
+      "source_url": "https://www.zambiamonitor.com/?p=83277",
+      "quote": "GDP at current prices for 2025 was estimated at K725.64 billion, up from K662.09 billion in 2024.",
+      "extracted_by": "manual",
+      "note": "Converti au taux moyen 2025 : 25,161947 ZMW pour un dollar."
+    },
+    {
+      "country_code": "ZWE",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "58.29",
+      "value_lcu": "1550500000000",
+      "currency": "ZWG",
+      "fx_rate": "26.600692",
+      "source_name": "ZIMSTAT, PIB annuel 2025",
+      "source_url": "https://zimstat.co.zw/zimstat-releases-2025-annual-gross-domestic-product-gdp-figures/",
+      "quote": "Nominal GDP at current prices increased from ZWG 822.9 billion in 2024 to ZWG 1,550.5 billion in 2025.",
+      "extracted_by": "manual",
+      "note": "Année de base portée de 2023 à 2025. Converti au taux moyen 2025 : 26,600692 ZWG pour un dollar.",
+      "base_year": "2025",
+      "published_on": "2026-06-18"
+    },
+    {
+      "country_code": "RWA",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "16.34",
+      "value_lcu": "23387000000000",
+      "currency": "RWF",
+      "fx_rate": "1431.126669",
+      "source_name": "NISR, PIB 2025",
+      "source_url": "https://statistics.gov.rw/sites/default/files/documents/2026-03/GDP%202025.pdf",
+      "quote": "In 2025, GDP at current market prices was estimated at Frw 23,387 billion, up  from Frw 19,918 billion in 2024.",
+      "extracted_by": "manual",
+      "note": "Base 2024. Converti au taux moyen 2025 : 1431,126669 RWF pour un dollar.",
+      "published_on": "2026-03-16"
+    },
+    {
+      "country_code": "COD",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "92.80",
+      "source_name": "Banque centrale du Congo, note de conjoncture (rapporté par l'ACP)",
+      "source_url": "https://acp.cd/economie/rdc-le-pib-nominal-attendu-a-1204-milliards-usd-en-2026/",
+      "quote": "Le PIB nominal devrait s’établir à 120,4 milliards USD en 2026, contre 92,8 milliards en 2025",
+      "extracted_by": "manual",
+      "note": "Montant publié directement en dollars par la Banque centrale."
+    },
+    {
+      "country_code": "CMR",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "59.23",
+      "value_lcu": "34474000000000",
+      "currency": "XAF",
+      "fx_rate": "582.010311433",
+      "source_name": "INS, Les comptes nationaux de 2025 (août 2026), annexe, tableau 1",
+      "source_url": "https://ins-cameroun.cm/wp-content/uploads/2026/09/Comptes_Nationaux_2025_FR_VF.pdf",
+      "quote": "PIB (3+4) 23 458,3 24 960,5 27 662,0 29 609,4 32 316,2 34 474,0",
+      "extracted_by": "manual",
+      "note": "Valeur lue dans le tableau 1 de l'annexe (PIB courant, optique production). Converti au taux moyen 2025 : 582,010311433 XAF pour un dollar."
+    },
+    {
+      "country_code": "NAM",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "15.08",
+      "value_lcu": "269800000000",
+      "currency": "NAD",
+      "fx_rate": "17.8859560",
+      "source_name": "Namibia Statistics Agency, comptes nationaux annuels 2025 (rapporté par The Namibian Observer)",
+      "source_url": "https://www.observer24.com.na/?p=46056",
+      "quote": "In nominal terms, Namibia’s Gross Domestic Product stood at N$269.8 billion in 2025, up from N$250 billion in 2024.",
+      "extracted_by": "manual",
+      "note": "Converti au taux moyen 2025 : 17,885956 NAD pour un dollar."
+    },
+    {
+      "country_code": "MUS",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "17.67",
+      "value_lcu": "810300000000",
+      "currency": "MUR",
+      "fx_rate": "45.853547",
+      "source_name": "Statistics Mauritius, comptes nationaux en nouvelle année de référence 2023 (rapporté par L'Express, via AllAfrica)",
+      "source_url": "https://fr.allafrica.com/stories/202610050275.html",
+      "quote": "Le PIB nominal atteindrait Rs 873,1 milliards, contre Rs 810,3 milliards en 2025.",
+      "extracted_by": "manual",
+      "note": "Année de référence portée de 2018 à 2023 en octobre 2026. Converti au taux moyen 2025 : 45,853547 MUR pour un dollar.",
+      "base_year": "2023"
+    },
+    {
+      "country_code": "GAB",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "23.75",
+      "value_lcu": "13822000000000",
+      "currency": "XAF",
+      "fx_rate": "582.010311433",
+      "source_name": "Ministère de l'Économie et des Finances, communiqué du 13 sept. 2026 (rapporté par Gabonreview)",
+      "source_url": "https://www.gabonreview.com/dette-publique-laudit-efface-plus-de-2-175-milliards-de-fcfa-de-lestimation-initiale/",
+      "quote": "Le gouvernement évalue le produit intérieur brut (PIB) du Gabon à 13 822 milliards de FCFA en 2025.",
+      "extracted_by": "manual",
+      "note": "Première estimation issue du rebasage des comptes nationaux. Converti au taux moyen 2025 : 582,010311433 XAF pour un dollar.",
+      "published_on": "2026-09-13"
+    },
+    {
+      "country_code": "GIN",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2024,
+      "period_label": "2024",
+      "value": "36.30",
+      "value_lcu": "311898000000000",
+      "currency": "GNF",
+      "fx_rate": "8592.231405",
+      "source_name": "INS et ministère du Plan, rebasage du PIB (rapporté par AllAfrica)",
+      "source_url": "https://fr.allafrica.com/stories/202510210113.html",
+      "quote": "PIB 2024 : 311 898 milliards GNF, soit environ 36,3 milliards USD",
+      "extracted_by": "manual",
+      "note": "Base 2018 depuis le rebasage d'octobre 2025 (+51,2 % sur 2018). Pas encore de chiffre officiel 2025 ; dollars donnés par la présidence. Seul le PIB 2024 rebasé est publié ; converti au taux implicite donné par l'INS (36,3 Md$).",
+      "published_on": "2025-10-21"
+    },
+    {
+      "country_code": "TGO",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "11.89",
+      "value_lcu": "6919100000000",
+      "currency": "XOF",
+      "fx_rate": "582.010311433",
+      "source_name": "INSEED, comptes nationaux provisoires 2025 (rapporté par Togo First)",
+      "source_url": "https://www.togofirst.com/en/economic-governance/2605-19068-togo-nears-lower-middle-income-status-as-gdp-per-capita-reaches-1-400",
+      "quote": "Nominal gross domestic product reached 6,919.1 billion CFA francs",
+      "extracted_by": "manual",
+      "note": "Converti au taux moyen 2025 : 582,010311433 XOF pour un dollar."
+    },
+    {
+      "country_code": "MRT",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "11.87",
+      "value_lcu": "472560000000",
+      "currency": "MRU",
+      "fx_rate": "39.828006",
+      "source_name": "Banque centrale de Mauritanie, rapport annuel 2025 (rapporté par La Presse)",
+      "source_url": "https://www.lapresse.tn/2026/08/07/mauritanie-la-croissance-resiste-a-40-linflation-tombe-a-16/",
+      "quote": "En valeur nominale, le PIB a atteint 472,56 milliards MRU, en progression de 9,4 %.",
+      "extracted_by": "manual",
+      "note": "Converti au taux moyen 2025 : 39,828006 MRU pour un dollar."
+    },
+    {
+      "country_code": "NER",
+      "indicator": "gdp_usd_bn",
+      "calendar_year": 2025,
+      "period_label": "2025",
+      "value": "21.23",
+      "value_lcu": "12354116000000",
+      "currency": "XOF",
+      "fx_rate": "582.010311433",
+      "source_name": "INS Niger, comptes économiques de la nation rapides 2025",
+      "source_url": "https://www.stat-niger.org/wp-content/uploads/rapport_economique/cna/cna_rapides_2025_VF.pdf",
+      "quote": "PIB nominal 11 963 063 12 354 116",
+      "extracted_by": "manual",
+      "note": "Tableau 2 libellé « en milliers de FCFA » mais les annexes donnent les mêmes montants en millions : 12 354 milliards FCFA. Estimation rapide, révisable. Converti au taux moyen 2025 : 582,010311433 XOF pour un dollar."
     }
   ],
   "rebasings": [
