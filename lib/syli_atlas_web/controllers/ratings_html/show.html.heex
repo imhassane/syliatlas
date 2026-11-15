@@ -11,6 +11,69 @@
 
   <.rating_section entry={@entry} name={@name} rated={@doc["rated"]} locale={@locale} page />
 
+  <.section :if={@entry["band"]} id="rating-context">
+    <div class="grid grid-2">
+      <.card pad class="stack gap-2">
+        <p class="eyebrow">{gettext("Follow")}</p>
+        <SyliAtlasWeb.AccountComponents.follow
+          kind="area"
+          ref={@entry["code"]}
+          locale={@locale}
+          path={Paths.rating(@locale, SyliAtlas.Locales.pick(@entry["slug"], @locale))}
+          alert_area={@entry["code"]}
+        />
+        <p class="small muted">
+          {gettext(
+            "An email at the next decision of an agency on %{name}.",
+            SyliAtlasWeb.Format.names(@name)
+          )}
+        </p>
+        <div :if={@context} class="stack gap-1" id="rating-figures">
+          <h2 class="h3">{gettext("The figures behind the rating")}</h2>
+          <p>
+            <span :if={is_number(@context.debt)}>
+              {gettext("Public debt %{year}", year: @context.year)}:
+              <b class="num">{SyliAtlasWeb.Format.number(@context.debt, 0, @locale)} %</b>
+              {gettext("of GDP")} ·
+            </span>
+            <span :if={is_number(@context.growth)}>
+              {gettext("Real growth %{year}", year: @context.year)}:
+              <b class="num">{SyliAtlasWeb.Format.number(@context.growth, 1, @locale)} %</b>
+            </span>
+          </p>
+          <p class="small muted">{gettext("IMF, World Economic Outlook")}</p>
+        </div>
+      </.card>
+      <.card :if={@same_band != []} pad class="stack gap-2" id="rating-same-band">
+        <p class="eyebrow">{gettext("In the same band")}</p>
+        <h2 class="h3">{SyliAtlasWeb.RatingComponents.verdict(@entry["band"])}</h2>
+        <ul class="stack gap-1" role="list">
+          <li :for={c <- @same_band}>
+            <a href={Paths.rating(@locale, c.slug)}>{c.name}</a>
+            <span class="num muted small">{c.label}</span>
+          </li>
+        </ul>
+      </.card>
+    </div>
+    <nav class="chips" aria-label={gettext("See also")} id="rating-see-also">
+      <a class="chip" href={Paths.ratings(@locale)}>{gettext("All African ratings")}</a>
+      <a
+        class="chip"
+        href={Paths.area(@locale, "country", SyliAtlas.Locales.pick(@entry["slug"], @locale))}
+      >
+        {gettext("Profile of %{name}", name: @name)}
+      </a>
+      <a class="chip" href={Paths.debt(@locale)}>{gettext("Public debt in Africa")}</a>
+      <a
+        :for={c <- @communities}
+        class="chip"
+        href={Paths.community(@locale, SyliAtlas.Locales.pick(c.slug, @locale) || c.slug["en"])}
+      >
+        {SyliAtlas.Locales.pick(c.short, @locale) || c.short["en"]}
+      </a>
+    </nav>
+  </.section>
+
   <.section :if={@history != []} id="rating-history" variant="alt">
     <.section_head
       eyebrow={gettext("History")}

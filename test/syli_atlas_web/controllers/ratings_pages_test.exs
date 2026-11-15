@@ -53,6 +53,11 @@ defmodule SyliAtlasWeb.RatingsPagesTest do
     assert html =~ ~s(id="rating-history-rows")
     assert html =~ "<h1"
     assert html =~ "BreadcrumbList"
+    # Follow, other countries of the same band, links to the profile and debt.
+    assert html =~ ~s(id="rating-context")
+    assert html =~ ~s(id="rating-see-also")
+    assert html =~ ~s(href="/fr/pays/cote-d-ivoire")
+    assert html =~ "FAQPage"
 
     assert build_conn() |> get("/en/credit-ratings/cote-d-ivoire") |> html_response(200) =~
              "Decisions"

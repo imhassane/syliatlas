@@ -145,46 +145,183 @@ defmodule SyliAtlasWeb.MarketController do
     if conn.request_path != paths[locale] do
       conn |> put_status(301) |> redirect(to: paths[locale])
     else
-      history = Market.security_history(row["id"])
-      fx = Market.fx()
-      session_value = doc["session"]["value"]
-
-      share =
-        if row["current"] and is_number(row["value"]) and is_number(session_value) and
-             session_value > 0,
-           do: row["value"] / session_value * 100
-
-      render(conn, :security,
-        page_title:
-          gettext("%{name} (%{ticker}): price on the %{exchange} and history",
-            name: row["name"],
-            ticker: row["ticker"],
-            exchange: e["short_name"]
-          ),
-        seo:
-          Seo.page(locale, paths, security_answer(row, e, locale), %{
-            json_ld: [
-              Seo.breadcrumbs([
-                {"Syli Atlas", Paths.home(locale)},
-                {gettext("Stock exchanges"), Paths.markets(locale)},
-                {e["short_name"], Paths.exchange(locale, code)},
-                {row["name"], paths[locale]}
-              ]),
-              Seo.corporation(row["name"], row["ticker"], e["short_name"], paths[locale])
-            ]
-          }),
-        alternates: Seo.alternates_for_header(paths),
-        doc: doc,
-        e: e,
-        row: row,
-        history: history,
-        fx: fx,
-        share: share,
-        country: Enum.find(e["country_names"], &(&1["code"] == row["country"])),
-        answer: security_answer(row, e, locale)
-      )
+      render_security(conn, doc, row, e, paths)
     end
   end
+
+  defp render_security(conn, doc, row, e, paths) do
+    alias SyliAtlas.Market.{Profiles, SecurityStats}
+
+    locale = conn.assigns.locale
+    sessions = Market.security_sessions(row["id"])
+    history = for s <- sessions, s["close"], do: [s["date"], s["close"]]
+    fx = Market.fx()
+    session_value = doc["session"]["value"]
+
+    share =
+      if row["current"] and is_number(row["value"]) and is_number(session_value) and
+           session_value > 0,
+         do: row["value"] / session_value * 100
+
+    listings = Profiles.listings(e["code"], row["ticker"])
+    stats = SecurityStats.compute(sessions, doc["history"], doc["securities"], row)
+    country = Enum.find(e["country_names"], &(&1["code"] == row["country"]))
+    context = SyliAtlasWeb.CountryContext.get(row["country"], locale)
+    usd = Market.to_usd(SyliAtlasWeb.MarketComponents.to_f(row["close"]), row["currency"], fx)
+
+    peer_tickers = Profiles.peers(e["code"], row["ticker"])
+
+    peers =
+      for r <- doc["securities"], r["ticker"] in peer_tickers, do: r
+
+    answer = security_answer(row, e, listings, locale)
+
+    faq =
+      security_faq(
+        row,
+        e,
+        listings,
+        usd,
+        Profiles.about(e["code"], row["ticker"], locale),
+        locale
+      )
+
+    render(conn, :security,
+      page_title: security_title(row, e, listings),
+      seo:
+        Seo.page(locale, paths, security_description(answer, share, e, context, locale), %{
+          json_ld: [
+            Seo.breadcrumbs([
+              {"Syli Atlas", Paths.home(locale)},
+              {gettext("Stock exchanges"), Paths.markets(locale)},
+              {e["short_name"], Paths.exchange(locale, e["code"])},
+              {row["name"], paths[locale]}
+            ]),
+            Seo.corporation(row["name"], row["ticker"], e["short_name"], paths[locale],
+              listings: Enum.map(listings, &{&1["exchange"], &1["ticker"]}),
+              isin: row["isin"] || Profiles.get(e["code"], row["ticker"])["isin"]
+            ),
+            Seo.faq(faq)
+          ]
+        }),
+      alternates: Seo.alternates_for_header(paths),
+      doc: doc,
+      e: e,
+      row: row,
+      history: history,
+      sessions: sessions,
+      fx: fx,
+      share: share,
+      country: country,
+      context: context,
+      listings: listings,
+      isin: row["isin"] || Profiles.get(e["code"], row["ticker"])["isin"],
+      sector: Profiles.sector_name(e["code"], row["ticker"], locale),
+      about: Profiles.about(e["code"], row["ticker"], locale),
+      stats: stats,
+      peers: peers,
+      faq: faq,
+      answer: answer
+    )
+  end
+
+  # « Sibanye-Stillwater (SSW / SBSW): price on the JSE, volume and history »:
+  # people search the code they know, often the one of another market.
+  defp security_title(row, e, listings) do
+    gettext("%{name} (%{codes}): price on the %{exchange}, volume and history",
+      name: row["name"],
+      codes: Enum.join([row["ticker"] | Enum.map(listings, & &1["ticker"])], " / "),
+      exchange: e["short_name"]
+    )
+  end
+
+  defp security_description(answer, share, e, context, locale) do
+    extra =
+      cond do
+        is_number(share) and share >= 0.5 ->
+          gettext("%{share} % of the trading of the %{exchange} that day.",
+            share: SyliAtlasWeb.Format.number(share, 0, locale),
+            exchange: e["short_name"]
+          )
+
+        context && context.name ->
+          gettext("Country: %{name}.", name: context.name)
+
+        true ->
+          nil
+      end
+
+    Enum.join(Enum.reject([answer, extra], &is_nil/1), " ")
+  end
+
+  defp security_faq(row, e, listings, usd, about, locale) do
+    alias SyliAtlasWeb.MarketComponents, as: M
+
+    other =
+      for l <- listings do
+        {gettext("What is the code of %{name} on the %{exchange}?",
+           name: row["name"],
+           exchange: l["exchange"]
+         ), listing_sentence(row, l)}
+      end
+
+    where =
+      {gettext("Where is %{name} listed?", name: row["name"]),
+       Enum.join(
+         [
+           gettext("On the %{exchange} under the code %{ticker}, in %{currency}.",
+             exchange: e["short_name"],
+             ticker: row["ticker"],
+             currency: row["currency"]
+           )
+           | for(
+               l <- listings,
+               do:
+                 gettext("On the %{exchange} under the code %{ticker}.",
+                   exchange: l["exchange"],
+                   ticker: l["ticker"]
+                 )
+             )
+         ],
+         " "
+       )}
+
+    dollars =
+      if is_number(usd) and row["close"] do
+        [
+          {gettext("How much is a %{ticker} share in dollars?", ticker: row["ticker"]),
+           gettext(
+             "About %{usd} at the close of %{date} (%{price} %{currency}), at the day's exchange rate.",
+             usd: SyliAtlasWeb.MarketComponents.usd(usd, locale),
+             date: M.day(row["trade_date"], locale),
+             price: M.price(row["close"], locale),
+             currency: row["currency"]
+           )}
+        ]
+      else
+        []
+      end
+
+    business =
+      if about,
+        do: [{gettext("What does %{name} do?", name: row["name"]), about}],
+        else: []
+
+    other ++ [where] ++ dollars ++ business
+  end
+
+  defp listing_sentence(row, %{"shares_per_receipt" => n} = l) when is_integer(n) do
+    gettext(
+      "%{code} on the %{exchange}. One depositary receipt %{code} stands for %{n} shares %{ticker} listed on the home exchange.",
+      code: l["ticker"],
+      exchange: l["exchange"],
+      n: n,
+      ticker: row["ticker"]
+    )
+  end
+
+  defp listing_sentence(_row, l),
+    do: gettext("%{code} on the %{exchange}.", code: l["ticker"], exchange: l["exchange"])
 
   def etfs(conn, _params) do
     locale = conn.assigns.locale
@@ -296,27 +433,46 @@ defmodule SyliAtlasWeb.MarketController do
     end
   end
 
-  defp security_answer(row, e, locale) do
+  defp security_answer(row, e, listings, locale) do
     alias SyliAtlasWeb.MarketComponents, as: M
 
-    if row["close"] do
-      gettext(
-        "%{name} (%{ticker}) closed at %{price} %{currency} on %{date} on the %{exchange} (%{change}).",
-        name: row["name"],
-        ticker: row["ticker"],
-        price: M.price(row["close"], locale),
-        currency: row["currency"],
-        date: M.day(row["trade_date"], locale),
-        exchange: e["short_name"],
-        change: M.pct(row["change_pct"], locale)
-      )
-    else
-      gettext("%{name} (%{ticker}), listed on the %{exchange}.",
-        name: row["name"],
-        ticker: row["ticker"],
-        exchange: e["short_name"]
-      )
-    end
+    base =
+      if row["close"] do
+        gettext(
+          "%{name} (%{ticker}) closed at %{price} %{currency} on %{date} on the %{exchange} (%{change}).",
+          name: row["name"],
+          ticker: row["ticker"],
+          price: M.price(row["close"], locale),
+          currency: row["currency"],
+          date: M.day(row["trade_date"], locale),
+          exchange: e["short_name"],
+          change: M.pct(row["change_pct"], locale)
+        )
+      else
+        gettext("%{name} (%{ticker}), listed on the %{exchange}.",
+          name: row["name"],
+          ticker: row["ticker"],
+          exchange: e["short_name"]
+        )
+      end
+
+    also =
+      for l <- listings do
+        if is_integer(l["shares_per_receipt"]) do
+          gettext("Also listed on the %{exchange} (%{code}, 1 receipt = %{n} shares).",
+            exchange: l["exchange"],
+            code: l["ticker"],
+            n: l["shares_per_receipt"]
+          )
+        else
+          gettext("Also listed on the %{exchange} (%{code}).",
+            exchange: l["exchange"],
+            code: l["ticker"]
+          )
+        end
+      end
+
+    Enum.join([base | also], " ")
   end
 
   # Indices up and down at their last session, and exchanges whose index

@@ -244,6 +244,7 @@ defmodule SyliAtlasWeb.Router do
       get "/", PageController, :home
       get "/#{seg.(:method)}", PageController, :method
       get "/#{seg.(:about)}", PageController, :about
+      get "/#{seg.(:reuse)}", PageController, :reuse
       get "/#{seg.(:glossary)}", GlossaryController, :index
       get "/#{seg.(:glossary)}/:slug", GlossaryController, :show
       get "/#{seg.(:questions)}", QuestionsController, :index
@@ -318,6 +319,10 @@ defmodule SyliAtlasWeb.Router do
     get "/emails", EmailsController, :index
     post "/membres/:id/sessions", MembersController, :close_sessions
     get "/recherches", SearchMissesController, :index
+    get "/recherche-google", SearchConsoleController, :index
+    post "/recherche-google/importer", SearchConsoleController, :import
+    get "/traductions", SearchConsoleController, :translations
+    post "/traductions/relue", SearchConsoleController, :review
     get "/membres", MembersController, :index
     post "/membres/:id/role", MembersController, :role
     post "/membres/:id/actif", MembersController, :active

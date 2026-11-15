@@ -122,6 +122,44 @@ defmodule SyliAtlasWeb.PageController do
     )
   end
 
+  @doc "For journalists, researchers and teachers: the licence, how to cite, download and embed."
+  def reuse(conn, _params) do
+    locale = conn.assigns.locale
+    paths = SyliAtlas.Locales.each(fn l -> Paths.reuse(l) end)
+    edition = Sources.published_edition("imf_weo")
+    example = SyliAtlas.Geo.get_area_by_code("SEN")
+    {from, to} = SyliAtlas.Profiles.Builder.default_period()
+    title = gettext("Reuse the figures of Syli Atlas: licence, citation, downloads")
+
+    render(conn, :reuse,
+      page_title: title,
+      seo:
+        Seo.page(
+          locale,
+          paths,
+          gettext(
+            "Syli Atlas calculations are under CC BY 4.0: copy, adapt and republish them, commercial use included, with credit and a link. How to cite, download a country's figures and embed a chart."
+          ),
+          %{
+            json_ld: [
+              Seo.breadcrumbs([
+                {"Syli Atlas", Paths.home(locale)},
+                {gettext("Reuse our figures"), paths[locale]}
+              ])
+            ]
+          }
+        ),
+      alternates: Seo.alternates_for_header(paths),
+      edition: edition,
+      example: example,
+      example_name: example && SyliAtlas.Geo.Area.name(example, locale),
+      from: from,
+      to: to,
+      today: Date.utc_today(),
+      contact: Application.get_env(:syli_atlas, :site, [])[:contact_email]
+    )
+  end
+
   def method(conn, _params) do
     locale = conn.assigns.locale
     paths = SyliAtlas.Locales.each(fn l -> Paths.method(l) end)

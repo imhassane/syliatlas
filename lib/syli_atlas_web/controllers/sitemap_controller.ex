@@ -10,7 +10,7 @@ defmodule SyliAtlasWeb.SitemapController do
   alias SyliAtlas.{Geo, Market, Ratings}
   alias SyliAtlasWeb.{Paths, Seo}
 
-  @parts ~w(pages countries ratings markets securities)
+  @parts ~w(pages countries figures ratings markets securities)
 
   @doc """
   `/sitemap.xml`: an index of one sitemap per kind of page, each with the
@@ -242,7 +242,17 @@ defmodule SyliAtlasWeb.SitemapController do
     imf = imf_date()
 
     static =
-      for fun <- [:home, :regions, :method, :accessibility, :debt, :budgets, :communities, :api] do
+      for fun <- [
+            :home,
+            :regions,
+            :method,
+            :reuse,
+            :accessibility,
+            :debt,
+            :budgets,
+            :communities,
+            :api
+          ] do
         {both(&apply(Paths, fun, [&1])), imf}
       end ++
         [{both(&Paths.currencies/1), (SyliAtlas.Fx.latest() || %{})["as_of"] || imf}] ++
@@ -257,6 +267,20 @@ defmodule SyliAtlasWeb.SitemapController do
         for area <- Geo.list_countries() do
           {both(&SyliAtlasWeb.CountryQuestionsController.questions_path(&1, area)), imf}
         end
+
+    # One indicator, one country, one year: only the indexed years.
+    {from, to} = SyliAtlas.Profiles.Builder.default_period()
+
+    figures =
+      for area <- Geo.list_countries(),
+          series =
+            (SyliAtlasWeb.PublicData.area(area.code, from, to) || %{})["profile"]["series"],
+          is_map(series),
+          key <- SyliAtlasWeb.IndicatorYear.keys(),
+          year <- SyliAtlasWeb.IndicatorYear.indexed_years(),
+          is_number(SyliAtlasWeb.PublicData.at(series[key], year)) do
+        {both(&SyliAtlasWeb.IndicatorYear.path(&1, area, key, year)), imf}
+      end
 
     communities =
       for c <- SyliAtlas.Economy.Communities.all() do
@@ -279,6 +303,7 @@ defmodule SyliAtlasWeb.SitemapController do
     %{
       "pages" => static ++ communities,
       "countries" => areas,
+      "figures" => figures,
       "ratings" => rating_pages,
       "markets" => markets,
       "securities" => securities

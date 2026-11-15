@@ -1,0 +1,28 @@
+{
+  "_about": "Facts about listed companies that the market source does not give, kept by hand. Each entry is keyed by exchange code and ticker. Fill only what a primary source confirms (issuer announcement, exchange notice) and note it in `source`. `sector` groups comparable securities of the same exchange; `listings` are the other places the security trades, with the number of local shares one depositary receipt stands for.",
+  "sectors": {
+    "precious_metals": {"en": "Precious metals mining", "fr": "Mines de métaux précieux", "es": "Minería de metales preciosos", "pt": "Mineração de metais preciosos", "ar": "تعدين المعادن النفيسة", "hi": "बहुमूल्य धातु खनन", "zh": "贵金属开采"}
+  },
+  "securities": {
+    "JSE/SSW": {
+      "isin": "ZAE000259701",
+      "sector": "precious_metals",
+      "listings": [{"exchange": "NYSE", "ticker": "SBSW", "kind": "adr", "shares_per_receipt": 4}],
+      "about": {
+        "en": "South African mining group: platinum, palladium and rhodium, gold, and recycling of autocatalysts, with mines in South Africa and the United States.",
+        "fr": "Groupe minier sud-africain : platine, palladium et rhodium, or, et recyclage des pots catalytiques, avec des mines en Afrique du Sud et aux États-Unis.",
+        "es": "Grupo minero sudafricano: platino, paladio y rodio, oro y reciclaje de catalizadores de automóvil, con minas en Sudáfrica y Estados Unidos.",
+        "pt": "Grupo mineiro sul-africano: platina, paládio e ródio, ouro e reciclagem de catalisadores automóveis, com minas na África do Sul e nos Estados Unidos.",
+        "ar": "مجموعة تعدين جنوب أفريقية: البلاتين والبلاديوم والروديوم والذهب وإعادة تدوير المحولات الحفازة، ولها مناجم في جنوب أفريقيا والولايات المتحدة.",
+        "hi": "दक्षिण अफ़्रीकी खनन समूह: प्लैटिनम, पैलेडियम और रोडियम, सोना, और ऑटो-कैटेलिस्ट का पुनर्चक्रण; खदानें दक्षिण अफ़्रीका और अमेरिका में।",
+        "zh": "南非矿业集团：铂、钯、铑、黄金及汽车催化剂回收，矿山位于南非和美国。"
+      },
+      "source": "Sibanye Stillwater announcements: share codes SSW (JSE) and SBSW (NYSE), ISIN ZAE000259701; one ADS represents four ordinary shares."
+    },
+    "JSE/IMP": {"sector": "precious_metals"},
+    "JSE/NPH": {"sector": "precious_metals"},
+    "JSE/HAR": {"sector": "precious_metals"},
+    "JSE/GFI": {"sector": "precious_metals"},
+    "JSE/DRD": {"sector": "precious_metals"}
+  }
+}

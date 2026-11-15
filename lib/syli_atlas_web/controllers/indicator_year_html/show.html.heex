@@ -1,0 +1,76 @@
+<Layouts.public locale={@locale} current={:countries} alternates={@alternates}>
+  <.section tight={:bottom} variant="alt">
+    <div class="stack gap-3">
+      <nav aria-label={gettext("Breadcrumb")}>
+        <ol class="crumbs">
+          <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+          <li><a href={Paths.area(@locale, @area)}>{@name}</a></li>
+          <li aria-current="page">{label(@key)} {@year}</li>
+        </ol>
+      </nav>
+      <h1 class="h1" id="indicator-year-title">
+        {SyliAtlasWeb.IndicatorYearController.heading(@key, @name, @year)}
+      </h1>
+      <p class="lead" data-answer>{@answer}</p>
+      <p class="src">
+        {@edition} · {status_label(@status)}
+      </p>
+      <nav class="chips" aria-label={gettext("Other years")} id="indicator-years">
+        <a :for={y <- @years} class="chip" href={year_path(@locale, @area, @key, y)}>{y}</a>
+      </nav>
+    </div>
+  </.section>
+
+  <.section>
+    <div class="grid grid-2">
+      <.card>
+        <div class="pad">
+          <.card_head title={gettext("Year by year")} subtitle={label(@key)} />
+        </div>
+        <table class="table" id="indicator-year-rows">
+          <caption class="vh">{label(@key)} · {@name}</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="l">{gettext("Year")}</th>
+              <th scope="col">{label(@key)}</th>
+              <th scope="col" class="l">{gettext("Status")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={r <- @rows} class={r.year == @year && "is-current"}>
+              <td class="l">
+                <%= if r.year == @year do %>
+                  <b>{r.year}</b>
+                <% else %>
+                  <a href={year_path(@locale, @area, @key, r.year)}>{r.year}</a>
+                <% end %>
+              </td>
+              <td class="num">{value_text(r.value, @key, @locale)}</td>
+              <td class="l">
+                <span class={[
+                  "pill no-dot",
+                  case r.status do
+                    "projection" -> "pill-info"
+                    "estimate" -> "pill-warn"
+                    _ -> "pill-neutral"
+                  end
+                ]}>
+                  {status_label(r.status)}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </.card>
+      <.card pad class="stack gap-2">
+        <p class="eyebrow">{gettext("In Africa")}</p>
+        <p :if={@rank} class="big num">{@rank} / {@ranked}</p>
+        <p class="muted">{gettext("Rank among African countries, highest first.")}</p>
+        <a href={Paths.area(@locale, @area)}>{gettext("Profile of %{name}", name: @name)} →</a>
+        <a href={SyliAtlasWeb.Topics.ranking_path(@locale, @key)}>{gettext(
+          "The ranking of the 54 countries"
+        )} →</a>
+      </.card>
+    </div>
+  </.section>
+</Layouts.public>

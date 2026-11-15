@@ -1,0 +1,130 @@
+<Layouts.public locale={@locale} current={:reuse}>
+  <.section tight={:bottom} variant="alt">
+    <div class="prose stack gap-3">
+      <nav aria-label={gettext("Breadcrumb")}>
+        <ol class="crumbs">
+          <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+          <li aria-current="page">{gettext("Reuse our figures")}</li>
+        </ol>
+      </nav>
+      <p class="eyebrow">{gettext("Journalists, researchers, teachers")}</p>
+      <h1 class="h1">{gettext("Take our figures, credit Syli Atlas")}</h1>
+      <p class="lead" data-answer>
+        {gettext(
+          "What Syli Atlas computes and writes (regional and community totals, ranks, changes over a period, answer sentences, charts and share images) is under the Creative Commons Attribution 4.0 licence (CC BY 4.0): you may copy, adapt and republish it, commercial use included, as long as you credit Syli Atlas with a link to the page."
+        )}
+        <a href={SyliAtlasWeb.Seo.license_url()} rel="license">{gettext("Read the licence")}</a>
+      </p>
+    </div>
+  </.section>
+
+  <.section>
+    <div class="grid grid-3" id="reuse-steps">
+      <.card pad class="stack gap-2">
+        <p class="eyebrow">1 · {gettext("Cite")}</p>
+        <h2 class="h3">{gettext("A sentence ready on each page")}</h2>
+        <p class="small mono cite" id="reuse-citation">
+          {gettext("Source: Syli Atlas (CC BY 4.0), from IMF, %{edition}, %{url}, %{date}.",
+            edition: (@edition && @edition.label) || "World Economic Outlook",
+            url:
+              SyliAtlasWeb.Seo.url(
+                if(@example, do: Paths.area(@locale, @example), else: Paths.home(@locale))
+              ),
+            date:
+              SyliAtlasWeb.Dates.day_month_year(@today.day, @today.month, @today.year, @locale)
+          )}
+        </p>
+      </.card>
+      <.card pad class="stack gap-2">
+        <p class="eyebrow">2 · {gettext("Download")}</p>
+        <h2 class="h3">{gettext("CSV, Excel, JSON")}</h2>
+        <p>
+          {gettext(
+            "Each file names its source and the sentence to cite. Stock prices are not included."
+          )}
+        </p>
+        <p :if={@example} class="small">
+          <a href={Paths.area_data(@locale, @example, :csv, @from, @to)}>CSV</a>
+          · <a href={Paths.area_data(@locale, @example, :xlsx, @from, @to)}>Excel</a>
+          · <a href={Paths.area_data(@locale, @example, :json, @from, @to)}>JSON</a>
+          <span class="muted">· {@example_name}</span>
+        </p>
+      </.card>
+      <.card pad class="stack gap-2">
+        <p class="eyebrow">3 · {gettext("Embed")}</p>
+        <h2 class="h3">{gettext("A chart in your article")}</h2>
+        <p>
+          {gettext(
+            "Paste the code in your article: the chart stays readable, with its source and a link to the profile. Free, no account, no cookie."
+          )}
+        </p>
+        <a :if={@example} href={Paths.area_embed(@locale, @example)}>
+          {gettext("Embed the figures of %{name}", SyliAtlasWeb.Format.names(@example_name))} →
+        </a>
+      </.card>
+    </div>
+  </.section>
+
+  <.section tight={:top}>
+    <.card>
+      <div class="pad">
+        <h2 class="h2">{gettext("What the licence covers")}</h2>
+      </div>
+      <div class="table-box">
+        <table class="table" id="reuse-terms">
+          <caption class="vh">{gettext("What the licence covers")}</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="l">{gettext("Content")}</th>
+              <th scope="col" class="l">{gettext("Reuse")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="l">
+                {gettext("Syli Atlas calculations (real GDP index, regional totals)")}
+              </td>
+              <td class="l">{gettext("Free, CC BY 4.0: credit Syli Atlas with a link")}</td>
+            </tr>
+            <tr>
+              <td class="l">{gettext("IMF, World Bank, CEPII figures")}</td>
+              <td class="l">{gettext("Terms of each source: cite it along with Syli Atlas")}</td>
+            </tr>
+            <tr>
+              <td class="l">{gettext("Sovereign ratings")}</td>
+              <td class="l">
+                {gettext("The agencies': quote them, do not republish them in bulk")}
+              </td>
+            </tr>
+            <tr>
+              <td class="l">{gettext("Stock prices")}</td>
+              <td class="l">
+                {gettext(
+                  "stock prices: shown on the site (Data by MansaAPI), not redistributable"
+                )}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </.card>
+  </.section>
+
+  <.section tight={:top}>
+    <div class="grid grid-2">
+      <.card pad class="stack gap-2">
+        <h2 class="h3">{gettext("Questions on a figure")}</h2>
+        <p>
+          {gettext("A figure that looks wrong, a method to explain, a series you need?")}
+        </p>
+        <p :if={@contact}><a href={"mailto:" <> @contact}>{@contact}</a></p>
+        <a href={Paths.method(@locale)}>{gettext("Method and sources")} →</a>
+      </.card>
+      <.card pad class="stack gap-2">
+        <h2 class="h3">{gettext("For developers")}</h2>
+        <p>{gettext("The same figures in JSON, with their sources, in the public API.")}</p>
+        <a href={Paths.api(@locale)}>{gettext("Public API")} →</a>
+      </.card>
+    </div>
+  </.section>
+</Layouts.public>

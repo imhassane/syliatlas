@@ -67,10 +67,28 @@ defmodule SyliAtlasWeb.SeoPagesTest do
       assert dataset["license"] == "https://creativecommons.org/licenses/by/4.0/"
       assert dataset["creditText"] == "Syli Atlas"
       assert dataset["creator"]["@id"] =~ "#organization"
+      # Search Console: creator and publisher typed and named, not a bare @id.
+      assert dataset["creator"]["@type"] == "Organization"
+      assert dataset["publisher"]["name"] == "Syli Atlas"
+      assert String.length(dataset["description"]) in 50..5000
       assert length(dataset["variableMeasured"]) >= 5
       formats = Enum.map(dataset["distribution"], & &1["encodingFormat"])
       assert "text/csv" in formats
       assert dataset["about"]["identifier"] == "SEN"
+    end
+
+    test "every Dataset of the ratings page has a licence, a creator and a long enough description" do
+      for d <- doc("/fr/notations") |> json_ld() |> Enum.filter(&(&1["@type"] == "Dataset")) do
+        assert d["license"]
+        assert d["creator"]["@type"] == "Organization"
+        assert String.length(d["description"]) >= 50
+      end
+    end
+
+    test "a short description is completed, never left under 50 characters" do
+      assert String.length(SyliAtlasWeb.Seo.dataset_description("PIB")) >= 50
+      long = String.duplicate("a", 6000)
+      assert String.length(SyliAtlasWeb.Seo.dataset_description(long)) == 5000
     end
 
     test "one dataset per source: none on tabs that repeat the IMF series" do

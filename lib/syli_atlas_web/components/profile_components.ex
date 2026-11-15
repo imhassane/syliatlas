@@ -225,6 +225,14 @@ defmodule SyliAtlasWeb.ProfileComponents do
         >
           {@ctx.currency.name} ({@ctx.currency.code})
         </a>
+        <a
+          :if={@ctx.currency && @ctx.currency.code in ~w(XOF XAF)}
+          class="pill pill-neutral no-dot"
+          id="cfa-glossary"
+          href={SyliAtlasWeb.GlossaryController.term_path(@locale, "cfa_franc")}
+        >
+          {gettext("What is the CFA franc?")}
+        </a>
       </:chips>
       <:kpi
         :for={k <- @kpis}

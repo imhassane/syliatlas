@@ -1,0 +1,210 @@
+<.admin_shell
+  current={:search_console}
+  counts={@admin_counts}
+  until={@admin_until}
+  key={@admin_key}
+>
+  <header class="adm-head">
+    <div class="adm-intro">
+      <p class="eyebrow">Site · Google Search Console</p>
+      <h1 class="adm-title">Recherche Google</h1>
+      <p class="muted">
+        Importé chaque matin à 07:00 UTC (données de Google à J−2) pour {@site || "la propriété"}.
+        Agrégats de Google : rien sur les lecteurs.
+      </p>
+    </div>
+    <div class="adm-head-actions">
+      <nav class="seg" aria-label="Période">
+        <a
+          :for={p <- @periods}
+          class="btn btn-sm btn-quiet"
+          href={~p"/admin/recherche-google?jours=#{p}"}
+          aria-current={p == @days && "page"}
+        >
+          {p} jours
+        </a>
+      </nav>
+      <.form for={%{}} action={~p"/admin/recherche-google/importer"} method="post" id="gsc-import">
+        <button class="btn btn-primary" type="submit">Importer 28 jours</button>
+      </.form>
+    </div>
+  </header>
+
+  <div :if={!@configured} class="card adm-banner" role="alert" id="gsc-no-key">
+    <p>
+      <b>Compte de service absent.</b>
+      Créez un compte de service Google (API Search Console activée), ajoutez son adresse comme utilisateur
+      en lecture de la propriété, puis posez <code>GOOGLE_SEARCH_CONSOLE_KEY</code>
+      (clé JSON) et <code>GOOGLE_SEARCH_CONSOLE_SITE</code>
+      (<code>sc-domain:syliatlas.com</code>) sur le service Railway.
+    </p>
+  </div>
+
+  <p :if={@configured and is_nil(@totals)} class="muted" id="gsc-empty">
+    Aucune donnée importée pour l'instant.
+  </p>
+
+  <%= if @totals do %>
+    <div
+      :if={@totals.clicks < 100}
+      class="card adm-banner"
+      role="status"
+      id="gsc-small"
+    >
+      <p>
+        Moins de 100 clics sur la période : aucun taux de clic n'est encore significatif.
+      </p>
+    </div>
+
+    <dl class="stats" id="gsc-stats">
+      <div>
+        <dt>Clics</dt>
+        <dd class="big num adm-big-sm">{n(@totals.clicks)}</dd>
+        <dd class="small muted">{day(@totals.from)} → {day(@totals.to)}</dd>
+      </div>
+      <div>
+        <dt>Impressions</dt>
+        <dd class="big num adm-big-sm">{n(@totals.impressions)}</dd>
+        <dd class="small muted">taux de clic {ctr(@totals.clicks, @totals.impressions)}</dd>
+      </div>
+      <div>
+        <dt>Position moyenne</dt>
+        <dd class="big num adm-big-sm">{n(@totals.position)}</dd>
+        <dd class="small muted">pondérée par les impressions</dd>
+      </div>
+    </dl>
+
+    <section class="card adm-list" id="gsc-daily">
+      <div class="adm-card-head">
+        <h2 class="h3">Par jour</h2>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Jour</th><th>Impressions</th><th>Clics</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={d <- Enum.reverse(@daily)}>
+            <td>{day(d.date)}</td>
+            <td class="num">{n(d.impressions)}</td>
+            <td class="num">{n(d.clicks)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card adm-list" id="gsc-opportunities">
+      <div class="adm-card-head">
+        <h2 class="h3">Opportunités : première page, aucun clic</h2>
+        <p class="small muted">
+          Position 12 ou mieux. Revoir le titre et la description de la page.
+        </p>
+      </div>
+      <p :if={@opportunities == []} class="adm-empty muted">Aucune.</p>
+      <table :if={@opportunities != []} class="table">
+        <thead>
+          <tr>
+            <th>Requête</th><th>Impressions</th><th>Position</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={q <- @opportunities}>
+            <td>{q.key}</td>
+            <td class="num">{n(q.impressions)}</td>
+            <td class="num">{n(q.position)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <div class="adm-split">
+      <section class="card adm-list" id="gsc-devices">
+        <div class="adm-card-head">
+          <h2 class="h3">Par appareil</h2>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Appareil</th><th>Impressions</th><th>Clics</th><th>Position</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={d <- @devices}>
+              <td>{d.key}</td>
+              <td class="num">{n(d.impressions)}</td>
+              <td class="num">{n(d.clicks)}</td>
+              <td class="num">{n(d.position)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+      <section class="card adm-list" id="gsc-countries">
+        <div class="adm-card-head">
+          <h2 class="h3">Par pays du lecteur</h2>
+        </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Pays</th><th>Impressions</th><th>Clics</th><th>Position</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={c <- @countries}>
+              <td class="mono">{String.upcase(c.key)}</td>
+              <td class="num">{n(c.impressions)}</td>
+              <td class="num">{n(c.clicks)}</td>
+              <td class="num">{n(c.position)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+
+    <section class="card adm-list" id="gsc-sections">
+      <div class="adm-card-head">
+        <h2 class="h3">Par langue et rubrique</h2>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Langue</th><th>Rubrique</th><th>Pages</th><th>Impressions</th><th>Clics</th><th>
+              Position
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={s <- @sections}>
+            <td class="mono">{s.lang}</td>
+            <td>{s.section}</td>
+            <td class="num">{n(s.pages)}</td>
+            <td class="num">{n(s.impressions)}</td>
+            <td class="num">{n(s.clicks)}</td>
+            <td class="num">{n(s.position)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card adm-list" id="gsc-queries">
+      <div class="adm-card-head">
+        <h2 class="h3">Requêtes les plus vues</h2>
+      </div>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Requête</th><th>Impressions</th><th>Clics</th><th>Position</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={q <- @queries}>
+            <td>{q.key}</td>
+            <td class="num">{n(q.impressions)}</td>
+            <td class="num">{n(q.clicks)}</td>
+            <td class="num">{n(q.position)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  <% end %>
+</.admin_shell>

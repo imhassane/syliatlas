@@ -58,6 +58,29 @@ defmodule SyliAtlas.Market do
     |> Enum.map(fn {d, c} -> [Date.to_iso8601(d), Decimal.to_string(c, :normal)] end)
   end
 
+  @doc """
+  The sessions of a security, oldest first, the last `limit`:
+  `%{"date", "close", "change_pct", "volume"}` (decimals as strings).
+  """
+  def security_sessions(security_id, limit \\ 260) do
+    Repo.all(
+      from p in EodPrice,
+        where: p.security_id == ^security_id,
+        order_by: [desc: p.trade_date],
+        limit: ^limit,
+        select: {p.trade_date, p.close, p.change_pct, p.volume}
+    )
+    |> Enum.reverse()
+    |> Enum.map(fn {d, c, pct, v} ->
+      %{
+        "date" => Date.to_iso8601(d),
+        "close" => c && Decimal.to_string(c, :normal),
+        "change_pct" => pct && Decimal.to_string(pct, :normal),
+        "volume" => v
+      }
+    end)
+  end
+
   @doc "Exchanges serving a country, from the overview, with their busiest local shares."
   def for_country(area_code, overview \\ overview())
 
