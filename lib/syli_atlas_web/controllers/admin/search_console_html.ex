@@ -26,6 +26,7 @@ defmodule SyliAtlasWeb.Admin.SearchConsoleHTML do
   def import_label(:done), do: "réussi"
   def import_label(:retrying), do: "échec, nouvel essai prévu"
   def import_label(:failed), do: "échec"
+  def import_label(:stuck), do: "interrompu (redéploiement), cliquez sur « Réimporter »"
 
   def lang_name("pt"), do: "Portugais"
   def lang_name("es"), do: "Espagnol"
