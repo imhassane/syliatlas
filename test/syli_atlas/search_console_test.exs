@@ -179,6 +179,17 @@ defmodule SyliAtlas.SearchConsoleTest do
     assert admin |> get("/admin/recherche-google") |> html_response(200) =~
              ~s(id="gsc-import-status")
 
+    # A job left « executing » by a redeploy: shown as cut, and a click still
+    # starts a new import.
+    SyliAtlas.Repo.update_all(Oban.Job,
+      set: [state: "executing", attempted_at: DateTime.add(DateTime.utc_now(), -20, :minute)]
+    )
+
+    assert %{state: :stuck} = SearchConsole.last_import()
+    before = SyliAtlas.Repo.aggregate(Oban.Job, :count)
+    post(admin, "/admin/recherche-google/importer")
+    assert SyliAtlas.Repo.aggregate(Oban.Job, :count) == before + 1
+
     assert html =~ ~s(id="admin-nav-search_console")
 
     tr = admin |> get("/admin/traductions") |> html_response(200)

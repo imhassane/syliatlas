@@ -97,7 +97,9 @@ defmodule SyliAtlasWeb.Admin.SearchConsoleController do
 
   def import(conn, _params) do
     if SearchConsole.configured?() do
-      Oban.insert!(SyliAtlas.Workers.SearchConsoleWorker.new(%{"days" => 28}))
+      # Asked by hand: always a new job, even if an earlier one is waiting or
+      # was left « executing » by a redeploy (the import replaces its days).
+      Oban.insert!(SyliAtlas.Workers.SearchConsoleWorker.new(%{"days" => 28}, unique: false))
 
       conn
       |> put_flash(

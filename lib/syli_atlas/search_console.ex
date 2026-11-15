@@ -220,8 +220,18 @@ defmodule SyliAtlas.SearchConsole do
       )
 
     if job do
+      state = import_state(job.state)
+
+      # An import takes a minute: still « executing » after ten, it was cut
+      # (a redeploy) and will be rescued; a new click starts another.
+      state =
+        if (state == :running and job.attempted_at) &&
+             DateTime.diff(DateTime.utc_now(), job.attempted_at, :minute) >= 10,
+           do: :stuck,
+           else: state
+
       %{
-        state: import_state(job.state),
+        state: state,
         at: job.completed_at || job.attempted_at || job.scheduled_at || job.inserted_at,
         error: last_error(job.errors),
         attempt: job.attempt,
