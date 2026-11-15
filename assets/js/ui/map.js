@@ -109,7 +109,11 @@ export function initMap() {
       panel.show()
     }
     field("name").focus({preventScroll: drawer.matches})
-    if (!drawer.matches) panel.scrollIntoView({block: "nearest"})
+    // The column fits the screen: bring all of it into view if it is cut.
+    if (!drawer.matches) {
+      const r = panel.getBoundingClientRect()
+      if (r.top < 0 || r.bottom > innerHeight) panel.parentElement.scrollIntoView({block: "start"})
+    }
   }
 
   // On resize, a drawer left open becomes the column, and back.

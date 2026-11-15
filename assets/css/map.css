@@ -184,8 +184,23 @@ html.js .no-js-only { display: none !important; }
 @media (min-width: 64rem) {
   .map-panel-hero { box-shadow: var(--shadow-card); }
   .map-panel-hero .map-panel-name { font-size: 40px; }
-  /* The buttons stay in view while the column scrolls with the page. */
-  .map-panel-hero .map-panel-actions { position: sticky; bottom: 0; margin: 0 -28px -28px; padding: 14px 28px 20px; background: var(--card); border-top: 1px solid var(--border-faint); border-radius: 0 0 8px 8px; }
+  /* The country's column scrolls on its own, never the page: it fits the
+     screen (and the map's height), its buttons stay at the bottom. */
+  /* Under the sticky ratings band (--sticky-top, header.js). */
+  .hero-country { position: sticky; top: calc(var(--sticky-top) + 16px); scroll-margin-top: calc(var(--sticky-top) + 16px); }
+  .map-panel-hero[open] {
+    display: flex; flex-direction: column; padding: 24px 28px 0; gap: 14px; overflow: hidden;
+    max-height: min(calc(100dvh - var(--sticky-top) - 32px), 780px);
+  }
+  .map-panel-hero .map-panel-body {
+    flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+    margin: 0 -28px; padding: 0 28px 16px; scrollbar-gutter: stable;
+  }
+  .map-panel-hero .map-panel-actions {
+    flex: none; margin: 0 -28px; padding: 14px 28px 20px;
+    background: var(--card); border-top: 1px solid var(--border-faint);
+  }
+  .map-panel-hero .map-back { flex: none; }
 }
 
 @media (max-width: 63.99rem) {
@@ -227,3 +242,5 @@ html.js .no-js-only { display: none !important; }
 @media (forced-colors: active) {
   .map-panel-hero:modal { border-top: 1px solid CanvasText; }
 }
+/* The page behind the drawer does not scroll either. */
+html:has(.map-panel-hero:modal) { overflow: hidden; }
