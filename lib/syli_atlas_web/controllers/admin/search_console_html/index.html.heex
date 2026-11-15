@@ -6,11 +6,11 @@
 >
   <header class="adm-head">
     <div class="adm-intro">
-      <p class="eyebrow">Site · Google Search Console</p>
+      <p class="eyebrow">Site · Google</p>
       <h1 class="adm-title">Recherche Google</h1>
-      <p class="muted">
-        Importé chaque matin à 07:00 UTC (données de Google à J−2) pour {@site || "la propriété"}.
-        Agrégats de Google : rien sur les lecteurs.
+      <p class="muted small">
+        <span :if={@last_day}>Dernières données : {long_day(@last_day)} · </span>
+        Google publie avec deux jours de retard · import automatique chaque matin
       </p>
     </div>
     <div class="adm-head-actions">
@@ -18,14 +18,14 @@
         <a
           :for={p <- @periods}
           class="btn btn-sm btn-quiet"
-          href={~p"/admin/recherche-google?jours=#{p}"}
+          href={~p"/admin/recherche-google?jours=#{p}&onglet=#{@tab}"}
           aria-current={p == @days && "page"}
         >
           {p} jours
         </a>
       </nav>
       <.form for={%{}} action={~p"/admin/recherche-google/importer"} method="post" id="gsc-import">
-        <button class="btn btn-primary" type="submit">Importer 28 jours</button>
+        <button class="btn btn-secondary" type="submit">Réimporter</button>
       </.form>
     </div>
   </header>
@@ -45,197 +45,229 @@
   </p>
 
   <%= if @totals do %>
-    <div
-      :if={@totals.clicks < 100}
-      class="card adm-banner"
-      role="status"
-      id="gsc-small"
-    >
-      <p>
-        Moins de 100 clics sur la période : aucun taux de clic n'est encore significatif.
+    <section class="card gsc-brief" aria-labelledby="gsc-brief-title" id="gsc-brief">
+      <p class="eyebrow" id="gsc-brief-title">En bref</p>
+      <p class="gsc-brief-text">
+        En {@days} jours, Google a montré Syli Atlas
+        <b class="num">{n(@totals.impressions)} fois</b>
+        dans ses résultats et <b class="num">{n(@totals.clicks)}</b>
+        {if @totals.clicks == 1, do: "personne a", else: "personnes ont"} cliqué.
+        <%= if @totals.position do %>
+          Le site apparaît en moyenne en
+          <b>{results_page(@totals.position)}<sup>{if results_page(@totals.position) == 1,
+            do: "re",
+            else: "e"}</sup>
+          page</b>
+          (rang {n(@totals.position)})<span :if={@first_page > 0}>, et <b class="num">{n(@first_page)} pages</b> sont en première page sur au moins une requête</span>.
+        <% end %>
       </p>
-    </div>
+      <p :if={@totals.clicks < 100} class="gsc-warn" role="status" id="gsc-small">
+        Trop tôt pour conclure : moins de 100 clics. Les taux et les tendances voudront dire quelque chose à partir de 100 clics ou de 28 jours de données.
+      </p>
+    </section>
 
     <dl class="stats" id="gsc-stats">
       <div>
-        <dt>Clics</dt>
-        <dd class="big num adm-big-sm">{n(@totals.clicks)}</dd>
-        <dd class="small muted">{day(@totals.from)} → {day(@totals.to)}</dd>
-      </div>
-      <div>
-        <dt>Impressions</dt>
+        <dt>Apparitions dans Google</dt>
         <dd class="big num adm-big-sm">{n(@totals.impressions)}</dd>
-        <dd class="small muted">taux de clic {ctr(@totals.clicks, @totals.impressions)}</dd>
+        <dd class="small muted">
+          Une « impression » : le site figure sur une page de résultats qu'une personne a vue.
+        </dd>
       </div>
       <div>
-        <dt>Position moyenne</dt>
-        <dd class="big num adm-big-sm">{n(@totals.position)}</dd>
-        <dd class="small muted">pondérée par les impressions</dd>
+        <dt>Visites venues de Google</dt>
+        <dd class="big num adm-big-sm">{n(@totals.clicks)}</dd>
+        <dd class="small muted">
+          Un « clic » : quelqu'un a choisi Syli Atlas dans les résultats. Taux : {ctr(
+            @totals.clicks,
+            @totals.impressions
+          )}.
+        </dd>
+      </div>
+      <div>
+        <dt>Rang moyen</dt>
+        <dd class="big num adm-big-sm">{n(@totals.position && round(@totals.position))}</dd>
+        <dd class="small muted">
+          1 à 10 = première page. Au-delà de 20, presque personne ne voit le lien.
+        </dd>
       </div>
     </dl>
 
-    <section class="card adm-list" id="gsc-daily">
-      <div class="adm-card-head">
-        <h2 class="h3">Par jour</h2>
+    <section class="card gsc-section" aria-labelledby="gsc-chart-title" id="gsc-chart">
+      <div class="gsc-section-head">
+        <div>
+          <h2 class="h3" id="gsc-chart-title">
+            {if @days > 60, do: "Semaine par semaine", else: "Jour par jour"}
+          </h2>
+          <p class="small muted">
+            <%= if @measure == "rang" do %>
+              Rang moyen : plus le point est haut, mieux le site est placé.
+            <% else %>
+              Barres : apparitions (échelle de gauche) · points : visites (échelle de droite)
+            <% end %>
+          </p>
+        </div>
+        <nav class="seg" aria-label="Mesure">
+          <a
+            class="btn btn-sm btn-quiet"
+            href={~p"/admin/recherche-google?jours=#{@days}&onglet=#{@tab}" <> "#gsc-chart"}
+            aria-current={@measure == "volume" && "page"}
+          >
+            Apparitions et visites
+          </a>
+          <a
+            class="btn btn-sm btn-quiet"
+            href={~p"/admin/recherche-google?jours=#{@days}&onglet=#{@tab}&mesure=rang" <> "#gsc-chart"}
+            aria-current={@measure == "rang" && "page"}
+          >
+            Rang moyen
+          </a>
+        </nav>
       </div>
-      <div class="table-box table-scroll" tabindex="0" role="region" aria-label="Par jour">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Jour</th><th>Impressions</th><th>Clics</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr :for={d <- Enum.reverse(@daily)}>
-              <td>{day(d.date)}</td>
-              <td class="num">{n(d.impressions)}</td>
-              <td class="num">{n(d.clicks)}</td>
-            </tr>
-          </tbody>
-        </table>
+      <.chart
+        rows={@daily}
+        measure={@measure}
+        aria={"#{length(@daily)} #{if @days > 60, do: "semaines", else: "jours"} : #{n(@totals.impressions)} apparitions et #{n(@totals.clicks)} visites au total"}
+      />
+      <p class="small subtle">Survolez une barre pour le détail du jour.</p>
+    </section>
+
+    <section class="card gsc-section" aria-labelledby="gsc-where-title" id="gsc-where">
+      <div class="gsc-section-head">
+        <h2 class="h3" id="gsc-where-title">Où sont nos pages dans Google</h2>
+        <p class="small subtle">Rang moyen de chaque page sur la période</p>
+      </div>
+      <div
+        class="gsc-bands-bar"
+        role="img"
+        aria-label={Enum.map_join(@bands, ", ", &"#{&1.pages} pages : #{band_label(&1.band)}")}
+      >
+        <div
+          :for={b <- @bands}
+          :if={b.pages > 0}
+          style={"flex: #{b.pages}; background: #{band_color(b.band)}"}
+        >
+        </div>
+      </div>
+      <div class="gsc-bands">
+        <div :for={b <- @bands}>
+          <span class="gsc-band-name">
+            <i style={"background: #{band_color(b.band)}"}></i>{band_label(b.band)}
+          </span>
+          <span class="num gsc-band-count">{n(b.pages)} pages</span>
+          <span class="muted small">{n(b.impressions)} apparitions</span>
+        </div>
       </div>
     </section>
 
-    <section class="card adm-list" id="gsc-opportunities">
-      <div class="adm-card-head">
-        <h2 class="h3">Opportunités : première page, aucun clic</h2>
-        <p class="small muted">
-          Position 12 ou mieux. Revoir le titre et la description de la page.
+    <section aria-labelledby="gsc-todo-title" id="gsc-todo" class="stack gap-2">
+      <div class="gsc-section-head">
+        <h2 class="h3" id="gsc-todo-title">À faire cette semaine</h2>
+        <p class="small subtle">
+          Première page sans clic : les gens voient le lien mais ne choisissent pas Syli Atlas. Souvent, le titre ou la description ne répond pas à la question.
         </p>
       </div>
-      <p :if={@opportunities == []} class="adm-empty muted">Aucune.</p>
-      <div
-        :if={@opportunities != []}
-        class="table-box table-scroll"
-        tabindex="0"
-        role="region"
-        aria-label="Opportunités"
-      >
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Requête</th><th>Impressions</th><th>Position</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr :for={q <- @opportunities}>
-              <td>{q.key}</td>
-              <td class="num">{n(q.impressions)}</td>
-              <td class="num">{n(q.position)}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-    <div class="adm-split">
-      <section class="card adm-list" id="gsc-devices">
-        <div class="adm-card-head">
-          <h2 class="h3">Par appareil</h2>
-        </div>
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Appareil</th><th>Impressions</th><th>Clics</th><th>Position</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr :for={d <- @devices}>
-              <td>{d.key}</td>
-              <td class="num">{n(d.impressions)}</td>
-              <td class="num">{n(d.clicks)}</td>
-              <td class="num">{n(d.position)}</td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
-      <section class="card adm-list" id="gsc-countries">
-        <div class="adm-card-head">
-          <h2 class="h3">Par pays du lecteur</h2>
-        </div>
-        <div
-          class="table-box table-scroll"
-          tabindex="0"
-          role="region"
-          aria-label="Par pays du lecteur"
+      <p :if={@opportunities == []} class="muted">Rien à signaler.</p>
+      <div class="gsc-cards">
+        <article
+          :for={{o, i} <- Enum.with_index(@opportunities)}
+          class={["card gsc-card", o.done && "is-done"]}
+          id={"gsc-action-#{i}"}
         >
-          <table class="table">
-            <thead>
-              <tr>
-                <th>Pays</th><th>Impressions</th><th>Clics</th><th>Position</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr :for={c <- @countries}>
-                <td class="mono">{String.upcase(c.key)}</td>
-                <td class="num">{n(c.impressions)}</td>
-                <td class="num">{n(c.clicks)}</td>
-                <td class="num">{n(c.position)}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-    </div>
-
-    <section class="card adm-list" id="gsc-sections">
-      <div class="adm-card-head">
-        <h2 class="h3">Par langue et rubrique</h2>
+          <div class="gsc-card-head">
+            <b>« {o.key} »</b>
+            <.position_pill pos={o.position} />
+          </div>
+          <p class="small muted">
+            {n(o.impressions)} apparitions · 0 clic<span :if={o.page}> · <span class="mono">{path(
+              o.page
+            )}</span></span>
+          </p>
+          <%= if o.done do %>
+            <p class="small">
+              <span class="pill pill-ok no-dot">traitée le {Calendar.strftime(o.done.at, "%d/%m")}</span>
+              Vérifier dans deux semaines si les clics arrivent.
+            </p>
+          <% end %>
+          <div class="gsc-card-actions">
+            <a :if={o.page} href={path(o.page)} rel="noopener">Ouvrir la page →</a>
+            <.form
+              for={%{}}
+              action={~p"/admin/recherche-google/action"}
+              method="post"
+              id={"gsc-mark-#{i}"}
+            >
+              <input type="hidden" name="query" value={o.key} />
+              <input type="hidden" name="done" value={if(o.done, do: "0", else: "1")} />
+              <button class="btn btn-sm btn-secondary" type="submit">
+                {if o.done, do: "Rouvrir", else: "Marquer traitée"}
+              </button>
+            </.form>
+          </div>
+        </article>
       </div>
+    </section>
+
+    <section class="card adm-list" aria-labelledby="gsc-detail-title" id="gsc-detail">
+      <div class="adm-card-head gsc-section-head">
+        <h2 class="h3" id="gsc-detail-title">Le détail</h2>
+        <nav class="seg" aria-label="Détail par">
+          <a
+            :for={t <- @tabs}
+            class="btn btn-sm btn-quiet"
+            href={~p"/admin/recherche-google?jours=#{@days}&onglet=#{t}" <> "#gsc-detail"}
+            aria-current={t == @tab && "page"}
+          >
+            {tab_label(t)}
+          </a>
+        </nav>
+      </div>
+      <p :if={@rows == []} class="adm-empty muted">Aucune ligne.</p>
       <div
+        :if={@rows != []}
         class="table-box table-scroll"
         tabindex="0"
         role="region"
-        aria-label="Par langue et rubrique"
+        aria-label={tab_label(@tab)}
       >
-        <table class="table">
+        <table class="table" id="gsc-detail-table">
           <thead>
             <tr>
-              <th>Langue</th><th>Rubrique</th><th>Pages</th><th>Impressions</th><th>Clics</th><th>
-                Position
-              </th>
+              <th class="l">{key_label(@tab)}</th>
+              <th>Apparitions</th>
+              <th>Visites</th>
+              <th>Rang</th>
             </tr>
           </thead>
           <tbody>
-            <tr :for={s <- @sections}>
-              <td class="mono">{s.lang}</td>
-              <td>{s.section}</td>
-              <td class="num">{n(s.pages)}</td>
-              <td class="num">{n(s.impressions)}</td>
-              <td class="num">{n(s.clicks)}</td>
-              <td class="num">{n(s.position)}</td>
+            <tr :for={r <- @rows}>
+              <td class={["l", @tab == "pages" && "mono small"]}>{key_text(@tab, r.key)}</td>
+              <td class="num">{n(r.impressions)}</td>
+              <td class="num">{n(r.clicks)}</td>
+              <td><.position_pill pos={r.position} /></td>
             </tr>
           </tbody>
         </table>
       </div>
     </section>
 
-    <section class="card adm-list" id="gsc-queries">
-      <div class="adm-card-head">
-        <h2 class="h3">Requêtes les plus vues</h2>
-      </div>
-      <div
-        class="table-box table-scroll"
-        tabindex="0"
-        role="region"
-        aria-label="Requêtes les plus vues"
-      >
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Requête</th><th>Impressions</th><th>Clics</th><th>Position</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr :for={q <- @queries}>
-              <td>{q.key}</td>
-              <td class="num">{n(q.impressions)}</td>
-              <td class="num">{n(q.clicks)}</td>
-              <td class="num">{n(q.position)}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </section>
+    <details class="card gsc-help" id="gsc-help">
+      <summary>Comment lire cette page</summary>
+      <ul>
+        <li>
+          <b>Apparition</b>
+          (impression) : le lien est sur une page de résultats vue par quelqu'un, même tout en bas.
+        </li>
+        <li><b>Visite</b> (clic) : la personne est venue sur Syli Atlas.</li>
+        <li><b>Rang</b> (position) : la place moyenne du lien. 1 à 10 = première page.</li>
+        <li>
+          <b>Première page sans clic</b>
+          : le lien est visible mais pas choisi ; revoir le titre et la description de la page.
+        </li>
+        <li>
+          Les chiffres de Google arrivent avec deux jours de retard et bougent encore quelques jours ; l'import relit les cinq derniers jours chaque matin.
+        </li>
+      </ul>
+    </details>
   <% end %>
 </.admin_shell>

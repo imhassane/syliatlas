@@ -321,6 +321,7 @@ defmodule SyliAtlasWeb.Router do
     get "/recherches", SearchMissesController, :index
     get "/recherche-google", SearchConsoleController, :index
     post "/recherche-google/importer", SearchConsoleController, :import
+    post "/recherche-google/action", SearchConsoleController, :mark
     get "/traductions", SearchConsoleController, :translations
     post "/traductions/relue", SearchConsoleController, :review
     get "/membres", MembersController, :index
