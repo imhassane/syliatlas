@@ -33,6 +33,18 @@
     </.card>
   </.section>
 
+  <.section :if={@countries && @countries.rows != []} tight={:top}>
+    <.card id="term-countries">
+      <div class="pad">
+        <h2 class="h2">{@countries.title}</h2>
+      </div>
+      <.data_table id="term-countries-table" caption={@countries.title} rows={@countries.rows}>
+        <:head :let={{label, _v, href}} label={gettext("Country")}><a href={href}>{label}</a></:head>
+        <:col :let={{_l, v, _h}} label={gettext("Value")}>{v}</:col>
+      </.data_table>
+    </.card>
+  </.section>
+
   <.section tight={:top}>
     <div class="grid grid-2">
       <nav class="card pad stack gap-2" aria-label={gettext("Where to see it")}>

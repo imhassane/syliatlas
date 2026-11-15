@@ -66,4 +66,18 @@ defmodule SyliAtlasWeb.QuestionsGlossaryTest do
                200
     end
   end
+
+  test "the glossary sends to the countries, and back" do
+    {_, year} = SyliAtlas.Profiles.Builder.default_period()
+
+    cfa = doc("/fr/glossaire/franc-cfa")
+    links = cfa |> LazyHTML.query("#term-countries-table a") |> Enum.map(&LazyHTML.attribute(&1, "href"))
+    assert length(links) in 1..14
+    assert Enum.any?(links, &(List.first(&1) == "/fr/pays/senegal/inflation-#{year}"))
+
+    gdp = doc("/fr/glossaire/pib")
+    assert gdp |> LazyHTML.query("#term-countries-table tbody tr") |> Enum.count() == 10
+
+    assert doc("/fr/pays/senegal") |> LazyHTML.query("#cfa-glossary") |> Enum.count() == 1
+  end
 end

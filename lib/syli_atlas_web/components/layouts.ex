@@ -523,6 +523,7 @@ defmodule SyliAtlasWeb.Layouts do
           <h2>{gettext("The project")}</h2>
           <a href={Paths.about(@locale)}>{gettext("About")}</a>
           <a href={Paths.method(@locale)}>{gettext("Method and sources")}</a>
+          <a href={Paths.reuse(@locale)} id="footer-reuse">{gettext("Reuse our figures")}</a>
           <a href={Paths.api(@locale)}>{gettext("Public API")}</a>
           <a href={Paths.accessibility(@locale)} id="footer-accessibility">
             {accessibility_mention()}

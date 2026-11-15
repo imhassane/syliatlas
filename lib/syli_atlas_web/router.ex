@@ -244,6 +244,7 @@ defmodule SyliAtlasWeb.Router do
       get "/", PageController, :home
       get "/#{seg.(:method)}", PageController, :method
       get "/#{seg.(:about)}", PageController, :about
+      get "/#{seg.(:reuse)}", PageController, :reuse
       get "/#{seg.(:glossary)}", GlossaryController, :index
       get "/#{seg.(:glossary)}/:slug", GlossaryController, :show
       get "/#{seg.(:questions)}", QuestionsController, :index

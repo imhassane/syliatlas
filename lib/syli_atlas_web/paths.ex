@@ -66,6 +66,7 @@ defmodule SyliAtlasWeb.Paths do
   def search(locale), do: "/#{locale}/#{segment(locale, :search)}"
   def method(locale), do: "/#{locale}/#{segment(locale, :method)}"
   def about(locale), do: "/#{locale}/#{segment(locale, :about)}"
+  def reuse(locale), do: "/#{locale}/#{segment(locale, :reuse)}"
   def accessibility(locale), do: "/#{locale}/#{segment(locale, :accessibility)}"
   def offline(locale), do: "/#{locale}/#{segment(locale, :offline)}"
   @doc "The public API documentation: /fr/api, /en/api."
@@ -153,6 +154,7 @@ defmodule SyliAtlasWeb.Paths do
     search: %{"fr" => "recherche", "en" => "search", "es" => "buscar", "pt" => "pesquisa"},
     method: %{"fr" => "methode", "en" => "method", "es" => "metodo", "pt" => "metodo"},
     about: %{"fr" => "a-propos", "en" => "about", "es" => "acerca-de", "pt" => "sobre"},
+    reuse: %{"fr" => "reutiliser", "en" => "reuse", "es" => "reutilizar", "pt" => "reutilizar"},
     accessibility: %{
       "fr" => "accessibilite",
       "en" => "accessibility",
