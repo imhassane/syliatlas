@@ -191,7 +191,7 @@ defmodule SyliAtlas.Profiles.Queries do
       'gdp', gdp, 'gdp_change', gdp_change, 'real_change', real_change,
       'rank', CASE WHEN gdp IS NULL THEN NULL ELSE rnk END, 'of', ranked,
       'gdppc', gdppc, 'inflation', inflation, 'debt', debt, 'growth', growth,
-      'series', json(gdp_series)))) FROM (
+      'series', json(gdp_series), 'more', json(more)))) FROM (
       SELECT *, rank() OVER (ORDER BY gdp IS NULL, gdp DESC) AS rnk,
              count(gdp) OVER () AS ranked
       FROM (
@@ -207,7 +207,12 @@ defmodule SyliAtlas.Profiles.Queries do
                #{value_sql("inflation", "?3")} AS inflation,
                #{value_sql("public_debt_pct_gdp", "?3")} AS debt,
                #{value_sql("real_gdp_growth", "?3")} AS growth,
-               jsonb_extract(p.doc, '$.series.gdp_usd_bn') AS gdp_series
+               jsonb_extract(p.doc, '$.series.gdp_usd_bn') AS gdp_series,
+               json_object(
+                 'gdppc', json_extract(p.doc, '$.series.gdp_per_capita_usd'),
+                 'growth', json_extract(p.doc, '$.series.real_gdp_growth'),
+                 'inflation', json_extract(p.doc, '$.series.inflation'),
+                 'debt', json_extract(p.doc, '$.series.public_debt_pct_gdp')) AS more
         FROM profiles AS p
         JOIN areas AS a ON a.code = p.area_code
         LEFT JOIN areas AS r ON r.code = a.region_code

@@ -172,8 +172,8 @@ msgstr "Vérifié chaque jour"
 msgid "Cite this page"
 msgstr "Citer cette page"
 
-#: lib/syli_atlas_web/components/map_components.ex:325
-#: lib/syli_atlas_web/components/map_components.ex:504
+#: lib/syli_atlas_web/components/map_components.ex:371
+#: lib/syli_atlas_web/components/map_components.ex:550
 #: lib/syli_atlas_web/controllers/compare_controller.ex:81
 #: lib/syli_atlas_web/controllers/compare_controller.ex:104
 #: lib/syli_atlas_web/controllers/compare_html/show.html.heex:5
@@ -1010,20 +1010,21 @@ msgstr "PIB et population : sommes des pays. PIB par habitant : PIB total di
 msgid "GDP in current dollars %{year}"
 msgstr "PIB en dollars courants %{year}"
 
-#: lib/syli_atlas_web/components/map_components.ex:400
-#: lib/syli_atlas_web/components/map_components.ex:671
+#: lib/syli_atlas_web/components/map_components.ex:446
+#: lib/syli_atlas_web/components/map_components.ex:751
 #, elixir-autogen, elixir-format
 msgid "GDP in current dollars, %{year} (IMF)"
 msgstr "PIB en dollars courants, %{year} (FMI)"
 
-#: lib/syli_atlas_web/components/map_components.ex:254
-#: lib/syli_atlas_web/components/map_components.ex:434
+#: lib/syli_atlas_web/components/map_components.ex:294
+#: lib/syli_atlas_web/components/map_components.ex:480
 #, elixir-autogen, elixir-format
 msgid "GDP in current dollars, 2015 to 2030"
 msgstr "PIB en dollars courants, de 2015 à 2030"
 
-#: lib/syli_atlas_web/components/map_components.ex:281
-#: lib/syli_atlas_web/components/map_components.ex:461
+#: lib/syli_atlas_web/components/map_components.ex:327
+#: lib/syli_atlas_web/components/map_components.ex:507
+#: lib/syli_atlas_web/components/map_components.ex:705
 #: lib/syli_atlas_web/map_scale.ex:28
 #, elixir-autogen, elixir-format
 msgid "GDP per capita %{year}"
@@ -1034,13 +1035,13 @@ msgstr "PIB par habitant %{year}"
 msgid "GDP per capita, %{from} → %{to}"
 msgstr "PIB par habitant, %{from} → %{to}"
 
-#: lib/syli_atlas_web/components/map_components.ex:759
-#: lib/syli_atlas_web/components/map_components.ex:829
+#: lib/syli_atlas_web/components/map_components.ex:839
+#: lib/syli_atlas_web/components/map_components.ex:909
 #, elixir-autogen, elixir-format
 msgid "Go"
 msgstr "Voir"
 
-#: lib/syli_atlas_web/components/map_components.ex:818
+#: lib/syli_atlas_web/components/map_components.ex:898
 #, elixir-autogen, elixir-format
 msgid "Go to a country"
 msgstr "Aller à un pays"
@@ -1050,34 +1051,35 @@ msgstr "Aller à un pays"
 msgid "Highlight a region"
 msgstr "Mettre une région en avant"
 
-#: lib/syli_atlas_web/components/map_components.ex:244
-#: lib/syli_atlas_web/components/map_components.ex:424
+#: lib/syli_atlas_web/components/map_components.ex:245
+#: lib/syli_atlas_web/components/map_components.ex:470
 #: lib/syli_atlas_web/controllers/page_html.ex:57
 #, elixir-autogen, elixir-format
 msgid "In dollars since %{year}"
 msgstr "En dollars depuis %{year}"
 
-#: lib/syli_atlas_web/components/map_components.ex:291
-#: lib/syli_atlas_web/components/map_components.ex:471
+#: lib/syli_atlas_web/components/map_components.ex:337
+#: lib/syli_atlas_web/components/map_components.ex:517
+#: lib/syli_atlas_web/components/map_components.ex:707
 #: lib/syli_atlas_web/map_scale.ex:29
 #, elixir-autogen, elixir-format
 msgid "Inflation %{year}"
 msgstr "Inflation %{year}"
 
-#: lib/syli_atlas_web/components/map_components.ex:777
-#: lib/syli_atlas_web/components/map_components.ex:858
+#: lib/syli_atlas_web/components/map_components.ex:857
+#: lib/syli_atlas_web/components/map_components.ex:938
 #, elixir-autogen, elixir-format
 msgid "Islands are marked with a dot. Western Sahara has no separate IMF data. Source: IMF, World Economic Outlook."
 msgstr "Les îles sont marquées d'un point. Le Sahara occidental n'a pas de données distinctes au FMI. Source : FMI, Perspectives de l'économie mondiale."
 
-#: lib/syli_atlas_web/components/map_components.ex:713
-#: lib/syli_atlas_web/components/map_components.ex:797
+#: lib/syli_atlas_web/components/map_components.ex:793
+#: lib/syli_atlas_web/components/map_components.ex:877
 #, elixir-autogen, elixir-format
 msgid "Map indicator"
 msgstr "Indicateur de la carte"
 
-#: lib/syli_atlas_web/components/map_components.ex:741
-#: lib/syli_atlas_web/components/map_components.ex:838
+#: lib/syli_atlas_web/components/map_components.ex:821
+#: lib/syli_atlas_web/components/map_components.ex:918
 #, elixir-autogen, elixir-format
 msgid "Map of Africa: choose a country"
 msgstr "Carte de l'Afrique : choisir un pays"
@@ -1087,7 +1089,7 @@ msgstr "Carte de l'Afrique : choisir un pays"
 msgid "Map of the five regions of the African Union"
 msgstr "Carte des cinq régions de l'Union africaine"
 
-#: lib/syli_atlas_web/components/map_components.ex:373
+#: lib/syli_atlas_web/components/map_components.ex:419
 #, elixir-autogen, elixir-format
 msgid "Next country in the ranking"
 msgstr "Pays suivant du classement"
@@ -1114,13 +1116,14 @@ msgstr "Afrique du Nord, de l'Ouest, centrale, de l'Est et australe côte à cô
 msgid "North, West, Central, East and Southern Africa, as the African Union divides the continent. Totals computed by Syli Atlas from IMF figures, country by country."
 msgstr "Afrique du Nord, de l'Ouest, centrale, de l'Est et australe, selon le découpage de l'Union africaine. Totaux calculés par Syli Atlas à partir des chiffres du FMI, pays par pays."
 
-#: lib/syli_atlas_web/components/map_components.ex:356
+#: lib/syli_atlas_web/components/map_components.ex:402
 #, elixir-autogen, elixir-format
 msgid "Previous country in the ranking"
 msgstr "Pays précédent du classement"
 
-#: lib/syli_atlas_web/components/map_components.ex:296
-#: lib/syli_atlas_web/components/map_components.ex:476
+#: lib/syli_atlas_web/components/map_components.ex:342
+#: lib/syli_atlas_web/components/map_components.ex:522
+#: lib/syli_atlas_web/components/map_components.ex:708
 #: lib/syli_atlas_web/controllers/community_html/show.html.heex:49
 #: lib/syli_atlas_web/map_scale.ex:30
 #, elixir-autogen, elixir-format
@@ -1132,8 +1135,9 @@ msgstr "Dette publique %{year}"
 msgid "Real GDP, base 100 in %{year}"
 msgstr "PIB réel, base 100 en %{year}"
 
-#: lib/syli_atlas_web/components/map_components.ex:286
-#: lib/syli_atlas_web/components/map_components.ex:466
+#: lib/syli_atlas_web/components/map_components.ex:332
+#: lib/syli_atlas_web/components/map_components.ex:512
+#: lib/syli_atlas_web/components/map_components.ex:706
 #, elixir-autogen, elixir-format
 msgid "Real growth %{year}"
 msgstr "Croissance réelle %{year}"
@@ -1148,8 +1152,8 @@ msgstr "Régions d'Afrique, de 2015 à 2030"
 msgid "Regions, Africa and the world"
 msgstr "Régions, Afrique et monde"
 
-#: lib/syli_atlas_web/components/map_components.ex:321
-#: lib/syli_atlas_web/components/map_components.ex:500
+#: lib/syli_atlas_web/components/map_components.ex:367
+#: lib/syli_atlas_web/components/map_components.ex:546
 #, elixir-autogen, elixir-format
 msgid "See the full profile"
 msgstr "Voir la fiche complète"
@@ -1194,12 +1198,12 @@ msgstr "moins de %{v}"
 msgid "dashed: estimates and projections"
 msgstr "pointillés : estimations et projections"
 
-#: lib/syli_atlas_web/components/map_components.ex:550
+#: lib/syli_atlas_web/components/map_components.ex:596
 #, elixir-autogen, elixir-format
 msgid "economy no. %{rank} of %{of}"
 msgstr "économie n° %{rank} sur %{of}"
 
-#: lib/syli_atlas_web/components/map_components.ex:551
+#: lib/syli_atlas_web/components/map_components.ex:597
 #, elixir-autogen, elixir-format
 msgid "not ranked"
 msgstr "non classé"
@@ -2452,7 +2456,7 @@ msgstr "Pas de note d'agence"
 msgid "No country matches this search."
 msgstr "Aucun pays ne correspond à cette recherche."
 
-#: lib/syli_atlas_web/components/map_components.ex:542
+#: lib/syli_atlas_web/components/map_components.ex:588
 #, elixir-autogen, elixir-format
 msgid "None of the three main agencies rates this country"
 msgstr "Aucune des trois grandes agences ne note ce pays"
@@ -2515,8 +2519,8 @@ msgstr "Voir les %{count} pays notés"
 msgid "Sovereign credit ratings of African countries"
 msgstr "Notations souveraines des pays africains"
 
-#: lib/syli_atlas_web/components/map_components.ex:303
-#: lib/syli_atlas_web/components/map_components.ex:483
+#: lib/syli_atlas_web/components/map_components.ex:349
+#: lib/syli_atlas_web/components/map_components.ex:529
 #: lib/syli_atlas_web/components/rating_components.ex:230
 #: lib/syli_atlas_web/components/rating_components.ex:297
 #: lib/syli_atlas_web/og_image/specs.ex:371
@@ -4204,8 +4208,8 @@ msgid "Growth %{year}"
 msgstr "Croissance %{year}"
 
 #: lib/syli_atlas_web/components/layouts.ex:551
-#: lib/syli_atlas_web/components/map_components.ex:726
-#: lib/syli_atlas_web/components/map_components.ex:810
+#: lib/syli_atlas_web/components/map_components.ex:806
+#: lib/syli_atlas_web/components/map_components.ex:890
 #: lib/syli_atlas_web/components/national_components.ex:114
 #: lib/syli_atlas_web/controllers/national_html/index.html.heex:24
 #: lib/syli_atlas_web/controllers/national_html/index.html.heex:71
@@ -5441,8 +5445,8 @@ msgstr "Rechercher une notation"
 msgid "Site search"
 msgstr "Recherche dans le site"
 
-#: lib/syli_atlas_web/components/map_components.ex:780
-#: lib/syli_atlas_web/components/map_components.ex:861
+#: lib/syli_atlas_web/components/map_components.ex:860
+#: lib/syli_atlas_web/components/map_components.ex:941
 #, elixir-autogen, elixir-format
 msgid "The same figures as a table: ranking of the 54 countries"
 msgstr "Les mêmes chiffres en tableau : classement des 54 pays"
@@ -8909,8 +8913,8 @@ msgstr "Vérifié"
 msgid "Checked automatically"
 msgstr "Vérifié automatiquement"
 
-#: lib/syli_atlas_web/components/map_components.ex:771
-#: lib/syli_atlas_web/components/map_components.ex:852
+#: lib/syli_atlas_web/components/map_components.ex:851
+#: lib/syli_atlas_web/components/map_components.ex:932
 #, elixir-autogen, elixir-format
 msgid "Colours: official figure once checked, else the IMF's. Hatched dot: an official figure being checked, not counted yet."
 msgstr "Couleurs : chiffre officiel une fois vérifié, sinon celui du FMI. Point hachuré : un chiffre officiel en cours de vérification, pas encore compté."
@@ -8920,8 +8924,8 @@ msgstr "Couleurs : chiffre officiel une fois vérifié, sinon celui du FMI. Poin
 msgid "Composition: %{national} % national figures, %{pending} % being checked, the rest IMF figures as fallback"
 msgstr "Composition : %{national} % de chiffres nationaux, %{pending} % en cours de vérification, le reste en repli sur le FMI"
 
-#: lib/syli_atlas_web/components/map_components.ex:721
-#: lib/syli_atlas_web/components/map_components.ex:805
+#: lib/syli_atlas_web/components/map_components.ex:801
+#: lib/syli_atlas_web/components/map_components.ex:885
 #, elixir-autogen, elixir-format
 msgid "Figures used for the colours"
 msgstr "Chiffres utilisés pour les couleurs"
@@ -8936,8 +8940,8 @@ msgstr "Pour chaque pays, la somme prend son chiffre officiel de l'année une fo
 msgid "GDP %{year} by country: IMF figure, official figure, value used in the sum and its source"
 msgstr "PIB %{year} par pays : chiffre FMI, chiffre officiel, valeur retenue dans la somme et sa source"
 
-#: lib/syli_atlas_web/components/map_components.ex:399
-#: lib/syli_atlas_web/components/map_components.ex:670
+#: lib/syli_atlas_web/components/map_components.ex:445
+#: lib/syli_atlas_web/components/map_components.ex:750
 #, elixir-autogen, elixir-format
 msgid "GDP in current dollars, %{year} (official)"
 msgstr "PIB en dollars courants, %{year} (officiel)"
@@ -8952,8 +8956,8 @@ msgstr "Rebasage du PIB, %{date}"
 msgid "Gap or source to confirm: a person checks it before it counts in the African total and the rankings."
 msgstr "Écart ou source à confirmer : une personne vérifie avant qu'il compte dans la somme africaine et les classements."
 
-#: lib/syli_atlas_web/components/map_components.ex:774
-#: lib/syli_atlas_web/components/map_components.ex:855
+#: lib/syli_atlas_web/components/map_components.ex:854
+#: lib/syli_atlas_web/components/map_components.ex:935
 #, elixir-autogen, elixir-format
 msgid "Hatched dot: an official figure being checked (touch the country)."
 msgstr "Point hachuré : un chiffre officiel en cours de vérification (touchez le pays)."
@@ -8979,7 +8983,7 @@ msgid "IMF, World Economic Outlook; national figures: statistics institutes, cen
 msgstr "FMI, Perspectives de l'économie mondiale ; chiffres nationaux : instituts de statistique, banques centrales et ministères, chacun lié sur la fiche de son pays. Un exercice décalé compte pour l'année que lui donne le FMI. Conversion au taux officiel moyen de la période."
 
 #: lib/syli_atlas_web/components/layouts.ex:316
-#: lib/syli_atlas_web/components/map_components.ex:815
+#: lib/syli_atlas_web/components/map_components.ex:895
 #: lib/syli_atlas_web/controllers/national_controller.ex:54
 #: lib/syli_atlas_web/controllers/national_html/index.html.heex:6
 #, elixir-autogen, elixir-format
@@ -8991,8 +8995,8 @@ msgstr "Chiffres nationaux"
 msgid "National share of the sum"
 msgstr "Part nationale de la somme"
 
-#: lib/syli_atlas_web/components/map_components.ex:235
-#: lib/syli_atlas_web/components/map_components.ex:419
+#: lib/syli_atlas_web/components/map_components.ex:236
+#: lib/syli_atlas_web/components/map_components.ex:465
 #, elixir-autogen, elixir-format
 msgid "No national figure followed yet: the IMF figure is used in the African total."
 msgstr "Pas encore de chiffre national suivi : le chiffre du FMI est utilisé dans la somme africaine."
@@ -9002,7 +9006,7 @@ msgstr "Pas encore de chiffre national suivi : le chiffre du FMI est utilisé da
 msgid "No source: outside both totals"
 msgstr "Aucune source : hors des deux totaux"
 
-#: lib/syli_atlas_web/components/map_components.ex:731
+#: lib/syli_atlas_web/components/map_components.ex:811
 #: lib/syli_atlas_web/components/national_components.ex:120
 #: lib/syli_atlas_web/controllers/national_html/index.html.heex:72
 #: lib/syli_atlas_web/controllers/national_html/index.html.heex:90
@@ -9012,7 +9016,7 @@ msgid "Official"
 msgstr "Officiel"
 
 #: lib/syli_atlas_web/components/map_components.ex:219
-#: lib/syli_atlas_web/components/map_components.ex:404
+#: lib/syli_atlas_web/components/map_components.ex:450
 #, elixir-autogen, elixir-format
 msgid "Official GDP"
 msgstr "PIB officiel"
@@ -9113,7 +9117,8 @@ msgstr "Md"
 msgid "Official figures next to the IMF's · Africa's GDP, country by country"
 msgstr "Les chiffres officiels à côté de ceux du FMI · le PIB africain pays par pays"
 
-#: lib/syli_atlas_web/components/map_components.ex:515
+#: lib/syli_atlas_web/components/map_components.ex:561
+#: lib/syli_atlas_web/components/map_components.ex:703
 #: lib/syli_atlas_web/components/national_components.ex:224
 #, elixir-autogen, elixir-format
 msgid "GDP %{year} · IMF"
@@ -9173,7 +9178,7 @@ msgstr "PIB de l'Afrique %{year} · FMI"
 msgid "GDP, growth, debt and inflation of every African country, from 2015 to the 2030 projections. The country's official figure is shown beside the IMF's."
 msgstr "PIB, croissance, dette et inflation de chaque pays africain, de 2015 aux projections 2030. Le chiffre officiel du pays s'affiche à côté de celui du FMI."
 
-#: lib/syli_atlas_web/components/map_components.ex:748
+#: lib/syli_atlas_web/components/map_components.ex:828
 #, elixir-autogen, elixir-format
 msgid "Or choose a country"
 msgstr "Ou choisissez un pays"
@@ -9183,7 +9188,8 @@ msgstr "Ou choisissez un pays"
 msgid "Touch a country, see its economy."
 msgstr "Touchez un pays, voyez son économie."
 
-#: lib/syli_atlas_web/components/map_components.ex:514
+#: lib/syli_atlas_web/components/map_components.ex:560
+#: lib/syli_atlas_web/components/map_components.ex:704
 #, elixir-autogen, elixir-format
 msgid "GDP %{year} · official"
 msgstr "PIB %{year} · officiel"
@@ -9192,3 +9198,38 @@ msgstr "PIB %{year} · officiel"
 #, elixir-autogen, elixir-format
 msgid "All of Africa"
 msgstr "Toute l'Afrique"
+
+#: lib/syli_atlas_web/components/map_components.ex:709
+#, elixir-autogen, elixir-format
+msgid "IMF projection"
+msgstr "projection FMI"
+
+#: lib/syli_atlas_web/components/map_components.ex:275
+#, elixir-autogen, elixir-format
+msgid "Next year"
+msgstr "Année suivante"
+
+#: lib/syli_atlas_web/components/map_components.ex:710
+#, elixir-autogen, elixir-format
+msgid "No official figure for %{year}."
+msgstr "Pas de chiffre officiel pour %{year}."
+
+#: lib/syli_atlas_web/components/map_components.ex:256
+#, elixir-autogen, elixir-format
+msgid "Previous year"
+msgstr "Année précédente"
+
+#: lib/syli_atlas_web/components/map_components.ex:323
+#, elixir-autogen, elixir-format
+msgid "Touch the curve, or use the arrows, to see another year in the panel."
+msgstr "Touchez la courbe, ou utilisez les flèches, pour voir une autre année dans le panneau."
+
+#: lib/syli_atlas_web/components/map_components.ex:712
+#, elixir-autogen, elixir-format
+msgid "Year shown in the panel"
+msgstr "Année affichée dans le panneau"
+
+#: lib/syli_atlas_web/components/map_components.ex:711
+#, elixir-autogen, elixir-format
+msgid "Year shown: %{year}"
+msgstr "Année affichée : %{year}"

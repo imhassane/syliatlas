@@ -203,6 +203,82 @@ defmodule SyliAtlasWeb.MapComponents do
             ><path d="M6 6l12 12M18 6 6 18"></path></svg>
           </button>
         </div>
+        <div class="map-panel-years stack gap-1">
+          <div class="spark-years js-only" data-map-years>
+            <button
+              type="button"
+              class="icon-btn"
+              data-map-year-step="-1"
+              aria-label={gettext("Previous year")}
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                aria-hidden="true"
+              ><path d="M15 6l-6 6 6 6"></path></svg>
+            </button>
+            <span class="spark-year num" data-field="year">{@to}</span>
+            <span class="small muted" data-field="year-note"></span>
+            <button
+              type="button"
+              class="icon-btn"
+              data-map-year-step="1"
+              aria-label={gettext("Next year")}
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                aria-hidden="true"
+              ><path d="M9 6l6 6-6 6"></path></svg>
+            </button>
+          </div>
+          <div class="spark-reader" data-map-spark>
+            <svg
+              viewBox="0 0 260 56"
+              class="spark"
+              role="img"
+              aria-label={gettext("GDP in current dollars, 2015 to 2030")}
+            >
+              <line class="spark-mark" data-field="spark-mark" x1="0" x2="0" y1="0" y2="56" hidden>
+              </line>
+              <line
+                class="spark-base"
+                data-field="spark-base"
+                x1={@spark.base_x}
+                x2={@spark.base_x}
+                y1="0"
+                y2="56"
+              >
+              </line>
+              <g class="draw" data-field="spark-line">
+                <path class="spark-past" data-field="spark-past" d={@spark.past}></path>
+                <path class="spark-future" data-field="spark-future" d={@spark.future}></path>
+              </g>
+              <circle
+                :if={@spark.dot}
+                class="spark-dot"
+                data-field="spark-dot"
+                cx={elem(@spark.dot, 0)}
+                cy={elem(@spark.dot, 1)}
+                r="4.5"
+              >
+              </circle>
+            </svg>
+          </div>
+          <p class="src js-only">
+            {gettext("Touch the curve, or use the arrows, to see another year in the panel.")}
+          </p>
+        </div>
         <span class="pill p-info map-panel-indicator" data-field="indicator">
           {MapScale.title(@indicator, @from, @to)} : {MapScale.value_text(@indicator, @c, @locale)}
         </span>
@@ -231,6 +307,7 @@ defmodule SyliAtlasWeb.MapComponents do
             >
               {@national && @national.status}
             </span>
+            <span class="small muted" data-field="national-year-none" hidden></span>
             <span class="small muted" data-field="national-none" hidden={@national != nil}>
               {gettext(
                 "No national figure followed yet: the IMF figure is used in the African total."
@@ -247,53 +324,24 @@ defmodule SyliAtlasWeb.MapComponents do
               </dd>
             </div>
           </dl>
-          <svg
-            viewBox="0 0 260 56"
-            class="spark"
-            role="img"
-            aria-label={gettext("GDP in current dollars, 2015 to 2030")}
-          >
-            <line
-              class="spark-base"
-              data-field="spark-base"
-              x1={@spark.base_x}
-              x2={@spark.base_x}
-              y1="0"
-              y2="56"
-            >
-            </line>
-            <g class="draw" data-field="spark-line">
-              <path class="spark-past" data-field="spark-past" d={@spark.past}></path>
-              <path class="spark-future" data-field="spark-future" d={@spark.future}></path>
-            </g>
-            <circle
-              :if={@spark.dot}
-              class="spark-dot"
-              data-field="spark-dot"
-              cx={elem(@spark.dot, 0)}
-              cy={elem(@spark.dot, 1)}
-              r="4.5"
-            >
-            </circle>
-          </svg>
           <dl class="kv">
             <div>
-              <dt>{gettext("GDP per capita %{year}", year: @to)}</dt><dd data-field="gdppc">
+              <dt data-field="gdppc-label">{gettext("GDP per capita %{year}", year: @to)}</dt><dd data-field="gdppc">
                 {Format.value(@c["gdppc"], "gdp_per_capita_usd", @locale)}
               </dd>
             </div>
             <div>
-              <dt>{gettext("Real growth %{year}", year: @to)}</dt><dd data-field="growth">
+              <dt data-field="growth-label">{gettext("Real growth %{year}", year: @to)}</dt><dd data-field="growth">
                 {Format.value(@c["growth"], "real_gdp_growth", @locale)}
               </dd>
             </div>
             <div>
-              <dt>{gettext("Inflation %{year}", year: @to)}</dt><dd data-field="inflation">
+              <dt data-field="inflation-label">{gettext("Inflation %{year}", year: @to)}</dt><dd data-field="inflation">
                 {Format.value(@c["inflation"], "inflation", @locale)}
               </dd>
             </div>
             <div>
-              <dt>{gettext("Public debt %{year}", year: @to)}</dt><dd data-field="debt">
+              <dt data-field="debt-label">{gettext("Public debt %{year}", year: @to)}</dt><dd data-field="debt">
                 {Format.value(@c["debt"], "public_debt_pct_gdp", @locale)}
               </dd>
             </div>
@@ -584,6 +632,19 @@ defmodule SyliAtlasWeb.MapComponents do
     end
   end
 
+  @doc "Every official GDP of a country, by year (the panel's other years)."
+  def national_years(nil, _code, _locale), do: %{}
+
+  def national_years(doc, code, locale) do
+    entry = SyliAtlas.National.for_country(doc, code)
+
+    for {_y, f} <- get_in(entry || %{}, ["figures", "gdp_usd_bn"]) || %{},
+        f["status"] in SyliAtlas.National.Figure.public_statuses(),
+        into: %{} do
+      {to_string(f["year"]), national_text(doc, code, locale, f["year"])}
+    end
+  end
+
   @doc "Codes of the countries with an official figure being checked."
   def pending_codes(nil), do: []
 
@@ -633,6 +694,26 @@ defmodule SyliAtlasWeb.MapComponents do
       from: from,
       to: to,
       locale: locale,
+      # Another year in the panel (map.js formats with these, as Format does).
+      fmt: %{
+        group:
+          if(locale in ["fr", "pt"], do: "\u202F", else: if(locale == "es", do: ".", else: ",")),
+        dec: Format.decimal_sep(locale),
+        na: Format.value(nil, "inflation", locale),
+        bn: Format.billions(locale)
+      },
+      labels: %{
+        gdp_imf: gettext("GDP %{year} · IMF", year: "%Y"),
+        gdp_official: gettext("GDP %{year} · official", year: "%Y"),
+        gdppc: gettext("GDP per capita %{year}", year: "%Y"),
+        growth: gettext("Real growth %{year}", year: "%Y"),
+        inflation: gettext("Inflation %{year}", year: "%Y"),
+        debt: gettext("Public debt %{year}", year: "%Y"),
+        projection: gettext("IMF projection"),
+        no_official: gettext("No official figure for %{year}.", year: "%Y"),
+        year: gettext("Year shown: %{year}", year: "%Y"),
+        slider: gettext("Year shown in the panel")
+      },
       order: Enum.map(countries, & &1["code"]),
       unit: Format.billions(locale),
       indicators:
@@ -664,6 +745,8 @@ defmodule SyliAtlasWeb.MapComponents do
              },
              rating: rating_text(SyliAtlas.Ratings.for_country(ratings, c["code"]), rated),
              national: national_text(national, c["code"], locale, to),
+             nationals: national_years(national, c["code"], locale),
+             more: c["more"] || %{},
              gdp_short: gdp_short(c, to),
              gdp_label:
                if(c["gdp_source"] == "national",
