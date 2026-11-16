@@ -263,7 +263,26 @@ defmodule SyliAtlasWeb.PageController do
                 nomenclature: s["nomenclature"]
               )
           }
-        ]
+        ] ++
+          if SyliAtlas.Trade.document()["stages_source"] do
+            [
+              %{
+                id: "bec",
+                name: gettext("United Nations, HS 2022 to BEC rev. 5 correspondence"),
+                url: "https://unstats.un.org/unsd/classifications/Econ",
+                what:
+                  gettext(
+                    "Stage of processing of each product (primary, intermediate, final), applied to BACI; gold, precious stones and unwrought metals are shown apart as barely processed raw materials"
+                  ),
+                terms: gettext("Public classification of the United Nations Statistics Division"),
+                terms_url: "https://unstats.un.org/unsd/classifications/Econ",
+                updated: gettext("At each revision of the Harmonized System"),
+                online: "BEC rev. 5"
+              }
+            ]
+          else
+            []
+          end
     end
   end
 
@@ -274,7 +293,7 @@ defmodule SyliAtlasWeb.PageController do
           {"ids", gettext("External debt by creditor, including China, and its service")},
           {"wdi",
            gettext(
-             "Investment, remittances and aid inflows, value added and jobs by sector (ILO estimates), poverty, electricity, internet, accounts"
+             "Investment, remittances and aid inflows, value added and jobs by sector (ILO estimates), poverty, electricity, internet, accounts; age structure of the population (UN), schooling (UNESCO), health (UN IGME, WHO, WHO/UNICEF JMP), services exports, tourism receipts, logistics performance"
            )}
         ],
         s = sources[id] do

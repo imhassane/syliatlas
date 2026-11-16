@@ -30,10 +30,18 @@ defmodule Mix.Tasks.WorldBank.Refresh do
 
     years = Enum.to_list(SyliAtlas.WorldBank.first_year()..SyliAtlas.WorldBank.last_year())
 
+    # Eight series at a time: the API takes up to a minute per request.
+    fetched =
+      SyliAtlas.WorldBank.series()
+      |> Task.async_stream(
+        fn {key, code, db, _origin} -> {key, code, db, fetch(code, db, countries, years)} end,
+        max_concurrency: 8,
+        timeout: :infinity
+      )
+      |> Enum.map(fn {:ok, result} -> result end)
+
     {values, updated} =
-      Enum.reduce(SyliAtlas.WorldBank.series(), {%{}, %{}}, fn {key, code, db, _origin},
-                                                               {acc, updated} ->
-        {rows, last_updated} = fetch(code, db, countries, years)
+      Enum.reduce(fetched, {%{}, %{}}, fn {key, code, db, {rows, last_updated}}, {acc, updated} ->
         Mix.shell().info("#{key} (#{code}): #{length(rows)} values, updated #{last_updated}")
         name = if match?({:ids, _}, db) or db == :ids, do: "ids", else: "wdi"
 

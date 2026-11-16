@@ -76,7 +76,8 @@ defmodule SyliAtlasWeb.SitemapController do
 
     country_lines =
       for c <- countries do
-        "- [#{c.name_en}](#{Seo.url(Paths.area("en", c))}): GDP, growth, inflation, debt, trade, society, rating · " <>
+        "- [#{c.name_en}](#{Seo.url(Paths.area("en", c))}): GDP, growth, inflation, debt, society, rating · " <>
+          "[trade: products, buyers, Africa](#{Seo.url(Paths.area_tab("en", c, :trade))}) · " <>
           "[FR](#{Seo.url(Paths.area("fr", c))}) · [JSON](#{Seo.url("/api/v1/areas/" <> c.code)})"
       end
 
@@ -98,6 +99,12 @@ defmodule SyliAtlasWeb.SitemapController do
 
     IMF edition: #{(edition && edition.label) || "n/a"}. Country profiles have one page per theme:
     overview, economy, finances and debt, trade, society, markets. Information, not investment advice.
+
+    Trade pages (CEPII BACI, Licence Ouverte Etalab 2.0): main products by HS 4-digit heading and who buys
+    each, share of raw goods (UN BEC classification), exports since 1995, trade with each African country,
+    and products bought outside Africa that other African countries already export (Syli Atlas calculation).
+    Society pages (World Bank WDI, CC BY 4.0, republishing UN, UNESCO, WHO, ILO): population, age pyramid,
+    schooling, health, poverty, jobs.
 
     ## Main pages
 
@@ -169,7 +176,21 @@ defmodule SyliAtlasWeb.SitemapController do
             end)
           end
 
-        ["## ", area.name_en, "\n\n", Enum.join(lines, "\n"), "\n\n"]
+        # The Trade tab's lead too: products, buyers, raw exports (CEPII, BACI).
+        trade_lines =
+          for locale <- ["en", "fr"],
+              area.kind == "country",
+              entry = SyliAtlas.Trade.for_country(area.code),
+              entry != nil do
+            Gettext.with_locale(SyliAtlasWeb.Gettext, locale, fn ->
+              name = SyliAtlas.Geo.Area.name(area, locale)
+
+              "#{SyliAtlasWeb.TradeComponents.lead(entry, SyliAtlas.Trade.document(), name, locale)} (CEPII, BACI) " <>
+                Seo.url(Paths.area_tab(locale, area, :trade))
+            end)
+          end
+
+        ["## ", area.name_en, "\n\n", Enum.join(lines ++ trade_lines, "\n"), "\n\n"]
       end
 
     questions =

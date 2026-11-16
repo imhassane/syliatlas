@@ -107,6 +107,67 @@ defmodule SyliAtlasWeb.EconomySectionsTest do
     assert has?(doc("/fr/methode"), "#source-baci")
   end
 
+  test "detailed trade blocks: products and buyers, raw or processed, history, Africa, potential" do
+    doc = doc("/fr/pays/malawi/commerce")
+
+    for selector <-
+          ~w(#produits #top-products #product-buyers #transformation #stages #historique #exports-history #afrique #africa-partners-table #potentiel-africain #african-potential-table #services-logistique #questions-onglet) do
+      assert has?(doc, selector), "missing #{selector}"
+    end
+
+    text = LazyHTML.text(doc)
+    assert text =~ "Tabac brut"
+    assert text =~ "Belgique"
+    assert text =~ "BEC"
+    assert text =~ "calcul Syli Atlas"
+
+    # African partners link to their own trade page.
+    links = doc |> LazyHTML.query("#africa-partners-table a") |> LazyHTML.attribute("href")
+    assert "/fr/pays/afrique-du-sud/commerce" in links
+  end
+
+  test "trade tab: title names the first product, FAQPage and a full Dataset" do
+    html = build_conn() |> get("/en/countries/malawi/trade") |> html_response(200)
+    doc = LazyHTML.from_document(html)
+    title = doc |> LazyHTML.query("title") |> LazyHTML.text()
+    assert title =~ "Exports of Malawi in 2024: unmanufactured tobacco"
+
+    ld =
+      doc
+      |> LazyHTML.query(~s(script[type="application/ld+json"]))
+      |> Enum.map(&LazyHTML.text/1)
+      |> Enum.flat_map(&List.wrap(Jason.decode!(&1)))
+
+    types = Enum.map(ld, & &1["@type"])
+    assert "FAQPage" in types
+    dataset = Enum.find(ld, &(&1["@type"] == "Dataset"))
+    assert dataset["temporalCoverage"] == "1995/2024"
+    assert length(dataset["variableMeasured"]) >= 5
+
+    faq = Enum.find(ld, &(&1["@type"] == "FAQPage"))
+    assert Enum.any?(faq["mainEntity"], &(&1["name"] =~ "What does Malawi export?"))
+  end
+
+  test "society tab: population, age pyramid, education and health, with their bodies" do
+    doc = doc("/fr/pays/malawi/societe")
+
+    for selector <-
+          ~w(#population [data-kpi=under-15] #age-pyramid #education-sante #education-health-table #questions-onglet) do
+      assert has?(doc, selector), "missing #{selector}"
+    end
+
+    text = LazyHTML.text(doc)
+    assert text =~ "UNESCO"
+    assert text =~ "Nations unies"
+  end
+
+  test "llms.txt points to the trade pages, llms-full.txt carries their lead" do
+    txt = build_conn() |> get("/llms.txt") |> response(200)
+    assert txt =~ "/en/countries/malawi/trade"
+    full = build_conn() |> get("/llms-full.txt") |> response(200)
+    assert full =~ "(CEPII, BACI) http://localhost:4000/fr/pays/malawi/commerce"
+  end
+
   test "IMF risk of debt distress: on the country page and the debt page" do
     doc = doc("/fr/pays/ethiopie/finances-et-dette")
     assert has?(doc, "#debt-distress")
