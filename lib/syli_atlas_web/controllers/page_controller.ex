@@ -68,7 +68,10 @@ defmodule SyliAtlasWeb.PageController do
           national: national,
           map_source: map_source,
           edition: home["edition"],
-          last_checked_at: home["last_checked_at"]
+          last_checked_at: home["last_checked_at"],
+          trade_africa: SyliAtlas.AfricaTrade.africa(),
+          trade_year: SyliAtlas.AfricaTrade.document()["year"],
+          trade_version: get_in(SyliAtlas.AfricaTrade.document(), ["source", "version"])
         )
 
       _ ->
