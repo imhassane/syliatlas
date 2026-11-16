@@ -107,6 +107,26 @@ defmodule SyliAtlasWeb.Export do
     "﻿" <> Enum.map_join(lines, "\r\n", &csv_line(&1, sep)) <> "\r\n"
   end
 
+  @doc """
+  A CSV document from lines of context (`{label, value}`, written as
+  `# label : value`), a header and rows of cells (strings, numbers or nil),
+  with its byte-order mark. Numbers take the separator's decimal mark.
+  """
+  def csv_document(about, header, rows, sep) do
+    decimal = if sep == ";", do: ",", else: "."
+    about = Enum.map(about, fn {label, value} -> ["# #{label} : #{value}"] end)
+
+    rows =
+      Enum.map(rows, fn cells ->
+        Enum.map(cells, fn
+          n when is_number(n) -> csv_number(n, decimal)
+          other -> other
+        end)
+      end)
+
+    "\uFEFF" <> Enum.map_join(about ++ [header | rows], "\r\n", &csv_line(&1, sep)) <> "\r\n"
+  end
+
   defp csv_line(cells, sep), do: Enum.map_join(cells, sep, &csv_cell(&1, sep))
 
   defp csv_cell(nil, _sep), do: ""

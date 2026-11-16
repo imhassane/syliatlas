@@ -79,7 +79,13 @@ defmodule SyliAtlasWeb.TradeDetailComponents do
       <.card pad class="stack gap-3" id="top-products">
         <ul class="share-list">
           <li :for={p <- @products}>
-            <span>{Trade.heading(@doc, p["code"], @locale)}</span>
+            <a
+              :if={page = SyliAtlas.AfricaTrade.product_of_heading(p["code"])}
+              href={SyliAtlasWeb.TradeTopics.product_path(@locale, page)}
+            >{Trade.heading(@doc, p["code"], @locale)}</a>
+            <span :if={!SyliAtlas.AfricaTrade.product_of_heading(p["code"])}>
+              {Trade.heading(@doc, p["code"], @locale)}
+            </span>
             <span class="share-track">
               <span style={"width: #{width(p["share"], @max)}%"}></span>
             </span>

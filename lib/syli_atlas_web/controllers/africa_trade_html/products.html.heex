@@ -1,0 +1,47 @@
+<Layouts.public locale={@locale} current={:trade} alternates={@alternates}>
+  <section class="section-alt market-hero" id="products-hero">
+    <div class="wrap market-hero-wrap">
+      <nav aria-label={gettext("Breadcrumb")}>
+        <ol class="crumbs">
+          <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+          <li><a href={TradeTopics.africa_path(@locale)}>{gettext("Africa's trade")}</a></li>
+          <li aria-current="page">{gettext("Products")}</li>
+        </ol>
+      </nav>
+      <div class="market-hero-title">
+        <h1 class="market-h1">{gettext("Africa's products")}</h1>
+        <p class="muted market-hero-lead" id="products-answer" data-answer>{@answer}</p>
+      </div>
+      <p class="src">{source(@doc)}</p>
+    </div>
+  </section>
+
+  <.section id="produits">
+    <div :for={{group, cards} <- @groups} class="stack gap-3" id={"groupe-#{group}"}>
+      <h2 class="h2">{TradeTopics.group_label(group)}</h2>
+      <ul class="product-grid">
+        <li :for={c <- cards}>
+          <a href={c.path} class="card product-card" id={"product-card-" <> c.id}>
+            <span class="product-card-name">{c.name}</span>
+            <b class="num product-card-value">{usd(c.value, @locale)}</b>
+            <span class="small muted">
+              {if c.kind == :export,
+                do:
+                  gettext("exported · %{share} of the world", share: pct(c.world_share, @locale)),
+                else: gettext("bought by Africa")}
+            </span>
+            <span :if={c.lead} class="small product-card-lead">
+              <.any_flag code={c.lead} />
+              <span>
+                {if c.kind == :export,
+                  do: gettext("first exporter:"),
+                  else: gettext("first buyer:")}
+                {name(@countries, c.lead, @locale)} · {pct(c.lead_share, @locale)}
+              </span>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </.section>
+</Layouts.public>

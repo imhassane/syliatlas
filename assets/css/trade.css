@@ -1,0 +1,112 @@
+/* Trade pages that look beyond one country (TradeRankingController,
+   AfricaTradeController): the three trade rankings, Africa's trade, the
+   product pages. Same frame as the stock exchange pages (market.css). */
+
+/* The three rankings, one link each: a segmented control. */
+.trade-switch { display: inline-flex; flex-wrap: wrap; gap: 4px; padding: 3px; border-radius: 10px; background: var(--muted); align-self: flex-start; max-width: 100%; }
+.trade-switch a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 8px; color: var(--ink-muted); font-size: 14px; font-weight: 500; text-decoration: none; }
+.trade-switch a:hover { color: var(--ink); }
+.trade-switch a[aria-current="page"] { background: var(--card); color: var(--ink); box-shadow: 0 1px 2px rgba(11, 26, 51, .12); }
+.trade-switch a:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.trade-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.trade-tools .btn svg { flex: none; }
+
+/* Tables of countries: rank, flag and name, a bar with its value. */
+.trade-rank .trade-rank-n { width: 3.5rem; color: var(--ink-subtle); font-variant-numeric: tabular-nums; }
+.trade-country { display: inline-flex; align-items: center; gap: 10px; min-width: 0; }
+.trade-country a { font-weight: 600; }
+.trade-bar { display: grid; grid-template-columns: minmax(3rem, 1fr) 4.2rem; align-items: center; gap: 10px; min-width: 9rem; }
+.trade-country a { overflow-wrap: anywhere; }
+.trade-bar b { text-align: end; }
+.flag-none { background: var(--muted); }
+
+/* Two columns: a main block and a side one; one column on narrow screens. */
+.trade-cols { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.trade-main, .trade-side { min-width: 0; }
+.trade-main .card-head, .market-table > .card-head { padding: 22px 24px 8px; flex-direction: column; gap: 4px; }
+.trade-main .card-foot, .market-table > .card-foot { padding: 12px 24px 18px; }
+.trade-side .link-list a { padding: 0; }
+@media (max-width: 60rem) {
+  .trade-cols { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Share bars with a flag; the African countries of a world list in bold. */
+.share-list li { grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 4.5rem; }
+.share-label { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.share-label > a, .share-label > span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.share-mark .share-label, .share-mark b { font-weight: 700; color: var(--ink); }
+.share-mark .share-track > span { background: var(--c2); }
+@media (max-width: 30rem) {
+  .share-list li { grid-template-columns: minmax(0, 1fr) 4.2rem; row-gap: 4px; }
+  .share-list li .share-track { grid-column: 1 / -1; grid-row: 2; }
+}
+
+/* A product's processing chain: Africa's share of the world at each step. */
+.chain { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 20px 16px; }
+.chain-step { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+.chain-n { position: absolute; inset-inline-start: 0; top: 0; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--muted); color: var(--ink-muted); font-size: 12px; font-weight: 600; }
+.chain-bar { display: flex; align-items: flex-end; justify-content: center; width: 100%; height: 160px; border-bottom: 1px solid var(--border-strong); }
+.chain-bar > span { display: block; width: 56px; height: var(--w); min-height: 2px; border-radius: 6px 6px 0 0; background: var(--c1); }
+.chain-step:first-child .chain-bar > span { background: var(--c2); }
+.chain-share { font-size: 24px; font-weight: 400; letter-spacing: -.02em; }
+.chain-label { font-size: 14px; font-weight: 600; line-height: 1.3; }
+.chain-value, .chain-who { line-height: 1.35; }
+@media (max-width: 40rem) {
+  .chain { grid-template-columns: minmax(0, 1fr); gap: 10px; }
+  .chain-step { display: grid; grid-template-columns: 24px minmax(0, 1fr) 4.5rem; grid-template-areas: "n label share" "n bar bar" ". value value" ". who who"; align-items: center; gap: 4px 10px; text-align: start; }
+  .chain-n { position: static; grid-area: n; }
+  .chain-label { grid-area: label; }
+  .chain-share { grid-area: share; font-size: 18px; text-align: end; }
+  .chain-bar { grid-area: bar; height: 10px; border: 0; border-radius: 999px; background: var(--muted); justify-content: flex-start; align-items: stretch; overflow: hidden; }
+  .chain-bar > span { width: var(--w); height: 100%; min-width: 2px; border-radius: 999px; }
+  .chain-value { grid-area: value; }
+  .chain-who { grid-area: who; }
+}
+
+/* Cards of products. */
+.product-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr)); gap: 16px; }
+.product-card { display: flex; flex-direction: column; gap: 6px; height: 100%; padding: 18px 20px; color: var(--ink); text-decoration: none; transition: border-color .15s, box-shadow .15s; }
+.product-card:hover { border-color: var(--accent); }
+.product-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.product-card-name { font-size: 17px; font-weight: 600; }
+.product-card-value { font-size: 24px; font-weight: 400; letter-spacing: -.02em; }
+.product-card-lead { display: inline-flex; align-items: center; gap: 8px; margin-top: auto; padding-top: 8px; color: var(--ink-muted); }
+
+/* Two series in a chart: exports, a line; imports, dashes. */
+.chart-legend { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0; padding: 0; list-style: none; font-size: 13px; color: var(--ink-muted); }
+.chart-legend li { display: inline-flex; align-items: center; gap: 8px; }
+.legend-swatch { display: inline-block; width: 22px; height: 0; border-top: 3px solid var(--c1); }
+.legend-imports .legend-swatch { border-top: 3px dashed var(--c2); }
+.chart path.series-exports { stroke: var(--c1); stroke-width: 3; }
+.chart path.series-imports { stroke: var(--c2); stroke-width: 2.5; stroke-dasharray: 6 4; }
+
+/* Tables of countries on a phone: one compact block per country (rank,
+   flag and name, the main value on the same line; the rest below, small)
+   instead of a card of labelled lines: 54 countries stay readable. */
+@container (width < 34rem) {
+  .trade-rank tbody tr { display: grid; grid-template-columns: 2rem minmax(0, 1fr) auto; align-items: center; gap: 2px 10px; padding: 12px 16px; }
+  .trade-rank tbody th, .trade-rank tbody td { padding: 0; }
+  .trade-rank tbody .trade-rank-n { grid-column: 1; grid-row: 1 / span 3; align-self: start; width: auto; padding-top: 2px; font-size: 13px; }
+  .trade-rank tbody .trade-rank-n::before { display: none; }
+  .trade-rank tbody th[scope="row"] { grid-column: 2; grid-row: 1; padding: 0; }
+  .trade-rank tbody td:nth-child(3) { grid-column: 3; grid-row: 1; justify-content: flex-end; font-weight: 600; }
+  .trade-rank tbody td:nth-child(3)::before { display: none; }
+  .trade-rank tbody td:nth-child(n+4) { display: block; grid-column: 2 / 4; font-size: 13px; color: var(--ink-muted); text-align: start; }
+  .trade-rank tbody td:nth-child(n+4)::before { display: inline; margin-inline-end: 4px; font-size: 13px; content: attr(data-label) " :"; }
+  :lang(en) .trade-rank tbody td:nth-child(n+4)::before, :lang(es) .trade-rank tbody td:nth-child(n+4)::before, :lang(pt) .trade-rank tbody td:nth-child(n+4)::before, :lang(hi) .trade-rank tbody td:nth-child(n+4)::before, :lang(zh) .trade-rank tbody td:nth-child(n+4)::before, :lang(ar) .trade-rank tbody td:nth-child(n+4)::before { content: attr(data-label) ":"; }
+
+  /* The rankings: the bar and its value under the name, all the width. */
+  .trade-rank-bars tbody td:nth-child(3) { grid-column: 2 / 4; grid-row: 2; font-weight: 400; }
+  .trade-rank-bars .trade-bar { width: 100%; min-width: 0; grid-template-columns: minmax(0, 1fr) 4.5rem; }
+  .trade-rank-bars tbody td:nth-child(5) { display: flex; grid-column: 3; grid-row: 1; justify-content: flex-end; }
+  .trade-rank-bars tbody td:nth-child(5)::before { display: none; }
+  .trade-rank-bars tbody td:nth-child(4) { grid-row: 3; }
+}
+
+/* Products of Africa's page: three short columns that stay a table. */
+.trade-products th[scope="row"] { font-weight: 500; white-space: normal; }
+.trade-products td, .trade-products thead th:not(:first-child) { white-space: nowrap; }
+@media (max-width: 30rem) {
+  .trade-products th, .trade-products td { padding-inline: 8px; font-size: 14px; }
+}

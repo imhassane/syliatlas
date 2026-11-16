@@ -1,0 +1,247 @@
+<Layouts.public locale={@locale} current={:ranking} alternates={@alternates}>
+  <section class="section-alt market-hero" id="trade-ranking-hero">
+    <div class="wrap market-hero-wrap">
+      <nav aria-label={gettext("Breadcrumb")}>
+        <ol class="crumbs">
+          <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+          <li><a href={Paths.ranking_main(@locale)}>{gettext("Ranking")}</a></li>
+          <li aria-current="page">{TradeTopics.ranking_label(@id)}</li>
+        </ol>
+      </nav>
+      <nav class="trade-switch" aria-label={gettext("Trade rankings")}>
+        <a
+          :for={other <- TradeTopics.rankings()}
+          href={TradeTopics.ranking_path(@locale, other)}
+          aria-current={other == @id && "page"}
+        >{TradeTopics.ranking_label(other)}</a>
+      </nav>
+      <div class="market-hero-row">
+        <div class="market-hero-title">
+          <h1 class="market-h1">{question(@id)}</h1>
+          <p class="muted market-hero-lead" id="ranking-answer" data-answer>{@answer}</p>
+        </div>
+        <dl class="market-summary" id="ranking-summary">
+          <div>
+            <dt>{gettext("Median of the 54")}</dt>
+            <dd class="num">{pct(@median, @locale)}</dd>
+          </div>
+          <div>
+            <dt>{gettext("Above 50 %")}</dt>
+            <dd class="num">
+              {Enum.count(@all, &(is_number(&1.value) and &1.value >= 50))}
+            </dd>
+          </div>
+          <div>
+            <dt>{gettext("Year")}</dt>
+            <dd class="num">{@doc["year"]}</dd>
+          </div>
+        </dl>
+      </div>
+      <p class="src">
+        {gettext("Source: CEPII, BACI (version %{version}), Licence Ouverte Etalab 2.0",
+          version: @doc["source"]["version"]
+        )} · {gettext("shares: Syli Atlas calculation")}
+      </p>
+    </div>
+  </section>
+
+  <.section id="ranking-table" class="market-list">
+    <div class="card market-table" id="trade-ranking">
+      <div class="market-filters">
+        <div class="market-toolbar">
+          <div class="market-toolbar-title">
+            <h2 class="h2">{@title}</h2>
+            <span
+              class="small muted"
+              id="market-count"
+              data-all={ngettext("%{count} country", "%{count} countries", length(@all))}
+              data-one={count_template(1)}
+              data-many={count_template(2)}
+              aria-live="polite"
+            >
+              {count_text(@rows, @q)}
+            </span>
+          </div>
+          <div class="trade-tools">
+            <form
+              class="market-search"
+              action={TradeTopics.ranking_path(@locale, @id) <> "#ranking-table"}
+              method="get"
+              role="search"
+              aria-label={gettext("Search a country")}
+            >
+              <input :if={@region} type="hidden" name="region" value={@region.code} />
+              <label for="market-q" class="vh">{gettext("Search a country")}</label>
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                aria-hidden="true"
+              ><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+              <input
+                id="market-q"
+                name="q"
+                type="search"
+                value={@q}
+                placeholder={gettext("Country…")}
+                autocomplete="off"
+                data-market-search
+              />
+              <button type="submit" class="vh">{gettext("Search")}</button>
+            </form>
+            <a
+              class="btn btn-secondary btn-sm"
+              id="ranking-csv"
+              href={TradeTopics.ranking_csv_path(@locale, @id)}
+              download
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              ><path d="M12 4v11"></path><path d="M7 10l5 5 5-5"></path><path d="M5 20h14"></path></svg>
+              <span>{gettext("CSV file")}</span>
+            </a>
+          </div>
+        </div>
+        <nav class="market-tabs" aria-label={gettext("Filter by region")}>
+          <a
+            href={list_href(@locale, @id, @kept, %{"region" => nil}) <> "#ranking-table"}
+            aria-current={@region == nil && "true"}
+          >
+            {gettext("All countries")}<span class="market-tab-count">{@counts[nil]}</span>
+          </a>
+          <a
+            :for={r <- @regions}
+            href={list_href(@locale, @id, @kept, %{"region" => r.code}) <> "#ranking-table"}
+            aria-current={@region && @region.code == r.code && "true"}
+          >
+            {@region_name.(r)}<span class="market-tab-count">{@counts[r.code]}</span>
+          </a>
+        </nav>
+      </div>
+
+      <div
+        class="table-box table-scroll"
+        tabindex="0"
+        role="region"
+        aria-labelledby="ranking-caption"
+      >
+        <table class="table table-stack market-list trade-rank trade-rank-bars" id="market-list">
+          <caption class="vh" id="ranking-caption">{@title}</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="l trade-rank-n">{gettext("Rank")}</th>
+              <th scope="col" class="l" aria-sort={aria_sort("name", @sort, @dir)}>
+                <a href={sort_href(@locale, @id, @kept, "name", @sort, @dir)}>{gettext("Country")}{arrow(
+                  "name",
+                  @sort,
+                  @dir
+                )}</a>
+              </th>
+              <th scope="col" class="l" aria-sort={aria_sort("value", @sort, @dir)}>
+                <a href={sort_href(@locale, @id, @kept, "value", @sort, @dir)}>{value_label(@id)}{arrow(
+                  "value",
+                  @sort,
+                  @dir
+                )}</a>
+              </th>
+              <th scope="col" class="l">
+                {if @id == "intra",
+                  do: gettext("First African client"),
+                  else: gettext("First product")}
+              </th>
+              <th scope="col">{gettext("Exports of goods")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr :for={r <- @rows} id={"rank-" <> r.code} data-search={search_text(r)}>
+              <td class="l num trade-rank-n" data-label={gettext("Rank")}>
+                {@ranks[r.code] || "—"}
+              </td>
+              <th scope="row" class="l">
+                <span class="trade-country">
+                  <.flag code={r.code} size="sm" sprite />
+                  <a href={Paths.country_tab(@locale, r.slug, :trade)}>{r.name}</a>
+                </span>
+              </th>
+              <td class="l" data-label={value_label(@id)}>
+                <span class="trade-bar">
+                  <span class="share-track" aria-hidden="true">
+                    <span style={"width: #{width(r.value)}%"}></span>
+                  </span>
+                  <b class="num">{pct(r.value, @locale)}</b>
+                </span>
+              </td>
+              <td
+                class="l"
+                data-label={
+                  if @id == "intra",
+                    do: gettext("First African client"),
+                    else: gettext("First product")
+                }
+              >
+                <%= if @id == "intra" do %>
+                  <span :if={r.client}>
+                    {Map.get(@names, r.client, r.client)}
+                    <span class="small subtle">{usd(r.client_value, @locale)}</span>
+                  </span>
+                  <span :if={!r.client} class="subtle">—</span>
+                <% else %>
+                  {product(@doc, r.product, @locale)}
+                  <span :if={r.product && @id == "raw"} class="small subtle">
+                    {pct(r.product_share, @locale)}
+                  </span>
+                <% end %>
+              </td>
+              <td class="num" data-label={gettext("Exports of goods")}>
+                {usd(r.exports, @locale)}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="pad market-none muted" id="market-none-live" hidden>
+          {gettext("No country matches this search.")}
+        </p>
+        <div :if={@rows == []} class="pad stack gap-2 market-none" id="ranking-none">
+          <p>{gettext("No country matches « %{q} ».", q: @q)}</p>
+          <a
+            class="btn btn-secondary"
+            href={list_href(@locale, @id, @kept, %{"q" => nil}) <> "#ranking-table"}
+          >{gettext("Clear the search")}</a>
+        </div>
+      </div>
+      <div class="card-foot stack gap-2">
+        <p class="src">
+          {gettext(
+            "Click a heading to sort · the median is the value that splits the 54 countries in two halves · goods only, services not included"
+          )}
+        </p>
+      </div>
+    </div>
+  </.section>
+
+  <.section variant="alt" id="ranking-questions">
+    <.section_head eyebrow={gettext("Questions")} title={gettext("Reading this ranking")} />
+    <.faq items={@faq} />
+    <div class="chips" id="ranking-links">
+      <a
+        :for={other <- TradeTopics.rankings() -- [@id]}
+        class="chip"
+        href={TradeTopics.ranking_path(@locale, other)}
+      >{question(other)}</a>
+      <a class="chip" href={TradeTopics.africa_path(@locale)}>{gettext("Africa's trade")}</a>
+      <a class="chip" href={TradeTopics.products_path(@locale)}>{gettext("Africa's products")}</a>
+    </div>
+  </.section>
+</Layouts.public>

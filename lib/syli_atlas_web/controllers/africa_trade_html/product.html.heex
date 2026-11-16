@@ -1,0 +1,352 @@
+<Layouts.public locale={@locale} current={:trade} alternates={@alternates}>
+  <section class="section-alt market-hero" id="product-hero">
+    <div class="wrap market-hero-wrap">
+      <nav aria-label={gettext("Breadcrumb")}>
+        <ol class="crumbs">
+          <li><a href={Paths.home(@locale)}>Syli Atlas</a></li>
+          <li><a href={TradeTopics.africa_path(@locale)}>{gettext("Africa's trade")}</a></li>
+          <li><a href={TradeTopics.products_path(@locale)}>{gettext("Products")}</a></li>
+          <li aria-current="page">{TradeTopics.product_name(@id)}</li>
+        </ol>
+      </nav>
+      <p class="eyebrow">
+        {kind_label(@kind)} · {gettext("HS")} {Enum.join(@p["codes"], ", ")}
+      </p>
+      <div class="market-hero-row">
+        <div class="market-hero-title">
+          <h1 class="market-h1">{TradeTopics.product_title(@id)}</h1>
+          <p class="muted market-hero-lead" id="product-answer" data-answer>{@answer}</p>
+        </div>
+        <dl class="market-summary" id="product-summary">
+          <div>
+            <dt>{gettext("Exported by Africa")}</dt>
+            <dd class="num">{usd(@p["exports"], @locale)}</dd>
+          </div>
+          <div>
+            <dt>{gettext("Share of the world")}</dt>
+            <dd class="num">{pct(@p["world_share"], @locale)}</dd>
+          </div>
+          <div>
+            <dt>{gettext("Bought by Africa")}</dt>
+            <dd class="num">{usd(@p["imports"], @locale)}</dd>
+          </div>
+          <div>
+            <dt>{gettext("Year")}</dt>
+            <dd class="num">{@doc["year"]}</dd>
+          </div>
+        </dl>
+      </div>
+      <p class="src">{source(@doc)} · {gettext("shares: Syli Atlas calculation")}</p>
+    </div>
+  </section>
+
+  <.section :if={@p["chain"] != []} id="chaine">
+    <.section_head
+      eyebrow={gettext("Processing")}
+      title={gettext("From raw product to finished product")}
+    >
+      <:intro>{chain_sentence(@p["chain"], @locale)}</:intro>
+    </.section_head>
+    <.card pad class="stack gap-3" id="product-chain">
+      <p class="small muted">
+        {gettext(
+          "Share of Africa in world exports at each step, %{year}. Bars are drawn to the same scale.",
+          year: @doc["year"]
+        )}
+      </p>
+      <.chain steps={@p["chain"]} countries={@countries} locale={@locale} />
+      <p class="src">
+        {source(@doc)} · HS {Enum.map_join(@p["chain"], " · ", &Enum.join(&1["codes"], "+"))}
+      </p>
+    </.card>
+  </.section>
+
+  <.section id="pays" variant={if(@p["chain"] != [], do: "alt", else: "plain")}>
+    <div class="trade-cols">
+      <div class="card market-table trade-main" id="product-countries">
+        <div class="card-head">
+          <h2 class="h2">
+            {if @kind == :export,
+              do: gettext("Who exports it in Africa"),
+              else: gettext("Who buys it in Africa")}
+          </h2>
+          <p class="small muted">
+            {if @kind == :export,
+              do:
+                gettext("Every African exporter above one million dollars, %{year}",
+                  year: @doc["year"]
+                ),
+              else:
+                gettext("Every African buyer above one million dollars, %{year}",
+                  year: @doc["year"]
+                )}
+          </p>
+        </div>
+        <div
+          class="table-box table-scroll"
+          tabindex="0"
+          role="region"
+          aria-labelledby="product-countries-caption"
+        >
+          <table class="table table-stack market-list trade-rank" id="product-countries-table">
+            <caption class="vh" id="product-countries-caption">
+              {if @kind == :export,
+                do: gettext("Who exports it in Africa"),
+                else: gettext("Who buys it in Africa")}
+            </caption>
+            <thead>
+              <tr>
+                <th scope="col" class="l trade-rank-n">{gettext("Rank")}</th>
+                <th scope="col" class="l">{gettext("Country")}</th>
+                <th scope="col">
+                  {if @kind == :export, do: gettext("Exports"), else: gettext("Imports")}
+                </th>
+                <th scope="col">{gettext("Share of Africa")}</th>
+                <th scope="col">
+                  {if @kind == :export,
+                    do: gettext("Share of the world"),
+                    else: gettext("Bought from Africa")}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                :for={{r, i} <- Enum.with_index(main_rows(@p, @kind), 1)}
+                id={"product-row-" <> r["code"]}
+              >
+                <td class="l num trade-rank-n" data-label={gettext("Rank")}>{i}</td>
+                <th scope="row" class="l">
+                  <.country code={r["code"]} countries={@countries} locale={@locale} />
+                </th>
+                <td
+                  class="num"
+                  data-label={
+                    if @kind == :export, do: gettext("Exports"), else: gettext("Imports")
+                  }
+                >
+                  {usd(r["value"], @locale)}
+                </td>
+                <td class="num" data-label={gettext("Share of Africa")}>
+                  <b>{pct(r["share"], @locale)}</b>
+                </td>
+                <td
+                  class="num"
+                  data-label={
+                    if @kind == :export,
+                      do: gettext("Share of the world"),
+                      else: gettext("Bought from Africa")
+                  }
+                >
+                  {if @kind == :export,
+                    do: pct(r["world_share"], @locale),
+                    else: pct(r["from_africa"], @locale)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="src card-foot">{source(@doc)}</p>
+      </div>
+
+      <div class="stack gap-4 trade-side">
+        <.card :if={@p["world_top"] != []} pad class="stack gap-3" id="product-world">
+          <div class="stack gap-1">
+            <h2 class="h3">{gettext("Against the rest of the world")}</h2>
+            <p class="small muted">
+              {gettext("First exporters in the world, %{year} · African countries in bold",
+                year: @doc["year"]
+              )}
+            </p>
+          </div>
+          <.share_bars
+            id="product-world-bars"
+            locale={@locale}
+            alt
+            items={
+              for r <- @p["world_top"],
+                  do: %{
+                    label: name(@countries, r["code"], @locale),
+                    share: r["share"],
+                    flag: r["code"],
+                    mark: r["african"]
+                  }
+            }
+          />
+        </.card>
+        <.card
+          :if={@kind == :export and @p["clients"] != []}
+          pad
+          class="stack gap-3"
+          id="product-clients"
+        >
+          <div class="stack gap-1">
+            <h2 class="h3">{gettext("Where African exports go")}</h2>
+            <p class="small muted">
+              {gettext("Share of African exports of the product, %{year}", year: @doc["year"])}
+            </p>
+          </div>
+          <.share_bars
+            id="product-clients-bars"
+            locale={@locale}
+            items={
+              for r <- @p["clients"],
+                  do: %{
+                    label: name(@countries, r["code"], @locale),
+                    share: r["share"],
+                    flag: r["code"]
+                  }
+            }
+          />
+        </.card>
+        <.card
+          :if={@kind == :import and @p["suppliers"] != []}
+          pad
+          class="stack gap-3"
+          id="product-suppliers"
+        >
+          <div class="stack gap-1">
+            <h2 class="h3">{gettext("Where Africa buys it")}</h2>
+            <p class="small muted">
+              {gettext(
+                "Share of African purchases of the product, %{year} · %{intra} from other African countries",
+                year: @doc["year"],
+                intra: pct(@p["imports_from_africa"], @locale)
+              )}
+            </p>
+          </div>
+          <.share_bars
+            id="product-suppliers-bars"
+            locale={@locale}
+            items={
+              for r <- @p["suppliers"],
+                  do: %{
+                    label: name(@countries, r["code"], @locale),
+                    share: r["share"],
+                    flag: r["code"]
+                  }
+            }
+          />
+        </.card>
+      </div>
+    </div>
+  </.section>
+
+  <.section :if={@kind == :import and @p["exporters"] != []} id="producteurs">
+    <.section_head
+      eyebrow={gettext("Produced in Africa")}
+      title={gettext("The African countries that sell it")}
+    >
+      <:intro>
+        {gettext(
+          "Africa also exports it: %{value} in %{year}, %{share} of world exports. Main African exporters:",
+          value: usd(@p["exports"], @locale),
+          year: @doc["year"],
+          share: pct(@p["world_share"], @locale)
+        )}
+      </:intro>
+    </.section_head>
+    <.card pad id="product-exporters">
+      <.share_bars
+        id="product-exporters-bars"
+        locale={@locale}
+        items={
+          for r <- Enum.take(@p["exporters"], 8),
+              do: %{
+                label: name(@countries, r["code"], @locale),
+                share: r["share"],
+                flag: r["code"],
+                href:
+                  @countries[r["code"]] &&
+                    Paths.country_tab(@locale, @countries[r["code"]].slug, :trade)
+              }
+        }
+      />
+    </.card>
+  </.section>
+
+  <.section
+    :if={length(@history) > 2}
+    id="historique"
+    variant={if(@kind == :import and @p["exporters"] != [], do: "alt", else: "plain")}
+  >
+    <.section_head
+      eyebrow={gettext("Since %{year}", year: elem(hd(@history), 0))}
+      title={gettext("%{years} years of trade", years: length(@history))}
+    >
+      <:intro :if={growth(@history, @kind)}>
+        {if @kind == :export,
+          do:
+            gettext("African exports were multiplied by %{n} between %{y0} and %{y1}.",
+              n: SyliAtlasWeb.Format.number(growth(@history, @kind), 1, @locale),
+              y0: elem(hd(@history), 0),
+              y1: elem(List.last(@history), 0)
+            ),
+          else:
+            gettext("African purchases were multiplied by %{n} between %{y0} and %{y1}.",
+              n: SyliAtlasWeb.Format.number(growth(@history, @kind), 1, @locale),
+              y0: elem(hd(@history), 0),
+              y1: elem(List.last(@history), 0)
+            )}
+      </:intro>
+    </.section_head>
+    <.card pad>
+      <.history_chart
+        id="product-history"
+        points={@history}
+        label={history_label(@id, @kind, @history, @locale)}
+        locale={@locale}
+        source={history_source(@doc)}
+      />
+    </.card>
+  </.section>
+
+  <.section :if={@companies != []} id="entreprises">
+    <.section_head
+      eyebrow={gettext("Companies")}
+      title={gettext("The main companies of the sector")}
+    >
+      <:intro>
+        {gettext(
+          "Mines, producers and groups named by their own reports. Each line gives its source and the date it was last checked; a line that cannot be confirmed is withdrawn."
+        )}
+      </:intro>
+    </.section_head>
+    <SyliAtlasWeb.CompanyComponents.table
+      companies={@companies}
+      countries={@countries}
+      locale={@locale}
+    />
+  </.section>
+
+  <.section variant="alt" id="questions-produit">
+    <div class="trade-cols">
+      <div class="stack gap-3 trade-main">
+        <h2 class="h2">{gettext("Questions")}</h2>
+        <.faq items={@faq} />
+      </div>
+      <div class="stack gap-3 trade-side" id="product-links">
+        <h2 class="h3">{gettext("Data and links")}</h2>
+        <a
+          class="btn btn-primary"
+          href={TradeTopics.product_csv_path(@locale, @id)}
+          download
+          id="product-csv"
+        >
+          {gettext("Download the data (CSV)")}
+        </a>
+        <ul class="link-list">
+          <li :for={r <- Enum.take(main_rows(@p, @kind), 3)} :if={@countries[r["code"]]}>
+            <a href={Paths.country_tab(@locale, @countries[r["code"]].slug, :trade)}>
+              {gettext("Trade of %{country}", country: @countries[r["code"]].name)}
+            </a>
+          </li>
+          <li><a href={TradeTopics.africa_path(@locale)}>{gettext("Africa's trade")}</a></li>
+          <li :for={other <- @related}>
+            <a href={TradeTopics.product_path(@locale, other)}>{TradeTopics.product_title(other)}</a>
+          </li>
+          <li><a href={TradeTopics.products_path(@locale)}>{gettext("All products")} →</a></li>
+        </ul>
+      </div>
+    </div>
+  </.section>
+</Layouts.public>

@@ -209,6 +209,43 @@ defmodule SyliAtlasWeb.Search.Index do
   end
 
   # Theme pages, found by their name or by the words people use for them.
+  # Africa's trade and its product pages, named in each language.
+  defp trade_pages do
+    t = SyliAtlasWeb.TradeTopics
+
+    each = fn fun ->
+      SyliAtlas.Locales.each(&Gettext.with_locale(SyliAtlasWeb.Gettext, &1, fun))
+    end
+
+    [
+      {:trade, &t.africa_path/1,
+       each.(fn -> Gettext.gettext(SyliAtlasWeb.Gettext, "Africa's trade") end),
+       [
+         "commerce",
+         "trade",
+         "exportations",
+         "exports",
+         "importations",
+         "imports",
+         "commerce afrique",
+         "africa trade",
+         "zlecaf",
+         "afcfta"
+       ]}
+    ] ++
+      for id <- SyliAtlas.AfricaTrade.products() do
+        {String.to_atom("product_" <> id), &t.product_path(&1, id),
+         each.(fn -> t.product_title(id) end),
+         Enum.uniq(
+           for(
+             l <- SyliAtlas.Locales.all(),
+             do: Gettext.with_locale(SyliAtlasWeb.Gettext, l, fn -> t.product_name(id) end)
+           ) ++
+             [t.product_slug(id, "fr"), t.product_slug(id, "en")]
+         )}
+      end
+  end
+
   defp pages do
     [
       {:debt, &Paths.debt/1,
@@ -369,6 +406,7 @@ defmodule SyliAtlasWeb.Search.Index do
         ],
         else: []
     )
+    |> Kernel.++(trade_pages())
     |> Enum.map(fn {code, path, names, words} ->
       %{
         type: :page,
