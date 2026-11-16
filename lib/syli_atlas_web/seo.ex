@@ -4,6 +4,16 @@ defmodule SyliAtlasWeb.Seo do
 
   def url(path), do: SyliAtlasWeb.Endpoint.url() <> path
 
+  # Syli Atlas's public accounts (16 Nov. 2026): `sameAs` of the Organization
+  # and the links of the footer.
+  @social_profiles [
+    {:linkedin, "LinkedIn", "https://www.linkedin.com/company/syli-atlas/"},
+    {:x, "X", "https://x.com/syliatlas"}
+  ]
+
+  @doc "The public accounts as `{key, network name, url}`."
+  def social_profiles, do: @social_profiles
+
   @doc "Builds the seo assign from localised paths %{\"fr\" => path, \"en\" => path}."
   def page(locale, paths, description, extra \\ %{}) do
     Map.merge(
@@ -66,6 +76,7 @@ defmodule SyliAtlasWeb.Seo do
         "name" => "Syli Atlas",
         "url" => url("/"),
         "logo" => url("/images/apple-touch-icon.png"),
+        "sameAs" => for({_, _, href} <- @social_profiles, do: href),
         "description" =>
           gettext(
             "African economies in verifiable figures: every figure names its public source."
