@@ -229,12 +229,13 @@ defmodule SyliAtlasWeb.Layouts do
           </summary>
           <div class="nav-menu-pop nav-mega">
             <div
-              :for={{group, title} <- [theme: gettext("Themes"), tool: gettext("Tools")]}
+              :for={{title, items} <- mega_columns(@themes)}
               class="nav-mega-col"
             >
-              <p class="nav-mega-head">{title}</p>
+              <p :if={title} class="nav-mega-head">{title}</p>
+              <p :if={!title} class="nav-mega-head nav-mega-head-blank" aria-hidden="true">&nbsp;</p>
               <a
-                :for={t <- Enum.filter(@themes, &(&1.group == group))}
+                :for={t <- items}
                 href={t.href}
                 aria-current={@current in t.current && "page"}
                 class={["nav-mega-item", t.key == :simulator && "is-featured"]}
@@ -263,6 +264,20 @@ defmodule SyliAtlasWeb.Layouts do
       <% end %>
     </nav>
     """
+  end
+
+  # Three columns: the themes in two halves, then the tools.
+  defp mega_columns(themes) do
+    {first, second} =
+      themes
+      |> Enum.filter(&(&1.group == :theme))
+      |> then(&Enum.split(&1, div(length(&1) + 1, 2)))
+
+    [
+      {gettext("Themes"), first},
+      {nil, second},
+      {gettext("Tools"), Enum.filter(themes, &(&1.group == :tool))}
+    ]
   end
 
   # The simulator is marked « New » for its first month, Africa's trade too.
