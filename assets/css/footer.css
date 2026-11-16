@@ -10,6 +10,11 @@
 .footer-about { display: flex; flex-direction: column; gap: 16px; max-width: 460px; }
 .footer-about .brand b { font-size: 26px; }
 .footer-claim { margin: 0; font-size: 22px; font-weight: 300; line-height: 1.35; letter-spacing: -.015em; }
+/* Public accounts: mark and name, same weight as the footer links. */
+.footer-social { display: flex; flex-wrap: wrap; gap: 8px 20px; margin: 0; }
+.footer-social a { display: inline-flex; align-items: center; gap: 8px; min-height: 32px; color: var(--ink-muted); text-decoration: none; }
+.footer-social a:hover { color: var(--accent-text); text-decoration: underline; text-underline-offset: 3px; }
+.footer-social svg { flex: none; }
 /* The recap band (canvas « Encart 2 »): a 2 px sunset frame around a white
    card, the pitch on the left, the address and the button on the right. */
 .footer-recap { padding: 2px; border-radius: 14px; background: linear-gradient(90deg, #ffb547, #ff6b3d 22%, #f0347a 45%, #8a3ffc 70%, #3b6cff); margin-bottom: 48px; }
@@ -52,6 +57,6 @@
   .footer-recap-text h2 { font-size: 23px; }
   .footer-recap-row { flex-direction: column; }
   .footer-nav { grid-template-columns: 1fr 1fr; gap: 28px 16px; }
-  .footer-col a { min-height: 44px; }
+  .footer-col a, .footer-social a { min-height: 44px; }
   .footer-bottom { margin-top: 32px; }
 }
