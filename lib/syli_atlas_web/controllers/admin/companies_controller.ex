@@ -9,7 +9,7 @@ defmodule SyliAtlasWeb.Admin.CompaniesController do
   alias SyliAtlas.Companies
   alias SyliAtlas.Workers.CompaniesWorker
 
-  def index(conn, _params) do
+  def index(conn, params) do
     rows = Companies.list_all()
 
     render(conn, :index,
@@ -17,6 +17,7 @@ defmodule SyliAtlasWeb.Admin.CompaniesController do
       rows: rows,
       counts: Enum.frequencies_by(rows, & &1.status),
       ready: SyliAtlas.Companies.Verifier.configured?(),
+      adding: params["ajouter"] == "1",
       countries:
         SyliAtlas.Geo.list_countries()
         |> Enum.map(&{&1.code, &1.name_fr})
@@ -34,7 +35,9 @@ defmodule SyliAtlasWeb.Admin.CompaniesController do
         |> back()
 
       {:error, cs} ->
-        conn |> put_flash(:error, "Refusée : #{errors(cs)}") |> back()
+        conn
+        |> put_flash(:error, "Refusée : #{errors(cs)}")
+        |> redirect(to: ~p"/admin/entreprises?ajouter=1")
     end
   end
 
