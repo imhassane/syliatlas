@@ -30,6 +30,16 @@ defmodule SyliAtlasWeb.AdminCompaniesTest do
     assert html =~ "Test Copper Mine"
     assert html =~ "À vérifier"
     assert html =~ ~s(href="/admin/entreprises" aria-current="page")
+
+    # The form is a modal window, closed until asked for (open without JavaScript with ?ajouter=1).
+    assert html =~ ~s(id="company-dialog")
+    refute html =~ ~r/<dialog[^>]*id="company-dialog"[^>]*\sopen/
+    assert html =~ ~s(data-dialog-open="company-dialog")
+
+    opened =
+      AccountsFixtures.admin_conn() |> get("/admin/entreprises?ajouter=1") |> html_response(200)
+
+    assert opened =~ ~r/<dialog[^>]*\sopen/
   end
 
   test "refuses a source that is not https" do
@@ -40,6 +50,7 @@ defmodule SyliAtlasWeb.AdminCompaniesTest do
       })
 
     assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "https"
+    assert redirected_to(conn) == "/admin/entreprises?ajouter=1"
   end
 
   test "withdraws a company and asks for a new check" do

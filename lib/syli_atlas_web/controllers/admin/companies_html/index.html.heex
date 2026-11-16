@@ -10,9 +10,20 @@
         <b>Clé ANTHROPIC_API_KEY absente : aucune vérification possible, rien ne s'affiche.</b>
       </p>
     </div>
-    <.form for={%{}} action={~p"/admin/entreprises/verifier"} method="post">
-      <button class="btn btn-secondary" type="submit" id="companies-check-due">Vérifier les lignes dues</button>
-    </.form>
+    <div class="row gap-1">
+      <.form for={%{}} action={~p"/admin/entreprises/verifier"} method="post">
+        <button class="btn btn-secondary" type="submit" id="companies-check-due">
+          Vérifier les lignes dues
+        </button>
+      </.form>
+      <a
+        class="btn btn-primary"
+        href={~p"/admin/entreprises?ajouter=1"}
+        data-dialog-open="company-dialog"
+        id="company-add"
+        aria-haspopup="dialog"
+      >+ Ajouter une entreprise</a>
+    </div>
   </header>
 
   <dl class="stats" id="adm-companies-stats">
@@ -64,9 +75,32 @@
     </article>
   </section>
 
-  <section class="card adm-list" id="adm-companies-new">
-    <div class="adm-card-head">
-      <h2 class="h2">Ajouter une entreprise</h2>
+  <dialog
+    class="adm-dialog"
+    id="company-dialog"
+    data-dialog
+    open={@adding}
+    aria-labelledby="company-dialog-title"
+  >
+    <div class="adm-dialog-head">
+      <h2 class="h2" id="company-dialog-title">Ajouter une entreprise</h2>
+      <a
+        href={~p"/admin/entreprises"}
+        class="adm-dialog-close"
+        data-dialog-close
+        aria-label="Fermer"
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        ><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </a>
     </div>
     <.form
       for={%{}}
@@ -147,8 +181,9 @@
         </label>
       </fieldset>
       <div class="adm-company-actions">
+        <a class="btn btn-quiet" href={~p"/admin/entreprises"} data-dialog-close>Annuler</a>
         <button class="btn btn-primary" type="submit" id="company-create">Ajouter et vérifier</button>
       </div>
     </.form>
-  </section>
+  </dialog>
 </.admin_shell>
