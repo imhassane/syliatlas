@@ -116,13 +116,22 @@ defmodule SyliAtlasWeb.TradeComponents do
 
   def chapter(doc, code, "en"), do: get_in(doc, ["chapters", code, "en"]) || code
   def chapter(doc, code, _), do: get_in(doc, ["chapters", code, "fr"]) || code
-  def partner(doc, code, locale), do: get_in(doc, ["partners", code, locale]) || code
+
+  def partner(doc, code, locale),
+    do: get_in(doc, ["partners", code, locale]) || get_in(doc, ["partners", code, "en"]) || code
 
   defp trade_title(e, label) do
     case e["concentration"] do
-      "high" -> gettext("Exports that depend on one product: %{product}", product: lower(label))
-      "medium" -> gettext("Exports led by %{product}", product: lower(label))
-      _ -> gettext("Diversified exports")
+      "high" ->
+        gettext("Exports that depend on one family of products: %{product}",
+          product: lower(label)
+        )
+
+      "medium" ->
+        gettext("Exports led by %{product}", product: lower(label))
+
+      _ ->
+        gettext("Diversified exports")
     end
   end
 
@@ -136,7 +145,7 @@ defmodule SyliAtlasWeb.TradeComponents do
     clients = e["top_clients"] |> Enum.take(2) |> Enum.map(&partner(doc, &1["code"], locale))
 
     gettext(
-      "%{name}: in %{year}, %{label} made up %{share} of goods exports, the five main chapters %{top5}. The first clients were %{clients}; %{africa} of exports went to other African countries.",
+      "%{name}: in %{year}, the “%{label}” chapter made up %{share} of goods exports, the five main chapters %{top5}. The first clients were %{clients}; %{africa} of exports went to other African countries.",
       name: name,
       year: doc["year"],
       label: lower(label),
@@ -144,7 +153,34 @@ defmodule SyliAtlasWeb.TradeComponents do
       top5: pct(e["top5_share"], locale),
       clients: Enum.join(clients, gettext(" and ")),
       africa: pct(e["africa_share_exports"], locale)
-    )
+    ) <> product_sentence(e, doc, locale)
+  end
+
+  # The first product (HS 4-digit heading) and the share sold unprocessed.
+  defp product_sentence(e, doc, locale) do
+    first = List.first(e["top_products"] || [])
+    primary = SyliAtlas.Trade.raw_share(get_in(e, ["stages", "exports"]))
+
+    cond do
+      first && primary ->
+        " " <>
+          gettext(
+            "First product: %{product} (%{share}); %{primary} of exports are raw materials, unprocessed or barely processed.",
+            product: lower(SyliAtlas.Trade.heading(doc, first["code"], locale)),
+            share: pct(first["share"], locale),
+            primary: pct(primary, locale)
+          )
+
+      first ->
+        " " <>
+          gettext("First product: %{product} (%{share}).",
+            product: lower(SyliAtlas.Trade.heading(doc, first["code"], locale)),
+            share: pct(first["share"], locale)
+          )
+
+      true ->
+        ""
+    end
   end
 
   defp trend_text(by_year, locale) do

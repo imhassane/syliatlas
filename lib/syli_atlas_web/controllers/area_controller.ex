@@ -119,6 +119,29 @@ defmodule SyliAtlasWeb.AreaController do
         SyliAtlasWeb.RatingComponents.faq_items(name, rating, ratings) ++
         SyliAtlasWeb.ClimateComponents.faq_items(name, climate)
 
+    # The Trade and Society tabs have their own questions (page and FAQPage).
+    tab_faq =
+      case tab do
+        :trade ->
+          SyliAtlasWeb.TradeDetailComponents.faq_items(
+            name,
+            trade,
+            SyliAtlas.Trade.document(),
+            locale
+          )
+
+        :society ->
+          SyliAtlasWeb.SocietyComponents.faq_items(
+            name,
+            world_bank,
+            SyliAtlas.WorldBank.document(),
+            locale
+          )
+
+        _ ->
+          []
+      end
+
     members = if(country?, do: [], else: members(profile, from, to, locale))
     kept = Map.take(params, ~w(from to peers members))
 
@@ -204,7 +227,11 @@ defmodule SyliAtlasWeb.AreaController do
             [Seo.breadcrumbs(crumbs)] ++
               (datasets(tab, area, name, paths[locale], profile, trade, world_bank, locale)
                |> with_rebasing(rebasing_sentence, rebasing)) ++
-              if(tab == :overview, do: [Seo.faq(faq)], else: [])
+              cond do
+                tab == :overview -> [Seo.faq(faq)]
+                tab_faq != [] -> [Seo.faq(tab_faq)]
+                true -> []
+              end
         }),
       alternates: Seo.alternates_for_header(paths),
       area: area,
@@ -225,6 +252,7 @@ defmodule SyliAtlasWeb.AreaController do
       peers_href: &Pagination.href(paths[locale], kept, "peers", &1, "peers"),
       peers_max: bar_max(peers),
       faq: faq,
+      tab_faq: tab_faq,
       answer: answer,
       members: Pagination.paginate(members, params["members"]),
       members_href: &Pagination.href(paths[locale], kept, "members", &1, "members"),
@@ -373,15 +401,33 @@ defmodule SyliAtlasWeb.AreaController do
         name: gettext("Exports of %{name}: products and clients", names(name)),
         description:
           gettext(
-            "Goods exported by %{name} in %{year}: share of each product chapter (HS) and of each client country. Source: %{source}, version %{version}.",
+            "Goods exported by %{name} in %{year}: share of each product (HS chapters and 4-digit headings) and of each client country, stage of processing (BEC), trade with each African country, products bought outside Africa that Africa exports, exports since 1995. Source: %{source}, version %{version}.",
             names(name, year: year, source: src["name"], version: src["version"])
           ),
         path: path,
         locale: locale,
         area: %{name: name, code: area.code},
+        keywords:
+          for(
+            k <- [
+              gettext("exports"),
+              gettext("imports"),
+              gettext("trade"),
+              gettext("main products")
+            ],
+            do: k <> " " <> name
+          ),
+        variables: [
+          {gettext("Exports of goods"), "USD"},
+          {gettext("Imports of goods"), "USD"},
+          {gettext("Share of each product in exports"), "%"},
+          {gettext("Share of each client in exports"), "%"},
+          {gettext("Raw materials in exports"), "%"},
+          {gettext("Exports to other African countries"), "%"}
+        ],
         based_on: {src["name"], src["url"]},
         modified: SyliAtlas.Trade.document()["as_of"],
-        temporal: to_string(year)
+        temporal: "1995/#{year}"
       )
     ]
   end
@@ -392,10 +438,10 @@ defmodule SyliAtlasWeb.AreaController do
 
     [
       Seo.dataset(
-        name: gettext("Living conditions in %{name}: poverty, jobs, electricity", names(name)),
+        name: gettext("Population and living conditions in %{name}", names(name)),
         description:
           gettext(
-            "Social indicators of %{name}: poverty, unemployment, access to electricity and the internet, remittances, foreign investment, value added and jobs by sector. Source: %{source}.",
+            "Social indicators of %{name}: population, age pyramid, towns, life expectancy, schooling, child and maternal mortality, drinking water, poverty, unemployment, access to electricity and the internet, remittances, foreign investment, value added and jobs by sector. Source: %{source}, which republishes the United Nations, UNESCO, WHO and ILO series.",
             names(name, source: src["name"])
           ),
         path: path,
@@ -435,15 +481,31 @@ defmodule SyliAtlasWeb.AreaController do
         title_names(name, year: to)
       )
 
-  defp title(:trade, _area, name, _to, trade),
-    do:
+  defp title(:trade, area, name, _to, doc) do
+    entry = SyliAtlas.Trade.for_country(area.code)
+    first = entry && List.first(entry["top_products"] || [])
+    year = (doc && doc["year"]) || ""
+
+    if first do
+      locale = Gettext.get_locale(SyliAtlasWeb.Gettext)
+
+      gettext(
+        "Exports of %{name} in %{year}: %{product}, products and buyers",
+        title_names(name,
+          year: year,
+          product: lower_first(SyliAtlas.Trade.heading(doc, first["code"], locale))
+        )
+      )
+    else
       gettext(
         "Exports of %{name}: products and main buyers (%{year})",
-        title_names(name, year: (trade && trade["year"]) || "")
+        title_names(name, year: year)
       )
+    end
+  end
 
   defp title(:society, _area, name, _to, _trade),
-    do: gettext("%{name}: poverty, jobs and access to electricity", title_names(name))
+    do: gettext("Population of %{name}: age, health, education and poverty", title_names(name))
 
   defp title(:markets, _area, name, _to, _trade),
     do: gettext("%{name}: credit rating, stock exchange and business climate", title_names(name))
@@ -457,6 +519,9 @@ defmodule SyliAtlasWeb.AreaController do
         else: {k, v}
     end
   end
+
+  defp lower_first(nil), do: ""
+  defp lower_first(text), do: String.downcase(String.first(text)) <> String.slice(text, 1..-1//1)
 
   defp usual(name) do
     case Gettext.get_locale(SyliAtlasWeb.Gettext) == "fr" &&

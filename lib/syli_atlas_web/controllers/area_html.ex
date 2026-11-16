@@ -14,6 +14,22 @@ defmodule SyliAtlasWeb.AreaHTML do
 
   embed_templates "area_html/*"
 
+  attr :items, :list, required: true
+  attr :name, :string, required: true
+
+  @doc "Questions of the Trade and Society tabs (also given as FAQPage)."
+  def tab_questions(assigns) do
+    ~H"""
+    <.section id="questions-onglet" variant="alt">
+      <.section_head
+        eyebrow={gettext("Questions")}
+        title={gettext("What people ask about %{name}", names(@name, []))}
+      />
+      <.faq items={@items} />
+    </.section>
+    """
+  end
+
   attr :kpis, :list, required: true
   attr :data, :map, required: true
   attr :profile, :map, required: true

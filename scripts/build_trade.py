@@ -1,26 +1,50 @@
 """Builds priv/data/trade.json: goods trade of the 54 African countries.
 
-Source: CEPII, BACI (HS 2022 nomenclature), Licence Ouverte Etalab 2.0.
-BACI reconciles what exporters and importers declare to UN Comtrade, so
-countries that report little still have figures. Values are in thousands of
-US dollars in the files, in dollars here.
+Source: CEPII, BACI, Licence Ouverte Etalab 2.0. BACI reconciles what
+exporters and importers declare to UN Comtrade, so countries that report
+little still have figures. Values are in thousands of US dollars in the
+files, in dollars here.
 
-For each country and the latest year: exports and imports, the five main
-export chapters (HS 2-digit, labels below), the five main clients and
-suppliers, the share of trade with other African countries, and two
-dependence measures computed by Syli Atlas (share of the first chapter,
-Herfindahl index over chapters). Exports of the earlier years of the file
-give the trend.
+For each country and the latest year of the HS 2022 archive:
 
-    python3 scripts/build_trade.py BACI_HS22_V202601.zip priv/data/trade.json
+  * exports and imports, the five main export chapters (HS 2-digit), the
+    five main clients and suppliers, the share of trade with other African
+    countries, two dependence measures (share of the first chapter,
+    Herfindahl index over chapters);
+  * the main exported products (HS 4-digit headings) and, for each, its
+    five main buyers;
+  * the stage of processing of exports and imports: primary goods, gold,
+    precious stones and unwrought metals (counted apart: the BEC calls them
+    processed), processed intermediate goods, final goods (consumption and
+    capital), from the United Nations correspondence between HS 2022 and the
+    Classification by Broad Economic Categories, revision 5;
+  * trade with each other African country, and the main product sold to
+    the largest African partners;
+  * the "African potential" (a Syli Atlas calculation, shown as such):
+    HS 6-digit products the country buys outside Africa while other African
+    countries already export at least as much of them to the world, grouped
+    by HS 4-digit heading, with the main African exporters.
 
+From the HS 1992 archive (optional, 1995 onwards): exports per year and the
+share of the latest first chapter, for the long trend.
+
+    python3 scripts/build_trade.py BACI_HS22_V202601.zip priv/data/trade.json \
+        --bec HS2022toBEC5ConversionAndCorrelationTables.xlsx \
+        --bec-codes BECCodeandDescription.xlsx \
+        --history BACI_HS92_V202601.zip
+
+The two BEC files come from https://unstats.un.org/unsd/classifications/Econ.
 Partner names in French come from pycountry's ISO 3166 translations, with
-the short forms below where the official name is long.
+the short forms below where the official name is long. Heading labels are
+in scripts/trade_labels.py.
 """
-import csv, io, json, sys, zipfile, re, gettext
+import argparse, json, re, sys, zipfile, gettext
 from collections import defaultdict
 
+import pandas as pd
 import pycountry
+
+from trade_labels import HS4
 
 # HS 2022 chapters, short labels (fr, en).
 CHAPTERS = {
@@ -151,85 +175,256 @@ def top(d, total, n=5):
     return [(k, v, round(100 * v / total, 1) if total else None) for k, v in rows]
 
 
-def main(zip_path, out_path):
+def pct(part, total):
+    return round(100 * part / total, 1) if total else None
+
+
+def baci_files(z):
+    files = sorted(n for n in z.namelist() if re.match(r"BACI_HS\d+_Y\d{4}_V\d+\.csv", n))
+    return files
+
+
+def country_codes(z):
+    name = next(n for n in z.namelist() if n.startswith("country_codes"))
+    df = pd.read_csv(z.open(name), dtype=str)
+    return {int(r.country_code): (r.country_iso3, r.country_name) for r in df.itertuples()}
+
+
+def read_year(z, name, codes, african):
+    """Flows of one year touching Africa: i, j as ISO3, k as HS6 string, v in dollars."""
+    df = pd.read_csv(
+        z.open(name), usecols=["i", "j", "k", "v"],
+        dtype={"i": "int32", "j": "int32", "k": str, "v": "float64"},
+    )
+    iso = {c: v[0] for c, v in codes.items()}
+    df["i"] = df["i"].map(iso)
+    df["j"] = df["j"].map(iso)
+    df["k"] = df["k"].str.zfill(6)
+    df["v"] = df["v"] * 1000
+    return df
+
+
+# Headings the BEC counts as processed goods although they leave the country as
+# barely processed raw materials: gold, silver, platinum, diamonds and precious
+# stones, unwrought or as waste, and unwrought base metals (copper cathodes,
+# nickel, aluminium, zinc, tin, cobalt…). Syli Atlas puts them in a category of
+# their own ("unwrought"), shown as such, so that a gold or copper exporter is
+# not presented as a seller of processed goods.
+UNWROUGHT = {
+    "7102", "7103", "7106", "7108", "7110", "7112",
+    "7401", "7402", "7403", "7404", "7405",
+    "7501", "7502", "7503", "7601", "7602", "7801", "7802",
+    "7901", "7902", "8001", "8002",
+    "8101", "8102", "8103", "8104", "8105", "8106", "8108", "8109", "8110", "8111", "8112",
+}
+
+
+def stages(bec_path, bec_codes_path):
+    """HS 2022 six-digit code -> primary / unwrought / intermediate / final (BEC rev. 5)."""
+    desc = pd.read_excel(bec_codes_path, sheet_name="BEC5", dtype=str)
+    desc = dict(zip(desc["Code"], desc["Description"]))
+    conv = pd.read_excel(bec_path, sheet_name=0, dtype=str)
+    out = {}
+    for hs, bec in zip(conv.iloc[:, 0], conv.iloc[:, 1]):
+        parts = [p.strip() for p in str(desc.get(bec, "")).split("|")]
+        if hs.zfill(6)[:4] in UNWROUGHT and "Primary" not in parts:
+            out[hs.zfill(6)] = "unwrought"
+        elif "Primary" in parts:
+            out[hs.zfill(6)] = "primary"
+        elif "Intermediate Consumption" in parts:
+            out[hs.zfill(6)] = "intermediate"
+        elif "Final Consumption" in parts or "Gross Fixed Capital Formation" in parts:
+            out[hs.zfill(6)] = "final"
+    return out
+
+
+def stage_shares(df, stage_of):
+    s = df.groupby(df["k"].map(stage_of).fillna("unknown"))["v"].sum()
+    total = s.sum()
+    return {k: pct(s.get(k, 0), total) for k in ("primary", "unwrought", "intermediate", "final")}
+
+
+def history(path, codes_hint, african, first_chapters):
+    """Exports per year and share of the latest first chapter, HS 1992 archive."""
+    z = zipfile.ZipFile(path)
+    codes = country_codes(z)
+    by_year = defaultdict(dict)
+    chapter_share = defaultdict(dict)
+    version = None
+    for name in baci_files(z):
+        y = re.search(r"_Y(\d{4})_", name).group(1)
+        version = re.search(r"_V(\d+)\.csv", name).group(1)
+        df = read_year(z, name, codes, african)
+        df = df[df["i"].isin(african)]
+        totals = df.groupby("i")["v"].sum()
+        ch = df.groupby([df["i"], df["k"].str[:2]])["v"].sum()
+        for c, total in totals.items():
+            by_year[c][y] = round(total)
+            first = first_chapters.get(c)
+            if first:
+                chapter_share[c][y] = pct(ch.get((c, first), 0), total)
+        print(name, "read", file=sys.stderr)
+    return by_year, chapter_share, version
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("zip_path")
+    ap.add_argument("out_path")
+    ap.add_argument("--bec")
+    ap.add_argument("--bec-codes")
+    ap.add_argument("--history")
+    args = ap.parse_args()
+
     areas = json.load(open("priv/data/areas.json"))["areas"]
     african = {a["code"] for a in areas if a["kind"] == "country"}
 
-    z = zipfile.ZipFile(zip_path)
-    files = sorted(n for n in z.namelist() if re.match(r"BACI_HS\d+_Y\d{4}_V\d+\.csv", n))
+    z = zipfile.ZipFile(args.zip_path)
+    files = baci_files(z)
     version = re.search(r"_V(\d+)\.csv", files[0]).group(1)
     nomenclature = re.match(r"BACI_(HS\d+)_", files[0]).group(1)
-    codes = {}
-    with z.open(next(n for n in z.namelist() if n.startswith("country_codes"))) as f:
-        for r in csv.DictReader(io.TextIOWrapper(f, "utf-8")):
-            codes[r["country_code"]] = (r["country_iso3"], r["country_name"])
-
-    exports_by_year = defaultdict(dict)
+    codes = country_codes(z)
+    name_of = {iso: n for iso, n in codes.values()}
     latest = files[-1]
     year = int(re.search(r"_Y(\d{4})_", latest).group(1))
 
-    exp_total = defaultdict(float); imp_total = defaultdict(float)
-    exp_chapter = defaultdict(lambda: defaultdict(float))
-    exp_partner = defaultdict(lambda: defaultdict(float))
-    imp_partner = defaultdict(lambda: defaultdict(float))
-    exp_africa = defaultdict(float); imp_africa = defaultdict(float)
-
-    for name in files:
-        y = int(re.search(r"_Y(\d{4})_", name).group(1))
-        totals = defaultdict(float)
-        with z.open(name) as f:
-            for r in csv.DictReader(io.TextIOWrapper(f, "utf-8")):
-                i = codes.get(r["i"], (None,))[0]
-                j = codes.get(r["j"], (None,))[0]
-                if i not in african and j not in african:
-                    continue
-                v = float(r["v"]) * 1000
-                if i in african:
-                    totals[i] += v
-                if y != year:
-                    continue
-                if i in african:
-                    exp_total[i] += v
-                    exp_chapter[i][r["k"][:2]] += v
-                    exp_partner[i][j] += v
-                    if j in african:
-                        exp_africa[i] += v
-                if j in african:
-                    imp_total[j] += v
-                    imp_partner[j][i] += v
-                    if i in african:
-                        imp_africa[j] += v
-        for c, v in totals.items():
-            exports_by_year[c][str(y)] = round(v)
+    exports_by_year = defaultdict(dict)
+    for name in files[:-1]:
+        df = read_year(z, name, codes, african)
+        y = re.search(r"_Y(\d{4})_", name).group(1)
+        for c, v in df[df["i"].isin(african)].groupby("i")["v"].sum().items():
+            exports_by_year[c][y] = round(v)
         print(name, "read", file=sys.stderr)
+
+    df = read_year(z, latest, codes, african)
+    print(latest, "read", file=sys.stderr)
+    df["h4"] = df["k"].str[:4]
+    df["ch"] = df["k"].str[:2]
+    exp = df[df["i"].isin(african)]
+    imp = df[df["j"].isin(african)]
+    for c, v in exp.groupby("i")["v"].sum().items():
+        exports_by_year[c][str(year)] = round(v)
+
+    stage_of = stages(args.bec, args.bec_codes) if args.bec else {}
+
+    # African supply of each HS6 line: what each African country sells to the world.
+    afr_supply = exp.groupby(["k", "i"])["v"].sum()
+    afr_supply_total = exp.groupby("k")["v"].sum()
 
     partner_names = {}
     countries = {}
+    used_h4 = set()
+
+    def remember(p):
+        if p and isinstance(p, str) and p not in partner_names:
+            partner_names[p] = names(p, name_of.get(p, p))
+
     for c in sorted(african):
-        total = exp_total.get(c, 0)
+        e = exp[exp["i"] == c]
+        m = imp[imp["j"] == c]
+        total = e["v"].sum()
         if not total:
             continue
-        chapters = exp_chapter[c]
+        imp_total = m["v"].sum()
+        chapters = e.groupby("ch")["v"].sum().to_dict()
         shares = [v / total for v in chapters.values()]
         tops = top(chapters, total)
-        clients = top(exp_partner[c], total)
-        suppliers = top(imp_partner[c], imp_total.get(c, 0))
+        clients = top(e.groupby("j")["v"].sum().to_dict(), total)
+        suppliers = top(m.groupby("i")["v"].sum().to_dict(), imp_total)
         for p, _, _ in clients + suppliers:
-            if p and p not in partner_names:
-                partner_names[p] = names(p, next((n for iso, n in codes.values() if iso == p), p))
-        countries[c] = {
+            remember(p)
+
+        # Main products (HS4) and their buyers.
+        products = []
+        for h4, v, s in top(e.groupby("h4")["v"].sum().to_dict(), total, 6):
+            buyers = top(e[e["h4"] == h4].groupby("j")["v"].sum().to_dict(), v)
+            for p, _, _ in buyers:
+                remember(p)
+            used_h4.add(h4)
+            products.append({
+                "code": h4, "value": round(v), "share": s,
+                "clients": [{"code": p, "share": bs} for p, _, bs in buyers],
+            })
+        by_h6 = e.groupby("k")["v"].sum()
+
+        # Trade with each African partner.
+        e_afr = e[e["j"].isin(african)].groupby("j")["v"].sum()
+        m_afr = m[m["i"].isin(african)].groupby("i")["v"].sum()
+        africa = {}
+        for p in sorted(set(e_afr.index) | set(m_afr.index)):
+            if p == c:
+                continue
+            africa[p] = [round(e_afr.get(p, 0)), round(m_afr.get(p, 0))]
+        africa_top = []
+        for p, (ev, iv) in sorted(africa.items(), key=lambda kv: -(kv[1][0] + kv[1][1]))[:5]:
+            remember(p)
+            sold = e[e["j"] == p].groupby("h4")["v"].sum()
+            h4 = sold.idxmax() if len(sold) else None
+            if h4:
+                used_h4.add(h4)
+            africa_top.append({"code": p, "exports": ev, "imports": iv, "product": h4})
+
+        # African potential: HS6 bought outside Africa that other African countries export.
+        outside = m[~m["i"].isin(african)]
+        out_h6 = outside.groupby("k")["v"].sum()
+        lines = []
+        for k, v in out_h6.items():
+            if v < 1e6:
+                continue
+            others = afr_supply_total.get(k, 0) - afr_supply.get((k, c), 0)
+            if others >= max(5e6, v):
+                lines.append(k)
+        potential = []
+        if lines:
+            sel = outside[outside["k"].isin(lines)]
+            per_h4 = sel.groupby("h4")["v"].sum().sort_values(ascending=False)
+            for h4, v in per_h4.head(5).items():
+                ks = [k for k in lines if k[:4] == h4]
+                supplier = sel[sel["h4"] == h4].groupby("i")["v"].sum().idxmax()
+                sup = afr_supply[afr_supply.index.get_level_values(0).isin(ks)]
+                sup = sup.groupby(level=1).sum().drop(c, errors="ignore").sort_values(ascending=False)
+                exporters = [p for p in sup.index[:3]]
+                for p in exporters + [supplier]:
+                    remember(p)
+                used_h4.add(h4)
+                potential.append({
+                    "code": h4, "value": round(v), "supplier": supplier,
+                    "exporters": exporters,
+                })
+
+        entry = {
             "exports_usd": round(total),
-            "imports_usd": round(imp_total.get(c, 0)),
+            "imports_usd": round(imp_total),
             "exports_by_year": exports_by_year[c],
             "top_exports": [{"chapter": k, "value": round(v), "share": s} for k, v, s in tops],
             "top_clients": [{"code": k, "value": round(v), "share": s} for k, v, s in clients],
             "top_suppliers": [{"code": k, "value": round(v), "share": s} for k, v, s in suppliers],
-            "africa_share_exports": round(100 * exp_africa[c] / total, 1),
-            "africa_share_imports": round(100 * imp_africa[c] / imp_total[c], 1) if imp_total.get(c) else None,
+            "africa_share_exports": pct(e_afr.sum(), total),
+            "africa_share_imports": pct(m_afr.sum(), imp_total),
             "first_chapter_share": tops[0][2] if tops else None,
             "top5_share": round(sum(s for _, _, s in tops), 1),
             "hhi": round(sum(s * s for s in shares), 3),
+            "top_products": products,
+            "products_exported": int((by_h6 > 0).sum()),
+            "products_over_1m": int((by_h6 >= 1e6).sum()),
+            "africa_partners": africa_top,
+            "africa_trade": africa,
+            "potential": potential,
         }
+        if stage_of:
+            entry["stages"] = {"exports": stage_shares(e, stage_of), "imports": stage_shares(m, stage_of)}
+        countries[c] = entry
+
+    hist_version = None
+    if args.history:
+        first = {c: v["top_exports"][0]["chapter"] for c, v in countries.items() if v["top_exports"]}
+        by_year, chapter_share, hist_version = history(args.history, codes, african, first)
+        for c, v in countries.items():
+            v["history"] = {"exports": by_year.get(c, {}), "first_chapter_share": chapter_share.get(c, {})}
+
+    missing = sorted(h for h in used_h4 if h not in HS4)
+    if missing:
+        sys.exit("labels missing in scripts/trade_labels.py: " + " ".join(missing))
 
     out = {
         "source": {
@@ -241,12 +436,20 @@ def main(zip_path, out_path):
         },
         "year": year,
         "chapters": {k: {"fr": fr, "en": en} for k, (fr, en) in CHAPTERS.items()},
+        "headings": {h: {"fr": HS4[h][0], "en": HS4[h][1]} for h in sorted(used_h4)},
         "partners": partner_names,
         "countries": countries,
     }
-    json.dump(out, open(out_path, "w"), ensure_ascii=False, indent=1)
-    print(f"{out_path}: {len(countries)} countries, {year}", file=sys.stderr)
+    if args.bec:
+        out["stages_source"] = {
+            "name": "United Nations Statistics Division, HS 2022 to BEC Rev. 5 conversion table",
+            "url": "https://unstats.un.org/unsd/classifications/Econ",
+        }
+    if hist_version:
+        out["history_source"] = {"nomenclature": "HS92", "version": hist_version}
+    json.dump(out, open(args.out_path, "w"), ensure_ascii=False, indent=1)
+    print(f"{args.out_path}: {len(countries)} countries, {year}", file=sys.stderr)
 
 
 if __name__ == "__main__":
-    main(sys.argv[1], sys.argv[2])
+    main()

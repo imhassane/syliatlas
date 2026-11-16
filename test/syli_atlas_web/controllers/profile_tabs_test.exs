@@ -39,10 +39,14 @@ defmodule SyliAtlasWeb.ProfileTabsTest do
 
     # The title names what people search, with the article French needs.
     assert doc |> LazyHTML.query("title") |> LazyHTML.text() =~
-             "Exportations de la Côte d'Ivoire\u202f: produits et premiers clients"
+             "Exportations de la Côte d'Ivoire en 2024\u202f: or, produits et clients"
 
     assert doc |> LazyHTML.query(".crumbs") |> LazyHTML.text() =~ "Commerce"
-    refute LazyHTML.text(LazyHTML.query(doc, ~s(script[type="application/ld+json"]))) =~ "FAQPage"
+    # The Trade tab has its own questions (on trade), not the overview's.
+    ld = LazyHTML.text(LazyHTML.query(doc, ~s(script[type="application/ld+json"])))
+    assert ld =~ "FAQPage"
+    assert ld =~ "Qu'exporte la Côte d'Ivoire"
+    refute ld =~ "PIB par habitant"
   end
 
   test "English tabs, French slugs redirected, unknown tab is a 404" do

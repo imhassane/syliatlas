@@ -74,7 +74,11 @@ defmodule SyliAtlasWeb.SiteStructureTest do
     assert txt =~ "/en/countries/senegal"
     assert txt =~ "/api/v1/areas/SEN"
     assert txt =~ "ECOWAS"
-    assert length(Regex.scan(~r{\]\(http://localhost:4000/en/countries/}, txt)) == 54
+    # Each country: its profile and its trade page.
+    assert length(Regex.scan(~r{\]\(http://localhost:4000/en/countries/[a-z-]+\)}, txt)) == 54
+
+    assert length(Regex.scan(~r{\]\(http://localhost:4000/en/countries/[a-z-]+/trade\)}, txt)) ==
+             54
   end
 
   # Every page of the sitemap is linked from at least three other pages:
