@@ -36,7 +36,8 @@ defmodule SyliAtlasWeb.RecapControllerTest do
     # Every country can be added from the dialog.
     assert LazyHTML.query(d, "#recap-dialog [data-recap-add] option[value]") |> Enum.count() >= 54
     # The footer's brand is the site's logo, and the credit of the market data links to it.
-    assert LazyHTML.query(d, ".footer-about .brand svg rect") |> Enum.count() == 4
+    assert LazyHTML.query(d, ".footer-about .brand svg path[fill=\"url(#sa-mark-footer)\"]")
+           |> Enum.count() == 1
   end
 
   test "the page works without JavaScript: a form, then « check your inbox »",
