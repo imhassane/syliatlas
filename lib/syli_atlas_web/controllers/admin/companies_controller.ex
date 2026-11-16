@@ -16,7 +16,11 @@ defmodule SyliAtlasWeb.Admin.CompaniesController do
       page_title: "Admin · Entreprises",
       rows: rows,
       counts: Enum.frequencies_by(rows, & &1.status),
-      ready: SyliAtlas.Companies.Verifier.configured?()
+      ready: SyliAtlas.Companies.Verifier.configured?(),
+      countries:
+        SyliAtlas.Geo.list_countries()
+        |> Enum.map(&{&1.code, &1.name_fr})
+        |> Enum.sort_by(&SyliAtlas.Geo.Area.normalize(elem(&1, 1)))
     )
   end
 

@@ -145,3 +145,21 @@
   .flows-narrow { display: flex; }
   .flows-cta { width: 100%; justify-content: center; order: 3; }
 }
+
+/* Admin « Entreprises »: the form to add a company. */
+.adm-company-form { display: flex; flex-direction: column; gap: 20px; padding: 18px 24px 24px; }
+.adm-company-help { margin: 0; max-width: 60rem; }
+.adm-company-group { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 18px; margin: 0; padding: 18px; border: 1px solid var(--border-faint); border-radius: 12px; }
+.adm-company-group legend { padding: 0 6px; font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-subtle); }
+.adm-company-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; font-size: 14px; font-weight: 500; color: var(--ink); }
+.adm-company-field small { font-weight: 400; color: var(--ink-subtle); }
+.adm-company-wide { grid-column: 1 / -1; }
+.adm-company-field input, .adm-company-field select { box-sizing: border-box; width: 100%; min-height: 44px; padding: 0 12px; border: 1px solid var(--border-input); border-radius: 10px; background: var(--card); color: var(--ink); font: inherit; font-size: 15px; font-weight: 400; }
+.adm-company-field input::placeholder { color: var(--ink-subtle); }
+.adm-company-field input:focus-visible, .adm-company-field select:focus-visible { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-bg); }
+.adm-company-actions { display: flex; justify-content: flex-end; }
+@media (max-width: 40rem) {
+  .adm-company-form { padding: 14px 16px 16px; }
+  .adm-company-group { grid-template-columns: minmax(0, 1fr); padding: 14px; }
+  .adm-company-actions .btn { width: 100%; justify-content: center; }
+}
