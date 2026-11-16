@@ -78,6 +78,14 @@
     </div>
   </div>
 
+  <SyliAtlasWeb.TradeFlowComponents.home_flows
+    :if={@trade_africa}
+    africa={@trade_africa}
+    year={@trade_year}
+    version={@trade_version}
+    locale={@locale}
+  />
+
   <.section variant="alt">
     <.section_head
       eyebrow={gettext("Start with a question")}

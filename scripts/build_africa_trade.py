@@ -66,6 +66,50 @@ PRODUCTS = {
 }
 
 MIN_ROW = 1_000_000
+
+# Families of products for the flow chart of the home page (exports on the
+# left, imports on the right), from HS headings and chapters.
+EXPORT_ENERGY = {"2701", "2709", "2710", "2711"}
+EXPORT_PRECIOUS = {"7102", "7103", "7106", "7108", "7110"}
+EXPORT_MINERAL_CHAPTERS = {25, 26, 28, 31, 72, 73, 74, 75, 76, 78, 79, 80, 81}
+
+
+def export_family(heading, chapter):
+    if heading in EXPORT_ENERGY:
+        return "energy"
+    if heading in EXPORT_PRECIOUS:
+        return "precious"
+    if chapter in EXPORT_MINERAL_CHAPTERS:
+        return "minerals"
+    if 1 <= chapter <= 24:
+        return "farm"
+    if chapter in (84, 85, 87, 88, 89, 90):
+        return "machines"
+    return "other"
+
+
+def import_family(heading, chapter):
+    if chapter == 27:
+        return "energy"
+    if chapter in (84, 85, 90):
+        return "machines"
+    if chapter in (86, 87, 88, 89):
+        return "vehicles"
+    if 1 <= chapter <= 24:
+        return "food"
+    if chapter in (28, 29, 30, 31, 32, 33, 34, 38, 39, 40):
+        return "chemicals"
+    if chapter in (72, 73, 76):
+        return "metals"
+    return "other"
+
+
+def families(d, fn):
+    h4 = d["k"].str[:4]
+    ch = d["k"].str[:2].astype(int)
+    keys = [fn(h, c) for h, c in zip(h4, ch)]
+    s = d.groupby(keys)["v"].sum()
+    return {k: round(v) for k, v in s.items()}
 FIRST_YEAR = 2000
 
 
@@ -119,6 +163,7 @@ def africa_block(df, african, stage_of):
     return {
         "exports": round(exports),
         "imports": round(imports),
+        "families": {"exports": families(ex, export_family), "imports": families(im, import_family)},
         "intra": round(intra),
         "intra_share": share(intra, exports),
         "stages": {"exports": stage(ex), "imports": stage(im)},
@@ -225,6 +270,11 @@ def main():
     p.add_argument("--bec", required=True)
     p.add_argument("--bec-codes", required=True)
     p.add_argument("--history", required=True)
+    p.add_argument(
+        "--keep-history",
+        action="store_true",
+        help="reuse the series of the existing output file instead of reading the HS 1992 archive",
+    )
     p.add_argument("--areas", default="priv/data/areas.json")
     args = p.parse_args()
 
@@ -242,7 +292,15 @@ def main():
     africa = africa_block(df, african, stage_of)
     products = {pid: product_block(df, african, core, chain) for pid, (core, chain) in PRODUCTS.items()}
 
-    hist, hist_version = history(args.history, african)
+    if args.keep_history and Path(args.output).exists():
+        old = json.load(open(args.output))
+        hist = {
+            "africa": old["africa"]["history"],
+            "products": {pid: p.get("history", {}) for pid, p in old["products"].items()},
+        }
+        hist_version = old["history_source"]["version"]
+    else:
+        hist, hist_version = history(args.history, african)
     africa["history"] = hist["africa"]
     for pid in products:
         products[pid]["history"] = hist["products"][pid]
