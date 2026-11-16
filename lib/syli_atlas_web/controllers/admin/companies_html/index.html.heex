@@ -68,44 +68,87 @@
     <div class="adm-card-head">
       <h2 class="h2">Ajouter une entreprise</h2>
     </div>
-    <p class="muted pad-sm">
-      Donne une page web (pas un PDF) qui nomme l'entreprise, le produit et le pays, et les actionnaires si tu les indiques. Elle s'affiche dès que la vérification la confirme.
-    </p>
     <.form
       for={%{}}
       as={:company}
       action={~p"/admin/entreprises"}
       method="post"
-      class="adm-rebasing-form"
+      class="adm-company-form"
       id="company-form"
     >
-      <div class="adm-rebasing-fields">
-        <label>
-          Produit
+      <p class="muted adm-company-help">
+        Donne une page web (pas un PDF) qui nomme l'entreprise, le produit et le pays, et les actionnaires si tu les indiques. Elle s'affiche dès que la vérification la confirme, en général dans la minute.
+      </p>
+      <fieldset class="adm-company-group">
+        <legend>L'entreprise</legend>
+        <label class="adm-company-field">
+          <span>Nom</span>
+          <input
+            type="text"
+            name="company[name]"
+            required
+            maxlength="120"
+            placeholder="Kamoto Copper Company (KCC)"
+          />
+        </label>
+        <label class="adm-company-field">
+          <span>Produit</span>
           <select name="company[product]" required>
             <option :for={id <- SyliAtlas.AfricaTrade.products()} value={id}>
               {product_name(id)}
             </option>
           </select>
         </label>
-        <label>Pays (code ISO à 3 lettres)
-        <input type="text" name="company[country]" required pattern="[A-Z]{3}" maxlength="3" /></label>
-        <label>Nom <input type="text" name="company[name]" required maxlength="120" /></label>
-        <label>
-          Type
+        <label class="adm-company-field">
+          <span>Pays</span>
+          <select name="company[country]" required>
+            <option value="">Choisir un pays</option>
+            <option :for={{code, name} <- @countries} value={code}>{name}</option>
+          </select>
+        </label>
+        <label class="adm-company-field">
+          <span>Type</span>
           <select name="company[kind]" required>
             <option :for={k <- SyliAtlas.Companies.Company.kinds()} value={k}>
               {kind_name(k)}
             </option>
           </select>
         </label>
-        <label>Actionnaires (séparés par des virgules)
-        <input type="text" name="company[owners]" maxlength="200" /></label>
-        <label>Cotation <input type="text" name="company[listing]" /></label>
-        <label>Page source (https://…) <input type="url" name="company[source_url]" required /></label>
-        <label>Nom de la source <input type="text" name="company[source_name]" required /></label>
+        <label class="adm-company-field adm-company-wide">
+          <span>Actionnaires
+          <small>facultatif · séparés par des virgules, sans pourcentages</small></span>
+          <input
+            type="text"
+            name="company[owners]"
+            maxlength="200"
+            placeholder="Glencore, Gécamines"
+          />
+        </label>
+        <label class="adm-company-field adm-company-wide">
+          <span>Cotation <small>facultatif · la bourse où ses actions s'échangent</small></span>
+          <input type="text" name="company[listing]" placeholder="Lusaka Securities Exchange" />
+        </label>
+      </fieldset>
+      <fieldset class="adm-company-group">
+        <legend>La source</legend>
+        <label class="adm-company-field adm-company-wide">
+          <span>Adresse de la page</span>
+          <input
+            type="url"
+            name="company[source_url]"
+            required
+            placeholder="https://…"
+            pattern="https://.*"
+          />
+        </label>
+        <label class="adm-company-field adm-company-wide">
+          <span>Nom affiché <small>ce que le lecteur verra comme source</small></span>
+          <input type="text" name="company[source_name]" required placeholder="Glencore" />
+        </label>
+      </fieldset>
+      <div class="adm-company-actions">
+        <button class="btn btn-primary" type="submit" id="company-create">Ajouter et vérifier</button>
       </div>
-      <button class="btn btn-primary" type="submit" id="company-create">Ajouter</button>
     </.form>
   </section>
 </.admin_shell>
