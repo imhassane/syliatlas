@@ -190,7 +190,7 @@ defmodule SyliAtlasWeb.PageComponents do
     ~H"""
     <div class="install-card" data-install>
       <div class="install-text">
-        <SyliAtlasWeb.Layouts.logo size={48} />
+        <SyliAtlasWeb.Layouts.logo size={48} gradient_id="sa-mark-install" />
         <div class="stack gap-1">
           <h3 class="h2">{gettext("Syli Atlas on your phone")}</h3>
           <p>

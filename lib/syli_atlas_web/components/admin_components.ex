@@ -44,12 +44,7 @@ defmodule SyliAtlasWeb.AdminComponents do
     <div class="admin" id="admin">
       <aside class="admin-side" id="admin-side">
         <a class="admin-logo" href={~p"/fr"}>
-          <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true">
-            <rect width="13" height="13" rx="3" fill="var(--ink)" />
-            <rect x="15" width="13" height="13" rx="3" fill="#4b3bff" />
-            <rect y="15" width="13" height="13" rx="3" fill="#4b3bff" />
-            <rect x="15" y="15" width="13" height="13" rx="3" fill="#ff6b3d" />
-          </svg>
+          <SyliAtlasWeb.Layouts.logo size={28} />
           <span>syli <span>admin</span></span>
         </a>
         <nav aria-label="Administration" class="admin-nav">

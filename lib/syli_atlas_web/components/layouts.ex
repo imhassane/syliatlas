@@ -454,7 +454,7 @@ defmodule SyliAtlasWeb.Layouts do
       <div class="wrap footer-top">
         <div class="footer-about">
           <a class="brand" href={Paths.home(@locale)} aria-label="Syli Atlas">
-            <.logo size={30} />
+            <.logo size={30} gradient_id="sa-mark-footer" />
             <b>syli <span>atlas</span></b>
           </a>
           <p class="footer-claim">
@@ -835,8 +835,10 @@ defmodule SyliAtlasWeb.Layouts do
           aria-label={gettext("Menu")}
         >
           <div class="drawer-head">
-            <a class="brand" href={Paths.home(@locale)} aria-label="Syli Atlas"><.logo size={28} /><b>syli
-            <span>atlas</span></b></a>
+            <a class="brand" href={Paths.home(@locale)} aria-label="Syli Atlas"><.logo
+              size={28}
+              gradient_id="sa-mark-app"
+            /><b>syli <span>atlas</span></b></a>
             <button
               type="button"
               class="icon-btn"
@@ -940,7 +942,15 @@ defmodule SyliAtlasWeb.Layouts do
     }
   end
 
+  @doc """
+  The mark (16 Nov. 2026, canvas « Syli Atlas — pistes de logo Afrique »,
+  piste D): the African continent with Madagascar (Natural Earth outline),
+  filled with the sunset gradient. Two marks on one page need two gradient
+  ids (`gradient_id`): the header and the footer both draw it. Fixed ids, so
+  a page renders the same every time.
+  """
   attr :size, :integer, default: 28
+  attr :gradient_id, :string, default: "sa-mark"
 
   @doc "Mark of a social network (paths from Simple Icons, CC0)."
   attr :network, :atom, required: true
@@ -962,12 +972,23 @@ defmodule SyliAtlasWeb.Layouts do
   end
 
   def logo(assigns) do
+    assigns = assign(assigns, :gid, assigns.gradient_id)
+
     ~H"""
     <svg width={@size} height={@size} viewBox="0 0 28 28" aria-hidden="true">
-      <rect width="13" height="13" rx="3" fill="var(--ink)" />
-      <rect x="15" width="13" height="13" rx="3" fill="#4b3bff" />
-      <rect y="15" width="13" height="13" rx="3" fill="#4b3bff" />
-      <rect x="15" y="15" width="13" height="13" rx="3" fill="#ff6b3d" />
+      <defs>
+        <linearGradient id={@gid} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#ffb547" />
+          <stop offset=".3" stop-color="#ff6b3d" />
+          <stop offset=".55" stop-color="#f0347a" />
+          <stop offset=".8" stop-color="#8a3ffc" />
+          <stop offset="1" stop-color="#3b6cff" />
+        </linearGradient>
+      </defs>
+      <path
+        fill={"url(##{@gid})"}
+        d="M6.7 12.6 5.4 12.5 4.5 12.8 3.9 12.5 2.6 11.6 2.1 10.6 1.5 10.1 1.6 10.0 1.4 9.9 1.6 9.8 1.2 9.9 0.9 9.7 1.0 9.6 0.9 9.3 1.1 9.3 1.4 9.3 1.0 9.3 0.6 8.8 1.0 8.4 1.2 7.7 1.0 7.0 1.1 6.6 0.9 6.3 0.8 6.4 1.3 5.2 2.4 3.7 3.0 3.5 3.6 2.9 3.8 1.9 4.7 1.3 5.1 0.6 5.3 0.5 5.6 0.8 6.7 0.9 7.9 0.3 10.5 0.2 11.2 0.0 11.5 0.2 11.7 0.2 11.5 0.4 11.7 0.8 11.3 1.2 11.4 1.4 12.2 1.7 13.3 1.9 13.5 2.3 14.8 2.7 15.2 2.5 15.2 2.0 15.8 1.7 17.2 2.3 18.7 2.5 19.5 2.2 19.9 2.4 20.7 2.3 21.0 3.1 20.7 3.7 20.1 2.9 20.0 3.0 21.3 5.2 21.3 5.6 21.7 5.9 22.0 7.2 22.4 7.5 22.8 8.5 23.4 8.8 24.3 9.7 23.9 10.0 24.9 10.4 27.3 9.9 27.2 10.4 27.3 10.4 27.4 10.5 27.2 10.5 27.2 10.8 26.1 12.8 23.1 15.5 22.7 16.3 22.5 16.9 22.8 17.2 22.7 17.8 22.9 18.4 23.2 18.6 23.3 20.2 22.9 20.9 20.9 22.1 21.2 23.2 21.2 23.9 20.2 24.5 20.0 25.6 18.2 27.3 17.4 27.7 16.2 27.7 15.2 28.0 14.6 27.8 14.4 27.2 14.5 27.1 14.5 26.8 13.2 24.7 13.0 23.2 12.0 21.5 12.0 20.6 12.8 18.8 12.5 18.0 12.6 17.7 12.2 16.9 12.5 16.8 12.2 16.8 12.0 16.3 11.2 15.4 10.8 14.7 11.0 14.6 11.1 14.4 11.2 14.5 11.3 14.4 11.0 14.3 11.3 13.3 11.2 12.9 10.9 12.9 10.6 12.6 10.6 12.7 10.1 12.8 10.1 12.7 10.1 12.8 9.8 12.8 9.5 12.3 8.8 12.0 8.9 11.9ZM26.5 19.2 27.0 20.5 26.9 20.7 26.7 20.5 26.6 21.6 25.7 24.1 25.1 24.4 24.6 24.3 24.4 24.0 24.2 23.1 24.7 22.2 24.5 21.3 24.7 20.8 25.7 20.5 25.8 20.2 26.0 20.2 26.0 19.8 26.4 19.6Z"
+      />
     </svg>
     """
   end
