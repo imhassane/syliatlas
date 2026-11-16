@@ -1,0 +1,111 @@
+<.admin_shell current={:companies} counts={@admin_counts} until={@admin_until} key={@admin_key}>
+  <header class="adm-head">
+    <div class="adm-intro">
+      <p class="eyebrow">Données</p>
+      <h1 class="adm-title">Entreprises des pages produits</h1>
+      <p class="muted">
+        Une entreprise n'est affichée que si sa page source la confirme, mot pour mot : nom, produit, pays et actionnaires. L'IA relit chaque ligne tous les 30 jours ; au moindre doute la ligne est masquée aussitôt, sans attendre personne. Une ligne non confirmée depuis 90 jours est masquée aussi. L'IA n'ajoute jamais d'entreprise.
+      </p>
+      <p :if={!@ready} class="down">
+        <b>Clé ANTHROPIC_API_KEY absente : aucune vérification possible, rien ne s'affiche.</b>
+      </p>
+    </div>
+    <.form for={%{}} action={~p"/admin/entreprises/verifier"} method="post">
+      <button class="btn btn-secondary" type="submit" id="companies-check-due">Vérifier les lignes dues</button>
+    </.form>
+  </header>
+
+  <dl class="stats" id="adm-companies-stats">
+    <div :for={s <- ~w(published hidden pending withdrawn)}>
+      <dt>{status_label(s)}</dt>
+      <dd class="big num adm-big-sm">{@counts[s] || 0}</dd>
+    </div>
+  </dl>
+
+  <section class="card adm-list" id="adm-companies">
+    <div class="adm-card-head">
+      <h2 class="h2">Toutes les lignes</h2>
+    </div>
+    <p :if={@rows == []} class="muted pad">
+      Aucune entreprise : le fichier priv/data/companies.json est lu chaque matin.
+    </p>
+    <article :for={c <- @rows} class="adm-national" id={"company-#{c.id}"}>
+      <div class="adm-national-head">
+        <div class="stack gap-1">
+          <p class="eyebrow">{product_name(c.product)} · {c.country} · {kind_name(c.kind)}</p>
+          <p class="h3">
+            {c.name}
+            <span class={["pill", status_class(c.status)]}>{status_label(c.status)}</span>
+          </p>
+          <p :if={c.owners} class="small">Actionnaires : {c.owners}</p>
+          <p class="small">
+            <a href={c.source_url} rel="noopener">{c.source_name}</a>
+            <span class="muted"> · vérifiée {when_text(c.checked_at)}</span>
+          </p>
+        </div>
+        <div class="row gap-1">
+          <.form for={%{}} action={~p"/admin/entreprises/#{c.id}/verifier"} method="post">
+            <button class="btn btn-secondary btn-sm" type="submit" id={"company-check-#{c.id}"}>Vérifier</button>
+          </.form>
+          <.form
+            :if={c.status != "withdrawn"}
+            for={%{}}
+            action={~p"/admin/entreprises/#{c.id}/retirer"}
+            method="post"
+          >
+            <button class="btn btn-quiet btn-sm" type="submit" id={"company-withdraw-#{c.id}"}>Retirer</button>
+          </.form>
+        </div>
+      </div>
+      <blockquote :if={c.excerpt && c.status == "published"} class="adm-quote">
+        « {c.excerpt} »
+      </blockquote>
+      <p :if={c.note} class="small down">{c.note}</p>
+    </article>
+  </section>
+
+  <section class="card adm-list" id="adm-companies-new">
+    <div class="adm-card-head">
+      <h2 class="h2">Ajouter une entreprise</h2>
+    </div>
+    <p class="muted pad-sm">
+      Donne une page web (pas un PDF) qui nomme l'entreprise, le produit et le pays, et les actionnaires si tu les indiques. Elle s'affiche dès que la vérification la confirme.
+    </p>
+    <.form
+      for={%{}}
+      as={:company}
+      action={~p"/admin/entreprises"}
+      method="post"
+      class="adm-rebasing-form"
+      id="company-form"
+    >
+      <div class="adm-rebasing-fields">
+        <label>
+          Produit
+          <select name="company[product]" required>
+            <option :for={id <- SyliAtlas.AfricaTrade.products()} value={id}>
+              {product_name(id)}
+            </option>
+          </select>
+        </label>
+        <label>Pays (code ISO à 3 lettres)
+        <input type="text" name="company[country]" required pattern="[A-Z]{3}" maxlength="3" /></label>
+        <label>Nom <input type="text" name="company[name]" required maxlength="120" /></label>
+        <label>
+          Type
+          <select name="company[kind]" required>
+            <option :for={k <- SyliAtlas.Companies.Company.kinds()} value={k}>
+              {kind_name(k)}
+            </option>
+          </select>
+        </label>
+        <label>Actionnaires (séparés par des virgules)
+        <input type="text" name="company[owners]" maxlength="200" /></label>
+        <label>Cotation <input type="text" name="company[listing]" /></label>
+        <label>Page source (https://…) <input type="url" name="company[source_url]" required /></label>
+        <label>Nom de la source <input type="text" name="company[source_name]" required /></label>
+      </div>
+      <button class="btn btn-primary" type="submit" id="company-create">Ajouter</button>
+    </.form>
+  </section>
+</.admin_shell>

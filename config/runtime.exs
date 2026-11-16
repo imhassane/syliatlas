@@ -74,6 +74,28 @@ if config_env() != :test do
     config :syli_atlas, SyliAtlas.Budgets.Extractor, model: String.trim(model)
   end
 
+  # Audience for the administrators' daily email (Plausible Stats API).
+  config :syli_atlas, SyliAtlas.Plausible,
+    api_key:
+      (case System.get_env("PLAUSIBLE_API_KEY") do
+         v when v in [nil, ""] -> nil
+         v -> String.trim(v)
+       end),
+    site_id: System.get_env("PLAUSIBLE_SITE_ID") || "syliatlas.com"
+
+  # Who receives the administrators' daily email: ADMIN_DIGEST_TO (addresses
+  # separated by commas), else every active administrator.
+  if to = System.get_env("ADMIN_DIGEST_TO") do
+    config :syli_atlas, SyliAtlas.Admin.DailyDigest,
+      to: to |> String.split(",", trim: true) |> Enum.map(&String.trim/1)
+  end
+
+  # Companies of the product pages: checked with the same key;
+  # COMPANIES_VERIFY_MODEL changes the model.
+  if model = System.get_env("COMPANIES_VERIFY_MODEL") do
+    config :syli_atlas, SyliAtlas.Companies.Verifier, model: String.trim(model)
+  end
+
   config :syli_atlas, SyliAtlas.Ratings.Extractor,
     api_key:
       (case System.get_env("ANTHROPIC_API_KEY") do

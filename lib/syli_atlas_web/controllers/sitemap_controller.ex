@@ -115,6 +115,13 @@ defmodule SyliAtlasWeb.SitemapController do
     - [Economic communities](#{Seo.url(Paths.communities("en"))})
     - [Regions of Africa](#{Seo.url(Paths.regions("en"))})
     - [Method and sources](#{Seo.url(Paths.method("en"))}): sources, editions, licences, calculations
+    - [Africa's trade](#{Seo.url(SyliAtlasWeb.TradeTopics.africa_path("en"))}): what the 54 countries sell and buy, partners, processing, since 2000 (CEPII BACI; CSV)
+    - [Africa's products](#{Seo.url(SyliAtlasWeb.TradeTopics.products_path("en"))}): 24 products, their African exporters and buyers, Africa's share of the world
+
+    ## Trade rankings and products
+
+    #{Enum.map_join(SyliAtlasWeb.TradeTopics.rankings(), "\n", fn id -> "- [#{Gettext.with_locale(SyliAtlasWeb.Gettext, "en", fn -> SyliAtlasWeb.TradeRankingController.question(id) end)}](#{Seo.url(SyliAtlasWeb.TradeTopics.ranking_path("en", id))}) · [CSV](#{Seo.url(SyliAtlasWeb.TradeTopics.ranking_csv_path("en", id))})" end)}
+    #{Enum.map_join(SyliAtlas.AfricaTrade.products(), "\n", fn id -> "- [#{Gettext.with_locale(SyliAtlasWeb.Gettext, "en", fn -> SyliAtlasWeb.TradeTopics.product_title(id) end)}](#{Seo.url(SyliAtlasWeb.TradeTopics.product_path("en", id))})" end)}
 
     ## Rankings and questions
 
@@ -286,6 +293,7 @@ defmodule SyliAtlasWeb.SitemapController do
       end ++
         [{both(&Paths.currencies/1), (SyliAtlas.Fx.latest() || %{})["as_of"] || imf}] ++
         [{both(&Paths.rebasings/1), latest_date([imf | Map.values(rebased)])}] ++
+        trade_pages() ++
         for(p <- SyliAtlasWeb.Topics.sitemap_pages(), do: {p, imf})
 
     # A country is listed once per tab that has data: each tab has its
@@ -378,6 +386,22 @@ defmodule SyliAtlasWeb.SitemapController do
   end
 
   defp both(fun), do: SyliAtlas.Locales.each(fn l -> fun.(l) end)
+
+  # Africa's trade, its products and the trade rankings: they change with
+  # the BACI file, dated by its source version (« 202601 » → January 2026).
+  defp trade_pages do
+    t = SyliAtlasWeb.TradeTopics
+
+    date =
+      case SyliAtlas.AfricaTrade.document()["source"] do
+        %{"version" => <<y::binary-size(4), m::binary-size(2)>>} -> "#{y}-#{m}-01"
+        _ -> nil
+      end
+
+    [{both(&t.africa_path/1), date}, {both(&t.products_path/1), date}] ++
+      for(id <- t.rankings(), do: {both(&t.ranking_path(&1, id)), date}) ++
+      for(id <- SyliAtlas.AfricaTrade.products(), do: {both(&t.product_path(&1, id)), date})
+  end
 
   defp xml(pages) do
     urls =

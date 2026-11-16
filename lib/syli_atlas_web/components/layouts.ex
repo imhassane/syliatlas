@@ -265,8 +265,9 @@ defmodule SyliAtlasWeb.Layouts do
     """
   end
 
-  # The simulator is marked « New » for its first month.
+  # The simulator is marked « New » for its first month, Africa's trade too.
   @simulator_new_until ~D[2026-12-12]
+  @trade_new_until ~D[2026-12-31]
 
   # The themes of the menu (each compares the 54 countries), then the tools,
   # with live counts (both from memory: no query).
@@ -283,6 +284,16 @@ defmodule SyliAtlasWeb.Layouts do
         href: Paths.debt(locale),
         description: gettext("Levels, creditors, risk of debt distress · 54 countries"),
         short: gettext("54 countries")
+      },
+      %{
+        key: :trade,
+        group: :theme,
+        new: Date.compare(Date.utc_today(), @trade_new_until) == :lt,
+        current: [:trade],
+        label: gettext("Africa's trade"),
+        href: SyliAtlasWeb.TradeTopics.africa_path(locale),
+        description: gettext("What Africa sells and buys, product by product · 24 products"),
+        short: nil
       },
       %{
         key: :budgets,
@@ -407,6 +418,8 @@ defmodule SyliAtlasWeb.Layouts do
             <path d="M4 20V9l8-5 8 5v11" /><path d="M9 20v-6h6v6" /><path d="M4 9h16" />
           <% :compare -> %>
             <path d="M5 20V10M12 20V4M19 20v-7" />
+          <% :trade -> %>
+            <path d="M4 8h13l-3-3" /><path d="M20 16H7l3 3" />
           <% _ -> %>
             <circle cx="12" cy="12" r="8" />
         <% end %>

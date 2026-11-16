@@ -236,6 +236,30 @@ defmodule SyliAtlasWeb.Router do
         get "/#{kind_seg}/:slug/#{seg.(:data)}.#{format}", ExportController, :show,
           assigns: %{format: format, kind: kind}
       end
+
+      # The trade pages' files (SyliAtlasWeb.TradeTopics).
+      for id <- SyliAtlasWeb.TradeTopics.rankings() do
+        get "/#{seg.(:ranking)}/#{SyliAtlasWeb.TradeTopics.ranking_slug(id, locale)}.csv",
+            TradeRankingController,
+            :csv,
+            assigns: %{ranking: id}
+      end
+
+      get "/#{SyliAtlasWeb.TradeTopics.africa_segment(locale)}/#{SyliAtlasWeb.Paths.tab_segment(locale, :trade)}.csv",
+          AfricaTradeController,
+          :africa_csv
+
+      for id <- SyliAtlas.AfricaTrade.products() do
+        get "/#{SyliAtlasWeb.TradeTopics.africa_segment(locale)}/#{SyliAtlasWeb.TradeTopics.products_segment(locale)}/#{SyliAtlasWeb.TradeTopics.product_slug(id, locale)}.csv",
+            AfricaTradeController,
+            :product_csv,
+            assigns: %{product: id}
+      end
+
+      # A country's trade tab as files (SyliAtlasWeb.TradeExportController).
+      get "/#{seg.(:country)}/:slug/#{SyliAtlasWeb.Paths.tab_segment(locale, :trade)}/:file",
+          TradeExportController,
+          :show
     end
 
     scope "/#{locale}", SyliAtlasWeb do
@@ -252,6 +276,26 @@ defmodule SyliAtlasWeb.Router do
       get "/#{seg.(:accessibility)}", PageController, :accessibility
       get "/#{seg.(:offline)}", PageController, :offline
       get "/#{seg.(:ranking)}", RankingController, :index
+
+      for id <- SyliAtlasWeb.TradeTopics.rankings() do
+        get "/#{seg.(:ranking)}/#{SyliAtlasWeb.TradeTopics.ranking_slug(id, locale)}",
+            TradeRankingController,
+            :show,
+            assigns: %{ranking: id}
+      end
+
+      get "/#{SyliAtlasWeb.TradeTopics.africa_segment(locale)}/#{SyliAtlasWeb.Paths.tab_segment(locale, :trade)}",
+          AfricaTradeController,
+          :africa
+
+      get "/#{SyliAtlasWeb.TradeTopics.africa_segment(locale)}/#{SyliAtlasWeb.TradeTopics.products_segment(locale)}",
+          AfricaTradeController,
+          :products
+
+      get "/#{SyliAtlasWeb.TradeTopics.africa_segment(locale)}/#{SyliAtlasWeb.TradeTopics.products_segment(locale)}/:slug",
+          AfricaTradeController,
+          :product
+
       get "/#{seg.(:ranking)}/:topic", RankingController, :topic
       get "/#{seg.(:search)}", SearchController, :index
       get "/#{seg.(:country)}/:slug", AreaController, :show
@@ -327,6 +371,11 @@ defmodule SyliAtlasWeb.Router do
     get "/budgets/pays/:code", BudgetsController, :country
     post "/budgets/pays/:code", BudgetsController, :update_country
     get "/emails", EmailsController, :index
+    get "/entreprises", CompaniesController, :index
+    post "/entreprises", CompaniesController, :create
+    post "/entreprises/verifier", CompaniesController, :check_due
+    post "/entreprises/:id/verifier", CompaniesController, :check
+    post "/entreprises/:id/retirer", CompaniesController, :withdraw
     post "/membres/:id/sessions", MembersController, :close_sessions
     get "/recherches", SearchMissesController, :index
     get "/recherche-google", SearchConsoleController, :index

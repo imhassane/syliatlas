@@ -12,6 +12,8 @@ defmodule SyliAtlasWeb.Flags do
       service worker, loaded only by pages that show several flags.
 
   Flags are decorative: the country's name is always written next to them.
+  Trade partners outside Africa (China, India…) have their own sprite,
+  priv/static/images/flags-world.svg (scripts/build_world_flags.py).
   """
   use Phoenix.VerifiedRoutes,
     endpoint: SyliAtlasWeb.Endpoint,
@@ -93,6 +95,14 @@ defmodule SyliAtlasWeb.Flags do
            {iso3, svg}
          end)
 
+  # Trade partners outside Africa (scripts/build_world_flags.py): a second
+  # sprite, loaded only by the trade pages that name them.
+  @world_path Path.join(@dir, "world.json")
+  @external_resource @world_path
+  @world if File.exists?(@world_path),
+           do: @world_path |> File.read!() |> Jason.decode!(),
+           else: %{}
+
   @doc "The two-letter code used by the flag files, or nil."
   def iso2(iso3), do: Map.get(@iso2, iso3)
 
@@ -106,9 +116,10 @@ defmodule SyliAtlasWeb.Flags do
 
   @doc "The address of the flag in the sprite (digested in production), or nil."
   def sprite_href(iso3) do
-    case iso2(iso3) do
-      nil -> nil
-      cc -> ~p"/images/flags.svg" <> "#" <> cc
+    case {iso2(iso3), @world[iso3]} do
+      {nil, nil} -> nil
+      {nil, cc} -> ~p"/images/flags-world.svg" <> "#" <> cc
+      {cc, _} -> ~p"/images/flags.svg" <> "#" <> cc
     end
   end
 end

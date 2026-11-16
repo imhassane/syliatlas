@@ -97,3 +97,14 @@ config :syli_atlas, SyliAtlas.National.RebasingExtractor,
 config :syli_atlas, SyliAtlas.National.Watch,
   feeds: [{"test", "https://feeds.test/rebasing.xml"}],
   req_options: [plug: {Req.Test, SyliAtlas.National.Watch}, retry: false]
+
+# Companies of the product pages: source pages and the AI stubbed (Req.Test).
+config :syli_atlas, SyliAtlas.Companies.Verifier,
+  api_key: "test-key",
+  req_options: [plug: {Req.Test, SyliAtlas.Companies.Verifier.Page}, retry: false],
+  api_req_options: [plug: {Req.Test, SyliAtlas.Companies.Verifier}, retry: false]
+
+# Plausible (the administrators' daily email), stubbed (Req.Test).
+config :syli_atlas, SyliAtlas.Plausible,
+  api_key: "test-key",
+  req_options: [plug: {Req.Test, SyliAtlas.Plausible}, retry: false]

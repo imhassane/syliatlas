@@ -55,6 +55,17 @@ defmodule SyliAtlas.Accounts.EmailLayout do
           | {:highlight, String.t()}
           | {:figures, String.t(), [{String.t(), String.t()}]}
           | {:small, String.t()}
+          | {:actions,
+             [
+               %{
+                 count: integer(),
+                 label: String.t(),
+                 detail: String.t(),
+                 url: String.t(),
+                 urgent: boolean()
+               }
+             ]}
+          | {:rows, String.t(), [{String.t(), String.t(), String.t()}]}
 
   @doc "The HTML document."
   @spec render(keyword()) :: String.t()
@@ -116,6 +127,20 @@ defmodule SyliAtlas.Accounts.EmailLayout do
       caption <>
         "\n" <> Enum.map_join(figures, "\n", fn {label, value} -> "#{label} : #{value}" end)
 
+  defp text_block({:actions, items}),
+    do:
+      Enum.map_join(items, "\n", fn i ->
+        "#{i.count} · #{i.label}#{if i.detail != "", do: " (#{i.detail})"} : #{i.url}"
+      end)
+
+  defp text_block({:rows, caption, rows}),
+    do:
+      caption <>
+        "\n" <>
+        Enum.map_join(rows, "\n", fn {label, value, extra} ->
+          "#{label} : #{value}#{if extra != "", do: " (#{extra})"}"
+        end)
+
   defp text_block({:facts, facts}),
     do: Enum.map_join(facts, "\n", fn {label, value} -> "#{label} : #{value}" end)
 
@@ -175,7 +200,7 @@ defmodule SyliAtlas.Accounts.EmailLayout do
     <%= case @block do %><% {:paragraph, text} -> %><p style="margin: 0 0 16px; font-size: 16px; line-height: 1.6; color: <%= @c.ink %>;"><%= text %></p><% {:code, code, caption} -> %><table #{table} style="margin: 8px 0 20px;"><tr><td bgcolor="<%= @c.code_bg %>" style="background: <%= @c.code_bg %>; border-radius: 8px; padding: 20px 24px;">
     <p dir="ltr" style="margin: 0; font-family: <%= @mono %>; font-size: 36px; line-height: 1.2; letter-spacing: 0.18em; font-weight: 500; color: <%= @c.ink %>;"><%= code %></p>
     <p style="margin: 6px 0 0; font-size: 13px; line-height: 1.4; color: <%= @c.ink_muted %>;"><%= caption %></p>
-    </td></tr></table><% {:note, text} -> %><table #{table} style="margin: 8px 0 16px;"><tr><td bgcolor="<%= @c.note_bg %>" style="background: <%= @c.note_bg %>; border-radius: 8px; padding: 14px 16px; font-size: 14px; line-height: 1.5; color: <%= @c.note_ink %>;"><%= text %></td></tr></table><% {:section, title, link} -> %><table #{table} style="margin: 32px 0 12px; border-top: 1px solid <%= @c.border %>;"><tr><td align="left" style="padding-top: 24px; font-family: <%= @sans %>; font-size: 24px; line-height: 1.2; font-weight: 400; letter-spacing: -0.015em; color: <%= @c.ink %>;"><%= title %></td><%= if link do %><td align="right" style="padding-top: 24px; font-size: 14px; white-space: nowrap;"><a href="<%= elem(link, 1) %>" style="color: <%= @c.brand %>; font-weight: 500; text-decoration: none;"><%= elem(link, 0) %> →</a></td><% end %></tr></table><% {:highlight, text} -> %><table #{table} style="margin: 4px 0 12px;"><tr><td bgcolor="<%= @c.code_bg %>" style="background: <%= @c.code_bg %>; border-radius: 8px; padding: 12px 14px; font-size: 15px; line-height: 1.5; color: <%= @c.ink %>;"><%= text %></td></tr></table><% {:small, text} -> %><p style="margin: 16px 0 0; font-size: 12px; line-height: 1.5; color: <%= @c.ink_subtle %>;"><%= text %></p><% {:figures, caption, figures} -> %><p style="margin: 8px 0 8px; font-family: <%= @mono %>; font-size: 11px; line-height: 1.4; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: <%= @c.ink_subtle %>;"><%= caption %></p><table #{table} style="margin: 0 0 8px; border-collapse: separate; border-spacing: 6px 0;"><tr><%= for {label, value} <- figures do %><td bgcolor="<%= @c.page %>" style="background: <%= @c.page %>; border-radius: 8px; padding: 10px 12px; width: 33%;"><p style="margin: 0; font-size: 12px; line-height: 1.4; color: <%= @c.ink_muted %>;"><%= label %></p><p style="margin: 2px 0 0; font-size: 20px; line-height: 1.3; font-weight: 500; color: <%= @c.ink %>;"><%= value %></p></td><% end %></tr></table><% {:facts, facts} -> %><table #{table} style="margin: 4px 0 20px; border-collapse: collapse;"><%= for {label, value} <- facts do %><tr><td style="padding: 10px 0; border-top: 1px solid <%= @c.border %>; font-size: 14px; color: <%= @c.ink_subtle %>;"><%= label %></td><td align="right" style="padding: 10px 0; border-top: 1px solid <%= @c.border %>; font-size: 15px; color: <%= @c.ink %>;"><%= value %></td></tr><% end %></table><% end %>
+    </td></tr></table><% {:note, text} -> %><table #{table} style="margin: 8px 0 16px;"><tr><td bgcolor="<%= @c.note_bg %>" style="background: <%= @c.note_bg %>; border-radius: 8px; padding: 14px 16px; font-size: 14px; line-height: 1.5; color: <%= @c.note_ink %>;"><%= text %></td></tr></table><% {:section, title, link} -> %><table #{table} style="margin: 32px 0 12px; border-top: 1px solid <%= @c.border %>;"><tr><td align="left" style="padding-top: 24px; font-family: <%= @sans %>; font-size: 24px; line-height: 1.2; font-weight: 400; letter-spacing: -0.015em; color: <%= @c.ink %>;"><%= title %></td><%= if link do %><td align="right" style="padding-top: 24px; font-size: 14px; white-space: nowrap;"><a href="<%= elem(link, 1) %>" style="color: <%= @c.brand %>; font-weight: 500; text-decoration: none;"><%= elem(link, 0) %> →</a></td><% end %></tr></table><% {:highlight, text} -> %><table #{table} style="margin: 4px 0 12px;"><tr><td bgcolor="<%= @c.code_bg %>" style="background: <%= @c.code_bg %>; border-radius: 8px; padding: 12px 14px; font-size: 15px; line-height: 1.5; color: <%= @c.ink %>;"><%= text %></td></tr></table><% {:small, text} -> %><p style="margin: 16px 0 0; font-size: 12px; line-height: 1.5; color: <%= @c.ink_subtle %>;"><%= text %></p><% {:figures, caption, figures} -> %><p style="margin: 8px 0 8px; font-family: <%= @mono %>; font-size: 11px; line-height: 1.4; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: <%= @c.ink_subtle %>;"><%= caption %></p><table #{table} style="margin: 0 0 8px; border-collapse: separate; border-spacing: 6px 0;"><tr><%= for {label, value} <- figures do %><td bgcolor="<%= @c.page %>" style="background: <%= @c.page %>; border-radius: 8px; padding: 10px 12px; width: 33%;"><p style="margin: 0; font-size: 12px; line-height: 1.4; color: <%= @c.ink_muted %>;"><%= label %></p><p style="margin: 2px 0 0; font-size: 20px; line-height: 1.3; font-weight: 500; color: <%= @c.ink %>;"><%= value %></p></td><% end %></tr></table><% {:actions, items} -> %><table #{table} style="margin: 4px 0 8px; border-collapse: collapse;"><%= for i <- items do %><tr><td width="48" valign="top" style="padding: 12px 0; border-top: 1px solid <%= @c.border %>; font-size: 26px; line-height: 1.1; font-weight: 300; color: <%= @c.ink %>;"><%= i.count %></td><td valign="top" style="padding: 12px 8px 12px 0; border-top: 1px solid <%= @c.border %>;"><p style="margin: 0; font-size: 16px; line-height: 1.4; font-weight: 600; color: <%= @c.ink %>;"><%= i.label %></p><%= if i.detail != "" do %><p style="margin: 3px 0 0; font-size: 13px; line-height: 1.4; color: <%= if i.urgent, do: "#B42318", else: @c.ink_muted %>;"><%= i.detail %></p><% end %></td><td width="90" align="right" valign="top" style="padding: 12px 0; border-top: 1px solid <%= @c.border %>;"><a href="<%= i.url %>" style="display: inline-block; padding: 8px 14px; border-radius: 999px; background: <%= @c.brand %>; color: <%= @c.on_brand %>; font-size: 13px; font-weight: 600; text-decoration: none;"><%= dgettext("emails", "Open") %></a></td></tr><% end %></table><% {:rows, caption, rows} -> %><p style="margin: 16px 0 6px; font-family: <%= @mono %>; font-size: 11px; line-height: 1.4; font-weight: 500; letter-spacing: 0.07em; text-transform: uppercase; color: <%= @c.ink_subtle %>;"><%= caption %></p><table #{table} style="margin: 0 0 8px; border-collapse: collapse;"><%= for {label, value, extra} <- rows do %><tr><td style="padding: 7px 0; border-top: 1px solid <%= @c.border %>; font-size: 14px; color: <%= @c.ink %>;"><%= label %></td><td align="right" style="padding: 7px 0; border-top: 1px solid <%= @c.border %>; font-size: 14px; font-weight: 600; color: <%= @c.ink %>;"><%= value %></td><td width="72" align="right" style="padding: 7px 0; border-top: 1px solid <%= @c.border %>; font-size: 12px; color: <%= @c.ink_subtle %>;"><%= extra %></td></tr><% end %></table><% {:facts, facts} -> %><table #{table} style="margin: 4px 0 20px; border-collapse: collapse;"><%= for {label, value} <- facts do %><tr><td style="padding: 10px 0; border-top: 1px solid <%= @c.border %>; font-size: 14px; color: <%= @c.ink_subtle %>;"><%= label %></td><td align="right" style="padding: 10px 0; border-top: 1px solid <%= @c.border %>; font-size: 15px; color: <%= @c.ink %>;"><%= value %></td></tr><% end %></table><% end %>
     """,
     [:assigns],
     engine: Phoenix.HTML.Engine
