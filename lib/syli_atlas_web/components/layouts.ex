@@ -942,16 +942,6 @@ defmodule SyliAtlasWeb.Layouts do
     }
   end
 
-  @doc """
-  The mark (16 Nov. 2026, canvas « Syli Atlas — pistes de logo Afrique »,
-  piste D): the African continent with Madagascar (Natural Earth outline),
-  filled with the sunset gradient. Two marks on one page need two gradient
-  ids (`gradient_id`): the header and the footer both draw it. Fixed ids, so
-  a page renders the same every time.
-  """
-  attr :size, :integer, default: 28
-  attr :gradient_id, :string, default: "sa-mark"
-
   @doc "Mark of a social network (paths from Simple Icons, CC0)."
   attr :network, :atom, required: true
 
@@ -970,6 +960,16 @@ defmodule SyliAtlasWeb.Layouts do
     </svg>
     """
   end
+
+  @doc """
+  The mark (16 Nov. 2026, canvas « Syli Atlas — pistes de logo Afrique »,
+  piste D): the African continent with Madagascar (Natural Earth outline),
+  filled with the sunset gradient. Two marks on one page need two gradient
+  ids (`gradient_id`): the header and the footer both draw it. Fixed ids, so
+  a page renders the same every time.
+  """
+  attr :size, :integer, default: 28
+  attr :gradient_id, :string, default: "sa-mark"
 
   def logo(assigns) do
     assigns = assign(assigns, :gid, assigns.gradient_id)
