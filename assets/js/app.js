@@ -32,8 +32,10 @@ import {initMoney} from "./ui/money"
 import {initChartTips} from "./ui/chart_tips"
 import {initPlausible} from "./ui/plausible"
 import {initDetailsTarget} from "./ui/details_target"
+import {initDialogs} from "./ui/dialogs"
 
 initTheme()
+initDialogs()
 initDrawer()
 initCurrencyPickers()
 initSheets()

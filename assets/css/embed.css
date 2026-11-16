@@ -63,3 +63,9 @@ html:has(.embed-body), .embed-body { min-height: 0; height: auto; }
 /* No entrance animation in a frame: a reader's screenshot or a printed
    article must never catch a half-drawn line. */
 .embed-body *, .embed-body *::before, .embed-body *::after { animation: none !important; transition: none !important; }
+/* With the trade files the panel is taller: it scrolls inside the screen,
+   and on a phone it spans the screen instead of leaving it on the left. */
+.data-menu-panel { max-height: calc(100dvh - 160px); overflow-y: auto; overscroll-behavior: contain; }
+@media (max-width: 40rem) {
+  .data-menu-panel { position: fixed; top: auto; inset-inline: 12px; width: auto; margin-top: 8px; }
+}

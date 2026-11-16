@@ -25,7 +25,8 @@ defmodule SyliAtlasWeb.AdminComponents do
            {:ratings, "Notations", ~p"/admin/notations", :ratings},
            {:national, "Chiffres nationaux", ~p"/admin/chiffres-nationaux", :ratings},
            {:budgets, "Budgets et lois", ~p"/admin/budgets", :budgets},
-           {:market, "Données de marché", ~p"/admin/marches", :market}
+           {:market, "Données de marché", ~p"/admin/marches", :market},
+           {:companies, "Entreprises", ~p"/admin/entreprises", :budgets}
          ]},
         {"Communauté",
          [

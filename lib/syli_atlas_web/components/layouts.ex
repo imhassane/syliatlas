@@ -229,12 +229,13 @@ defmodule SyliAtlasWeb.Layouts do
           </summary>
           <div class="nav-menu-pop nav-mega">
             <div
-              :for={{group, title} <- [theme: gettext("Themes"), tool: gettext("Tools")]}
+              :for={{title, items} <- mega_columns(@themes)}
               class="nav-mega-col"
             >
-              <p class="nav-mega-head">{title}</p>
+              <p :if={title} class="nav-mega-head">{title}</p>
+              <p :if={!title} class="nav-mega-head nav-mega-head-blank" aria-hidden="true">&nbsp;</p>
               <a
-                :for={t <- Enum.filter(@themes, &(&1.group == group))}
+                :for={t <- items}
                 href={t.href}
                 aria-current={@current in t.current && "page"}
                 class={["nav-mega-item", t.key == :simulator && "is-featured"]}
@@ -265,8 +266,23 @@ defmodule SyliAtlasWeb.Layouts do
     """
   end
 
-  # The simulator is marked « New » for its first month.
+  # Three columns: the themes in two halves, then the tools.
+  defp mega_columns(themes) do
+    {first, second} =
+      themes
+      |> Enum.filter(&(&1.group == :theme))
+      |> then(&Enum.split(&1, div(length(&1) + 1, 2)))
+
+    [
+      {gettext("Themes"), first},
+      {nil, second},
+      {gettext("Tools"), Enum.filter(themes, &(&1.group == :tool))}
+    ]
+  end
+
+  # The simulator is marked « New » for its first month, Africa's trade too.
   @simulator_new_until ~D[2026-12-12]
+  @trade_new_until ~D[2026-12-31]
 
   # The themes of the menu (each compares the 54 countries), then the tools,
   # with live counts (both from memory: no query).
@@ -283,6 +299,16 @@ defmodule SyliAtlasWeb.Layouts do
         href: Paths.debt(locale),
         description: gettext("Levels, creditors, risk of debt distress · 54 countries"),
         short: gettext("54 countries")
+      },
+      %{
+        key: :trade,
+        group: :theme,
+        new: Date.compare(Date.utc_today(), @trade_new_until) == :lt,
+        current: [:trade],
+        label: gettext("Africa's trade"),
+        href: SyliAtlasWeb.TradeTopics.africa_path(locale),
+        description: gettext("What Africa sells and buys, product by product · 24 products"),
+        short: nil
       },
       %{
         key: :budgets,
@@ -407,6 +433,8 @@ defmodule SyliAtlasWeb.Layouts do
             <path d="M4 20V9l8-5 8 5v11" /><path d="M9 20v-6h6v6" /><path d="M4 9h16" />
           <% :compare -> %>
             <path d="M5 20V10M12 20V4M19 20v-7" />
+          <% :trade -> %>
+            <path d="M4 8h13l-3-3" /><path d="M20 16H7l3 3" />
           <% _ -> %>
             <circle cx="12" cy="12" r="8" />
         <% end %>
@@ -459,6 +487,18 @@ defmodule SyliAtlasWeb.Layouts do
           </a>
           <p class="footer-claim">
             {gettext("African economies in verifiable figures. Every figure cites its source.")}
+          </p>
+          <p class="footer-social">
+            <a
+              :for={{key, name, href} <- SyliAtlasWeb.Seo.social_profiles()}
+              href={href}
+              rel="me noopener"
+              id={"footer-social-#{key}"}
+              aria-label={gettext("Syli Atlas on %{network}", network: name)}
+            >
+              <.social_icon network={key} />
+              <span aria-hidden="true">{name}</span>
+            </a>
           </p>
         </div>
       </div>
@@ -928,6 +968,25 @@ defmodule SyliAtlasWeb.Layouts do
       not_now: gettext("Not now"),
       installed_message: gettext("Syli Atlas is installed")
     }
+  end
+
+  @doc "Mark of a social network (paths from Simple Icons, CC0)."
+  attr :network, :atom, required: true
+
+  def social_icon(%{network: :linkedin} = assigns) do
+    ~H"""
+    <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+    </svg>
+    """
+  end
+
+  def social_icon(%{network: :x} = assigns) do
+    ~H"""
+    <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true" fill="currentColor">
+      <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
+    </svg>
+    """
   end
 
   @doc """

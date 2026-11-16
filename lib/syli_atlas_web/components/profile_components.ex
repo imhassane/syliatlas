@@ -305,7 +305,32 @@ defmodule SyliAtlasWeb.ProfileComponents do
       }
     ]
 
-    assigns = assign(assigns, files: files)
+    trade_files =
+      if (ctx[:tab] == :trade and ctx[:trade]) && ctx.area.kind == "country" do
+        alias SyliAtlasWeb.TradeExportController, as: T
+
+        for(
+          f <- T.files(),
+          do: %{
+            id: f,
+            name: T.title(f) <> " · CSV",
+            hint: T.hint(f),
+            href: T.path(ctx.locale, ctx.area, f)
+          }
+        ) ++
+          [
+            %{
+              id: "all",
+              name: gettext("All trade files · ZIP"),
+              hint: gettext("the five files above in one archive"),
+              href: T.path(ctx.locale, ctx.area, "all")
+            }
+          ]
+      else
+        []
+      end
+
+    assigns = assign(assigns, files: files, trade_files: trade_files)
 
     ~H"""
     <details class="data-menu" id="data-menu" data-nav-menu>
@@ -351,6 +376,36 @@ defmodule SyliAtlasWeb.ProfileComponents do
             </a>
           </li>
         </ul>
+        <div :if={@trade_files != []} class="stack gap-2" id="data-menu-trade">
+          <p class="eyebrow">
+            {gettext("Trade %{year} (CEPII, BACI)", year: @ctx.trade_doc["year"])}
+          </p>
+          <ul role="list">
+            <li :for={f <- @trade_files}>
+              <a href={f.href} download id={"data-trade-" <> f.id}>
+                <span class="data-menu-icon" aria-hidden="true">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  >
+                    <path d="M6 3h8l5 5v12a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"></path>
+                    <path d="M14 3v5h5"></path>
+                  </svg>
+                </span>
+                <span class="data-menu-text">
+                  <b>{f.name} <span class="sr-only">{gettext("(file)")}</span></b>
+                  <span class="small muted">{f.hint}</span>
+                </span>
+              </a>
+            </li>
+          </ul>
+        </div>
         <p class="small muted">
           {gettext(
             "Each file names its source and the sentence to cite. Stock prices are not included."

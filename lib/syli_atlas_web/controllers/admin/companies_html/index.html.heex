@@ -1,0 +1,189 @@
+<.admin_shell current={:companies} counts={@admin_counts} until={@admin_until} key={@admin_key}>
+  <header class="adm-head">
+    <div class="adm-intro">
+      <p class="eyebrow">Données</p>
+      <h1 class="adm-title">Entreprises des pages produits</h1>
+      <p class="muted">
+        Une entreprise n'est affichée que si sa page source la confirme, mot pour mot : nom, produit, pays et actionnaires. L'IA relit chaque ligne tous les 30 jours ; au moindre doute la ligne est masquée aussitôt, sans attendre personne. Une ligne non confirmée depuis 90 jours est masquée aussi. L'IA n'ajoute jamais d'entreprise.
+      </p>
+      <p :if={!@ready} class="down">
+        <b>Clé ANTHROPIC_API_KEY absente : aucune vérification possible, rien ne s'affiche.</b>
+      </p>
+    </div>
+    <div class="row gap-1">
+      <.form for={%{}} action={~p"/admin/entreprises/verifier"} method="post">
+        <button class="btn btn-secondary" type="submit" id="companies-check-due">
+          Vérifier les lignes dues
+        </button>
+      </.form>
+      <a
+        class="btn btn-primary"
+        href={~p"/admin/entreprises?ajouter=1"}
+        data-dialog-open="company-dialog"
+        id="company-add"
+        aria-haspopup="dialog"
+      >+ Ajouter une entreprise</a>
+    </div>
+  </header>
+
+  <dl class="stats" id="adm-companies-stats">
+    <div :for={s <- ~w(published hidden pending withdrawn)}>
+      <dt>{status_label(s)}</dt>
+      <dd class="big num adm-big-sm">{@counts[s] || 0}</dd>
+    </div>
+  </dl>
+
+  <section class="card adm-list" id="adm-companies">
+    <div class="adm-card-head">
+      <h2 class="h2">Toutes les lignes</h2>
+    </div>
+    <p :if={@rows == []} class="muted pad">
+      Aucune entreprise : le fichier priv/data/companies.json est lu chaque matin.
+    </p>
+    <article :for={c <- @rows} class="adm-national" id={"company-#{c.id}"}>
+      <div class="adm-national-head">
+        <div class="stack gap-1">
+          <p class="eyebrow">{product_name(c.product)} · {c.country} · {kind_name(c.kind)}</p>
+          <p class="h3">
+            {c.name}
+            <span class={["pill", status_class(c.status)]}>{status_label(c.status)}</span>
+          </p>
+          <p :if={c.owners} class="small">Actionnaires : {c.owners}</p>
+          <p class="small">
+            <a href={c.source_url} rel="noopener">{c.source_name}</a>
+            <span class="muted"> · vérifiée {when_text(c.checked_at)}</span>
+          </p>
+        </div>
+        <div class="row gap-1">
+          <.form for={%{}} action={~p"/admin/entreprises/#{c.id}/verifier"} method="post">
+            <button class="btn btn-secondary btn-sm" type="submit" id={"company-check-#{c.id}"}>Vérifier</button>
+          </.form>
+          <.form
+            :if={c.status != "withdrawn"}
+            for={%{}}
+            action={~p"/admin/entreprises/#{c.id}/retirer"}
+            method="post"
+          >
+            <button class="btn btn-quiet btn-sm" type="submit" id={"company-withdraw-#{c.id}"}>Retirer</button>
+          </.form>
+        </div>
+      </div>
+      <blockquote :if={c.excerpt && c.status == "published"} class="adm-quote">
+        « {c.excerpt} »
+      </blockquote>
+      <p :if={c.note} class="small down">{c.note}</p>
+    </article>
+  </section>
+
+  <dialog
+    class="adm-dialog"
+    id="company-dialog"
+    data-dialog
+    open={@adding}
+    aria-labelledby="company-dialog-title"
+  >
+    <div class="adm-dialog-head">
+      <h2 class="h2" id="company-dialog-title">Ajouter une entreprise</h2>
+      <a
+        href={~p"/admin/entreprises"}
+        class="adm-dialog-close"
+        data-dialog-close
+        aria-label="Fermer"
+      >
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        ><path d="M6 6l12 12M18 6L6 18"></path></svg>
+      </a>
+    </div>
+    <.form
+      for={%{}}
+      as={:company}
+      action={~p"/admin/entreprises"}
+      method="post"
+      class="adm-company-form"
+      id="company-form"
+    >
+      <p class="muted adm-company-help">
+        Donne une page web (pas un PDF) qui nomme l'entreprise, le produit et le pays, et les actionnaires si tu les indiques. Elle s'affiche dès que la vérification la confirme, en général dans la minute.
+      </p>
+      <fieldset class="adm-company-group">
+        <legend>L'entreprise</legend>
+        <label class="adm-company-field">
+          <span>Nom</span>
+          <input
+            type="text"
+            name="company[name]"
+            required
+            maxlength="120"
+            placeholder="Kamoto Copper Company (KCC)"
+          />
+        </label>
+        <label class="adm-company-field">
+          <span>Produit</span>
+          <select name="company[product]" required>
+            <option :for={id <- SyliAtlas.AfricaTrade.products()} value={id}>
+              {product_name(id)}
+            </option>
+          </select>
+        </label>
+        <label class="adm-company-field">
+          <span>Pays</span>
+          <select name="company[country]" required>
+            <option value="">Choisir un pays</option>
+            <option :for={{code, name} <- @countries} value={code}>{name}</option>
+          </select>
+        </label>
+        <label class="adm-company-field">
+          <span>Type</span>
+          <select name="company[kind]" required>
+            <option :for={k <- SyliAtlas.Companies.Company.kinds()} value={k}>
+              {kind_name(k)}
+            </option>
+          </select>
+        </label>
+        <label class="adm-company-field adm-company-wide">
+          <span>Actionnaires
+          <small>facultatif · séparés par des virgules, sans pourcentages</small></span>
+          <input
+            type="text"
+            name="company[owners]"
+            maxlength="200"
+            placeholder="Glencore, Gécamines"
+          />
+        </label>
+        <label class="adm-company-field adm-company-wide">
+          <span>Cotation <small>facultatif · la bourse où ses actions s'échangent</small></span>
+          <input type="text" name="company[listing]" placeholder="Lusaka Securities Exchange" />
+        </label>
+      </fieldset>
+      <fieldset class="adm-company-group">
+        <legend>La source</legend>
+        <label class="adm-company-field adm-company-wide">
+          <span>Adresse de la page</span>
+          <input
+            type="url"
+            name="company[source_url]"
+            required
+            placeholder="https://…"
+            pattern="https://.*"
+          />
+        </label>
+        <label class="adm-company-field adm-company-wide">
+          <span>Nom affiché <small>ce que le lecteur verra comme source</small></span>
+          <input type="text" name="company[source_name]" required placeholder="Glencore" />
+        </label>
+      </fieldset>
+      <div class="adm-company-actions">
+        <a class="btn btn-quiet" href={~p"/admin/entreprises"} data-dialog-close>Annuler</a>
+        <button class="btn btn-primary" type="submit" id="company-create">Ajouter et vérifier</button>
+      </div>
+    </.form>
+  </dialog>
+</.admin_shell>

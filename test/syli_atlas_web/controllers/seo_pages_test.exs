@@ -63,6 +63,24 @@ defmodule SyliAtlasWeb.SeoPagesTest do
   end
 
   describe "structured data" do
+    test "the Organization names its public accounts, linked from every footer" do
+      home = doc("/fr")
+      org = home |> json_ld() |> Enum.find(&(&1["@type"] == "Organization"))
+
+      assert org["sameAs"] == [
+               "https://www.linkedin.com/company/syli-atlas/",
+               "https://x.com/syliatlas"
+             ]
+
+      for page <- [home, doc("/en/countries/senegal")], href <- org["sameAs"] do
+        [link] = page |> LazyHTML.query(~s(.footer-social a[href="#{href}"])) |> Enum.to_list()
+        assert LazyHTML.attribute(link, "rel") == ["me noopener"]
+      end
+
+      assert home |> LazyHTML.query("#footer-social-x") |> LazyHTML.attribute("aria-label") ==
+               ["Syli Atlas sur X"]
+    end
+
     test "the country Dataset has what Google Dataset Search needs" do
       [dataset] = doc("/fr/pays/senegal") |> json_ld() |> Enum.filter(&(&1["@type"] == "Dataset"))
       assert dataset["description"] =~ "FMI"

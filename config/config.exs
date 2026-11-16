@@ -67,6 +67,12 @@ config :syli_atlas, Oban,
        # Budget laws (SyliAtlas.Budgets): the official pages set to « auto »
        # in the admin, read every morning; new files go to the AI.
        {"30 5 * * *", SyliAtlas.Workers.BudgetFetchWorker},
+       # Companies of the product pages (SyliAtlas.Companies): new lines of the
+       # seed file, then the checks due against their sources.
+       {"10 5 * * *", SyliAtlas.Workers.CompaniesWorker},
+       # The administrators' daily email (« Point du jour »): 8:00 UTC, after
+       # the morning watches (9:00 in Paris in winter, 10:00 in summer).
+       {"0 8 * * *", SyliAtlas.Workers.DailyDigestWorker},
        # Server time of the public API: a probe, then the finished hours written.
        {"5 * * * *", SyliAtlas.Workers.ApiTimingWorker}
      ]}
