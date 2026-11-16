@@ -25,47 +25,79 @@ defmodule SyliAtlas.WorldBank do
 
   # key => {World Bank code, database, origin when the Bank republishes another body's data}
   @series [
-    # IDS: public and publicly guaranteed (PPG) external debt by creditor, current US$.
-    {"external_debt_usd", "DT.DOD.DECT.CD", :ids, nil},
-    {"ppg_debt_usd", "DT.DOD.DPPG.CD", :ids, nil},
-    {"ppg_multilateral_usd", "DT.DOD.MLAT.CD", :ids, nil},
-    {"ppg_bilateral_usd", "DT.DOD.BLAT.CD", :ids, nil},
-    {"ppg_china_usd", "DT.DOD.BLAT.CD", {:ids, "730"}, nil},
-    {"ppg_bonds_usd", "DT.DOD.PBND.CD", :ids, nil},
-    {"ppg_banks_usd", "DT.DOD.PCBK.CD", :ids, nil},
-    {"ppg_other_private_usd", "DT.DOD.PROP.CD", :ids, nil},
-    {"ppg_service_usd", "DT.TDS.DPPG.CD", :ids, nil},
-    {"ppg_service_pct_exports", "DT.TDS.DPPG.XP.ZS", :wdi, nil},
-    # WDI: inflows.
-    {"fdi_pct_gdp", "BX.KLT.DINV.WD.GD.ZS", :wdi, "imf_bop"},
-    {"remittances_pct_gdp", "BX.TRF.PWKR.DT.GD.ZS", :wdi, "knomad"},
-    {"oda_pct_gni", "DT.ODA.ODAT.GN.ZS", :wdi, "oecd"},
-    {"fdi_usd", "BX.KLT.DINV.CD.WD", :wdi, "imf_bop"},
-    {"remittances_usd", "BX.TRF.PWKR.CD.DT", :wdi, "knomad"},
-    {"oda_usd", "DT.ODA.ODAT.CD", :wdi, "oecd"},
-    # WDI: structure of the economy.
-    {"agriculture_pct_gdp", "NV.AGR.TOTL.ZS", :wdi, nil},
-    {"industry_pct_gdp", "NV.IND.TOTL.ZS", :wdi, nil},
-    {"manufacturing_pct_gdp", "NV.IND.MANF.ZS", :wdi, nil},
-    {"services_pct_gdp", "NV.SRV.TOTL.ZS", :wdi, nil},
-    # WDI: ILO modelled estimates.
-    {"unemployment_ilo", "SL.UEM.TOTL.ZS", :wdi, "ilo"},
-    {"youth_unemployment", "SL.UEM.1524.ZS", :wdi, "ilo"},
-    {"female_participation", "SL.TLF.CACT.FE.ZS", :wdi, "ilo"},
-    {"vulnerable_employment", "SL.EMP.VULN.ZS", :wdi, "ilo"},
-    {"jobs_agriculture", "SL.AGR.EMPL.ZS", :wdi, "ilo"},
-    {"jobs_industry", "SL.IND.EMPL.ZS", :wdi, "ilo"},
-    {"jobs_services", "SL.SRV.EMPL.ZS", :wdi, "ilo"},
-    # WDI: living conditions.
-    {"poverty", "SI.POV.DDAY", :wdi, nil},
-    {"gini", "SI.POV.GINI", :wdi, nil},
-    {"electricity", "EG.ELC.ACCS.ZS", :wdi, nil},
-    {"internet", "IT.NET.USER.ZS", :wdi, nil},
-    {"accounts", "FX.OWN.TOTL.ZS", :wdi, nil}
-  ]
+            # IDS: public and publicly guaranteed (PPG) external debt by creditor, current US$.
+            {"external_debt_usd", "DT.DOD.DECT.CD", :ids, nil},
+            {"ppg_debt_usd", "DT.DOD.DPPG.CD", :ids, nil},
+            {"ppg_multilateral_usd", "DT.DOD.MLAT.CD", :ids, nil},
+            {"ppg_bilateral_usd", "DT.DOD.BLAT.CD", :ids, nil},
+            {"ppg_china_usd", "DT.DOD.BLAT.CD", {:ids, "730"}, nil},
+            {"ppg_bonds_usd", "DT.DOD.PBND.CD", :ids, nil},
+            {"ppg_banks_usd", "DT.DOD.PCBK.CD", :ids, nil},
+            {"ppg_other_private_usd", "DT.DOD.PROP.CD", :ids, nil},
+            {"ppg_service_usd", "DT.TDS.DPPG.CD", :ids, nil},
+            {"ppg_service_pct_exports", "DT.TDS.DPPG.XP.ZS", :wdi, nil},
+            # WDI: inflows.
+            {"fdi_pct_gdp", "BX.KLT.DINV.WD.GD.ZS", :wdi, "imf_bop"},
+            {"remittances_pct_gdp", "BX.TRF.PWKR.DT.GD.ZS", :wdi, "knomad"},
+            {"oda_pct_gni", "DT.ODA.ODAT.GN.ZS", :wdi, "oecd"},
+            {"fdi_usd", "BX.KLT.DINV.CD.WD", :wdi, "imf_bop"},
+            {"remittances_usd", "BX.TRF.PWKR.CD.DT", :wdi, "knomad"},
+            {"oda_usd", "DT.ODA.ODAT.CD", :wdi, "oecd"},
+            # WDI: structure of the economy.
+            {"agriculture_pct_gdp", "NV.AGR.TOTL.ZS", :wdi, nil},
+            {"industry_pct_gdp", "NV.IND.TOTL.ZS", :wdi, nil},
+            {"manufacturing_pct_gdp", "NV.IND.MANF.ZS", :wdi, nil},
+            {"services_pct_gdp", "NV.SRV.TOTL.ZS", :wdi, nil},
+            # WDI: ILO modelled estimates.
+            {"unemployment_ilo", "SL.UEM.TOTL.ZS", :wdi, "ilo"},
+            {"youth_unemployment", "SL.UEM.1524.ZS", :wdi, "ilo"},
+            {"female_participation", "SL.TLF.CACT.FE.ZS", :wdi, "ilo"},
+            {"vulnerable_employment", "SL.EMP.VULN.ZS", :wdi, "ilo"},
+            {"jobs_agriculture", "SL.AGR.EMPL.ZS", :wdi, "ilo"},
+            {"jobs_industry", "SL.IND.EMPL.ZS", :wdi, "ilo"},
+            {"jobs_services", "SL.SRV.EMPL.ZS", :wdi, "ilo"},
+            # WDI: living conditions.
+            {"poverty", "SI.POV.DDAY", :wdi, nil},
+            {"gini", "SI.POV.GINI", :wdi, nil},
+            {"electricity", "EG.ELC.ACCS.ZS", :wdi, nil},
+            {"internet", "IT.NET.USER.ZS", :wdi, nil},
+            {"accounts", "FX.OWN.TOTL.ZS", :wdi, nil},
+            # WDI: population (UN World Population Prospects and World Urbanization
+            # Prospects, republished by the Bank under CC BY 4.0).
+            {"population", "SP.POP.TOTL", :wdi, "un_wpp"},
+            {"population_growth", "SP.POP.GROW", :wdi, "un_wpp"},
+            {"urban_pct", "SP.URB.TOTL.IN.ZS", :wdi, "un_wup"},
+            {"under15_pct", "SP.POP.0014.TO.ZS", :wdi, "un_wpp"},
+            {"over65_pct", "SP.POP.65UP.TO.ZS", :wdi, "un_wpp"},
+            {"dependency_ratio", "SP.POP.DPND", :wdi, "un_wpp"},
+            {"fertility", "SP.DYN.TFRT.IN", :wdi, "un_wpp"},
+            {"life_expectancy", "SP.DYN.LE00.IN", :wdi, "un_wpp"}
+          ] ++
+            (for sex <- ~w(MA FE),
+                 band <-
+                   ~w(0004 0509 1014 1519 2024 2529 3034 3539 4044 4549 5054 5559 6064 6569 7074 7579 80UP) do
+               {"pyramid_#{String.downcase(sex)}_#{band}", "SP.POP.#{band}.#{sex}.5Y", :wdi,
+                "un_wpp"}
+             end) ++
+            [
+              # WDI: education (UNESCO Institute for Statistics) and health (UN IGME,
+              # WHO, WHO/UNICEF JMP), republished by the Bank under CC BY 4.0.
+              {"primary_completion", "SE.PRM.CMPT.ZS", :wdi, "unesco"},
+              {"lower_secondary_completion", "SE.SEC.CMPT.LO.ZS", :wdi, "unesco"},
+              {"youth_literacy", "SE.ADT.1524.LT.ZS", :wdi, "unesco"},
+              {"pupils_per_teacher", "SE.PRM.ENRL.TC.ZS", :wdi, "unesco"},
+              {"under5_mortality", "SH.DYN.MORT", :wdi, "igme"},
+              {"maternal_mortality", "SH.STA.MMRT", :wdi, "who"},
+              {"physicians_per_1000", "SH.MED.PHYS.ZS", :wdi, "who"},
+              {"water_basic", "SH.H2O.BASW.ZS", :wdi, "jmp"},
+              # WDI: trade in services and logistics.
+              {"services_exports_usd", "BX.GSR.NFSV.CD", :wdi, "imf_bop"},
+              {"tourism_receipts_usd", "ST.INT.RCPT.CD", :wdi, "un_tourism"},
+              {"lpi", "LP.LPI.OVRL.XQ", :wdi, nil}
+            ]
 
   # Lower is better for these; the others are neutral or higher is better.
-  @lower_is_better ~w(poverty gini unemployment_ilo youth_unemployment vulnerable_employment ppg_service_pct_exports)
+  @lower_is_better ~w(poverty gini unemployment_ilo youth_unemployment vulnerable_employment ppg_service_pct_exports under5_mortality maternal_mortality pupils_per_teacher)
 
   @key {__MODULE__, :document}
 

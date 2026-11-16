@@ -158,8 +158,30 @@
             name={@name}
             locale={@locale}
           />
+          <SyliAtlasWeb.TradeDetailComponents.details
+            entry={@trade}
+            doc={@trade_doc}
+            name={@name}
+            locale={@locale}
+            slugs={@ctx.slugs}
+            communities={@ctx.communities}
+            world_bank={@world_bank}
+          />
+          <.tab_questions :if={@tab_faq != []} items={@tab_faq} name={@name} />
           <ProfileComponents.related_links ctx={@ctx} />
         <% :society -> %>
+          <SyliAtlasWeb.SocietyComponents.demography_section
+            entry={@world_bank}
+            doc={@world_bank_doc}
+            name={@name}
+            locale={@locale}
+          />
+          <SyliAtlasWeb.SocietyComponents.education_health_section
+            entry={@world_bank}
+            doc={@world_bank_doc}
+            name={@name}
+            locale={@locale}
+          />
           <WorldBankComponents.flows_section
             entry={@world_bank}
             doc={@world_bank_doc}
@@ -177,6 +199,7 @@
             name={@name}
             locale={@locale}
           />
+          <.tab_questions :if={@tab_faq != []} items={@tab_faq} name={@name} />
           <ProfileComponents.related_links ctx={@ctx} />
         <% :markets -> %>
           <RatingComponents.rating_section
