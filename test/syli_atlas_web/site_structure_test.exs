@@ -31,7 +31,7 @@ defmodule SyliAtlasWeb.SiteStructureTest do
 
     # Each entry has its icon; the tools have their own column.
     assert doc |> LazyHTML.query("#header-nav .nav-mega-item .theme-ico svg") |> Enum.count() == 9
-    assert doc |> LazyHTML.query("#header-nav .nav-mega-col") |> Enum.count() == 2
+    assert doc |> LazyHTML.query("#header-nav .nav-mega-col") |> Enum.count() == 3
 
     panel = doc |> LazyHTML.query("#header-nav details") |> LazyHTML.text()
     assert panel =~ "54 pays" and panel =~ "CEDEAO"
