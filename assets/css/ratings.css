@@ -264,3 +264,9 @@ dd.rt-inv, dd.rt-spec, dd.rt-high, dd.rt-risk, dd.rt-def, b.rt-inv, b.rt-spec, b
 .soc-grid textarea { font: inherit; font-size: 14px; line-height: 1.5; padding: 10px 12px; border: 1px solid var(--border-input); border-radius: 8px; background: var(--card); color: var(--ink); resize: vertical; width: 100%; box-sizing: border-box; }
 .soc-link { overflow-wrap: anywhere; }
 .soc-image { width: 100%; height: auto; border-radius: 8px; background: var(--alt); }
+.soc-cell { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.soc-alert { display: inline-grid; place-items: center; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 999px; background: var(--warning-bg, #fff1e6); color: var(--warning-ink, #a34a00); cursor: pointer; }
+.soc-pop { margin: auto; max-width: min(520px, calc(100vw - 32px)); padding: 24px; border: 0; border-radius: 12px; background: var(--card); color: var(--ink); box-shadow: 0 12px 28px -8px rgba(50, 50, 93, .3); }
+.soc-pop::backdrop { background: rgba(11, 26, 51, .4); }
+.soc-pop .h3 { margin: 0 0 8px; font-size: 18px; font-weight: 500; }
+.soc-pop p { margin: 0 0 12px; overflow-wrap: anywhere; }

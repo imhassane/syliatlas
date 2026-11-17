@@ -89,7 +89,7 @@
           <label class="adm-field" for={"post-#{p.id}-li"}>
             <span>LinkedIn · français</span>
             <textarea id={"post-#{p.id}-li"} name="post[text_linkedin]" rows="8">{p.text_linkedin}</textarea>
-            <span class="mono subtle small soc-link">1er commentaire : {p.link_linkedin}</span>
+            <span class="mono subtle small soc-link">+ lien : {p.link_linkedin}</span>
           </label>
           <div :if={p.image_url} class="adm-field">
             <span>Image jointe</span>
@@ -207,14 +207,80 @@
               {title(p)}
               <div class="small muted">{String.slice(p.text_x, 0, 90)}…</div>
             </td>
-            <%= for {state, error} <- [{p.x_state, p.x_error}, {p.linkedin_state, p.linkedin_error}] do %>
+            <%= for {network, name, state, error} <- [
+                  {"x", "X", p.x_state, p.x_error},
+                  {"linkedin", "LinkedIn", p.linkedin_state, p.linkedin_error}
+                ] do %>
               <td class="l">
                 <%= case network_state(state) do %>
                   <% nil -> %>
                     <span class="subtle">—</span>
                   <% {label, cls} -> %>
-                    <span class={["pill", cls]}>{label}</span>
-                    <div :if={error} class="small adm-bad">{error}</div>
+                    <div class="soc-cell">
+                      <span class={["pill", cls]}>{label}</span>
+                      <button
+                        :if={error}
+                        type="button"
+                        class="soc-alert"
+                        popovertarget={"error-#{p.id}-#{network}"}
+                        aria-label={"Voir l'erreur d'envoi sur #{name}"}
+                        id={"error-btn-#{p.id}-#{network}"}
+                      >
+                        <svg
+                          width="18"
+                          height="18"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M12 3 2 20h20L12 3z" /><path d="M12 10v4" /><path d="M12 17.5v.01" />
+                        </svg>
+                      </button>
+                      <.form
+                        :if={
+                          p.status in ["approved", "done"] and
+                            state in ["queued", "simulated", "failed"]
+                        }
+                        for={%{}}
+                        action={~p"/admin/reseaux/#{p.id}/renvoyer/#{network}"}
+                        method="post"
+                      >
+                        <button
+                          class="btn btn-quiet btn-sm"
+                          type="submit"
+                          id={"resend-#{p.id}-#{network}"}
+                          aria-label={"Renvoyer sur #{name}"}
+                        >
+                          Renvoyer
+                        </button>
+                      </.form>
+                    </div>
+                    <div
+                      :if={error}
+                      popover
+                      id={"error-#{p.id}-#{network}"}
+                      class="soc-pop"
+                      role="dialog"
+                      aria-label={"Erreur d'envoi sur #{name}"}
+                    >
+                      <h3 class="h3">Erreur d'envoi sur {name}</h3>
+                      <p class="small">{error}</p>
+                      <p class="small muted">
+                        « Renvoyer » relance l'envoi sur ce réseau une fois la cause corrigée.
+                      </p>
+                      <button
+                        type="button"
+                        class="btn btn-secondary btn-sm"
+                        popovertarget={"error-#{p.id}-#{network}"}
+                        popovertargetaction="hide"
+                      >
+                        Fermer
+                      </button>
+                    </div>
                 <% end %>
               </td>
             <% end %>

@@ -9,8 +9,7 @@ defmodule SyliAtlas.Social.Publisher do
   @type network :: :x | :linkedin
   @type post :: %{
           required(:text) => String.t(),
-          optional(:image_url) => String.t() | nil,
-          optional(:first_comment) => String.t() | nil
+          optional(:image_url) => String.t() | nil
         }
 
   @doc "The connected accounts: `%{id, name, service}`."

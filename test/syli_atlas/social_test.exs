@@ -43,7 +43,8 @@ defmodule SyliAtlas.SocialTest do
       assert post.text_linkedin =~ "(30 oct. 2026)"
       assert post.link_x =~ "/en/credit-ratings/zambia?utm_source=x&utm_medium=social"
       assert post.link_linkedin =~ "utm_source=linkedin"
-      assert post.image_url =~ "/og/"
+      assert post.image_url =~ "/fr/notations/zambie"
+      assert post.image_url_x =~ "/en/credit-ratings/zambia"
       assert Post.x_length(post) <= Post.x_limit()
 
       # The same event twice: still one draft.
@@ -136,6 +137,28 @@ defmodule SyliAtlas.SocialTest do
       assert attrs.link_x =~ "/en/countries/senegal/budget"
       assert Drafts.budget_law(%{law | stage: "tabled"}) == :skip
     end
+
+    test "with exchange rates, the amount in dollars follows in parentheses" do
+      SyliAtlas.FxFixtures.import!()
+
+      {:ok, attrs} =
+        Drafts.budget_law(%{
+          country_code: "SEN",
+          fiscal_year: 2027,
+          kind: "initial",
+          sequence: 1,
+          stage: "voted",
+          expenditure: Decimal.new("7346000000000"),
+          currency: "XOF",
+          source_name: nil
+        })
+
+      # 7 346 billion XOF at 587.66 per dollar.
+      assert attrs.text_x =~ "7,346 billion CFA francs (about $12.5 billion) of spending"
+
+      assert attrs.text_linkedin =~
+               "7 346 milliards de francs CFA (environ 12,5 milliards de dollars)"
+    end
   end
 
   describe "approval and sending (simulated)" do
@@ -164,6 +187,40 @@ defmodule SyliAtlas.SocialTest do
       assert post.x_state == "simulated"
       assert post.linkedin_state == "simulated"
       assert post.sent_at
+    end
+
+    test "LinkedIn gets the link at the end, old wording reworded" do
+      post = %Post{
+        text_linkedin: "Le classement : lien en premier commentaire.",
+        link_linkedin: "https://syliatlas.com/fr/x"
+      }
+
+      assert Post.linkedin_body(post) ==
+               "Le classement : lien ci-dessous.\nhttps://syliatlas.com/fr/x"
+    end
+
+    test "a network can be sent again: after a failure or a deletion in Buffer", %{post: post} do
+      {:ok, post} = Social.approve(post, ["x", "linkedin"], %{}, "admin@test")
+      :ok = perform_job(SocialPublishWorker, %{"post_id" => post.id})
+      post = Social.get!(post.id)
+      assert post.status == "done"
+
+      # Deleted in Buffer: sent again on X only.
+      assert {:ok, post} = Social.resend(post, "x")
+      assert post.status == "approved" and post.x_state == "pending" and post.x_ref == nil
+      assert post.linkedin_state == "simulated"
+      :ok = perform_job(SocialPublishWorker, %{"post_id" => post.id})
+      post = Social.get!(post.id)
+      assert post.status == "done" and post.x_state == "simulated"
+
+      # A failure.
+      post =
+        post
+        |> Ecto.Changeset.change(linkedin_state: "failed", linkedin_error: "refused")
+        |> Repo.update!()
+
+      assert {:ok, _} = Social.resend(post, "linkedin")
+      assert Social.resend(%{post | status: "draft"}, "x") == {:error, :nothing_to_resend}
     end
 
     test "only X: LinkedIn stays untouched", %{post: post} do
@@ -235,21 +292,20 @@ defmodule SyliAtlas.SocialTest do
       end)
     end
 
-    test "adds to the queue of the right channel, link in LinkedIn's first comment" do
+    test "adds to the queue of the right channel, never a first comment" do
       stub_buffer(self())
 
       assert {:ok, "p42"} =
                Buffer.publish(:linkedin, %{
                  text: "Bonjour",
-                 image_url: "https://syliatlas.com/og/v/fr.png",
-                 first_comment: "https://syliatlas.com/fr"
+                 image_url: "https://syliatlas.com/og/v/fr.png"
                })
 
       assert_received {:created, input}
       assert input["channelId"] == "li1"
       assert input["mode"] == "addToQueue"
       assert input["assets"] == [%{"image" => %{"url" => "https://syliatlas.com/og/v/fr.png"}}]
-      assert input["metadata"] == %{"linkedin" => %{"firstComment" => "https://syliatlas.com/fr"}}
+      refute Map.has_key?(input, "metadata")
 
       assert {:ok, "p42"} = Buffer.publish(:x, %{text: "Hello"})
       assert_received {:created, %{"channelId" => "tw1", "assets" => []} = x}
