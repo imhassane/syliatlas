@@ -62,6 +62,45 @@ defmodule SyliAtlas.SocialTest do
                Social.drafts()
     end
 
+    test "a recent change checked by hand prepares its post, an old one does not" do
+      recent =
+        rating!(%{
+          rating: "B-",
+          outlook: "positive",
+          action_type: "upgrade",
+          action_date: Date.utc_today() |> Date.add(-10) |> Date.to_iso8601(),
+          country_code: "BFA",
+          agency: "sp",
+          needs_check: true
+        })
+
+      old =
+        rating!(%{
+          rating: "Caa1",
+          action_type: "upgrade",
+          action_date: "2025-01-10",
+          needs_check: true
+        })
+
+      # Still to check: not offered yet.
+      assert Drafts.rating_candidates() == []
+
+      {:ok, _} =
+        SyliAtlas.Ratings.Review.mark_checked(recent, %{
+          "source_url" => "https://disclosure.spglobal.com/ratings/en/x"
+        })
+
+      {:ok, _} =
+        SyliAtlas.Ratings.Review.mark_checked(old, %{
+          "source_url" => "https://ratings.moodys.com/x"
+        })
+
+      assert [%Post{key: "rating:BFA:sp:" <> _, text_x: "S&P upgrades Burkina Faso to B-" <> _}] =
+               Social.drafts()
+
+      assert Drafts.rating_candidates() == []
+    end
+
     test "an affirmation prepares nothing" do
       r = rating!(%{rating: "B", action_date: "2026-10-08", country_code: "EGY", agency: "fitch"})
       assert Drafts.on_rating(r.id) == :skip

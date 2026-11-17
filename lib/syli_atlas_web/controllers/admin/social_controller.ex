@@ -14,8 +14,24 @@ defmodule SyliAtlasWeb.Admin.SocialController do
       drafts: Social.drafts(),
       history: Social.history(50),
       stats: Social.stats(),
-      channels: Social.channels()
+      channels: Social.channels(),
+      candidates: SyliAtlas.Social.Drafts.rating_candidates()
     )
+  end
+
+  def prepare_rating(conn, %{"rating_id" => id}) do
+    case SyliAtlas.Social.Drafts.on_rating(String.to_integer(id)) do
+      {:ok, _} ->
+        conn |> put_flash(:info, "Brouillon préparé.") |> back()
+
+      :exists ->
+        conn |> put_flash(:info, "Cette décision a déjà son post.") |> back()
+
+      _ ->
+        conn
+        |> put_flash(:error, "Pas de post pour cette décision (confirmation sans changement).")
+        |> back()
+    end
   end
 
   def update(conn, %{"id" => id, "post" => attrs}) do

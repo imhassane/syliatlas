@@ -116,8 +116,16 @@ defmodule SyliAtlas.Ratings.Review do
       )
       |> Repo.update()
       |> tap(fn
-        {:ok, _} -> Ratings.rebuild!()
-        _ -> :ok
+        {:ok, checked} ->
+          Ratings.rebuild!()
+          # A recent change confirmed here is news the site has not told yet:
+          # it prepares its post (SyliAtlas.Social), as a validated proposal.
+          SyliAtlas.Social.Drafts.safely(fn ->
+            SyliAtlas.Social.Drafts.on_recent_rating(checked)
+          end)
+
+        _ ->
+          :ok
       end)
     end
   end

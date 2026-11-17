@@ -73,6 +73,30 @@ defmodule SyliAtlasWeb.AdminSocialTest do
     assert Phoenix.Flash.get(conn.assigns.flash, :error) =~ "plus un brouillon"
   end
 
+  test "a recent decision without post can be prepared from the page" do
+    r =
+      %SyliAtlas.Ratings.Rating{}
+      |> SyliAtlas.Ratings.Rating.changeset(%{
+        country_code: "SEN",
+        agency: "moodys",
+        rating: "Ca",
+        outlook: "stable",
+        action_type: "downgrade",
+        action_date: Date.utc_today() |> Date.add(-5) |> Date.to_iso8601()
+      })
+      |> SyliAtlas.Repo.insert!()
+
+    html = admin() |> get("/admin/reseaux") |> html_response(200)
+    assert html =~ ~s(id="candidate-#{r.id}")
+
+    conn = admin() |> post("/admin/reseaux/preparer/notation/#{r.id}")
+    assert Phoenix.Flash.get(conn.assigns.flash, :info) == "Brouillon préparé."
+    assert Enum.any?(Social.drafts(), &(&1.key =~ "rating:SEN:moodys"))
+
+    html = admin() |> get("/admin/reseaux") |> html_response(200)
+    refute html =~ ~s(id="candidate-#{r.id}")
+  end
+
   test "visitors are sent to the sign-in page", %{conn: conn} do
     assert conn |> get("/admin/reseaux") |> redirected_to() == "/fr/connexion"
   end

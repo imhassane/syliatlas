@@ -45,6 +45,40 @@ defmodule SyliAtlas.Social.Drafts do
     end
   end
 
+  @recent_days 60
+
+  @doc "Ratings checked by hand: a post only for a decision of the last #{@recent_days} days."
+  def on_recent_rating(%Rating{} = r, today \\ Date.utc_today()) do
+    if recent?(r, today), do: on_rating(r.id), else: :skip
+  end
+
+  defp recent?(%Rating{action_date: iso}, today) do
+    case Date.from_iso8601(iso || "") do
+      {:ok, d} -> Date.diff(today, d) <= @recent_days
+      _ -> false
+    end
+  end
+
+  @doc """
+  Decisions of the last #{@recent_days} days that change a rating or an
+  outlook and have no post yet: the admin can prepare theirs by hand
+  (decisions recorded before the posts existed, or checked by hand).
+  """
+  def rating_candidates(today \\ Date.utc_today()) do
+    since = today |> Date.add(-@recent_days) |> Date.to_iso8601()
+    taken = MapSet.new(Repo.all(from p in SyliAtlas.Social.Post, select: p.key))
+
+    Repo.all(
+      from r in Rating,
+        where: r.action_date >= ^since and r.needs_check == false,
+        order_by: [desc: r.action_date, asc: r.country_code]
+    )
+    |> Enum.reject(&MapSet.member?(taken, rating_key(&1)))
+    |> Enum.filter(&match?({:ok, _}, rating(&1, previous(&1))))
+  end
+
+  defp rating_key(r), do: "rating:#{r.country_code}:#{r.agency}:#{r.action_date}"
+
   defp previous(%Rating{} = r) do
     Repo.one(
       from p in Rating,
@@ -102,7 +136,7 @@ defmodule SyliAtlas.Social.Drafts do
 
       {:ok,
        %{
-         key: "rating:#{r.country_code}:#{r.agency}:#{r.action_date}",
+         key: rating_key(r),
          kind: "rating",
          area_code: r.country_code,
          priority: 30 + if(move in [:up, :down], do: 10, else: 0) + size(r.country_code),

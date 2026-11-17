@@ -154,6 +154,37 @@
     <% end %>
   </section>
 
+  <section :if={@candidates != []} class="card adm-list" id="social-candidates">
+    <div class="adm-card-head">
+      <div>
+        <h2 class="h2">Décisions récentes sans post</h2>
+        <p class="small muted">
+          Changements de note ou de perspective des 60 derniers jours, arrivés avant les posts ou vérifiés à la main.
+        </p>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="table adm-table">
+        <tbody>
+          <tr :for={r <- @candidates} id={"candidate-#{r.id}"}>
+            <td class="l">{area_name(r.country_code)} · {agency_name(r.agency)}</td>
+            <td class="l num">
+              {r.rating}{if r.outlook not in [nil, "none"], do: ", #{r.outlook}"}
+            </td>
+            <td class="subtle">{r.action_date}</td>
+            <td>
+              <.form for={%{}} action={~p"/admin/reseaux/preparer/notation/#{r.id}"} method="post">
+                <button class="btn btn-secondary btn-sm" type="submit" id={"prepare-#{r.id}"}>
+                  Préparer le post
+                </button>
+              </.form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
   <section class="card adm-list" id="social-history">
     <div class="adm-card-head">
       <h2 class="h2">Historique</h2>

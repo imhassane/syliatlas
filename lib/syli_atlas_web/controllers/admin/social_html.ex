@@ -17,10 +17,17 @@ defmodule SyliAtlasWeb.Admin.SocialHTML do
 
   def title(%Post{area_code: nil} = p), do: kind_label(p.kind)
 
-  def title(%Post{area_code: code} = p) do
-    name = if area = Geo.get_area_by_code(code), do: Area.name(area, "fr"), else: code
-    "#{name} · #{kind_label(p.kind)}"
+  def title(%Post{area_code: code} = p), do: "#{area_name(code)} · #{kind_label(p.kind)}"
+
+  def area_name(code) do
+    if area = Geo.get_area_by_code(code), do: Area.name(area, "fr"), else: code
   end
+
+  def agency_name("sp"), do: "S&P"
+  def agency_name("moodys"), do: "Moody's"
+  def agency_name("fitch"), do: "Fitch"
+  def agency_name("afcra"), do: "AfCRA"
+  def agency_name(other), do: other
 
   def x_count(%Post{} = p), do: Post.x_length(p)
   def x_limit, do: Post.x_limit()
