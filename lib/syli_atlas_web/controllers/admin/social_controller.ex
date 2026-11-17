@@ -67,6 +67,13 @@ defmodule SyliAtlasWeb.Admin.SocialController do
     end
   end
 
+  def resend(conn, %{"id" => id, "reseau" => network}) do
+    case Social.resend(Social.get!(id), network) do
+      {:ok, _} -> conn |> put_flash(:info, "Nouvel envoi lancé.") |> back()
+      {:error, _} -> conn |> put_flash(:error, "Rien à renvoyer sur ce réseau.") |> back()
+    end
+  end
+
   def reject(conn, %{"id" => id}) do
     case Social.reject(Social.get!(id), reviewer(conn)) do
       {:ok, _} -> conn |> put_flash(:info, "Post rejeté.") |> back()
