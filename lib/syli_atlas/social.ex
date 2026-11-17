@@ -206,7 +206,7 @@ defmodule SyliAtlas.Social do
     payload =
       case network do
         :x ->
-          %{text: Post.x_body(post), image_url: post.image_url_x || post.image_url}
+          %{text: Post.x_body(post), image_url: Post.x_image(post)}
 
         :linkedin ->
           %{text: Post.linkedin_body(post), image_url: post.image_url}

@@ -103,4 +103,24 @@ defmodule SyliAtlasWeb.OgImageTest do
     refute File.exists?(Path.join(dir, "older"))
     assert {:ok, @png <> _} = OgImageController.image("/fr/pays/senegal")
   end
+
+  test "a long rating is drawn smaller and never under the agencies' lines" do
+    spec = fn figure ->
+      %{
+        layout: :rating,
+        title: "Note souveraine du Mozambique",
+        figure: figure,
+        lines: ["S&P CCC+ · 12 sept. 2026"],
+        labels: %{default: "Défaut", investment: "BBB−"}
+      }
+    end
+
+    long = SyliAtlasWeb.OgImage.svg(spec.("CCC+")) |> IO.iodata_to_binary()
+    short = SyliAtlasWeb.OgImage.svg(spec.("B-")) |> IO.iodata_to_binary()
+
+    assert long =~ ~r/font-size="120"[^>]*>CCC\+/
+    [x] = Regex.run(~r/<text x="(\d+)"[^>]*>S&amp;P CCC/, long, capture: :all_but_first)
+    assert String.to_integer(x) > 72 + 4 * 0.66 * 120
+    assert short =~ ~r/<text x="380"[^>]*>S&amp;P CCC/
+  end
 end
