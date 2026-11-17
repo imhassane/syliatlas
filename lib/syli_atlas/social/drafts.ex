@@ -359,6 +359,100 @@ defmodule SyliAtlas.Social.Drafts do
 
   defp base(_, _), do: ""
 
+  # National figures ---------------------------------------------------------
+
+  @doc """
+  An official figure confirmed in /admin/chiffres-nationaux (GDP in dollars or
+  public debt): the figure, its source, and the IMF's estimate beside it.
+  One post per value: a revised figure gets its own.
+  """
+  def on_national_figure(%{status: "verified"} = f) do
+    case national(f) do
+      {:ok, attrs} -> Social.create_draft(attrs)
+      other -> other
+    end
+  end
+
+  def on_national_figure(_), do: :skip
+
+  @doc false
+  def national(%{indicator: indicator} = f)
+      when indicator in ~w(gdp_usd_bn public_debt_pct_gdp) do
+    value = parse(f.value || "")
+
+    if is_number(value) do
+      en = name(f.country_code, "en")
+      fr = name(f.country_code, "fr")
+      period = f.period_label || Integer.to_string(f.calendar_year)
+      source = f.source_name && f.source_name |> String.split(",") |> hd() |> String.trim()
+      imf = SyliAtlas.National.imf_value(f.country_code, indicator, f.calendar_year)
+      tab = if indicator == "gdp_usd_bn", do: :economy, else: :finances
+
+      {x, li} =
+        case indicator do
+          "gdp_usd_bn" ->
+            local_en = local_amount(f, "en")
+            local_fr = local_amount(f, "fr")
+
+            {"#{en}'s official GDP for #{period}: $#{num(value, "en")} billion#{local_en}" <>
+               if(source, do: ", according to #{source}.", else: ".") <>
+               if(imf, do: "\nThe IMF's estimate: $#{num(imf, "en")} billion.", else: ""),
+             "PIB officiel #{French.of(fr)} pour #{period} : #{num(value, "fr")} milliards de dollars#{local_fr}" <>
+               if(source, do: ", selon #{source}.", else: ".") <>
+               if(imf,
+                 do: "\nL'estimation du FMI : #{num(imf, "fr")} milliards de dollars.",
+                 else: ""
+               )}
+
+          "public_debt_pct_gdp" ->
+            {"#{en}'s public debt: #{pct(value, "en")} of GDP in #{period}" <>
+               if(source, do: " (official figure, #{source}).", else: " (official figure).") <>
+               if(imf, do: "\nThe IMF's estimate: #{pct(imf, "en")}.", else: ""),
+             "Dette publique #{French.of(fr)} : #{pct(value, "fr")} du PIB en #{period}" <>
+               if(source, do: " (chiffre officiel, #{source}).", else: " (chiffre officiel).") <>
+               if(imf, do: "\nL'estimation du FMI : #{pct(imf, "fr")}.", else: "")}
+        end
+
+      path_en = Paths.country_tab("en", slug(f.country_code, "en"), tab)
+      path_fr = Paths.country_tab("fr", slug(f.country_code, "fr"), tab)
+
+      {:ok,
+       %{
+         key: "national:#{f.country_code}:#{indicator}:#{f.calendar_year}:#{f.value}",
+         kind: "national",
+         area_code: f.country_code,
+         priority: 25 + size(f.country_code),
+         text_x: x <> "\n\nOfficial figures and the IMF's, side by side:",
+         text_linkedin:
+           li <> "\n\nChiffres officiels et chiffres du FMI, côte à côte : lien ci-dessous.",
+         link_x: link(path_en, "x"),
+         link_linkedin: link(path_fr, "linkedin"),
+         image_url: Seo.image(path_fr),
+         image_url_x: Seo.image(path_en)
+       }}
+    else
+      :skip
+    end
+  end
+
+  def national(_), do: :skip
+
+  # « (8,044 billion ZAR) »: the amount in its currency, no dollars (already given).
+  defp local_amount(%{value_lcu: lcu, currency: cur}, locale)
+       when is_binary(lcu) and is_binary(cur) and cur != "USD" do
+    case parse(lcu) do
+      v when is_number(v) -> " (" <> amount(v, cur, locale, false) <> ")"
+      _ -> ""
+    end
+  end
+
+  defp local_amount(_, _), do: ""
+
+  defp num(v, locale) do
+    decimals = if abs(v) >= 100, do: 0, else: 1
+    SyliAtlasWeb.Format.number(v, decimals, locale)
+  end
+
   # Helpers ------------------------------------------------------------------
 
   defp name(code, locale), do: Area.name(area!(code), locale)
@@ -370,7 +464,7 @@ defmodule SyliAtlas.Social.Drafts do
   defp link(path, source), do: Seo.url(path) <> "?utm_source=#{source}&utm_medium=social"
 
   # « 7,346 billion CFA francs », « 7 346 milliards de francs CFA ».
-  defp amount(value, currency, locale) do
+  defp amount(value, currency, locale, with_usd \\ true) do
     {v, unit} =
       cond do
         abs(value) >= 1.0e9 ->
@@ -396,7 +490,8 @@ defmodule SyliAtlas.Social.Drafts do
 
     text = Enum.join(Enum.reject([number, unit, money], &is_nil/1), " ")
 
-    case currency != "USD" && SyliAtlas.Fx.convert(SyliAtlas.Fx.latest(), value, currency, "USD") do
+    case with_usd && currency != "USD" &&
+           SyliAtlas.Fx.convert(SyliAtlas.Fx.latest(), value, currency, "USD") do
       usd when is_number(usd) -> text <> " (" <> dollars(usd, locale) <> ")"
       _ -> text
     end
