@@ -372,8 +372,16 @@ defmodule SyliAtlasWeb.Router do
     post "/budgets/pays/:code", BudgetsController, :update_country
     get "/emails", EmailsController, :index
     get "/reseaux", SocialController, :index
+    get "/reseaux/partager", SocialController, :share
+    post "/reseaux/partager", SocialController, :create_share
+    get "/reseaux/page", SocialController, :page_state
+    post "/reseaux/synchroniser", SocialController, :sync
     post "/reseaux/preparer/notation/:rating_id", SocialController, :prepare_rating
+    get "/reseaux/:id/modifier", SocialController, :edit
     post "/reseaux/:id", SocialController, :update
+    post "/reseaux/:id/file", SocialController, :queue
+    post "/reseaux/:id/maintenant", SocialController, :publish_now
+    post "/reseaux/:id/retirer", SocialController, :withdraw
     post "/reseaux/:id/valider", SocialController, :approve
     post "/reseaux/:id/rejeter", SocialController, :reject
     post "/reseaux/:id/renvoyer/:reseau", SocialController, :resend

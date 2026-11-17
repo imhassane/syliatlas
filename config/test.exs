@@ -114,4 +114,8 @@ config :syli_atlas, SyliAtlas.Plausible,
 config :syli_atlas, SyliAtlas.Social,
   adapter: SyliAtlas.Social.Simulated,
   api_key: "test-key",
+  no_cache: true,
   req_options: [plug: {Req.Test, SyliAtlas.Social.Buffer}, retry: false]
+
+config :syli_atlas, SyliAtlas.Social.Writer,
+  req_options: [plug: {Req.Test, SyliAtlas.Social.Writer}, retry: false]

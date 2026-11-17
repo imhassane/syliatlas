@@ -1,7 +1,10 @@
 // Public pages are cached without a session: they show "Sign in" and a
 // star that leads to sign-in. Here, one request to /account/me (private,
 // never cached) tells who is signed in; the header link becomes "My space"
-// and the stars become toggles, sent with the token /account/me gives.
+// and the stars become toggles, sent with the token /account/me gives. An
+// administrator also gets the admin bar (« Partager sur les réseaux »).
+
+import {showAdminBar} from "./admin_bar"
 
 export async function initAccount() {
   const links = document.querySelectorAll("a[data-space-href]")
@@ -18,6 +21,7 @@ export async function initAccount() {
     return
   }
   if (!me.signed_in) return
+  if (me.admin) showAdminBar()
 
   links.forEach((a) => {
     a.href = me.account

@@ -1,0 +1,199 @@
+<.admin_shell current={:social} counts={@admin_counts} until={@admin_until} key={@admin_key}>
+  <header class="adm-head">
+    <div class="adm-intro">
+      <p class="eyebrow">
+        <a href={~p"/admin/reseaux"}>Réseaux</a>
+        › {if @page, do: "Partager une page", else: "Modifier"}
+      </p>
+      <h1 class="adm-title">{title(@post)}</h1>
+      <p :if={@page} class="mono subtle small" id="share-paths">
+        <a href={@page.path_fr}>{@page.path_fr}</a>
+        <span :if={@page.path_en != @page.path_fr}> · <a href={@page.path_en}>{@page.path_en}</a></span>
+      </p>
+    </div>
+  </header>
+
+  <.form
+    for={%{}}
+    action={@action}
+    method="post"
+    class="card soc-composer"
+    id="social-composer"
+  >
+    <input :if={@page} type="hidden" name="page" value={@page.path_fr} />
+
+    <fieldset class="soc-networks">
+      <legend class="soc-tag">Réseaux</legend>
+      <label :for={n <- ["x", "linkedin"]} class="soc-toggle">
+        <input
+          type="checkbox"
+          name="reseaux[]"
+          value={n}
+          checked={n in @networks}
+          id={"net-#{n}"}
+        />
+        <.network_mark network={n} />
+        {network_name(n)} · {if n == "x", do: "anglais", else: "français"}
+      </label>
+      <button
+        :if={@page && assigns[:writer]}
+        class="btn btn-secondary btn-sm soc-propose"
+        type="submit"
+        name="action"
+        value="propose"
+        id="propose"
+        formnovalidate
+      >
+        Proposer un texte (Claude)
+      </button>
+    </fieldset>
+
+    <div class="soc-pair">
+      <section class="soc-col" aria-label="Post X">
+        <label class="adm-field" for="post-x">
+          <span>
+            X · anglais
+            <span
+              class={["mono", if(x_count(@post) > x_limit(), do: "adm-bad", else: "subtle")]}
+              data-x-count="post-x"
+            >
+              {x_count(@post)} / {x_limit()}
+            </span>
+          </span>
+          <textarea
+            id="post-x"
+            name="post[text_x]"
+            rows="7"
+            data-social-text="x"
+            data-preview="preview-x"
+            data-link-length={if(@post.link_x, do: "24", else: "0")}
+          >{@post.text_x}</textarea>
+        </label>
+        <article class="soc-x" id="preview-x" aria-label="Aperçu du post sur X">
+          <img class="soc-x-avatar" src={~p"/images/icon-192.png"} alt="" width="40" height="40" />
+          <div class="soc-x-main">
+            <div class="soc-x-head">
+              <b>Syli Atlas</b>
+              <span class="soc-x-muted">@syliatlas · {@next_slot || "programmé"}</span>
+            </div>
+            <div class="soc-x-text">
+              <span data-preview-text>{@post.text_x}</span><span :if={@post.link_x}>
+                <span class="soc-x-link">{x_display_link(@post.link_x)}</span>
+              </span>
+            </div>
+            <img
+              :if={Post.x_image(@post)}
+              class="soc-x-image"
+              src={Post.x_image(@post)}
+              alt=""
+              loading="lazy"
+              width="1200"
+              height="630"
+            />
+            <div class="soc-x-actions" aria-hidden="true">
+              <.social_action icon={:reply} />
+              <.social_action icon={:repost} />
+              <.social_action icon={:like} />
+              <.social_action icon={:views} />
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="soc-col" aria-label="Post LinkedIn">
+        <label class="adm-field" for="post-li">
+          <span>LinkedIn · français <span class="mono subtle">lien à la fin</span></span>
+          <textarea
+            id="post-li"
+            name="post[text_linkedin]"
+            rows="9"
+            data-social-text="linkedin"
+            data-preview="preview-li"
+          >{@post.text_linkedin}</textarea>
+        </label>
+        <article class="soc-li" id="preview-li" aria-label="Aperçu du post sur LinkedIn">
+          <div class="soc-li-head">
+            <img
+              class="soc-li-avatar"
+              src={~p"/images/icon-192.png"}
+              alt=""
+              width="48"
+              height="48"
+            />
+            <div>
+              <b>Syli Atlas</b>
+              <div class="soc-li-muted">Page · {@next_slot || "programmé"}</div>
+            </div>
+          </div>
+          <div class="soc-li-body">
+            <div class="soc-li-text" data-clamp>
+              <span data-preview-text>{linkedin_text(@post)}</span><span :if={@post.link_linkedin}>
+                <span class="soc-li-link">{@post.link_linkedin}</span>
+              </span>
+            </div>
+            <button type="button" class="soc-li-more" data-more hidden>… voir plus</button>
+          </div>
+          <img
+            :if={@post.image_url}
+            class="soc-li-image"
+            src={@post.image_url}
+            alt=""
+            loading="lazy"
+            width="1200"
+            height="630"
+          />
+          <div class="soc-li-actions" aria-hidden="true">
+            <span>J'aime</span><span>Commenter</span><span>Republier</span><span>Envoyer</span>
+          </div>
+        </article>
+      </section>
+    </div>
+
+    <div class="soc-composer-bar">
+      <div class="soc-slot" id="social-slot">
+        <span class="small muted">Prochain créneau libre dans Buffer</span>
+        <b>{@next_slot || "—"}</b>
+        <span :if={@simulated} class="pill pill-warn">simulé</span>
+        <span :if={@full != []} class="small adm-bad">
+          File pleine sur {Enum.map_join(@full, " et ", &network_name/1)}
+        </span>
+      </div>
+      <div class="adm-buttons">
+        <button
+          class="btn btn-primary"
+          type="submit"
+          name="action"
+          value="schedule"
+          id="action-schedule"
+          disabled={@full != [] and Enum.any?(@networks, &(&1 in @full))}
+        >
+          Programmer
+        </button>
+        <button
+          class="btn btn-secondary"
+          type="submit"
+          name="action"
+          value="queue"
+          id="action-queue"
+        >
+          Ajouter à la file
+        </button>
+        <button
+          class="btn btn-secondary"
+          type="submit"
+          name="action"
+          value={if(@page, do: "draft", else: "save")}
+          id="action-draft"
+        >
+          {if @page, do: "Envoyer à valider", else: "Enregistrer"}
+        </button>
+        <button class="btn btn-quiet" type="submit" name="action" value="now" id="action-now">
+          Publier maintenant
+        </button>
+      </div>
+      <p class="small muted">
+        « Ajouter à la file » : prêt mais sans date, gardé sur Syli Atlas, hors du quota Buffer. « Publier maintenant » : tout de suite, hors créneau.
+      </p>
+    </div>
+  </.form>
+</.admin_shell>

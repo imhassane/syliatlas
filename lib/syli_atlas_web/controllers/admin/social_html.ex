@@ -5,7 +5,8 @@ defmodule SyliAtlasWeb.Admin.SocialHTML do
 
   alias SyliAtlas.Geo
   alias SyliAtlas.Geo.Area
-  alias SyliAtlas.Social.Post
+  alias SyliAtlas.Social
+  alias SyliAtlas.Social.{Clock, Post}
 
   embed_templates "social_html/*"
 
@@ -14,7 +15,14 @@ defmodule SyliAtlasWeb.Admin.SocialHTML do
   def kind_label("edition"), do: "Édition du FMI"
   def kind_label("rebasing"), do: "Rebasage du PIB"
   def kind_label("national"), do: "Chiffre national"
+  def kind_label("page"), do: "Page du site"
   def kind_label(other), do: other
+
+  @doc "A post's name on the board: its country and kind, or a page's first line."
+  def title(%Post{kind: "page"} = p) do
+    line = (p.text_linkedin || p.text_x || "") |> String.split("\n", parts: 2) |> hd()
+    if String.length(line) > 70, do: String.slice(line, 0, 69) <> "…", else: line
+  end
 
   def title(%Post{area_code: nil} = p), do: kind_label(p.kind)
 
@@ -41,7 +49,7 @@ defmodule SyliAtlasWeb.Admin.SocialHTML do
 
   @doc "LinkedIn's text as it will be sent, without the link (shown apart)."
   def linkedin_text(%Post{text_linkedin: text}),
-    do: String.replace(text, "lien en premier commentaire", "lien ci-dessous")
+    do: String.replace(text || "", "lien en premier commentaire", "lien ci-dessous")
 
   @doc "One of X's action icons (decorative, in the preview)."
   attr :icon, :atom, required: true
@@ -72,25 +80,128 @@ defmodule SyliAtlasWeb.Admin.SocialHTML do
     """
   end
 
+  @doc "The logo of a network, small."
+  attr :network, :string, required: true
+
+  def network_mark(assigns) do
+    ~H"""
+    <span
+      class="soc-net"
+      title={network_name(@network)}
+      aria-label={network_name(@network)}
+      role="img"
+    >
+      <svg
+        :if={@network == "x"}
+        width="11"
+        height="11"
+        viewBox="0 0 24 24"
+        fill="currentColor"
+        aria-hidden="true"
+      ><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" /></svg>
+      <span :if={@network == "linkedin"} aria-hidden="true">in</span>
+    </span>
+    """
+  end
+
   def x_limit, do: Post.x_limit()
+
+  def network_name("x"), do: "X"
+  def network_name("linkedin"), do: "LinkedIn"
+
+  @doc "The networks a post goes or went to."
+  def networks_of(%Post{status: s} = p) when s in ["draft", "ready"], do: Post.chosen(p)
+
+  def networks_of(%Post{} = p),
+    do: for({n, st} <- [{"x", p.x_state}, {"linkedin", p.linkedin_state}], st, do: n)
 
   @doc "Outcome of one network: label and pill class."
   def network_state(nil), do: nil
+  def network_state("waiting"), do: {"En attente", "pill-neutral"}
   def network_state("pending"), do: {"En cours d'envoi", "pill-info"}
   def network_state("queued"), do: {"Dans la file Buffer", "pill-ok"}
+  def network_state("sent"), do: {"Publié", "pill-ok"}
   def network_state("simulated"), do: {"Simulé", "pill-warn"}
   def network_state("failed"), do: {"Échec", "pill-warn"}
   def network_state(other), do: {other, "pill-neutral"}
 
-  def status_label("rejected"), do: {"Rejeté", "pill-neutral"}
-  def status_label("approved"), do: {"En cours", "pill-info"}
-  def status_label("done"), do: {"Envoyé", "pill-ok"}
-  def status_label(other), do: {other, "pill-neutral"}
-
   def fr_datetime(nil), do: "—"
-  def fr_datetime(%DateTime{} = d), do: Calendar.strftime(d, "%d/%m/%Y %H:%M UTC")
+  def fr_datetime(%DateTime{} = d), do: Clock.label(d)
+
+  def when_label(nil), do: nil
+  def when_label(%DateTime{} = d), do: Clock.label(d)
+
+  def day_label(%Date{} = d), do: Clock.short_day(d)
 
   def service_name("twitter"), do: "X"
   def service_name("linkedin"), do: "LinkedIn"
   def service_name(other), do: other
+
+  def due_label(%Post{} = p), do: p |> Social.first_due() |> when_label()
+
+  @doc "When each network went out: « X 10:00 · in 14:00 » when they differ."
+  def sent_label(%Post{} = p) do
+    times =
+      for {n, st, at} <- [
+            {"X", p.x_state, p.x_sent_at},
+            {"in", p.linkedin_state, p.linkedin_sent_at}
+          ],
+          st in ["sent", "simulated"],
+          do: {n, at || p.sent_at}
+
+    case Enum.uniq_by(times, &elem(&1, 1)) do
+      [{_, at}] -> when_label(at)
+      [] -> when_label(p.sent_at)
+      _ -> Enum.map_join(times, " · ", fn {n, at} -> "#{n} #{when_label(at)}" end)
+    end
+  end
+
+  @metrics [{"impressions", "vues"}, {"clicks", "clics"}, {"reactions", "réactions"}]
+
+  @doc "Buffer's figures of a sent post, both networks added: [{label, value}]."
+  def metrics(%Post{} = p) do
+    for {key, label} <- @metrics,
+        values = for(m <- [p.x_metrics, p.linkedin_metrics], is_map(m), v = m[key], do: v),
+        values != [],
+        do: {label, values |> Enum.sum() |> round()}
+  end
+
+  def quota_pct(n, limit), do: "#{min(100, round(n * 100 / max(limit, 1)))}%"
+
+  def sync_label(nil), do: "jamais synchronisé depuis le démarrage"
+
+  def sync_label({at, :ok}),
+    do: "synchronisé avec Buffer #{ago(at)}"
+
+  def sync_label({at, {:error, message}}),
+    do: "synchronisation impossible #{ago(at)} : #{message}"
+
+  defp ago(at) do
+    minutes = div(DateTime.diff(DateTime.utc_now(), at), 60)
+
+    cond do
+      minutes < 1 -> "à l'instant"
+      minutes < 60 -> "il y a #{minutes} min"
+      true -> "il y a #{div(minutes, 60)} h"
+    end
+  end
+
+  def sync_ok?({_, :ok}), do: true
+  def sync_ok?(_), do: false
+
+  @doc "A week cell's short text: the posts of the slot."
+  def cell_text(%{posts: []}), do: nil
+
+  def cell_text(%{posts: posts}) do
+    posts
+    |> Enum.group_by(& &1.post.id)
+    |> Enum.map_join(" · ", fn {_, [first | _] = list} ->
+      nets = Enum.map_join(list, ", ", &if(&1.network == "x", do: "X", else: "in"))
+      "#{short_title(first.post)} · #{nets}"
+    end)
+  end
+
+  defp short_title(%Post{kind: "page"} = p), do: p |> title() |> String.slice(0, 18)
+  defp short_title(%Post{area_code: code}) when is_binary(code), do: area_name(code)
+  defp short_title(p), do: kind_label(p.kind)
 end
