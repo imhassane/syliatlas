@@ -372,6 +372,7 @@ defmodule SyliAtlasWeb.Router do
     post "/budgets/pays/:code", BudgetsController, :update_country
     get "/emails", EmailsController, :index
     get "/reseaux", SocialController, :index
+    post "/reseaux/preparer/notation/:rating_id", SocialController, :prepare_rating
     post "/reseaux/:id", SocialController, :update
     post "/reseaux/:id/valider", SocialController, :approve
     post "/reseaux/:id/rejeter", SocialController, :reject
