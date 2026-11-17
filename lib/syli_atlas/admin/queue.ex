@@ -63,6 +63,7 @@ defmodule SyliAtlas.Admin.Queue do
           :count
         ),
       emails: SyliAtlas.Admin.Emails.failures(7),
+      social: SyliAtlas.Social.count_drafts(),
       companies:
         Repo.aggregate(
           from(c in SyliAtlas.Companies.Company, where: c.status == "hidden"),

@@ -2,7 +2,9 @@ defmodule SyliAtlas.Workers.AlertEventWorker do
   @moduledoc """
   An event alerts may react to: a published rating decision, a new IMF
   edition, a market session published, a budget law approved. Writes the deliveries and enqueues their emails
-  (`SyliAtlas.Accounts.AlertEvents`). Safe to run twice.
+  (`SyliAtlas.Accounts.AlertEvents`), and prepares the post for X and LinkedIn
+  (`SyliAtlas.Social.Drafts`, never in the way of the alerts). Safe to run
+  twice.
   """
   use Oban.Worker,
     queue: :alerts,
@@ -16,15 +18,18 @@ defmodule SyliAtlas.Workers.AlertEventWorker do
     ]
 
   alias SyliAtlas.Accounts.AlertEvents
+  alias SyliAtlas.Social.Drafts
 
   @impl Oban.Worker
   def perform(%Oban.Job{args: %{"type" => "rating", "rating_id" => id}}) do
     AlertEvents.on_rating(id)
+    Drafts.safely(fn -> Drafts.on_rating(id) end)
     :ok
   end
 
   def perform(%Oban.Job{args: %{"type" => "budget_law", "law_id" => id}}) do
     AlertEvents.on_budget_law(id)
+    Drafts.safely(fn -> Drafts.on_budget_law(id) end)
     :ok
   end
 
@@ -36,6 +41,7 @@ defmodule SyliAtlas.Workers.AlertEventWorker do
   def perform(%Oban.Job{args: %{"type" => "edition", "edition_id" => id} = args}) do
     opts = if today = args["today"], do: [today: Date.from_iso8601!(today)], else: []
     AlertEvents.on_edition(id, opts)
+    Drafts.safely(fn -> Drafts.on_edition(id) end)
     :ok
   end
 end

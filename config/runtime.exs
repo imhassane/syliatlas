@@ -135,6 +135,15 @@ if config_env() != :test do
   end
 end
 
+# Posts for X and LinkedIn (SyliAtlas.Social): Buffer's queue when its personal
+# API key is set (production), else simulated (development, tests): approved
+# posts are marked « simulé » and nothing leaves the server.
+if buffer_key = System.get_env("BUFFER_API_KEY") do
+  config :syli_atlas, SyliAtlas.Social,
+    adapter: SyliAtlas.Social.Buffer,
+    api_key: buffer_key
+end
+
 # Emails (sign-in codes, alerts, digests). MAILER_ADAPTER chooses, else
 # the variables present do:
 #

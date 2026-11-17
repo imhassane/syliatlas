@@ -13,7 +13,8 @@ defmodule SyliAtlas.Admin.Jobs do
     "seo" => "Sitemap, images de partage, llms.txt",
     "alerts" => "Évaluer les alertes des membres, envoyer les e-mails et les récaps",
     "moderation" => "Discussions (pas encore ouvertes)",
-    "market" => "Cours des bourses : import après les clôtures, contrôles, publication"
+    "market" => "Cours des bourses : import après les clôtures, contrôles, publication",
+    "social" => "Posts X et LinkedIn validés, envoyés à Buffer (simulé hors production)"
   }
 
   @workers %{
@@ -29,7 +30,8 @@ defmodule SyliAtlas.Admin.Jobs do
     "SyliAtlas.Workers.DigestWorker" => "Choisir les récaps du jour",
     "SyliAtlas.Workers.DigestEmailWorker" => "E-mail de récap",
     "SyliAtlas.Workers.ApiTimingWorker" => "Mesure horaire de l'API",
-    "SyliAtlas.Workers.CachePurgeWorker" => "Vider le cache Cloudflare de l'API"
+    "SyliAtlas.Workers.CachePurgeWorker" => "Vider le cache Cloudflare de l'API",
+    "SyliAtlas.Workers.SocialPublishWorker" => "Envoyer un post sur X ou LinkedIn"
   }
 
   def worker_label(worker),

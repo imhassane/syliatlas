@@ -254,3 +254,13 @@ dd.rt-inv, dd.rt-spec, dd.rt-high, dd.rt-risk, dd.rt-def, b.rt-inv, b.rt-spec, b
 .gsc-import p { margin: 0; }
 .gsc-import.is-done { background: var(--success-bg); color: var(--success-ink); }
 .gsc-import.is-retrying, .gsc-import.is-failed, .gsc-import.is-stuck { background: var(--warning-bg); color: var(--warning-ink); }
+
+/* Admin « Réseaux » (canvas « Syli Atlas — publication sur X et LinkedIn »). */
+.soc-service { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 16px 24px; font-size: 14px; }
+.soc-service .mono { margin-left: auto; }
+.soc-row { display: flex; flex-direction: column; gap: 16px; padding: 24px; border-bottom: 1px solid var(--border-faint); }
+.soc-row:has(+ .adm-hidden-form:last-child) { border-bottom: 0; }
+.soc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.soc-grid textarea { font: inherit; font-size: 14px; line-height: 1.5; padding: 10px 12px; border: 1px solid var(--border-input); border-radius: 8px; background: var(--card); color: var(--ink); resize: vertical; width: 100%; box-sizing: border-box; }
+.soc-link { overflow-wrap: anywhere; }
+.soc-image { width: 100%; height: auto; border-radius: 8px; background: var(--alt); }

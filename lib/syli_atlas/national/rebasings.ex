@@ -63,6 +63,7 @@ defmodule SyliAtlas.National.Rebasings do
     |> Rebasing.changeset(publication(attrs, who))
     |> Repo.insert()
     |> tap(&rebuild_if_ok/1)
+    |> tap(&social_draft/1)
   end
 
   @doc "A person publishes a proposal, with the fields they completed."
@@ -73,6 +74,7 @@ defmodule SyliAtlas.National.Rebasings do
     |> Rebasing.changeset(publication(Map.merge(defaults(r), attrs), who))
     |> Repo.update()
     |> tap(&rebuild_if_ok/1)
+    |> tap(&social_draft/1)
   end
 
   @doc "A person rejects a proposal (or withdraws a published rebasing)."
@@ -282,4 +284,10 @@ defmodule SyliAtlas.National.Rebasings do
 
   defp to_float(nil), do: nil
   defp to_float(s), do: SyliAtlas.National.Verify.to_float(s)
+
+  # A published rebasing prepares its post for X and LinkedIn (SyliAtlas.Social).
+  defp social_draft({:ok, r}),
+    do: SyliAtlas.Social.Drafts.safely(fn -> SyliAtlas.Social.Drafts.on_rebasing(r) end)
+
+  defp social_draft(_), do: :ok
 end

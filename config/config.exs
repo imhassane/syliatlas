@@ -31,7 +31,16 @@ config :phoenix_live_view,
 config :syli_atlas, Oban,
   engine: Oban.Engines.Lite,
   repo: SyliAtlas.Repo,
-  queues: [imports: 1, computations: 2, seo: 1, alerts: 2, moderation: 1, market: 1, budgets: 1],
+  queues: [
+    imports: 1,
+    computations: 2,
+    seo: 1,
+    alerts: 2,
+    moderation: 1,
+    market: 1,
+    budgets: 1,
+    social: 1
+  ],
   # A job cut by a redeploy stays « executing » until rescued: after 30
   # minutes instead of Oban's hour (the longest jobs, imports, take a few).
   lifeline: [rescue_after: {30, :minutes}],
