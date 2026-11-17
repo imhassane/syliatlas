@@ -12,7 +12,7 @@ defmodule SyliAtlas.Social.Post do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @kinds ~w(rating budget_law edition rebasing)
+  @kinds ~w(rating budget_law edition rebasing national)
   @networks ~w(x linkedin)
 
   def kinds, do: @kinds

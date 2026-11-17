@@ -13,6 +13,7 @@ defmodule SyliAtlasWeb.Admin.SocialHTML do
   def kind_label("budget_law"), do: "Loi de finances"
   def kind_label("edition"), do: "Édition du FMI"
   def kind_label("rebasing"), do: "Rebasage du PIB"
+  def kind_label("national"), do: "Chiffre national"
   def kind_label(other), do: other
 
   def title(%Post{area_code: nil} = p), do: kind_label(p.kind)
