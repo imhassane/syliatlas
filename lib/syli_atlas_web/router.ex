@@ -371,6 +371,10 @@ defmodule SyliAtlasWeb.Router do
     get "/budgets/pays/:code", BudgetsController, :country
     post "/budgets/pays/:code", BudgetsController, :update_country
     get "/emails", EmailsController, :index
+    get "/reseaux", SocialController, :index
+    post "/reseaux/:id", SocialController, :update
+    post "/reseaux/:id/valider", SocialController, :approve
+    post "/reseaux/:id/rejeter", SocialController, :reject
     get "/entreprises", CompaniesController, :index
     post "/entreprises", CompaniesController, :create
     post "/entreprises/verifier", CompaniesController, :check_due

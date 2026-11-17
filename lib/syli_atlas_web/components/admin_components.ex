@@ -35,6 +35,7 @@ defmodule SyliAtlasWeb.AdminComponents do
          ]},
         {"Site",
          [
+           {:social, "Réseaux", ~p"/admin/reseaux", :emails},
            {:search_console, "Recherche Google", ~p"/admin/recherche-google", :searches},
            {:translations, "Traductions", ~p"/admin/traductions", :searches},
            {:searches, "Recherches sans résultat", ~p"/admin/recherches", :searches}
