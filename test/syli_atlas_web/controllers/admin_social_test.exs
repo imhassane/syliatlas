@@ -97,6 +97,28 @@ defmodule SyliAtlasWeb.AdminSocialTest do
     refute html =~ ~s(id="candidate-#{r.id}")
   end
 
+  test "a failed network shows an alert opening the error, and can be sent again", %{post: post} do
+    {:ok, post} = Social.approve(post, ["x", "linkedin"], %{}, "admin@test")
+
+    post
+    |> Ecto.Changeset.change(
+      x_state: "queued",
+      linkedin_state: "failed",
+      linkedin_error: "Invalid post"
+    )
+    |> SyliAtlas.Repo.update!()
+
+    html = admin() |> get("/admin/reseaux") |> html_response(200)
+    assert html =~ ~s(popovertarget="error-#{post.id}-linkedin")
+    assert html =~ ~r/<div[^>]*popover[^>]*id="error-#{post.id}-linkedin"/
+    assert html =~ "Invalid post"
+    assert html =~ ~s(id="resend-#{post.id}-x")
+
+    conn = admin() |> post("/admin/reseaux/#{post.id}/renvoyer/linkedin")
+    assert Phoenix.Flash.get(conn.assigns.flash, :info) == "Nouvel envoi lancé."
+    assert Social.get!(post.id).linkedin_state == "pending"
+  end
+
   test "visitors are sent to the sign-in page", %{conn: conn} do
     assert conn |> get("/admin/reseaux") |> redirected_to() == "/fr/connexion"
   end

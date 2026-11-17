@@ -9,8 +9,8 @@ defmodule SyliAtlas.Social.Buffer do
   needs no change on our side.
 
   Posts are added to the queue (`addToQueue`): Buffer publishes them at the
-  next slot of its posting schedule. On LinkedIn the link goes in the first
-  comment.
+  next slot of its posting schedule. The link is in the text on both networks
+  (a LinkedIn first comment needs a paid Buffer plan).
   """
   @behaviour SyliAtlas.Social.Publisher
 
@@ -55,7 +55,6 @@ defmodule SyliAtlas.Social.Buffer do
           "source" => "syliatlas",
           "assets" => assets(post[:image_url])
         }
-        |> put_metadata(network, post[:first_comment])
 
       case query(@create, %{"input" => input}) do
         {:ok, %{"createPost" => %{"post" => %{"id" => id}}}} -> {:ok, id}
@@ -78,11 +77,6 @@ defmodule SyliAtlas.Social.Buffer do
 
   defp assets(nil), do: []
   defp assets(url), do: [%{"image" => %{"url" => url}}]
-
-  defp put_metadata(input, :linkedin, comment) when is_binary(comment),
-    do: Map.put(input, "metadata", %{"linkedin" => %{"firstComment" => comment}})
-
-  defp put_metadata(input, _network, _comment), do: input
 
   defp organization do
     case query("query { account { organizations { id } } }", %{}) do

@@ -130,6 +130,36 @@ defmodule SyliAtlas.Social do
 
   def approve(%Post{}, _networks, _attrs, _who), do: {:error, :not_draft}
 
+  @doc """
+  Sends a post again on one network (« Renvoyer »): after a failure, or when
+  the post was deleted in Buffer. Its other network is left as it is.
+  """
+  def resend(%Post{status: status} = post, network)
+      when status in ["approved", "done"] and network in ["x", "linkedin"] do
+    state = String.to_existing_atom(network <> "_state")
+
+    if Map.get(post, state) in ["queued", "simulated", "failed"] do
+      Repo.transaction(fn ->
+        post =
+          post
+          |> Ecto.Changeset.change(%{
+            :status => "approved",
+            state => "pending",
+            String.to_existing_atom(network <> "_ref") => nil,
+            String.to_existing_atom(network <> "_error") => nil
+          })
+          |> Repo.update!()
+
+        %{"post_id" => post.id} |> SocialPublishWorker.new() |> Oban.insert!()
+        post
+      end)
+    else
+      {:error, :nothing_to_resend}
+    end
+  end
+
+  def resend(%Post{}, _network), do: {:error, :nothing_to_resend}
+
   def reject(%Post{status: "draft"} = post, who) do
     post
     |> Ecto.Changeset.change(status: "rejected", reviewed_by: who, reviewed_at: now())
@@ -176,14 +206,10 @@ defmodule SyliAtlas.Social do
     payload =
       case network do
         :x ->
-          %{text: Post.x_body(post), image_url: post.image_url}
+          %{text: Post.x_body(post), image_url: Post.x_image(post)}
 
         :linkedin ->
-          %{
-            text: post.text_linkedin,
-            image_url: post.image_url,
-            first_comment: post.link_linkedin
-          }
+          %{text: Post.linkedin_body(post), image_url: post.image_url}
       end
 
     {state, ref, error} =

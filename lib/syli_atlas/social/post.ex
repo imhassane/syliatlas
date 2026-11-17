@@ -36,6 +36,7 @@ defmodule SyliAtlas.Social.Post do
     field :link_x, :string
     field :link_linkedin, :string
     field :image_url, :string
+    field :image_url_x, :string
     field :x_state, :string
     field :x_ref, :string
     field :x_error, :string
@@ -53,7 +54,7 @@ defmodule SyliAtlas.Social.Post do
     post
     |> cast(
       attrs,
-      ~w(key kind area_code priority text_x text_linkedin link_x link_linkedin image_url)a
+      ~w(key kind area_code priority text_x text_linkedin link_x link_linkedin image_url image_url_x)a
     )
     |> validate_required(~w(key kind text_x text_linkedin)a)
     |> validate_inclusion(:kind, @kinds)
@@ -82,6 +83,31 @@ defmodule SyliAtlas.Social.Post do
   @doc "The text as sent to X: the link on its own line at the end."
   def x_body(%__MODULE__{text_x: text, link_x: nil}), do: text
   def x_body(%__MODULE__{text_x: text, link_x: link}), do: text <> "\n" <> link
+
+  @doc """
+  The text as sent to LinkedIn: the link at the end. Buffer's free plan
+  refuses a first comment; drafts written before this change said « lien en
+  premier commentaire » and are reworded on the way.
+  """
+  def linkedin_body(%__MODULE__{text_linkedin: text, link_linkedin: link}) do
+    text = String.replace(text, "lien en premier commentaire", "lien ci-dessous")
+    if link, do: text <> "\n" <> link, else: text
+  end
+
+  @doc """
+  The share image for X: the English page's. Drafts written before it was
+  stored get it from their English link.
+  """
+  def x_image(%__MODULE__{image_url_x: url}) when is_binary(url), do: url
+
+  def x_image(%__MODULE__{link_x: link, image_url: fallback}) when is_binary(link) do
+    case URI.parse(link) do
+      %URI{path: "/" <> _ = path} -> SyliAtlasWeb.Seo.image(path)
+      _ -> fallback
+    end
+  end
+
+  def x_image(%__MODULE__{image_url: url}), do: url
 
   @doc "Characters counted by X (the link counts 23, wherever it points)."
   def x_length(%__MODULE__{text_x: text, link_x: link}), do: x_length(text, link)

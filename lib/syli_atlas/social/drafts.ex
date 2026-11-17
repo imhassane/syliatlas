@@ -2,7 +2,8 @@ defmodule SyliAtlas.Social.Drafts do
   @moduledoc """
   Prepares the posts of an event (canvas « Syli Atlas — publication sur X et
   LinkedIn », artboard « Modèles »): X in English with the link in the post,
-  LinkedIn in French with the link in the first comment. Always the figure,
+  LinkedIn in French with the link at the end (Buffer's free plan refuses
+  first comments). Always the figure,
   the date and the source; never an opinion on a government.
 
   Called by `SyliAtlas.Workers.AlertEventWorker` (rating decision, budget
@@ -143,11 +144,12 @@ defmodule SyliAtlas.Social.Drafts do
          text_x: x <> "\n\nRatings from S&P, Moody's and Fitch, with the full history:",
          text_linkedin:
            li <>
-             "\n\nOù en sont les autres agences, et l'historique de toutes les décisions : lien en premier commentaire." <>
+             "\n\nOù en sont les autres agences, et l'historique de toutes les décisions : lien ci-dessous." <>
              "\n\nSource : communiqué de #{agency}.",
          link_x: link(path_en, "x"),
          link_linkedin: link(path_fr, "linkedin"),
-         image_url: Seo.image(path_fr)
+         image_url: Seo.image(path_fr),
+         image_url_x: Seo.image(path_en)
        }}
     end
   end
@@ -243,11 +245,12 @@ defmodule SyliAtlas.Social.Drafts do
            "#{en}'s #{what_en} is #{verb_en}#{amount_en}.\n\nRevenue, deficit and the full law:",
          text_linkedin:
            "#{who_fr} #{verb_fr} sa #{what_fr}#{amount_fr}." <>
-             "\n\nRecettes, déficit et texte de la loi : lien en premier commentaire." <>
+             "\n\nRecettes, déficit et texte de la loi : lien ci-dessous." <>
              if(law.source_name, do: "\n\nSource : #{law.source_name}.", else: ""),
          link_x: link(path_en, "x"),
          link_linkedin: link(path_fr, "linkedin"),
-         image_url: Seo.image(path_fr)
+         image_url: Seo.image(path_fr),
+         image_url_x: Seo.image(path_en)
        }}
     else
       :skip
@@ -298,11 +301,12 @@ defmodule SyliAtlas.Social.Drafts do
         "New IMF forecasts: Africa's fastest-growing economies in #{year}\n#{lines_en}\n\nAll 54 countries:",
       text_linkedin:
         "Le FMI publie ses nouvelles prévisions. Les plus fortes croissances attendues en Afrique en #{year} : #{list_fr}." <>
-          "\n\nLe classement des 54 pays : lien en premier commentaire." <>
+          "\n\nLe classement des 54 pays : lien ci-dessous." <>
           "\n\nSource : FMI, Perspectives de l'économie mondiale.",
       link_x: link(path_en, "x"),
       link_linkedin: link(path_fr, "linkedin"),
-      image_url: Seo.image(path_fr)
+      image_url: Seo.image(path_fr),
+      image_url_x: Seo.image(path_en)
     }
   end
 
@@ -336,11 +340,12 @@ defmodule SyliAtlas.Social.Drafts do
       text_x: x <> "\n\nWhat changes, and the official figures:",
       text_linkedin:
         li <>
-          "\n\nCe que ça change pour la dette rapportée au PIB et pour le classement : lien en premier commentaire." <>
+          "\n\nCe que ça change pour la dette rapportée au PIB et pour le classement : lien ci-dessous." <>
           if(r.source_name, do: "\n\nSource : #{r.source_name}.", else: ""),
       link_x: link(path_en, "x"),
       link_linkedin: link(path_fr, "linkedin"),
-      image_url: Seo.image(path_fr)
+      image_url: Seo.image(path_fr),
+      image_url_x: Seo.image(path_en)
     })
   end
 
@@ -389,7 +394,34 @@ defmodule SyliAtlas.Social.Drafts do
         {c, _} -> c
       end
 
-    Enum.join(Enum.reject([number, unit, money], &is_nil/1), " ")
+    text = Enum.join(Enum.reject([number, unit, money], &is_nil/1), " ")
+
+    case currency != "USD" && SyliAtlas.Fx.convert(SyliAtlas.Fx.latest(), value, currency, "USD") do
+      usd when is_number(usd) -> text <> " (" <> dollars(usd, locale) <> ")"
+      _ -> text
+    end
+  end
+
+  # « about $13.1 billion », « environ 13,1 milliards de dollars ».
+  defp dollars(usd, locale) do
+    {v, unit_en, unit_fr} =
+      cond do
+        abs(usd) >= 1.0e9 -> {usd / 1.0e9, "billion", "milliard"}
+        abs(usd) >= 1.0e6 -> {usd / 1.0e6, "million", "million"}
+        true -> {usd, nil, nil}
+      end
+
+    decimals = if abs(v) >= 100, do: 0, else: 1
+    number = SyliAtlasWeb.Format.number(v, decimals, locale)
+
+    case locale do
+      "fr" ->
+        unit = unit_fr && if(v >= 2, do: unit_fr <> "s", else: unit_fr)
+        "environ " <> Enum.join(Enum.reject([number, unit, "de dollars"], &is_nil/1), " ")
+
+      _ ->
+        "about $" <> Enum.join(Enum.reject([number, unit_en], &is_nil/1), " ")
+    end
   end
 
   defp size(code), do: if(code in @large, do: 5, else: 0)
