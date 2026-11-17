@@ -17,8 +17,18 @@ defmodule SyliAtlas.Social.Simulated do
        ]}
 
   @impl true
-  def publish(network, %{text: text}) do
-    Logger.info("social: simulated #{network} post (#{String.length(text)} characters)")
+  def publish(network, %{text: text}, mode \\ :queue) do
+    Logger.info("social: simulated #{network} post, #{mode} (#{String.length(text)} characters)")
     {:ok, "simulated-#{network}-#{System.unique_integer([:positive])}"}
   end
+
+  # Nothing was sent, so nothing changes.
+  @impl true
+  def posts(_ids), do: {:ok, %{}}
+
+  @impl true
+  def delete(_id), do: :ok
+
+  @impl true
+  def schedule(_network), do: {:ok, SyliAtlas.Social.Publisher.default_schedule()}
 end

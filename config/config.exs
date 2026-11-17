@@ -73,6 +73,9 @@ config :syli_atlas, Oban,
        # Google Search Console (SyliAtlas.SearchConsole): the days Google has
        # published, about two days late. Does nothing without a key.
        {"0 7 * * *", SyliAtlas.Workers.SearchConsoleWorker},
+       # Posts for X and LinkedIn: what Buffer did with them (sent, failed,
+       # figures). Every half hour; nothing to ask when nothing is waiting.
+       {"*/30 * * * *", SyliAtlas.Workers.SocialSyncWorker},
        # Budget laws (SyliAtlas.Budgets): the official pages set to « auto »
        # in the admin, read every morning; new files go to the AI.
        {"30 5 * * *", SyliAtlas.Workers.BudgetFetchWorker},

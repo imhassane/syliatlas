@@ -1,18 +1,22 @@
 defmodule SyliAtlas.Social.Buffer do
   @moduledoc """
-  Sends posts to Buffer's queue through its GraphQL API (api.buffer.com,
-  personal key in `BUFFER_API_KEY`, as a Bearer token).
+  Sends posts to Buffer through its GraphQL API (api.buffer.com, personal key
+  in `BUFFER_API_KEY`, as a Bearer token), and reads them back.
 
   The channels are not configured here: each call looks up, in the account's
   first organization, the connected channel of the network (`twitter` for X,
   `linkedin` for LinkedIn). Connecting or replacing an account in Buffer
-  needs no change on our side.
+  needs no change on our side. The organization's id is kept for an hour:
+  the free plan allows 3,000 requests a month.
 
-  Posts are added to the queue (`addToQueue`): Buffer publishes them at the
-  next slot of its posting schedule. The link is in the text on both networks
-  (a LinkedIn first comment needs a paid Buffer plan).
+  Posts are added to the queue (`addToQueue`: Buffer publishes them at the
+  next slot of its posting schedule) or published at once (`shareNow`). The
+  link is in the text on both networks (a LinkedIn first comment needs a
+  paid Buffer plan).
   """
   @behaviour SyliAtlas.Social.Publisher
+
+  require Logger
 
   @services %{x: "twitter", linkedin: "linkedin"}
 
@@ -22,6 +26,20 @@ defmodule SyliAtlas.Social.Buffer do
       __typename
       ... on PostActionSuccess { post { id } }
       ... on MutationError { message }
+    }
+  }
+  """
+
+  @delete """
+  mutation DeletePost($input: DeletePostInput!) {
+    deletePost(input: $input) { __typename }
+  }
+  """
+
+  @posts """
+  query Posts($org: OrganizationId!) {
+    posts(first: 100, input: {organizationId: $org, sort: [{field: createdAt, direction: desc}]}) {
+      edges { node { id status dueAt sentAt error { message } METRICS } }
     }
   }
   """
@@ -42,14 +60,15 @@ defmodule SyliAtlas.Social.Buffer do
   end
 
   @impl true
-  def publish(network, %{text: text} = post) when is_map_key(@services, network) do
+  def publish(network, %{text: text} = post, mode \\ :queue)
+      when is_map_key(@services, network) do
     with {:ok, channels} <- channels(),
          {:ok, channel} <- channel(channels, network) do
       input =
         %{
           "channelId" => channel.id,
           "text" => text,
-          "mode" => "addToQueue",
+          "mode" => if(mode == :now, do: "shareNow", else: "addToQueue"),
           "schedulingType" => "automatic",
           "needsApproval" => false,
           "source" => "syliatlas",
@@ -61,6 +80,79 @@ defmodule SyliAtlas.Social.Buffer do
         {:ok, %{"createPost" => %{"message" => message}}} -> {:error, message}
         {:ok, other} -> {:error, "réponse inattendue de Buffer : #{inspect(other)}"}
         {:error, _} = error -> error
+      end
+    end
+  end
+
+  @doc """
+  The organization's latest 100 posts, kept for the ids asked. Metrics are
+  asked too; should Buffer refuse them, the posts are read without.
+  """
+  @impl true
+  def posts([]), do: {:ok, %{}}
+
+  def posts(ids) do
+    wanted = MapSet.new(ids)
+
+    with {:ok, org} <- organization(),
+         {:ok, %{"posts" => %{"edges" => edges}}} <- read_posts(org) do
+      {:ok,
+       for %{"node" => n} <- edges, MapSet.member?(wanted, n["id"]), into: %{} do
+         {n["id"],
+          %{
+            status: n["status"],
+            due_at: datetime(n["dueAt"]),
+            sent_at: datetime(n["sentAt"]),
+            error: get_in(n, ["error", "message"]),
+            metrics: metrics(n["metrics"])
+          }}
+       end}
+    end
+  end
+
+  defp read_posts(org) do
+    case query(String.replace(@posts, "METRICS", "metrics { type value }"), %{"org" => org}) do
+      {:error, "Buffer : " <> _} -> query(String.replace(@posts, "METRICS", ""), %{"org" => org})
+      other -> other
+    end
+  end
+
+  defp metrics(list) when is_list(list),
+    do: for(%{"type" => t, "value" => v} <- list, is_number(v), into: %{}, do: {t, v})
+
+  defp metrics(_), do: %{}
+
+  @impl true
+  def delete(id) do
+    case query(@delete, %{"input" => %{"id" => id}}) do
+      {:ok, %{"deletePost" => %{"__typename" => "DeletePostSuccess"}}} -> :ok
+      {:ok, %{"deletePost" => %{"__typename" => other}}} -> {:error, "Buffer : #{other}"}
+      {:ok, other} -> {:error, "réponse inattendue de Buffer : #{inspect(other)}"}
+      {:error, _} = error -> error
+    end
+  end
+
+  @impl true
+  def schedule(network) when is_map_key(@services, network) do
+    with {:ok, org} <- organization(),
+         {:ok, %{"channels" => list}} <-
+           query(
+             "query Schedule($org: OrganizationId!) { channels(input: {organizationId: $org}) { service isDisconnected timezone postingSchedule { day paused times } } }",
+             %{"org" => org}
+           ) do
+      case Enum.find(list, &(&1["service"] == @services[network] and not &1["isDisconnected"])) do
+        nil ->
+          {:error, "aucun compte #{label(network)} connecté dans Buffer"}
+
+        c ->
+          {:ok,
+           %{
+             timezone: c["timezone"] || "Europe/Paris",
+             days:
+               Map.new(c["postingSchedule"] || [], fn d ->
+                 {d["day"], if(d["paused"], do: [], else: Enum.sort(d["times"] || []))}
+               end)
+           }}
       end
     end
   end
@@ -78,11 +170,39 @@ defmodule SyliAtlas.Social.Buffer do
   defp assets(nil), do: []
   defp assets(url), do: [%{"image" => %{"url" => url}}]
 
+  defp datetime(nil), do: nil
+
+  defp datetime(iso) do
+    case DateTime.from_iso8601(iso) do
+      {:ok, dt, _} -> DateTime.truncate(dt, :second)
+      _ -> nil
+    end
+  end
+
+  @org_ttl 3600
+
   defp organization do
-    case query("query { account { organizations { id } } }", %{}) do
-      {:ok, %{"account" => %{"organizations" => [%{"id" => id} | _]}}} -> {:ok, id}
-      {:ok, _} -> {:error, "aucune organisation dans le compte Buffer"}
-      error -> error
+    key = {__MODULE__, :organization}
+    now = System.system_time(:second)
+
+    case :persistent_term.get(key, nil) do
+      {id, at} when now - at < @org_ttl ->
+        {:ok, id}
+
+      _ ->
+        case query("query { account { organizations { id } } }", %{}) do
+          {:ok, %{"account" => %{"organizations" => [%{"id" => id} | _]}}} ->
+            unless Application.get_env(:syli_atlas, SyliAtlas.Social, [])[:no_cache],
+              do: :persistent_term.put(key, {id, now})
+
+            {:ok, id}
+
+          {:ok, _} ->
+            {:error, "aucune organisation dans le compte Buffer"}
+
+          error ->
+            error
+        end
     end
   end
 
@@ -113,6 +233,7 @@ defmodule SyliAtlas.Social.Buffer do
         {:error, "Buffer a répondu #{status}"}
 
       {:error, exception} ->
+        Logger.warning("social: Buffer unreachable: #{Exception.message(exception)}")
         {:error, "Buffer injoignable : " <> Exception.message(exception)}
     end
   end
