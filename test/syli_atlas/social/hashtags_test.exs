@@ -17,10 +17,10 @@ defmodule SyliAtlas.Social.HashtagsTest do
       })
 
     assert attrs.text_x ==
-             "S&P upgrades Nigeria to B. #IvoryCoast #CreditRating\n\nRatings, with the full history:"
+             "S&P upgrades Nigeria to B. #IvoryCoast #Africa #Economy\n\nRatings, with the full history:"
 
     assert attrs.text_linkedin ==
-             "S&P relève la note du Nigeria.\n\nSource : communiqué de S&P.\n\n#CôteDIvoire #NotationSouveraine #Finance #Afrique"
+             "S&P relève la note du Nigeria.\n\nSource : communiqué de S&P.\n\n#CôteDIvoire #NotationSouveraine #Afrique #Économie"
   end
 
   test "a list keeps its tags on their own line; no country for an IMF edition" do
@@ -34,13 +34,13 @@ defmodule SyliAtlas.Social.HashtagsTest do
       })
 
     assert attrs.text_x ==
-             "New IMF forecasts\n1. A 7%\n2. B 6%\n#IMF #Africa\n\nAll 54 countries:"
+             "New IMF forecasts\n1. A 7%\n2. B 6%\n#IMF #Africa #Economy\n\nAll 54 countries:"
 
-    assert attrs.text_linkedin == "Le FMI publie.\n\n#FMI #Croissance #Économie #Afrique"
+    assert attrs.text_linkedin == "Le FMI publie.\n\n#FMI #Afrique #Économie"
   end
 
   test "X never goes over 280 characters" do
-    long = String.duplicate("a", 250)
+    long = String.duplicate("a", 255)
 
     attrs =
       Hashtags.add(%{
@@ -58,8 +58,8 @@ defmodule SyliAtlas.Social.HashtagsTest do
     attrs = %{kind: "national", area_code: "COD", key: "national:COD:public_debt_pct_gdp:2025:1"}
 
     assert Hashtags.tags(attrs, "fr") ==
-             ["#RDC", "#DettePublique", "#FinancesPubliques", "#Afrique"]
+             ["#RDC", "#DettePublique", "#Afrique", "#Économie"]
 
-    assert Hashtags.tags(attrs, "en") == ["#DRC", "#PublicDebt"]
+    assert Hashtags.tags(attrs, "en") == ["#DRC", "#Africa", "#Economy"]
   end
 end
