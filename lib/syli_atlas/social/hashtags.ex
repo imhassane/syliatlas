@@ -7,15 +7,19 @@ defmodule SyliAtlas.Social.Hashtags do
   reach on their own; they classify the post and make it findable when
   someone searches the tag. So few and precise:
 
-    * X: two, the country and the subject, at the end of the first
-      paragraph (before the call to action and the link). Dropped if the
-      post would go over 280 characters.
-    * LinkedIn: three or four, in French, as the last paragraph (the link
-      follows them).
+    * X: three, the country (or the subject) then #Africa #Economy, at the
+      end of the first paragraph (before the call to action and the link).
+      Past 280 characters, #Africa #Economy alone, then none.
+    * LinkedIn: four, in French: country, subject, #Afrique #Économie, as
+      the last paragraph (the link follows them).
   """
   alias SyliAtlas.Geo
   alias SyliAtlas.Geo.Area
   alias SyliAtlas.Social.Post
+
+  # On every post.
+  @base_en ~w(#Africa #Economy)
+  @base_fr ~w(#Afrique #Économie)
 
   # Names that make a poor tag once squeezed into one word.
   @short %{
@@ -43,41 +47,41 @@ defmodule SyliAtlas.Social.Hashtags do
   @doc "The tags of a draft for a locale (en: X, fr: LinkedIn)."
   def tags(attrs, locale) do
     country = country(attrs[:area_code], locale)
-    subjects = subjects(attrs[:kind], attrs[:key], locale)
 
     case locale do
+      # X: the country (or the subject when there is none), then the two
+      # tags every post carries.
       "en" ->
-        Enum.take(Enum.reject([country | subjects], &is_nil/1), 2)
+        Enum.reject([country || subject(attrs[:kind], attrs[:key], "en")] ++ @base_en, &is_nil/1)
 
+      # LinkedIn: room for the country and the subject as well.
       "fr" ->
-        Enum.reject([country | subjects] ++ ["#Afrique"], &is_nil/1)
-        |> Enum.uniq()
-        |> Enum.take(4)
+        Enum.reject([country, subject(attrs[:kind], attrs[:key], "fr")] ++ @base_fr, &is_nil/1)
     end
+    |> Enum.uniq()
   end
 
-  defp subjects("rating", _, "en"), do: ["#CreditRating", "#Africa"]
-  defp subjects("rating", _, "fr"), do: ["#NotationSouveraine", "#Finance"]
-  defp subjects("budget_law", _, "en"), do: ["#Budget", "#Africa"]
-  defp subjects("budget_law", _, "fr"), do: ["#LoiDeFinances", "#FinancesPubliques"]
-  defp subjects("edition", _, "en"), do: ["#IMF", "#Africa"]
-  defp subjects("edition", _, "fr"), do: ["#FMI", "#Croissance", "#Économie"]
-  defp subjects("rebasing", _, "en"), do: ["#GDP", "#Africa"]
-  defp subjects("rebasing", _, "fr"), do: ["#PIB", "#Statistiques"]
+  defp subject("rating", _, "en"), do: "#CreditRating"
+  defp subject("rating", _, "fr"), do: "#NotationSouveraine"
+  defp subject("budget_law", _, "en"), do: "#Budget"
+  defp subject("budget_law", _, "fr"), do: "#LoiDeFinances"
+  defp subject("edition", _, "en"), do: "#IMF"
+  defp subject("edition", _, "fr"), do: "#FMI"
+  defp subject("rebasing", _, "en"), do: "#GDP"
+  defp subject("rebasing", _, "fr"), do: "#PIB"
 
-  defp subjects("national", key, locale) do
+  defp subject("national", key, locale) do
     debt? = is_binary(key) and String.contains?(key, ":public_debt_pct_gdp:")
 
     case {debt?, locale} do
-      {true, "en"} -> ["#PublicDebt", "#Africa"]
-      {true, "fr"} -> ["#DettePublique", "#FinancesPubliques"]
-      {false, "en"} -> ["#GDP", "#Africa"]
-      {false, "fr"} -> ["#PIB", "#Économie"]
+      {true, "en"} -> "#PublicDebt"
+      {true, "fr"} -> "#DettePublique"
+      {false, "en"} -> "#GDP"
+      {false, "fr"} -> "#PIB"
     end
   end
 
-  defp subjects(_, _, "en"), do: ["#Africa"]
-  defp subjects(_, _, _), do: ["#Économie"]
+  defp subject(_, _, _), do: nil
 
   defp country(nil, _), do: nil
 
@@ -124,7 +128,8 @@ defmodule SyliAtlas.Social.Hashtags do
 
     cond do
       Post.x_length(tagged, link) <= Post.x_limit() -> tagged
-      length(tags) > 1 -> tag_x(text, Enum.take(tags, 1), link)
+      # Too long: the two common tags alone, then nothing.
+      tags != @base_en -> tag_x(text, @base_en, link)
       true -> text
     end
   end
