@@ -108,3 +108,10 @@ config :syli_atlas, SyliAtlas.Companies.Verifier,
 config :syli_atlas, SyliAtlas.Plausible,
   api_key: "test-key",
   req_options: [plug: {Req.Test, SyliAtlas.Plausible}, retry: false]
+
+# Posts for X and LinkedIn: simulated by default; the Buffer adapter's own
+# tests stub its API (Req.Test).
+config :syli_atlas, SyliAtlas.Social,
+  adapter: SyliAtlas.Social.Simulated,
+  api_key: "test-key",
+  req_options: [plug: {Req.Test, SyliAtlas.Social.Buffer}, retry: false]

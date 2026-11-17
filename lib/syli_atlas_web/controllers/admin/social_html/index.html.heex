@@ -1,0 +1,234 @@
+<.admin_shell current={:social} counts={@admin_counts} until={@admin_until} key={@admin_key}>
+  <header class="adm-head">
+    <div class="adm-intro">
+      <p class="eyebrow">Site</p>
+      <h1 class="adm-title">Réseaux</h1>
+      <p class="muted">
+        Chaque événement validé (notation, loi de finances, édition du FMI, rebasage) prépare un post pour X en anglais et un pour LinkedIn en français. Rien ne part avant validation.
+      </p>
+    </div>
+  </header>
+
+  <section class="card soc-service" id="social-service">
+    <%= if @stats.simulated do %>
+      <span class="pill pill-warn">Buffer simulé</span>
+      <span class="muted">
+        Pas de clé Buffer sur ce serveur : les posts validés sont marqués « simulé », rien n'est envoyé.
+      </span>
+    <% else %>
+      <span class="pill pill-ok">Buffer connecté</span>
+      <span class="muted">
+        <%= case @channels do %>
+          <% {:ok, []} -> %>
+            Aucun compte connecté dans Buffer.
+          <% {:ok, list} -> %>
+            {Enum.map_join(list, " · ", &"#{service_name(&1.service)} : #{&1.name}")}
+          <% {:error, message} -> %>
+            Comptes illisibles : {message}
+        <% end %>
+      </span>
+    <% end %>
+    <span class="mono subtle small">Ajout à la file Buffer : l'heure suit son planning</span>
+  </section>
+
+  <dl class="stats" id="social-stats">
+    <div>
+      <dt>À valider</dt>
+      <dd class="big num adm-big-sm">{@stats.drafts}</dd>
+      <dd class="small muted">brouillons préparés</dd>
+    </div>
+    <div>
+      <dt>Envoyés · 7 jours</dt>
+      <dd class="big num adm-big-sm">{@stats.sent}</dd>
+      <dd class="small muted">
+        {if @stats.simulated, do: "simulés sur ce serveur", else: "X et LinkedIn"}
+      </dd>
+    </div>
+    <div>
+      <dt>Échecs · 7 jours</dt>
+      <dd class="big num adm-big-sm">{@stats.failed}</dd>
+      <dd class={["small", if(@stats.failed > 0, do: "down", else: "muted")]}>
+        nouvel essai automatique, 5 au plus
+      </dd>
+    </div>
+  </dl>
+
+  <section class="card adm-list" id="social-drafts">
+    <div class="adm-card-head">
+      <h2 class="h2">Brouillons</h2>
+      <span class="mono subtle small">les plus importants d'abord</span>
+    </div>
+    <p :if={@drafts == []} class="adm-empty muted" id="social-empty">
+      Aucun brouillon. Le prochain arrivera avec le prochain événement validé.
+    </p>
+
+    <%= for p <- @drafts do %>
+      <.form
+        for={%{}}
+        action={~p"/admin/reseaux/#{p.id}/valider"}
+        method="post"
+        class="soc-row"
+        id={"post-#{p.id}"}
+      >
+        <div class="adm-item-head">
+          <b>{title(p)}</b>
+          <span class="pill pill-info">{kind_label(p.kind)}</span>
+          <span class="mono subtle small">préparé le {fr_datetime(p.inserted_at)}</span>
+        </div>
+        <div class="soc-grid">
+          <label class="adm-field" for={"post-#{p.id}-x"}>
+            <span>
+              X · anglais
+              <span class={["mono", if(x_count(p) > x_limit(), do: "adm-bad", else: "subtle")]}>
+                {x_count(p)} / {x_limit()}
+              </span>
+            </span>
+            <textarea id={"post-#{p.id}-x"} name="post[text_x]" rows="8">{p.text_x}</textarea>
+            <span class="mono subtle small soc-link">+ lien : {p.link_x}</span>
+          </label>
+          <label class="adm-field" for={"post-#{p.id}-li"}>
+            <span>LinkedIn · français</span>
+            <textarea id={"post-#{p.id}-li"} name="post[text_linkedin]" rows="8">{p.text_linkedin}</textarea>
+            <span class="mono subtle small soc-link">1er commentaire : {p.link_linkedin}</span>
+          </label>
+          <div :if={p.image_url} class="adm-field">
+            <span>Image jointe</span>
+            <img
+              src={p.image_url}
+              alt=""
+              loading="lazy"
+              class="soc-image"
+              width="1200"
+              height="630"
+            />
+          </div>
+        </div>
+        <div class="adm-buttons">
+          <button class="btn btn-primary btn-sm" type="submit" id={"approve-#{p.id}"}>
+            Valider et programmer
+          </button>
+          <button
+            class="btn btn-secondary btn-sm"
+            type="submit"
+            name="reseaux"
+            value="x"
+            id={"approve-x-#{p.id}"}
+          >
+            Seulement X
+          </button>
+          <button
+            class="btn btn-secondary btn-sm"
+            type="submit"
+            name="reseaux"
+            value="linkedin"
+            id={"approve-li-#{p.id}"}
+          >
+            Seulement LinkedIn
+          </button>
+          <button
+            class="btn btn-secondary btn-sm"
+            type="submit"
+            formaction={~p"/admin/reseaux/#{p.id}"}
+            id={"save-#{p.id}"}
+          >
+            Enregistrer sans valider
+          </button>
+          <button
+            class="btn btn-quiet btn-sm"
+            type="submit"
+            form={"reject-#{p.id}"}
+            id={"reject-btn-#{p.id}"}
+          >
+            Rejeter
+          </button>
+        </div>
+      </.form>
+      <.form
+        for={%{}}
+        action={~p"/admin/reseaux/#{p.id}/rejeter"}
+        method="post"
+        id={"reject-#{p.id}"}
+        class="adm-hidden-form"
+      >
+      </.form>
+    <% end %>
+  </section>
+
+  <section :if={@candidates != []} class="card adm-list" id="social-candidates">
+    <div class="adm-card-head">
+      <div>
+        <h2 class="h2">Décisions récentes sans post</h2>
+        <p class="small muted">
+          Changements de note ou de perspective des 60 derniers jours, arrivés avant les posts ou vérifiés à la main.
+        </p>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="table adm-table">
+        <tbody>
+          <tr :for={r <- @candidates} id={"candidate-#{r.id}"}>
+            <td class="l">{area_name(r.country_code)} · {agency_name(r.agency)}</td>
+            <td class="l num">
+              {r.rating}{if r.outlook not in [nil, "none"], do: ", #{r.outlook}"}
+            </td>
+            <td class="subtle">{r.action_date}</td>
+            <td>
+              <.form for={%{}} action={~p"/admin/reseaux/preparer/notation/#{r.id}"} method="post">
+                <button class="btn btn-secondary btn-sm" type="submit" id={"prepare-#{r.id}"}>
+                  Préparer le post
+                </button>
+              </.form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="card adm-list" id="social-history">
+    <div class="adm-card-head">
+      <h2 class="h2">Historique</h2>
+    </div>
+    <p :if={@history == []} class="adm-empty muted">Rien pour l'instant.</p>
+    <div :if={@history != []} class="table-wrap">
+      <table class="table adm-table">
+        <thead>
+          <tr>
+            <th class="l">Post</th>
+            <th class="l">X</th>
+            <th class="l">LinkedIn</th>
+            <th class="l">État</th>
+            <th>Décidé</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr :for={p <- @history} id={"history-#{p.id}"}>
+            <td class="l adm-wrap">
+              {title(p)}
+              <div class="small muted">{String.slice(p.text_x, 0, 90)}…</div>
+            </td>
+            <%= for {state, error} <- [{p.x_state, p.x_error}, {p.linkedin_state, p.linkedin_error}] do %>
+              <td class="l">
+                <%= case network_state(state) do %>
+                  <% nil -> %>
+                    <span class="subtle">—</span>
+                  <% {label, cls} -> %>
+                    <span class={["pill", cls]}>{label}</span>
+                    <div :if={error} class="small adm-bad">{error}</div>
+                <% end %>
+              </td>
+            <% end %>
+            <td class="l">
+              <% {label, cls} = status_label(p.status) %>
+              <span class={["pill", cls]}>{label}</span>
+            </td>
+            <td class="subtle">
+              {fr_datetime(p.reviewed_at)}
+              <div :if={p.reviewed_by} class="small">{p.reviewed_by}</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</.admin_shell>
