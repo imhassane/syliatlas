@@ -156,6 +156,25 @@ defmodule SyliAtlas.NationalTest do
       assert National.rebasing(National.document(), "ETH")["active"]
     end
 
+    test "a confirmed figure prepares its post for X and LinkedIn, once per value" do
+      figure = National.get("ZAF", "gdp_usd_bn", 2025)
+      National.verify!(figure, "admin@test")
+      National.verify!(figure, "admin@test")
+
+      assert [post] = SyliAtlas.Social.drafts()
+      assert post.kind == "national"
+      assert post.key == "national:ZAF:gdp_usd_bn:2025:449.74"
+
+      assert post.text_x =~
+               "South Africa's official GDP for 2025: $450 billion (8,044 billion ZAR), according to Stats SA."
+
+      assert post.text_linkedin =~
+               "PIB officiel de l'Afrique du Sud pour 2025 : 450 milliards de dollars"
+
+      assert post.link_x =~ "/en/countries/south-africa/economy?utm_source=x"
+      assert SyliAtlas.Social.Post.x_length(post) <= 280
+    end
+
     test "once a person verifies it, it counts; rejected, it leaves the pages" do
       figure = National.get("ZAF", "gdp_usd_bn", 2025)
       National.verify!(figure, "admin@test")

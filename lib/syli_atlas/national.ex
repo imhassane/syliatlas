@@ -101,7 +101,12 @@ defmodule SyliAtlas.National do
   end
 
   @doc "A person confirms a figure: it counts from now on."
-  def verify!(%Figure{} = figure, who), do: review!(figure, "verified", who)
+  # A confirmed figure prepares its post for X and LinkedIn (SyliAtlas.Social).
+  def verify!(%Figure{} = figure, who) do
+    figure = review!(figure, "verified", who)
+    SyliAtlas.Social.Drafts.safely(fn -> SyliAtlas.Social.Drafts.on_national_figure(figure) end)
+    figure
+  end
 
   @doc "A person rejects a figure: it leaves the public pages."
   def reject!(%Figure{} = figure, who), do: review!(figure, "rejected", who)
