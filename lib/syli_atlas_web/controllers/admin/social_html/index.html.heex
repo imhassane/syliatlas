@@ -91,16 +91,30 @@
             <textarea id={"post-#{p.id}-li"} name="post[text_linkedin]" rows="8">{p.text_linkedin}</textarea>
             <span class="mono subtle small soc-link">+ lien : {p.link_linkedin}</span>
           </label>
-          <div :if={p.image_url} class="adm-field">
-            <span>Image jointe</span>
-            <img
-              src={p.image_url}
-              alt=""
-              loading="lazy"
-              class="soc-image"
-              width="1200"
-              height="630"
-            />
+          <div :if={p.image_url} class="adm-field soc-images">
+            <span>Images jointes</span>
+            <figure>
+              <img
+                src={Post.x_image(p)}
+                alt=""
+                loading="lazy"
+                class="soc-image"
+                width="1200"
+                height="630"
+              />
+              <figcaption class="mono subtle small">X · page anglaise</figcaption>
+            </figure>
+            <figure>
+              <img
+                src={p.image_url}
+                alt=""
+                loading="lazy"
+                class="soc-image"
+                width="1200"
+                height="630"
+              />
+              <figcaption class="mono subtle small">LinkedIn · page française</figcaption>
+            </figure>
           </div>
         </div>
         <div class="adm-buttons">

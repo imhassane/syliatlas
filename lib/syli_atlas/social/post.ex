@@ -94,6 +94,21 @@ defmodule SyliAtlas.Social.Post do
     if link, do: text <> "\n" <> link, else: text
   end
 
+  @doc """
+  The share image for X: the English page's. Drafts written before it was
+  stored get it from their English link.
+  """
+  def x_image(%__MODULE__{image_url_x: url}) when is_binary(url), do: url
+
+  def x_image(%__MODULE__{link_x: link, image_url: fallback}) when is_binary(link) do
+    case URI.parse(link) do
+      %URI{path: "/" <> _ = path} -> SyliAtlasWeb.Seo.image(path)
+      _ -> fallback
+    end
+  end
+
+  def x_image(%__MODULE__{image_url: url}), do: url
+
   @doc "Characters counted by X (the link counts 23, wherever it points)."
   def x_length(%__MODULE__{text_x: text, link_x: link}), do: x_length(text, link)
 
