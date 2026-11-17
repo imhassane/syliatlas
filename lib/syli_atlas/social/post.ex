@@ -3,16 +3,22 @@ defmodule SyliAtlas.Social.Post do
   A post for X (in English) and LinkedIn (in French), prepared from one event
   of the site (`SyliAtlas.Social.Drafts`).
 
-  `status`: `draft` (waiting in /admin/reseaux), `approved` (sending),
-  `done` (every chosen network answered), `rejected`. Each network keeps its
-  own outcome: `x_state` / `linkedin_state` is nil (not chosen), `queued`
-  (in Buffer's queue, `*_ref` = Buffer's post id), `simulated` (no Buffer:
-  development), `failed` (`*_error`).
+  A post can also be written for any page of the site (kind `page`,
+  `page_path`), from the page itself or from /admin/reseaux.
+
+  `status`: `draft` (waiting in /admin/reseaux), `ready` (approved, without a
+  date: « En file », kept here, not yet sent to Buffer), `approved`
+  (sending), `done` (every chosen network answered), `rejected`. Each network
+  keeps its own outcome: `x_state` / `linkedin_state` is nil (not chosen),
+  `pending` (being sent), `queued` (in Buffer's queue, `*_ref` = Buffer's
+  post id, `*_due_at` its slot), `sent` (published, `*_sent_at`, Buffer's
+  figures in `*_metrics`), `simulated` (no Buffer: development), `failed`
+  (`*_error`). `SyliAtlas.Social.sync/0` reads Buffer's side.
   """
   use Ecto.Schema
   import Ecto.Changeset
 
-  @kinds ~w(rating budget_law edition rebasing national)
+  @kinds ~w(rating budget_law edition rebasing national page)
   @networks ~w(x linkedin)
 
   def kinds, do: @kinds
@@ -46,6 +52,14 @@ defmodule SyliAtlas.Social.Post do
     field :reviewed_by, :string
     field :reviewed_at, :utc_datetime
     field :sent_at, :utc_datetime
+    field :page_path, :string
+    field :x_due_at, :utc_datetime
+    field :x_sent_at, :utc_datetime
+    field :x_metrics, :map
+    field :linkedin_due_at, :utc_datetime
+    field :linkedin_sent_at, :utc_datetime
+    field :linkedin_metrics, :map
+    field :synced_at, :utc_datetime
     timestamps(type: :utc_datetime)
   end
 
@@ -54,7 +68,7 @@ defmodule SyliAtlas.Social.Post do
     post
     |> cast(
       attrs,
-      ~w(key kind area_code priority text_x text_linkedin link_x link_linkedin image_url image_url_x)a
+      ~w(key kind area_code priority text_x text_linkedin link_x link_linkedin image_url image_url_x page_path)a
     )
     |> validate_required(~w(key kind text_x text_linkedin)a)
     |> validate_inclusion(:kind, @kinds)
@@ -108,6 +122,17 @@ defmodule SyliAtlas.Social.Post do
   end
 
   def x_image(%__MODULE__{image_url: url}), do: url
+
+  @doc """
+  The networks chosen for a post not sent yet: those marked `waiting` (a
+  post written for a page, or put in the queue for one network), else both.
+  """
+  def chosen(%__MODULE__{x_state: x, linkedin_state: li}) do
+    case Enum.filter([{"x", x}, {"linkedin", li}], &(elem(&1, 1) == "waiting")) do
+      [] -> @networks
+      some -> Enum.map(some, &elem(&1, 0))
+    end
+  end
 
   @doc "Characters counted by X (the link counts 23, wherever it points)."
   def x_length(%__MODULE__{text_x: text, link_x: link}), do: x_length(text, link)

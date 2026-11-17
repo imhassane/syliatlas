@@ -96,6 +96,12 @@ if config_env() != :test do
     config :syli_atlas, SyliAtlas.Companies.Verifier, model: String.trim(model)
   end
 
+  # « Proposer un texte » in /admin/reseaux: same key; SOCIAL_WRITER_MODEL
+  # changes the model.
+  if model = System.get_env("SOCIAL_WRITER_MODEL") do
+    config :syli_atlas, SyliAtlas.Social.Writer, model: String.trim(model)
+  end
+
   config :syli_atlas, SyliAtlas.Ratings.Extractor,
     api_key:
       (case System.get_env("ANTHROPIC_API_KEY") do

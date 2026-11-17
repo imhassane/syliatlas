@@ -1,0 +1,28 @@
+<.admin_shell current={:social} counts={@admin_counts} until={@admin_until} key={@admin_key}>
+  <header class="adm-head">
+    <div class="adm-intro">
+      <p class="eyebrow"><a href={~p"/admin/reseaux"}>Réseaux</a> › Partager une page</p>
+      <h1 class="adm-title">Partager une page du site</h1>
+      <p class="muted">
+        Collez l'adresse d'une page publique (pays, classement, produit, thème…). Sur le site, connecté en admin, le bouton « Partager sur les réseaux » de la barre d'admin mène ici directement.
+      </p>
+    </div>
+  </header>
+
+  <form class="card soc-picker" action={~p"/admin/reseaux/partager"} method="get" id="picker-form">
+    <label class="adm-field" for="picker-page">
+      <span>Adresse de la page</span>
+      <input
+        type="text"
+        id="picker-page"
+        name="page"
+        value={@input}
+        placeholder="https://syliatlas.com/fr/afrique/produits/cacao"
+        required
+      />
+    </label>
+    <div class="adm-buttons">
+      <button class="btn btn-primary" type="submit" id="picker-go">Préparer le post</button>
+    </div>
+  </form>
+</.admin_shell>

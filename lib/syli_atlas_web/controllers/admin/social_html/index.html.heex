@@ -4,291 +4,278 @@
       <p class="eyebrow">Site</p>
       <h1 class="adm-title">Réseaux</h1>
       <p class="muted">
-        Chaque événement validé (notation, loi de finances, édition du FMI, rebasage) prépare un post pour X en anglais et un pour LinkedIn en français. Rien ne part avant validation.
+        Les événements validés préparent leurs posts ; n'importe quelle page du site se partage depuis sa barre d'admin ou ici. X en anglais, LinkedIn en français. Rien ne part avant validation.
       </p>
     </div>
+    <form
+      class="soc-share-field"
+      action={~p"/admin/reseaux/partager"}
+      method="get"
+      id="share-form"
+    >
+      <label for="share-page">Partager une page du site</label>
+      <div>
+        <input
+          type="text"
+          id="share-page"
+          name="page"
+          placeholder="https://syliatlas.com/fr/…"
+          required
+        />
+        <button class="btn btn-primary btn-sm" type="submit" id="share-go">Préparer</button>
+      </div>
+    </form>
   </header>
 
-  <section class="card soc-service" id="social-service">
-    <%= if @stats.simulated do %>
-      <span class="pill pill-warn">Buffer simulé</span>
-      <span class="muted">
-        Pas de clé Buffer sur ce serveur : les posts validés sont marqués « simulé », rien n'est envoyé.
-      </span>
-    <% else %>
-      <span class="pill pill-ok">Buffer connecté</span>
-      <span class="muted">
+  <section class="card soc-buffer" id="social-service" aria-label="Buffer">
+    <div class="soc-buffer-part" id="social-accounts">
+      <span class="soc-tag">Buffer · comptes</span>
+      <%= if @stats.simulated do %>
+        <span class="pill pill-warn">Buffer simulé</span>
+        <p class="small muted">
+          Pas de clé Buffer sur ce serveur : les posts validés sont marqués « simulé », rien n'est envoyé.
+        </p>
+      <% else %>
         <%= case @channels do %>
           <% {:ok, []} -> %>
-            Aucun compte connecté dans Buffer.
+            <span class="pill pill-warn">Aucun compte connecté dans Buffer</span>
           <% {:ok, list} -> %>
-            {Enum.map_join(list, " · ", &"#{service_name(&1.service)} : #{&1.name}")}
+            <ul class="soc-accounts">
+              <li :for={c <- list}>
+                <.network_mark network={if(c.service == "twitter", do: "x", else: "linkedin")} />
+                <b>{c.name}</b>
+                <span class="soc-ok">connecté</span>
+              </li>
+            </ul>
           <% {:error, message} -> %>
-            Comptes illisibles : {message}
+            <span class="pill pill-warn">Comptes illisibles</span>
+            <p class="small muted">{message}</p>
         <% end %>
-      </span>
-    <% end %>
-    <span class="mono subtle small">Ajout à la file Buffer : l'heure suit son planning</span>
-  </section>
+      <% end %>
+      <span class="mono subtle small">offre gratuite · {@quota.limit} posts programmés par réseau</span>
+    </div>
 
-  <dl class="stats" id="social-stats">
-    <div>
-      <dt>À valider</dt>
-      <dd class="big num adm-big-sm">{@stats.drafts}</dd>
-      <dd class="small muted">brouillons préparés</dd>
-    </div>
-    <div>
-      <dt>Envoyés · 7 jours</dt>
-      <dd class="big num adm-big-sm">{@stats.sent}</dd>
-      <dd class="small muted">
-        {if @stats.simulated, do: "simulés sur ce serveur", else: "X et LinkedIn"}
-      </dd>
-    </div>
-    <div>
-      <dt>Échecs · 7 jours</dt>
-      <dd class="big num adm-big-sm">{@stats.failed}</dd>
-      <dd class={["small", if(@stats.failed > 0, do: "down", else: "muted")]}>
-        nouvel essai automatique, 5 au plus
-      </dd>
-    </div>
-  </dl>
-
-  <section class="card adm-list" id="social-drafts">
-    <div class="adm-card-head">
-      <h2 class="h2">Brouillons</h2>
-      <span class="mono subtle small">les plus importants d'abord</span>
-    </div>
-    <p :if={@drafts == []} class="adm-empty muted" id="social-empty">
-      Aucun brouillon. Le prochain arrivera avec le prochain événement validé.
-    </p>
-
-    <%= for p <- @drafts do %>
-      <.form
-        for={%{}}
-        action={~p"/admin/reseaux/#{p.id}/valider"}
-        method="post"
-        class="soc-row"
-        id={"post-#{p.id}"}
-      >
-        <div class="adm-item-head">
-          <b>{title(p)}</b>
-          <span class="pill pill-info">{kind_label(p.kind)}</span>
-          <span class="mono subtle small">préparé le {fr_datetime(p.inserted_at)}</span>
+    <div class="soc-buffer-part" id="social-quota">
+      <span class="soc-tag">Programmés dans Buffer</span>
+      <%= for {n, label} <- [{:x, "X"}, {:linkedin, "LinkedIn"}] do %>
+        <div class="soc-quota" id={"quota-#{n}"}>
+          <span>{label}</span>
+          <i><b style={"width: #{quota_pct(Map.fetch!(@quota, n), @quota.limit)}"}></b></i>
+          <span class="mono">{Map.fetch!(@quota, n)} / {@quota.limit}</span>
         </div>
-        <div class="soc-pair">
-          <section class="soc-col" aria-label="Post X">
-            <label class="adm-field" for={"post-#{p.id}-x"}>
-              <span>
-                X · anglais
-                <span
-                  class={["mono", if(x_count(p) > x_limit(), do: "adm-bad", else: "subtle")]}
-                  data-x-count={"post-#{p.id}-x"}
-                >
-                  {x_count(p)} / {x_limit()}
-                </span>
-              </span>
-              <textarea
-                id={"post-#{p.id}-x"}
-                name="post[text_x]"
-                rows="6"
-                data-social-text="x"
-                data-preview={"preview-x-#{p.id}"}
-                data-link-length={if(p.link_x, do: "24", else: "0")}
-              >{p.text_x}</textarea>
-            </label>
-            <article class="soc-x" id={"preview-x-#{p.id}"} aria-label="Aperçu du post sur X">
-              <img
-                class="soc-x-avatar"
-                src={~p"/images/icon-192.png"}
-                alt=""
-                width="40"
-                height="40"
-              />
-              <div class="soc-x-main">
-                <div class="soc-x-head">
-                  <b>Syli Atlas</b>
-                  <span class="soc-x-muted">@syliatlas · programmé</span>
-                </div>
-                <div class="soc-x-text">
-                  <span data-preview-text>{p.text_x}</span><span :if={p.link_x}>
-                    <span class="soc-x-link">{x_display_link(p.link_x)}</span>
-                  </span>
-                </div>
-                <img
-                  :if={p.image_url}
-                  class="soc-x-image"
-                  src={Post.x_image(p)}
-                  alt=""
-                  loading="lazy"
-                  width="1200"
-                  height="630"
-                />
-                <div class="soc-x-actions" aria-hidden="true">
-                  <.social_action icon={:reply} />
-                  <.social_action icon={:repost} />
-                  <.social_action icon={:like} />
-                  <.social_action icon={:views} />
-                </div>
-              </div>
-            </article>
-          </section>
+      <% end %>
+      <p :if={@full != []} class="small adm-bad">
+        File pleine sur {Enum.map_join(@full, " et ", &network_name/1)} : « Programmer » attend qu'un post parte ; « En file » reste possible.
+      </p>
+      <p class="small muted">
+        Prochain créneau libre : <b class="adm-strong">{@next_slot || "—"}</b>
+        · En file : {@stats.ready} · Échecs : {@stats.failed}
+      </p>
+    </div>
 
-          <section class="soc-col" aria-label="Post LinkedIn">
-            <label class="adm-field" for={"post-#{p.id}-li"}>
-              <span>LinkedIn · français</span>
-              <textarea
-                id={"post-#{p.id}-li"}
-                name="post[text_linkedin]"
-                rows="6"
-                data-social-text="linkedin"
-                data-preview={"preview-li-#{p.id}"}
-              >{p.text_linkedin}</textarea>
-            </label>
-            <article
-              class="soc-li"
-              id={"preview-li-#{p.id}"}
-              aria-label="Aperçu du post sur LinkedIn"
+    <div class="soc-buffer-part soc-buffer-week" id="social-week">
+      <span class="soc-tag">Créneaux de la semaine · heure de Paris</span>
+      <div
+        class="soc-week"
+        role="table"
+        aria-label="Créneaux Buffer de la semaine"
+        style={"grid-template-columns: 48px repeat(#{length(@week.days)}, minmax(0, 1fr))"}
+      >
+        <div role="row" class="soc-week-row">
+          <span role="columnheader"></span>
+          <span :for={d <- @week.days} role="columnheader" class="soc-week-day">{day_label(d)}</span>
+        </div>
+        <div :for={t <- @week.times} role="row" class="soc-week-row">
+          <span role="rowheader" class="soc-week-time mono">{t}</span>
+          <%= for d <- @week.days do %>
+            <% cell = @week.cells[{d, t}] %>
+            <span
+              role="cell"
+              class={["soc-week-cell", "is-#{cell.kind}"]}
+              id={"slot-#{d}-#{String.replace(t, ":", "")}"}
             >
-              <div class="soc-li-head">
-                <img
-                  class="soc-li-avatar"
-                  src={~p"/images/icon-192.png"}
-                  alt=""
-                  width="48"
-                  height="48"
-                />
-                <div>
-                  <b>Syli Atlas</b>
-                  <div class="soc-li-muted">Page · programmé</div>
-                </div>
-              </div>
-              <div class="soc-li-body">
-                <div class="soc-li-text" data-clamp>
-                  <span data-preview-text>{linkedin_text(p)}</span><span :if={p.link_linkedin}>
-                    <span class="soc-li-link">{p.link_linkedin}</span>
-                  </span>
-                </div>
-                <button type="button" class="soc-li-more" data-more hidden>… voir plus</button>
-              </div>
-              <img
-                :if={p.image_url}
-                class="soc-li-image"
-                src={p.image_url}
-                alt=""
-                loading="lazy"
-                width="1200"
-                height="630"
-              />
-              <div class="soc-li-actions" aria-hidden="true">
-                <span>J'aime</span><span>Commenter</span><span>Republier</span><span>Envoyer</span>
-              </div>
-            </article>
-          </section>
+              {cell_text(cell) || if(cell.kind == :free, do: "libre")}
+            </span>
+          <% end %>
         </div>
-        <div class="adm-buttons">
-          <button class="btn btn-primary btn-sm" type="submit" id={"approve-#{p.id}"}>
-            Valider et programmer
-          </button>
-          <button
-            class="btn btn-secondary btn-sm"
-            type="submit"
-            name="reseaux"
-            value="x"
-            id={"approve-x-#{p.id}"}
-          >
-            Seulement X
-          </button>
-          <button
-            class="btn btn-secondary btn-sm"
-            type="submit"
-            name="reseaux"
-            value="linkedin"
-            id={"approve-li-#{p.id}"}
-          >
-            Seulement LinkedIn
-          </button>
-          <button
-            class="btn btn-secondary btn-sm"
-            type="submit"
-            formaction={~p"/admin/reseaux/#{p.id}"}
-            id={"save-#{p.id}"}
-          >
-            Enregistrer sans valider
-          </button>
-          <button
-            class="btn btn-quiet btn-sm"
-            type="submit"
-            form={"reject-#{p.id}"}
-            id={"reject-btn-#{p.id}"}
-          >
-            Rejeter
-          </button>
-        </div>
-      </.form>
+      </div>
+      <span class="small muted">Les horaires se règlent dans Buffer.</span>
+    </div>
+
+    <div class="soc-buffer-foot">
+      <span class={["soc-sync", sync_ok?(@last_sync) && "is-ok"]} id="social-sync">
+        {if @stats.simulated, do: "simulé : rien à synchroniser", else: sync_label(@last_sync)}
+      </span>
       <.form
+        :if={!@stats.simulated}
         for={%{}}
-        action={~p"/admin/reseaux/#{p.id}/rejeter"}
+        action={~p"/admin/reseaux/synchroniser"}
         method="post"
-        id={"reject-#{p.id}"}
-        class="adm-hidden-form"
       >
+        <button class="btn btn-quiet btn-sm" type="submit" id="social-sync-now">Actualiser</button>
       </.form>
-    <% end %>
+      <a class="btn btn-secondary btn-sm" href="https://publish.buffer.com" rel="noopener">
+        Ouvrir Buffer ↗
+      </a>
+    </div>
   </section>
 
-  <section :if={@candidates != []} class="card adm-list" id="social-candidates">
+  <div class="soc-board" id="social-board">
+    <section class="soc-column" id="social-drafts" aria-labelledby="col-drafts">
+      <h2 class="soc-col-head" id="col-drafts">
+        À valider <span class="mono subtle">{length(@board.drafts)}</span>
+      </h2>
+      <p class="small muted">Préparés par le site · rien n'est encore dans Buffer.</p>
+      <p :if={@board.drafts == []} class="soc-empty muted" id="social-empty">
+        Aucun brouillon. Le prochain arrivera avec le prochain événement validé.
+      </p>
+      <article :for={p <- @board.drafts} class="soc-card" id={"post-#{p.id}"}>
+        <span class="soc-tag">{kind_label(p.kind)} · {fr_datetime(p.inserted_at)}</span>
+        <b>{title(p)}</b>
+        <p class="soc-card-text small muted">{String.slice(p.text_x, 0, 140)}</p>
+        <span class="soc-nets">
+          <.network_mark :for={n <- networks_of(p)} network={n} />
+        </span>
+        <div class="soc-card-actions">
+          <.form for={%{}} action={~p"/admin/reseaux/#{p.id}/valider"} method="post">
+            <button
+              class="btn btn-primary btn-sm"
+              type="submit"
+              id={"approve-#{p.id}"}
+              disabled={Enum.any?(networks_of(p), &(&1 in @full))}
+            >
+              Programmer
+            </button>
+          </.form>
+          <.form for={%{}} action={~p"/admin/reseaux/#{p.id}/file"} method="post">
+            <button class="btn btn-secondary btn-sm" type="submit" id={"queue-#{p.id}"}>
+              En file
+            </button>
+          </.form>
+          <a
+            class="btn btn-quiet btn-sm"
+            href={~p"/admin/reseaux/#{p.id}/modifier"}
+            id={"edit-#{p.id}"}
+          >
+            Modifier
+          </a>
+          <.form for={%{}} action={~p"/admin/reseaux/#{p.id}/rejeter"} method="post">
+            <button class="btn btn-quiet btn-sm" type="submit" id={"reject-btn-#{p.id}"}>
+              Rejeter
+            </button>
+          </.form>
+        </div>
+      </article>
+    </section>
+
+    <section class="soc-column" id="social-ready" aria-labelledby="col-ready">
+      <h2 class="soc-col-head" id="col-ready">
+        En file <span class="mono subtle">{length(@board.ready)}</span>
+      </h2>
+      <p class="small muted">Prêts, sans date · pas encore envoyés à Buffer.</p>
+      <p :if={@board.ready == []} class="soc-empty muted">
+        File vide. « Ajouter à la file » depuis une page ou un brouillon.
+      </p>
+      <article :for={p <- @board.ready} class="soc-card" id={"ready-#{p.id}"}>
+        <span class="soc-tag">{kind_label(p.kind)}</span>
+        <b>{title(p)}</b>
+        <span class="soc-nets">
+          <.network_mark :for={n <- networks_of(p)} network={n} />
+        </span>
+        <div class="soc-card-actions">
+          <.form for={%{}} action={~p"/admin/reseaux/#{p.id}/valider"} method="post">
+            <button
+              class="btn btn-primary btn-sm"
+              type="submit"
+              id={"schedule-#{p.id}"}
+              disabled={Enum.any?(networks_of(p), &(&1 in @full))}
+            >
+              Programmer
+            </button>
+          </.form>
+          <.form for={%{}} action={~p"/admin/reseaux/#{p.id}/maintenant"} method="post">
+            <button class="btn btn-secondary btn-sm" type="submit" id={"now-#{p.id}"}>
+              Publier maintenant
+            </button>
+          </.form>
+          <a class="btn btn-quiet btn-sm" href={~p"/admin/reseaux/#{p.id}/modifier"}>Modifier</a>
+          <.form for={%{}} action={~p"/admin/reseaux/#{p.id}/rejeter"} method="post">
+            <button class="btn btn-quiet btn-sm" type="submit" id={"drop-#{p.id}"}>Rejeter</button>
+          </.form>
+        </div>
+      </article>
+    </section>
+
+    <section class="soc-column" id="social-scheduled" aria-labelledby="col-scheduled">
+      <h2 class="soc-col-head" id="col-scheduled">
+        Programmés <span class="mono subtle">{length(@board.scheduled)}</span>
+      </h2>
+      <p class="small muted">Dans la file Buffer, publiés au créneau.</p>
+      <p :if={@board.scheduled == []} class="soc-empty muted">Rien de programmé.</p>
+      <article :for={p <- @board.scheduled} class="soc-card" id={"scheduled-#{p.id}"}>
+        <span class="soc-tag">{due_label(p) || "envoi en cours"}</span>
+        <b>{title(p)}</b>
+        <span class="soc-nets">
+          <%= for n <- networks_of(p) do %>
+            <.network_mark network={n} />
+          <% end %>
+          <span class={["soc-sync", "is-ok"]}>
+            {if Enum.any?(
+                  networks_of(p),
+                  &(Map.get(p, String.to_existing_atom(&1 <> "_state")) == "pending")
+                ),
+                do: "envoi vers Buffer…",
+                else: "dans Buffer"}
+          </span>
+        </span>
+        <div class="soc-card-actions">
+          <.form for={%{}} action={~p"/admin/reseaux/#{p.id}/maintenant"} method="post">
+            <button class="btn btn-secondary btn-sm" type="submit" id={"now-#{p.id}"}>
+              Publier maintenant
+            </button>
+          </.form>
+          <.form for={%{}} action={~p"/admin/reseaux/#{p.id}/retirer"} method="post">
+            <button class="btn btn-quiet btn-sm" type="submit" id={"withdraw-#{p.id}"}>
+              Retirer
+            </button>
+          </.form>
+        </div>
+      </article>
+    </section>
+
+    <section class="soc-column" id="social-published" aria-labelledby="col-published">
+      <h2 class="soc-col-head" id="col-published">
+        Publiés <span class="mono subtle">{length(@board.published)}</span>
+      </h2>
+      <p class="small muted">Statistiques Buffer, mises à jour une fois par jour.</p>
+      <p :if={@board.published == []} class="soc-empty muted">Rien de publié pour l'instant.</p>
+      <article :for={p <- @board.published} class="soc-card" id={"history-#{p.id}"}>
+        <span class="soc-tag">{sent_label(p)}</span>
+        <b>{title(p)}</b>
+        <span class="soc-nets">
+          <%= for n <- networks_of(p) do %>
+            <.network_mark network={n} />
+            <% {label, cls} = network_state(Map.get(p, String.to_existing_atom(n <> "_state"))) %>
+            <span :if={label != "Publié"} class={["pill", cls]}>{label}</span>
+          <% end %>
+        </span>
+        <span :if={metrics(p) != []} class="soc-metrics">
+          <span :for={{label, value} <- metrics(p)}><b>{value}</b> {label}</span>
+        </span>
+      </article>
+    </section>
+  </div>
+
+  <section :if={@board.failed != []} class="card adm-list" id="social-failed">
     <div class="adm-card-head">
-      <div>
-        <h2 class="h2">Décisions récentes sans post</h2>
-        <p class="small muted">
-          Changements de note ou de perspective des 60 derniers jours, arrivés avant les posts ou vérifiés à la main.
-        </p>
-      </div>
+      <h2 class="h2">Échecs</h2>
+      <span class="mono subtle small">« Renvoyer » relance l'envoi une fois la cause corrigée</span>
     </div>
     <div class="table-wrap">
       <table class="table adm-table">
         <tbody>
-          <tr :for={r <- @candidates} id={"candidate-#{r.id}"}>
-            <td class="l">{area_name(r.country_code)} · {agency_name(r.agency)}</td>
-            <td class="l num">
-              {r.rating}{if r.outlook not in [nil, "none"], do: ", #{r.outlook}"}
-            </td>
-            <td class="subtle">{r.action_date}</td>
-            <td>
-              <.form for={%{}} action={~p"/admin/reseaux/preparer/notation/#{r.id}"} method="post">
-                <button class="btn btn-secondary btn-sm" type="submit" id={"prepare-#{r.id}"}>
-                  Préparer le post
-                </button>
-              </.form>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="card adm-list" id="social-history">
-    <div class="adm-card-head">
-      <h2 class="h2">Historique</h2>
-    </div>
-    <p :if={@history == []} class="adm-empty muted">Rien pour l'instant.</p>
-    <div :if={@history != []} class="table-wrap">
-      <table class="table adm-table">
-        <thead>
-          <tr>
-            <th class="l">Post</th>
-            <th class="l">X</th>
-            <th class="l">LinkedIn</th>
-            <th class="l">État</th>
-            <th>Décidé</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr :for={p <- @history} id={"history-#{p.id}"}>
-            <td class="l adm-wrap">
-              {title(p)}
-              <div class="small muted">{String.slice(p.text_x, 0, 90)}…</div>
-            </td>
+          <tr :for={p <- @board.failed} id={"failed-#{p.id}"}>
+            <td class="l adm-wrap">{title(p)}</td>
             <%= for {network, name, state, error} <- [
                   {"x", "X", p.x_state, p.x_error},
                   {"linkedin", "LinkedIn", p.linkedin_state, p.linkedin_error}
@@ -299,6 +286,7 @@
                     <span class="subtle">—</span>
                   <% {label, cls} -> %>
                     <div class="soc-cell">
+                      <span class="small">{name}</span>
                       <span class={["pill", cls]}>{label}</span>
                       <button
                         :if={error}
@@ -323,10 +311,7 @@
                         </svg>
                       </button>
                       <.form
-                        :if={
-                          p.status in ["approved", "done"] and
-                            state in ["queued", "simulated", "failed"]
-                        }
+                        :if={state in ["queued", "simulated", "failed"]}
                         for={%{}}
                         action={~p"/admin/reseaux/#{p.id}/renvoyer/#{network}"}
                         method="post"
@@ -366,13 +351,36 @@
                 <% end %>
               </td>
             <% end %>
-            <td class="l">
-              <% {label, cls} = status_label(p.status) %>
-              <span class={["pill", cls]}>{label}</span>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section :if={@candidates != []} class="card adm-list" id="social-candidates">
+    <div class="adm-card-head">
+      <div>
+        <h2 class="h2">Décisions récentes sans post</h2>
+        <p class="small muted">
+          Changements de note ou de perspective des 60 derniers jours, arrivés avant les posts ou vérifiés à la main.
+        </p>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table class="table adm-table">
+        <tbody>
+          <tr :for={r <- @candidates} id={"candidate-#{r.id}"}>
+            <td class="l">{area_name(r.country_code)} · {agency_name(r.agency)}</td>
+            <td class="l num">
+              {r.rating}{if r.outlook not in [nil, "none"], do: ", #{r.outlook}"}
             </td>
-            <td class="subtle">
-              {fr_datetime(p.reviewed_at)}
-              <div :if={p.reviewed_by} class="small">{p.reviewed_by}</div>
+            <td class="subtle">{r.action_date}</td>
+            <td>
+              <.form for={%{}} action={~p"/admin/reseaux/preparer/notation/#{r.id}"} method="post">
+                <button class="btn btn-secondary btn-sm" type="submit" id={"prepare-#{r.id}"}>
+                  Préparer le post
+                </button>
+              </.form>
             </td>
           </tr>
         </tbody>
