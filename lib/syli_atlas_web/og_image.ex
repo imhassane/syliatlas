@@ -142,12 +142,17 @@ defmodule SyliAtlasWeb.OgImage do
     x = fn notch -> 72 + (1128 - 72) * (notch - 1) / 21 end
     score = s[:score]
     line = x.(13)
+    # A long rating (CCC+, Caa1) is drawn smaller, and the agencies' lines
+    # always start after it: Inter Light capitals are about 0.66 em wide.
+    chars = String.length(s.figure || "")
+    size = if chars >= 4, do: 120, else: 150
+    lines_x = max(380, round(72 + chars * (0.66 * size - 5) + 48))
 
     [
       text(72, 200, fit(s.title, 48), size: 40, weight: 300, fill: @muted, spacing: -1),
-      text(72, 350, s.figure, size: 150, weight: 300, spacing: -5),
+      text(72, 350, s.figure, size: size, weight: 300, spacing: -5),
       for {agency, i} <- Enum.with_index(Enum.take(s[:lines] || [], 3)) do
-        text(380, 268 + i * 44, fit(agency, 42), size: 28)
+        text(lines_x, 268 + i * 44, fit(agency, if(lines_x > 420, do: 36, else: 42)), size: 28)
       end,
       if score do
         [

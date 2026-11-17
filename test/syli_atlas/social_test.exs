@@ -189,6 +189,16 @@ defmodule SyliAtlas.SocialTest do
       assert post.sent_at
     end
 
+    test "X's image is the English page's, even for drafts written before" do
+      old = %Post{
+        link_x: "https://syliatlas.com/en/credit-ratings/zambia?utm_source=x",
+        image_url: "fr.png"
+      }
+
+      assert Post.x_image(old) =~ ~r{/og/[^/]+/en/credit-ratings/zambia\.png$}
+      assert Post.x_image(%{old | image_url_x: "en.png"}) == "en.png"
+    end
+
     test "LinkedIn gets the link at the end, old wording reworded" do
       post = %Post{
         text_linkedin: "Le classement : lien en premier commentaire.",
