@@ -75,47 +75,115 @@
           <span class="pill pill-info">{kind_label(p.kind)}</span>
           <span class="mono subtle small">préparé le {fr_datetime(p.inserted_at)}</span>
         </div>
-        <div class="soc-grid">
-          <label class="adm-field" for={"post-#{p.id}-x"}>
-            <span>
-              X · anglais
-              <span class={["mono", if(x_count(p) > x_limit(), do: "adm-bad", else: "subtle")]}>
-                {x_count(p)} / {x_limit()}
+        <div class="soc-pair">
+          <section class="soc-col" aria-label="Post X">
+            <label class="adm-field" for={"post-#{p.id}-x"}>
+              <span>
+                X · anglais
+                <span
+                  class={["mono", if(x_count(p) > x_limit(), do: "adm-bad", else: "subtle")]}
+                  data-x-count={"post-#{p.id}-x"}
+                >
+                  {x_count(p)} / {x_limit()}
+                </span>
               </span>
-            </span>
-            <textarea id={"post-#{p.id}-x"} name="post[text_x]" rows="8">{p.text_x}</textarea>
-            <span class="mono subtle small soc-link">+ lien : {p.link_x}</span>
-          </label>
-          <label class="adm-field" for={"post-#{p.id}-li"}>
-            <span>LinkedIn · français</span>
-            <textarea id={"post-#{p.id}-li"} name="post[text_linkedin]" rows="8">{p.text_linkedin}</textarea>
-            <span class="mono subtle small soc-link">+ lien : {p.link_linkedin}</span>
-          </label>
-          <div :if={p.image_url} class="adm-field soc-images">
-            <span>Images jointes</span>
-            <figure>
+              <textarea
+                id={"post-#{p.id}-x"}
+                name="post[text_x]"
+                rows="6"
+                data-social-text="x"
+                data-preview={"preview-x-#{p.id}"}
+                data-link-length={if(p.link_x, do: "24", else: "0")}
+              >{p.text_x}</textarea>
+            </label>
+            <article class="soc-x" id={"preview-x-#{p.id}"} aria-label="Aperçu du post sur X">
               <img
-                src={Post.x_image(p)}
+                class="soc-x-avatar"
+                src={~p"/images/icon-192.png"}
                 alt=""
-                loading="lazy"
-                class="soc-image"
-                width="1200"
-                height="630"
+                width="40"
+                height="40"
               />
-              <figcaption class="mono subtle small">X · page anglaise</figcaption>
-            </figure>
-            <figure>
+              <div class="soc-x-main">
+                <div class="soc-x-head">
+                  <b>Syli Atlas</b>
+                  <span class="soc-x-muted">@syliatlas · programmé</span>
+                </div>
+                <div class="soc-x-text">
+                  <span data-preview-text>{p.text_x}</span><span :if={p.link_x}>
+                    <span class="soc-x-link">{x_display_link(p.link_x)}</span>
+                  </span>
+                </div>
+                <img
+                  :if={p.image_url}
+                  class="soc-x-image"
+                  src={Post.x_image(p)}
+                  alt=""
+                  loading="lazy"
+                  width="1200"
+                  height="630"
+                />
+                <div class="soc-x-actions" aria-hidden="true">
+                  <.social_action icon={:reply} />
+                  <.social_action icon={:repost} />
+                  <.social_action icon={:like} />
+                  <.social_action icon={:views} />
+                </div>
+              </div>
+            </article>
+          </section>
+
+          <section class="soc-col" aria-label="Post LinkedIn">
+            <label class="adm-field" for={"post-#{p.id}-li"}>
+              <span>LinkedIn · français</span>
+              <textarea
+                id={"post-#{p.id}-li"}
+                name="post[text_linkedin]"
+                rows="6"
+                data-social-text="linkedin"
+                data-preview={"preview-li-#{p.id}"}
+              >{p.text_linkedin}</textarea>
+            </label>
+            <article
+              class="soc-li"
+              id={"preview-li-#{p.id}"}
+              aria-label="Aperçu du post sur LinkedIn"
+            >
+              <div class="soc-li-head">
+                <img
+                  class="soc-li-avatar"
+                  src={~p"/images/icon-192.png"}
+                  alt=""
+                  width="48"
+                  height="48"
+                />
+                <div>
+                  <b>Syli Atlas</b>
+                  <div class="soc-li-muted">Page · programmé</div>
+                </div>
+              </div>
+              <div class="soc-li-body">
+                <div class="soc-li-text" data-clamp>
+                  <span data-preview-text>{linkedin_text(p)}</span><span :if={p.link_linkedin}>
+                    <span class="soc-li-link">{p.link_linkedin}</span>
+                  </span>
+                </div>
+                <button type="button" class="soc-li-more" data-more hidden>… voir plus</button>
+              </div>
               <img
+                :if={p.image_url}
+                class="soc-li-image"
                 src={p.image_url}
                 alt=""
                 loading="lazy"
-                class="soc-image"
                 width="1200"
                 height="630"
               />
-              <figcaption class="mono subtle small">LinkedIn · page française</figcaption>
-            </figure>
-          </div>
+              <div class="soc-li-actions" aria-hidden="true">
+                <span>J'aime</span><span>Commenter</span><span>Republier</span><span>Envoyer</span>
+              </div>
+            </article>
+          </section>
         </div>
         <div class="adm-buttons">
           <button class="btn btn-primary btn-sm" type="submit" id={"approve-#{p.id}"}>

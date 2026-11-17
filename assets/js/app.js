@@ -33,6 +33,7 @@ import {initChartTips} from "./ui/chart_tips"
 import {initPlausible} from "./ui/plausible"
 import {initDetailsTarget} from "./ui/details_target"
 import {initDialogs} from "./ui/dialogs"
+import {initSocialPreviews} from "./ui/social_preview"
 
 initTheme()
 initDialogs()
@@ -61,6 +62,7 @@ initMoney()
 initChartTips()
 initPlausible()
 initDetailsTarget()
+initSocialPreviews()
 
 // The lines below enable quality of life phoenix_live_reload
 // development features:
