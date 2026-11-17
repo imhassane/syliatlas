@@ -25,6 +25,9 @@ defmodule SyliAtlas.Social.Drafts do
   # Largest economies first when several drafts wait (IMF, GDP in dollars).
   @large ~w(ZAF EGY NGA DZA ETH MAR KEN AGO CIV GHA TZA COD)
 
+  # Every draft gets its hashtags here, so they can still be edited.
+  defp save(attrs), do: attrs |> SyliAtlas.Social.Hashtags.add() |> Social.create_draft()
+
   @doc "Runs a draft builder without ever raising: alerts must not depend on it."
   def safely(fun) do
     fun.()
@@ -40,7 +43,7 @@ defmodule SyliAtlas.Social.Drafts do
   def on_rating(rating_id) do
     with %Rating{} = r <- Repo.get(Rating, rating_id),
          {:ok, attrs} <- rating(r, previous(r)) do
-      Social.create_draft(attrs)
+      save(attrs)
     else
       _ -> :skip
     end
@@ -192,7 +195,7 @@ defmodule SyliAtlas.Social.Drafts do
   def on_budget_law(law_id) do
     with %{} = law <- SyliAtlas.Budgets.get_law(law_id),
          {:ok, attrs} <- budget_law(law) do
-      Social.create_draft(attrs)
+      save(attrs)
     else
       _ -> :skip
     end
@@ -266,7 +269,7 @@ defmodule SyliAtlas.Social.Drafts do
     fr = top_growth(year, "fr")
 
     case {en, fr} do
-      {[_, _, _ | _], [_, _, _ | _]} -> Social.create_draft(edition(edition_id, year, en, fr))
+      {[_, _, _ | _], [_, _, _ | _]} -> save(edition(edition_id, year, en, fr))
       _ -> :skip
     end
   end
@@ -332,7 +335,7 @@ defmodule SyliAtlas.Social.Drafts do
     path_en = Paths.country_tab("en", slug(r.country_code, "en"), :economy)
     path_fr = Paths.country_tab("fr", slug(r.country_code, "fr"), :economy)
 
-    Social.create_draft(%{
+    save(%{
       key: "rebasing:#{r.country_code}:#{r.announced_on}",
       kind: "rebasing",
       area_code: r.country_code,
@@ -368,7 +371,7 @@ defmodule SyliAtlas.Social.Drafts do
   """
   def on_national_figure(%{status: "verified"} = f) do
     case national(f) do
-      {:ok, attrs} -> Social.create_draft(attrs)
+      {:ok, attrs} -> save(attrs)
       other -> other
     end
   end
