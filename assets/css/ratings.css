@@ -370,5 +370,5 @@ dd.rt-inv, dd.rt-spec, dd.rt-high, dd.rt-risk, dd.rt-def, b.rt-inv, b.rt-spec, b
 .admin-bar .admin-bar-copy button { min-height: 36px; padding: 0 10px; border: 1px solid rgba(230, 236, 245, .25); color: #e6ecf5; white-space: nowrap; }
 .admin-bar .admin-bar-copy button:hover, .admin-bar .admin-bar-copy button:focus-visible { background: rgba(230, 236, 245, .12); }
 .admin-bar-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-@media (max-width: 720px) { .admin-bar { flex-wrap: wrap; justify-content: center; bottom: 8px; } }
+@media (max-width: 720px) { .admin-bar { flex-wrap: wrap; justify-content: center; bottom: 8px; padding: 8px 40px; } .admin-bar > button { position: absolute; top: 4px; right: 4px; } }
 @media print { .admin-bar { display: none; } }
