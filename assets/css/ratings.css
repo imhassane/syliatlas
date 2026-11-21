@@ -365,4 +365,10 @@ dd.rt-inv, dd.rt-spec, dd.rt-high, dd.rt-risk, dd.rt-def, b.rt-inv, b.rt-spec, b
 .admin-bar span { color: #b8c4d6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .admin-bar a { display: inline-flex; align-items: center; gap: 8px; min-height: 36px; padding: 0 14px; border-radius: 8px; background: #ffffff; color: #0f1a2e; font-weight: 500; text-decoration: none; white-space: nowrap; }
 .admin-bar button { border: 0; background: transparent; color: #b8c4d6; min-width: 32px; min-height: 32px; border-radius: 8px; cursor: pointer; font: inherit; }
+.admin-bar-copy { display: inline-flex; align-items: center; gap: 4px; }
+.admin-bar-copy > span:first-child { color: #b8c4d6; margin-right: 4px; }
+.admin-bar .admin-bar-copy button { min-height: 36px; padding: 0 10px; border: 1px solid rgba(230, 236, 245, .25); color: #e6ecf5; white-space: nowrap; }
+.admin-bar .admin-bar-copy button:hover, .admin-bar .admin-bar-copy button:focus-visible { background: rgba(230, 236, 245, .12); }
+.admin-bar-status { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+@media (max-width: 720px) { .admin-bar { flex-wrap: wrap; justify-content: center; bottom: 8px; padding: 8px 40px; } .admin-bar > button { position: absolute; top: 4px; right: 4px; } }
 @media print { .admin-bar { display: none; } }
